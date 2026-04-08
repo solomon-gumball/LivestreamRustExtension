@@ -33,6 +33,33 @@ impl NetworkHandler {
     #[signal] fn scrolling_text_updated(text: GString);
     #[signal] fn pictionary_drawing_updated(svg: GString);
 
+    fn connect_to_server(&mut self, url: &str) {
+        godot_print!("Connecting to WebSocket server at: {url}");
+        let error = self.socket.connect_to_url(url);
+        if error != godot::global::Error::OK {
+            godot_error!("Failed to connect to WebSocket server: {error:?}");
+        } else {
+            godot_print!("Successfully connected to WebSocket server.");
+            self.subscribe(array!["SIMULATION"]);
+        }
+    }
+
+    #[func]
+    fn subscribe(&mut self, channels: Array<GString>) {
+        let message_string: Vec<String> = channels.iter_shared()
+        .map(|c| c.to_string())
+        .collect();
+
+        let json_string: String = match serde_json::to_string(&message_string) {
+            Ok(s) => s,
+            Err(e) => {
+                godot_error!("Failed to serialize channels: {e}");
+                return;
+            }
+        };
+        self.socket.send_text(&json_string);
+    }
+
     #[func]
     fn handle_packet(&mut self, raw: GString) {
         let json = raw.to_string();
@@ -44,6 +71,7 @@ impl NetworkHandler {
                 return;
             }
         };
+        godot_print!("Received WS message: {json}");
 
         match msg {
             WsMessage::TriggerEmote { chatter, emote } => {
@@ -67,6 +95,10 @@ impl INode for NetworkHandler {
           base,
           socket: WebSocketPeer::new_gd()
         }
+    }
+
+    fn ready(&mut self) {
+        self.connect_to_server("wss://livestream-listener-913887936892.us-central1.run.app");
     }
 
     fn process(&mut self, _delta: f64) {
