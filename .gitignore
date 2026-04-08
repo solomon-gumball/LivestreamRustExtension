@@ -1,0 +1,11 @@
+# Rust
+rust/target/
+
+# Godot
+godot/.godot/
+
+# Blender
+*.blend[1-9]
+
+# macOS
+.DS_Store
