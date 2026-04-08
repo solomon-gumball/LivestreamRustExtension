@@ -45,7 +45,7 @@ enum WsMessage {
     LeaderboardUpdated { leaderboard: Vec<ChatterData> },
     RequestActivityAdvance,
     StoreData {
-        action_queue: Box<WsMessage>,
+        action_queue: Vec<Box<WsMessage>>,
         active_chatters: Vec<ChatterData>,
         market: Vec<ShopItem>,
         drops: DropData,
@@ -59,6 +59,7 @@ impl NetworkHandler {
     #[signal] fn emote_triggered(chatter: Gd<Chatter>, emote: GString);
     #[signal] fn scrolling_text_updated(text: GString);
     #[signal] fn pictionary_drawing_updated(svg: GString);
+    #[signal] fn chatter_updated(chatter: Gd<Chatter>);
 
     fn connect_to_server(&mut self, url: &str) {
         godot_print!("Connecting to WebSocket server at: {url}");
@@ -67,24 +68,21 @@ impl NetworkHandler {
             godot_error!("Failed to connect to WebSocket server: {error:?}");
         } else {
             godot_print!("Successfully connected to WebSocket server.");
-            self.subscribe(array!["SIMULATION"]);
         }
     }
 
     #[func]
     fn subscribe(&mut self, channels: Array<GString>) {
-        let message_string: Vec<String> = channels.iter_shared()
+        let message_arr: Vec<String> = channels.iter_shared()
         .map(|c| c.to_string())
         .collect();
 
-        let json_string: String = match serde_json::to_string(&message_string) {
-            Ok(s) => s,
-            Err(e) => {
-                godot_error!("Failed to serialize channels: {e}");
-                return;
-            }
-        };
-        self.socket.send_text(&json_string);
+        let json_str = serde_json::json!({
+          "type": "subscribe",
+          "channels": message_arr
+        });
+        godot_print!("subscribe json -> {json_str}");
+        self.socket.send_text(&json_str.to_string());
     }
 
     #[func]
@@ -94,6 +92,7 @@ impl NetworkHandler {
         let msg: WsMessage = match serde_json::from_str(&json) {
             Ok(m) => m,
             Err(e) => {
+                // godot_print!("{json}");
                 // Do NOT log the json string here, if it's too big it can crash you pc!
                 godot_error!("Failed to parse WS message: {e}");
                 return;
@@ -112,7 +111,10 @@ impl NetworkHandler {
             WsMessage::PictionaryDrawingUpdated { svg } => {
                 self.signals().pictionary_drawing_updated().emit(&GString::from(&svg));
             }
-            WsMessage::UpdateChatter { .. } => {}
+            WsMessage::UpdateChatter { chatter } => {
+              let chatter_obj: Gd<Chatter> = chatter.into();
+              self.signals().chatter_updated().emit(&chatter_obj)
+            }
             WsMessage::ShowMail { .. } => {}
             WsMessage::MailQueueUpdated { .. } => {}
             WsMessage::ImageTest { .. } => {}
@@ -121,7 +123,13 @@ impl NetworkHandler {
             WsMessage::ActionQueueUpdated { .. } => {}
             WsMessage::LeaderboardUpdated { .. } => {}
             WsMessage::RequestActivityAdvance => {}
-            WsMessage::StoreData { .. } => {}
+            WsMessage::StoreData { active_chatters, .. } => {
+              if let Some(chatter) = active_chatters.first() {
+                let chatter_obj: Gd<Chatter> = chatter.clone().into();
+                self.signals().chatter_updated().emit(&chatter_obj);
+              }
+              self.subscribe(array!["SIMULATION"]);
+            }
         }
     }
 }
@@ -136,7 +144,8 @@ impl INode for NetworkHandler {
     }
 
     fn ready(&mut self) {
-        self.connect_to_server("wss://livestream-listener-913887936892.us-central1.run.app");
+        // self.connect_to_server("wss://livestream-listener-913887936892.us-central1.run.app");
+        self.connect_to_server("ws://localhost:1235");
     }
 
     fn process(&mut self, _delta: f64) {
@@ -146,15 +155,10 @@ impl INode for NetworkHandler {
 
         }
         State::OPEN => {
-            let mut i = 0;
-          while self.socket.get_available_packet_count() > 0 && i < 5 {
-            i += 1;
+          while self.socket.get_available_packet_count() > 0 {
             let packet = self.socket.get_packet();
             let message_str = packet.get_string_from_utf8();
             self.handle_packet(message_str);
-          }
-          if i > 0 {
-            godot_print!("Processed {i} packets, {} remaining", self.socket.get_available_packet_count());
           }
         }
         State::CLOSING => {
