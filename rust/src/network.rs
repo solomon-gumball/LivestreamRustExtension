@@ -1,9 +1,13 @@
 // lib.rs  (or network_message.rs)
 
+use std::collections::HashMap;
+
 use godot::{classes::{WebSocketPeer, web_socket_peer::State}, obj::NewGd, prelude::*};
 use serde::Deserialize;
 
-use crate::chatter::{Chatter, ChatterData}; // derive feature required in Cargo.toml
+use crate::chatter::{Chatter, ChatterData};
+use crate::mail::Mail;
+use crate::shop::ShopItem;
 
 #[derive(GodotClass)]
 #[class(base=Node)]
@@ -13,18 +17,41 @@ pub struct NetworkHandler {
 }
 
 #[derive(Deserialize)]
+pub struct DropData {
+    coins: u32,
+    stacks: u32,
+}
+
+#[derive(Deserialize)]
 #[serde(tag = "type", rename_all = "kebab-case")]
 enum WsMessage {
+    UpdateChatter { chatter: ChatterData},
+    ShowMail {
+        mail: Mail,
+        chatter: ChatterData,
+        uuid: String
+    },
+    MailQueueUpdated { mail: Vec<Mail> },
+    ImageTest { base64: String },
+    ItemInfo { info: std::collections::HashMap<String, ShopItem> },
+    ShopUpdated { items: Vec<String> },
+    ActionQueueUpdated { action_queue: Vec<WsMessage>},
     TriggerEmote {
         chatter: ChatterData,
-        emote: String,
+        emote: String
     },
-    ScrollingTextUpdated {
-        text: String,
-    },
-    PictionaryDrawingUpdated {
-        svg: String,
-    },
+    ScrollingTextUpdated { text: String },
+    PictionaryDrawingUpdated { svg: String },
+    LeaderboardUpdated { leaderboard: Vec<ChatterData> },
+    RequestActivityAdvance,
+    StoreData {
+        action_queue: Box<WsMessage>,
+        active_chatters: Vec<ChatterData>,
+        market: Vec<ShopItem>,
+        drops: DropData,
+        scrolling_text: String,
+        flags: HashMap<String, bool>
+    }
 }
 
 #[godot_api]
@@ -67,11 +94,12 @@ impl NetworkHandler {
         let msg: WsMessage = match serde_json::from_str(&json) {
             Ok(m) => m,
             Err(e) => {
+                // Do NOT log the json string here, if it's too big it can crash you pc!
                 godot_error!("Failed to parse WS message: {e}");
                 return;
             }
         };
-        godot_print!("Received WS message: {json}");
+        // godot_print!("Received WS message: {json}");
 
         match msg {
             WsMessage::TriggerEmote { chatter, emote } => {
@@ -79,11 +107,21 @@ impl NetworkHandler {
                 self.signals().emote_triggered().emit(&chatter_obj, &GString::from(&emote));
             }
             WsMessage::ScrollingTextUpdated { text } => {
-              self.signals().scrolling_text_updated().emit(&GString::from(&text));
+                self.signals().scrolling_text_updated().emit(&GString::from(&text));
             }
             WsMessage::PictionaryDrawingUpdated { svg } => {
                 self.signals().pictionary_drawing_updated().emit(&GString::from(&svg));
             }
+            WsMessage::UpdateChatter { .. } => {}
+            WsMessage::ShowMail { .. } => {}
+            WsMessage::MailQueueUpdated { .. } => {}
+            WsMessage::ImageTest { .. } => {}
+            WsMessage::ItemInfo { .. } => {}
+            WsMessage::ShopUpdated { .. } => {}
+            WsMessage::ActionQueueUpdated { .. } => {}
+            WsMessage::LeaderboardUpdated { .. } => {}
+            WsMessage::RequestActivityAdvance => {}
+            WsMessage::StoreData { .. } => {}
         }
     }
 }
@@ -108,10 +146,15 @@ impl INode for NetworkHandler {
 
         }
         State::OPEN => {
-          while self.socket.get_available_packet_count() > 0 {
+            let mut i = 0;
+          while self.socket.get_available_packet_count() > 0 && i < 5 {
+            i += 1;
             let packet = self.socket.get_packet();
             let message_str = packet.get_string_from_utf8();
             self.handle_packet(message_str);
+          }
+          if i > 0 {
+            godot_print!("Processed {i} packets, {} remaining", self.socket.get_available_packet_count());
           }
         }
         State::CLOSING => {
