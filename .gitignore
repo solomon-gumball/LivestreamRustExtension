@@ -1,11 +1,17 @@
 # Rust
-rust/target/
+godot/addons/livestream-rust/bin
 
 # Godot
 godot/.godot/
+
+web/public/**
+web/node_modules
+web/localhost-key.pem
+web/localhost.pem
 
 # Blender
 *.blend[1-9]
 
 # macOS
 .DS_Store
+

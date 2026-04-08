@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>$GODOT_PROJECT_NAME</title>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    $GODOT_HEAD_INCLUDE
+    <style>
+      * { margin: 0; padding: 0; box-sizing: border-box; }
+      html, body {
+        width: 100%; height: 100%;
+        background: #000;
+        overflow: hidden;
+      }
+      canvas {
+        display: block;
+        width: 100%;
+        height: 100%;
+      }
+    </style>
+    <script src="https://extension-files.twitch.tv/helper/v1/twitch-ext.min.js"></script>
+  </head>
+  <body>
+    <canvas id="canvas"></canvas>
+
+    <script src="$GODOT_URL"></script>
+    <script>
+      function startGodot() {
+        console.log("STARTING GODOT!!!!")
+        const engine = new Engine($GODOT_CONFIG);
+        engine.startGame({
+          persistentPaths: [],
+          // Explicitly pass the canvas so Godot doesn't go hunting for it
+          canvas: document.getElementById("canvas"),
+        }).catch(function (err) {
+          console.error("Godot startup failed:", err);
+        });
+      }
+
+      function waitForSize(callback) {
+        const canvas = document.getElementById("canvas");
+        // If we already have a size, go immediately
+        console.log(canvas.offsetWidth, canvas.offsetHeight)
+        if (canvas.offsetWidth > 0 && canvas.offsetHeight > 0) {
+          callback();
+          return;
+        }
+
+        // Otherwise poll until the iframe has been given dimensions
+        const observer = new ResizeObserver(function (entries) {
+          for (const entry of entries) {
+            console.log("observer fired", entry.contentRect)
+            if (entry.contentRect.width > 0 && entry.contentRect.height > 0) {
+              observer.disconnect();
+              callback();
+              return;
+            }
+          }
+        });
+        observer.observe(canvas);
+      }
+      // Wait for DOM + iframe sizing to settle before handing off to Godot
+      // setTimeout(() => {
+      //   startGodot()
+      // }, 2000)
+      window.addEventListener("load", function () {
+        console.log("LOAD EVENT FIRED")
+        waitForSize(startGodot);
+      });
+    </script>
+  </body>
+</html>
