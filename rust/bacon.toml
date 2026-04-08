@@ -1,0 +1,9 @@
+[jobs.build]
+command = ["cargo", "build"]
+need_stdout = true
+
+[jobs.build-release]
+command = ["cargo", "build", "--release"]
+need_stdout = true
+
+default_job = "build"

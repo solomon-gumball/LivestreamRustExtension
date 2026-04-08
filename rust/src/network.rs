@@ -1,16 +1,15 @@
 // lib.rs  (or network_message.rs)
 
-use godot::prelude::*;
-use serde::Deserialize; // derive feature required in Cargo.toml
+use godot::{classes::{WebSocketPeer, web_socket_peer::State}, obj::NewGd, prelude::*};
+use serde::Deserialize;
 
-// ── 1. Deserializable Rust structs (serde) ────────────────────────────────────
+use crate::chatter::{Chatter, ChatterData}; // derive feature required in Cargo.toml
 
-#[derive(Deserialize)]
-struct ChatterData {
-    id: String,
-    display_name: String,
-    login: String,
-    color: String,
+#[derive(GodotClass)]
+#[class(base=Node)]
+pub struct NetworkHandler {
+    base: Base<Node>,
+    socket: Gd<WebSocketPeer>
 }
 
 #[derive(Deserialize)]
@@ -26,69 +25,14 @@ enum WsMessage {
     PictionaryDrawingUpdated {
         svg: String,
     },
-    // add more variants to match your message.type strings
 }
 
-// ── 2. A GDScript-visible class that holds the parsed data ────────────────────
-
-/// Mirrors your GDScript `Chatter` class so GDScript can read the fields.
-#[derive(GodotClass)]
-#[class(base=RefCounted)]
-pub struct Chatter {
-    #[var] pub id: GString,
-    #[var] pub display_name: GString,
-    #[var] pub login: GString,
-    #[var] pub color: GString,
-    base: Base<RefCounted>,
-}
-
-#[godot_api]
-impl IRefCounted for Chatter {
-    fn init(base: Base<RefCounted>) -> Self {
-        Self {
-            id: GString::new(),
-            display_name: GString::new(),
-            login: GString::new(),
-            color: GString::new(),
-            base,
-        }
-    }
-}
-
-impl Chatter {
-    fn from_data(data: ChatterData) -> Gd<Self> {
-        Gd::from_init_fn(|base| Self {
-            id: data.id.as_str().into(),
-            display_name: data.display_name.as_str().into(),
-            login: data.login.as_str().into(),
-            color: data.color.as_str().into(),
-            base,
-        })
-    }
-}
-
-// ── 3. The WebSocket handler node exposed to GDScript ─────────────────────────
-
-#[derive(GodotClass)]
-#[class(base=Node)]
-pub struct NetworkHandler {
-    base: Base<Node>,
-}
-
-/// Signals GDScript connects to — same names as your existing ones.
 #[godot_api]
 impl NetworkHandler {
-    #[signal]
-    fn emote_triggered(chatter: Gd<Chatter>, emote: GString);
+    #[signal] fn emote_triggered(chatter: Gd<Chatter>, emote: GString);
+    #[signal] fn scrolling_text_updated(text: GString);
+    #[signal] fn pictionary_drawing_updated(svg: GString);
 
-    #[signal]
-    fn scrolling_text_updated(text: GString);
-
-    #[signal]
-    fn pictionary_drawing_updated(svg: GString);
-
-    /// Call this from GDScript when a raw packet arrives, e.g.:
-    ///   handler.handle_packet(packet.get_string_from_utf8())
     #[func]
     fn handle_packet(&mut self, raw: GString) {
         let json = raw.to_string();
@@ -101,10 +45,9 @@ impl NetworkHandler {
             }
         };
 
-        // mirrors your GDScript `match message.type:` block
         match msg {
             WsMessage::TriggerEmote { chatter, emote } => {
-                let chatter_obj = Chatter::from_data(chatter);
+                let chatter_obj: Gd<Chatter> = chatter.into();
                 self.signals().emote_triggered().emit(&chatter_obj, &GString::from(&emote));
             }
             WsMessage::ScrollingTextUpdated { text } => {
@@ -120,6 +63,32 @@ impl NetworkHandler {
 #[godot_api]
 impl INode for NetworkHandler {
     fn init(base: Base<Node>) -> Self {
-        Self { base }
+        Self {
+          base,
+          socket: WebSocketPeer::new_gd()
+        }
+    }
+
+    fn process(&mut self, _delta: f64) {
+      self.socket.poll();
+      match self.socket.get_ready_state() {
+        State::CONNECTING => {
+
+        }
+        State::OPEN => {
+          while self.socket.get_available_packet_count() > 0 {
+            let packet = self.socket.get_packet();
+            let message_str = packet.get_string_from_utf8();
+            self.handle_packet(message_str);
+          }
+        }
+        State::CLOSING => {
+          
+        }
+        State::CLOSED => {
+          
+        }
+        _ => {}
+      }
     }
 }
