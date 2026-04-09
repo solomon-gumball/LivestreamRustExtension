@@ -5,7 +5,7 @@ use std::collections::HashMap;
 use godot::{classes::{WebSocketPeer, web_socket_peer::State}, obj::NewGd, prelude::*};
 use serde::Deserialize;
 
-use crate::chatter::{Chatter, ChatterData};
+use crate::{chatter::{Chatter, ChatterData}, shop::CommonShopTraits};
 use crate::mail::Mail;
 use crate::shop::ShopItem;
 
@@ -73,7 +73,8 @@ impl NetworkHandler {
 
     #[func]
     fn get_database_server_url(&self) -> String {
-        return format!("https://{}", self.get_server_domain());
+        let protocol = if self.use_local_server { "http" } else { "https" };
+        return format!("{}://{}", protocol, self.get_server_domain());
     }
 
     #[func]
@@ -95,7 +96,10 @@ impl NetworkHandler {
     #[func]
     fn get_item_info(&self, item_name: GString) -> Variant {
         self.item_info.get(&item_name.to_string())
-            .map(|item| item.clone().into())
+            .map(|item| {
+                godot_print!("item found? {}", item.common().name);
+                item.clone().into()
+            })
             .unwrap_or(Variant::nil())
     }
 
@@ -147,7 +151,9 @@ impl NetworkHandler {
             WsMessage::ShowMail { .. } => {}
             WsMessage::MailQueueUpdated { .. } => {}
             WsMessage::ImageTest { .. } => {}
-            WsMessage::ItemInfo { .. } => {}
+            WsMessage::ItemInfo { info } => {
+                self.item_info.extend(info);
+            }
             WsMessage::ShopUpdated { .. } => {}
             WsMessage::ActionQueueUpdated { .. } => {}
             WsMessage::LeaderboardUpdated { .. } => {}
@@ -158,8 +164,8 @@ impl NetworkHandler {
                 self.signals().chatter_updated().emit(&chatter_obj);
               }
               godot_print!("Received store data {}", json);
-              market.iter().for_each(|item| {
-                self.item_info.set(item.name, item)
+              market.iter().for_each(|item: &ShopItem| {
+                self.item_info.insert(item.common().name.clone(), item.clone());
               });
             //   self.item_info = market.into_iter().map(|item| (item.name.clone(), item)).collect();
               self.subscribe(array!["SIMULATION"]);

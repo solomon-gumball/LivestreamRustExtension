@@ -114,6 +114,8 @@ func load_glb(url: String, no_cached: bool = false) -> Node3D:
         var glb_scene = _parse_glb(glb_data)
         _glb_cache[filename] = glb_scene
         return glb_scene
+    else:
+      print("ERROR LOADING ASSET: ", response._error, url)
 
     return null
 

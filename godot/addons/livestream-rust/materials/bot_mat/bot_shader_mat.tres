@@ -1,6 +1,6 @@
-[gd_resource type="ShaderMaterial" load_steps=4 format=3 uid="uid://p7rfrd37fbk1"]
+[gd_resource type="ShaderMaterial" format=3 uid="uid://p7rfrd37fbk1"]
 
-[ext_resource type="Shader" uid="uid://bsbf1pfb6d8a" path="res://addons/livestream-rust/materials/bot_mat/bot_shader.gdshader" id="1_ih83v"]
+[ext_resource type="Shader" uid="uid://cw1km147x2fwu" path="res://addons/livestream-rust/materials/bot_mat/bot_shader.gdshader" id="1_ih83v"]
 [ext_resource type="Texture2D" uid="uid://cas3gr887xevi" path="res://addons/livestream-rust/materials/bot_mat/bot_albedo.png" id="2_tdcyo"]
 [ext_resource type="Texture2D" uid="uid://ba6mac1k3t38a" path="res://addons/livestream-rust/materials/bot_mat/bot_normals.png" id="4_1fsq7"]
 

@@ -17,8 +17,8 @@ config/icon="res://icon.svg"
 
 [autoload]
 
-Network="*uid://dr4ycnsym07ms"
 ImageLoader="*uid://cs4ky8up2cqd3"
+Network="*res://addons/livestream-rust/network_handler_global.gd"
 
 [dotnet]
 

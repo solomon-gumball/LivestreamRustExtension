@@ -29,24 +29,24 @@ nodes/StateMachine/node = ExtResource("3_smtre")
 nodes/StateMachine/position = Vector2(-293.333, -120)
 node_connections = [&"output", 0, &"Add2", &"Add2", 0, &"StateMachine", &"Add2", 1, &"Animation 2"]
 
-[node name="gumbot" unique_id=574168232 instance=ExtResource("1_vqh4x")]
+[node name="gumbot" unique_id=2126276004 instance=ExtResource("1_vqh4x")]
 script = ExtResource("2_hyqf0")
 
-[node name="Skeleton3D" parent="Armature" parent_id_path=PackedInt32Array(335301328) index="0" unique_id=27532274]
+[node name="Skeleton3D" parent="Armature" parent_id_path=PackedInt32Array(904467510) index="0" unique_id=904851796]
 bones/1/position = Vector3(0, 0.11674872, 0)
 bones/2/rotation = Quaternion(-2.168021e-08, 0.02218937, 0.99975383, -8.1596285e-09)
-bones/3/rotation = Quaternion(-0.03647189, 2.382599e-07, -2.2898266e-08, 0.9993347)
-bones/4/rotation = Quaternion(0.717138, 1.02810716e-07, 4.1603144e-07, 0.69693124)
+bones/3/rotation = Quaternion(-0.03647189, 2.382599e-07, -2.2898268e-08, 0.9993347)
+bones/4/rotation = Quaternion(0.717138, 1.8830019e-07, 3.3295078e-07, 0.69693124)
 bones/5/rotation = Quaternion(-2.2063334e-08, 0.02218937, 0.99975383, 9.130505e-09)
 bones/6/rotation = Quaternion(-0.03647189, -2.3825989e-07, 2.2898268e-08, 0.9993347)
-bones/7/rotation = Quaternion(0.717138, -1.3418854e-07, -3.855377e-07, 0.69693124)
-bones/10/rotation = Quaternion(0.061373103, 0.7044383, -0.061373096, 0.7044383)
+bones/7/rotation = Quaternion(0.717138, -4.869907e-08, -4.6861837e-07, 0.69693124)
+bones/10/rotation = Quaternion(0, 0.7071068, 0, 0.7071068)
 bones/11/rotation = Quaternion(-9.263334e-08, -0.025976177, 0.99966264, -9.70999e-09)
 bones/12/rotation = Quaternion(0.05707023, 1.9267576e-10, -1.6033843e-08, 0.9983702)
 bones/13/rotation = Quaternion(-0.03111716, -1.68274e-07, 1.39750505e-08, 0.99951583)
-bones/14/rotation = Quaternion(-9.2107314e-08, -0.025976177, 0.99966264, 1.0534493e-08)
-bones/15/rotation = Quaternion(0.05707023, 1.9265115e-10, 2.8414176e-08, 0.9983702)
-bones/16/rotation = Quaternion(-0.03111716, 3.0885832e-07, -2.5114023e-08, 0.99951583)
+bones/14/rotation = Quaternion(-9.2107314e-08, -0.025976177, 0.99966264, 1.0534494e-08)
+bones/15/rotation = Quaternion(0.05707023, 1.9265037e-10, 2.8414176e-08, 0.9983702)
+bones/16/rotation = Quaternion(-0.03111716, 3.088583e-07, -2.5114023e-08, 0.99951583)
 bones/17/rotation = Quaternion(-8.42937e-08, 0.7071068, 0.7071068, -8.42937e-08)
 bones/20/rotation = Quaternion(1.3767878e-07, 0.7071068, -0.7071068, -1.3767878e-07)
 bones/21/rotation = Quaternion(-1.3767878e-07, 0.7071068, -0.7071068, 1.3767878e-07)

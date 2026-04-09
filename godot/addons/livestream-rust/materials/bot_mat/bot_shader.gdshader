@@ -12,5 +12,5 @@ void fragment() {
 	vec3 base_color_mix = mix(bot_color.rgb, albedo_sample.rgb, albedo_sample.a);
 	ALBEDO = base_color_mix;
 	EMISSION = ALBEDO * 0.3;
-	NORMAL_MAP = texture(normal_map, UV).rgb;
+	//NORMAL_MAP = texture(normal_map, UV).rgb;
 }

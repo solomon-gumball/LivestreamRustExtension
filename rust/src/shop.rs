@@ -28,19 +28,21 @@ pub struct WearableMetadata {
 }
 
 #[derive(Deserialize, Clone)]
+#[serde(tag = "type", rename_all = "lowercase")]
 pub enum ShopItem {
     Wearable {
-        #[serde(flatten)]
         metadata: WearableMetadata,
+        #[serde(flatten)]
         common: ShopItemCommon,
     },
     Emote {
-        #[serde(flatten)]
         metadata: serde_json::Value,
+        #[serde(flatten)]
         common: ShopItemCommon,
     },
 }
-trait CommonShopTraits {
+
+pub trait CommonShopTraits {
     fn common(&self) -> &ShopItemCommon;
 }
 impl CommonShopTraits for ShopItem {
@@ -173,28 +175,27 @@ impl IRefCounted for EmoteShopItem {
 
 impl From<ShopItem> for Variant {
     fn from(item: ShopItem) -> Self {
-
         match item {
             ShopItem::Wearable { common, metadata } => {
                 Gd::from_init_fn(|gd_base| WearableShopItem {
-                    price: base.price,
-                    name: base.name.as_str().into(),
-                    description: base.description.as_str().into(),
-                    tier: base.tier as i64,
-                    preview_scale: base.preview_scale,
-                    model_center: arr3_to_vec3(base.model_center),
+                    price: common.price,
+                    name: common.name.as_str().into(),
+                    description: common.description.as_str().into(),
+                    tier: common.tier as i64,
+                    preview_scale: common.preview_scale,
+                    model_center: arr3_to_vec3(common.model_center),
                     metadata: metadata.into(),
-                    base: gd_base,
+                    base: gd_base
                 }).to_variant()
             }
-            ShopItem::Emote { base, .. } => {
+            ShopItem::Emote { common, .. } => {
                 Gd::from_init_fn(|gd_base| EmoteShopItem {
-                    price: base.price,
-                    name: base.name.as_str().into(),
-                    description: base.description.as_str().into(),
-                    tier: base.tier as i64,
-                    preview_scale: base.preview_scale,
-                    model_center: arr3_to_vec3(base.model_center),
+                    price: common.price,
+                    name: common.name.as_str().into(),
+                    description: common.description.as_str().into(),
+                    tier: common.tier as i64,
+                    preview_scale: common.preview_scale,
+                    model_center: arr3_to_vec3(common.model_center),
                     base: gd_base,
                 }).to_variant()
             }

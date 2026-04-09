@@ -53,9 +53,11 @@ var chatter: Chatter = null:
 
     # Load all meshes
     var loaded_mesh_files: Dictionary[String, Node3D] = {}
+    return
+
     for slot_name in chatter.equipped:
       var item_name = chatter.equipped[slot_name]
-      if item_name != null:
+      if item_name != null and !item_name.is_empty():
         var name_lowered = item_name.to_lower()
         if !loaded_mesh_files.has(name_lowered):
           var clothing_node = await ImageLoader.load_wearable_asset(name_lowered)
@@ -74,8 +76,8 @@ var chatter: Chatter = null:
     for slot_name in chatter.equipped:
       var item_name = chatter.equipped[slot_name]
 
-      var item_info = Network.get_item_info(item_name)
-      if item_name != null:
+      var item_info: Variant = Network.get_item_info(item_name)
+      if item_info != null:
         if item_info is WearableShopItem:
           var meshes_in_slot_to_hide = item_info.metadata.hide_meshes
           for mesh_name_to_hide in meshes_in_slot_to_hide:
@@ -84,89 +86,50 @@ var chatter: Chatter = null:
 
           var mesh_to_add: Node3D = loaded_mesh_files[item_name.to_lower()]
           # var mesh_to_add: Node3D = load("res://assets/items/meshes/%s.glb" % item_name.to_lower()).instantiate()
-
-          var item_info_wearable = item_info as WearableShopItem
-          if item_info_wearable.metadata.mesh_type == "skinned_mesh":
+          var wearable_metadata = item_info.get("metadata")
+          if wearable_metadata.get("mesh_type") == "skinned_mesh":
             var skinned_meshes: Array[MeshInstance3D] = []
             skinned_meshes.assign(Util.get_all_children_recursive(mesh_to_add).filter(func (child): return child is MeshInstance3D))
             for skinned_mesh in skinned_meshes:
-              skinned_mesh.reparent(skeleton, false)
+              skinned_mesh.get_parent().remove_child(skinned_mesh)
+              skeleton.add_child(skinned_mesh)
               skinned_mesh.skeleton = "../"
               skinned_mesh.position = Vector3.ZERO
               clothing_meshes_added.append(skinned_mesh)
           else:
-            if item_info_wearable.metadata.attach_to != null && item_info_wearable.metadata.attach_to.length() > 0:
-              if sockets.has(item_info_wearable.metadata.attach_to):
-                var socket = sockets[item_info_wearable.metadata.attach_to]
+            var attach_to := wearable_metadata.get("attach_to") as String
+            if attach_to != null and attach_to.is_empty():
+              if sockets.has(attach_to):
+                var socket = sockets[attach_to]
 
                 socket.add_child(mesh_to_add)
                 clothing_meshes_added.append(mesh_to_add)
 
                 mesh_to_add.scale = Vector3(1.0, 1.0, 1.0)
-                mesh_to_add.position = item_info_wearable.metadata.offset
-                mesh_to_add.rotation = item_info_wearable.metadata.rotation
-
-                print("Adding %s to socket %s" % [item_info_wearable.name, item_info_wearable.metadata.attach_to])
+                mesh_to_add.position = wearable_metadata.offset
+                mesh_to_add.rotation = wearable_metadata.rotation
               else:
-                print("ERROR: NO SOCKET FOR %s" % item_info_wearable.metadata.attach_to)
+                print("ERROR: NO SOCKET FOR %s" % attach_to)
             else:
-              mesh_to_add.reparent(skeleton)
+              # mesh_to_add.reparent(skeleton)
+              skeleton.add_child(mesh_to_add)
 
-            if item_info_wearable.metadata.mesh_type == "own_skeleton":
-              # var clothing_skeleton = mesh_to_add as Skeleton3D
-              # var animation_players: Array[AnimationPlayer] = []
-              # animation_players.assign(.filter(func (child): return child is AnimationPlayer))
+            if wearable_metadata.mesh_type == "own_skeleton":
               for node in Util.get_all_children_recursive(mesh_to_add):
                 if node is AnimationPlayer:
                   var anim_player: AnimationPlayer = node as AnimationPlayer
                   var anims_to_play: Array[String] = []
                   anims_to_play.assign(anim_player.get_animation_list())
                   anims_to_play = anims_to_play.filter(func (anim_name: String): return anim_name.contains(item_name.to_lower()))
-                  # print("ANIMATIONS TO PLAY: %s" % anim_player.get_animation_list())
                   if anims_to_play.size() > 0:
-                    print("Playing animation %s" % anims_to_play[0])  
                     anim_player.play(anims_to_play[0])
 
-              print("Is skeleton")
               pass
 
-            mesh_to_add.position = item_info_wearable.metadata.offset
-            mesh_to_add.rotation = item_info_wearable.metadata.rotation
+            mesh_to_add.position = wearable_metadata.get("offset")
+            mesh_to_add.rotation = wearable_metadata.get("rotation")
         else:
           print("ERROR: NO ITEM DATA FOR %s" % item_name)
-          # print(Network.item_info)
-
-func fetch_clothing(asset_name: String, loaded_mesh_files: Dictionary[String, Node3D]) -> Node3D:
-  var url = "%s/items/%s.glb" % [Network.get_database_server_url(), asset_name]
-    # Download if not cached
-  var request = AwaitableHTTPRequest.new()
-  add_child(request)
-  print("FETCHING CLOTHING: ", url)
-  var response := await request.async_request(url)
-  request.queue_free()
-
-  if response.success() and response.status_ok():
-    var glb_data = response.bytes  # Byte array of the GLB file
-    # Load the GLB from memory
-    var gltf = GLTFDocument.new()
-    var state = GLTFState.new()
-
-    var err = gltf.append_from_buffer(glb_data, "", state)
-    if err != OK:
-        push_error("Failed to parse GLB")
-        return
-
-    # Instantiate the loaded scene
-    var glb_scene = gltf.generate_scene(state) as Node3D
-
-    if !glb_scene:
-      print("Failed to create scene from GLB")
-      return null
-    else:
-      loaded_mesh_files[asset_name] = glb_scene
-      return glb_scene
-  return null
-
 
 var color: Color = Color(0.5, 0.5, 0.5, 1.0):
   set(new_value):
