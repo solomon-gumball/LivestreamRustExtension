@@ -8,7 +8,7 @@ Add the Godot binary to your `$PATH` so it can be invoked as `godot` from the te
 
 Example:
 ```sh
-sudo ln -s /Applications/Godot.app/Contents/MacOS/Godot /usr/local/bin/godot
+sudo ln -s ~/godot/Godot_v4.6.2-stable_linux.x86_64 /user/local/bin
 ```
 
 ### Rust (godot-rust `api-custom` feature)
@@ -40,8 +40,31 @@ mv localhost.pem localhost-key.pem web/
 
 ## Building
 
+To run the `make export` script that exports the web project to the web/public dir, you should:
+- Make sure you have downloaded the web export templates in the Editor (Project > Export)
+- Install a nightly build of rustc:
+```sh
+rustup toolchain install nightly
+rustup component add rust-src --toolchain nightly
+rustup target add wasm32-unknown-emscripten --toolchain nightly
+
+```
+- Install Emscripten
+```sh
+git clone https://github.com/emscripten-core/emsdk.git
+cd emsdk
+./emsdk install 3.1.74
+./emsdk activate 3.1.74
+
+source ./emsdk_env.sh  # on Linux
+run ./emsdk_env.bat    # on Windows
+```
+
+Now you should be able to run the export script
+
 ```sh
 make export
 ```
+
 
 This will build the Rust library targeting `wasm32-unknown-emscripten` and then export the Godot project to `web/public/`.

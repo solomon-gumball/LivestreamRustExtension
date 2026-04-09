@@ -4,7 +4,8 @@ godot/addons/livestream-rust/bin
 # Godot
 godot/.godot/
 
-web/public/**
+web/public/*
+!web/public/.gitkeep
 web/node_modules
 web/localhost-key.pem
 web/localhost.pem

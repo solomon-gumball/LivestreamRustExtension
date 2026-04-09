@@ -1,0 +1,290 @@
+[gd_resource type="AnimationNodeStateMachine" format=3 uid="uid://bhmvb2r1oed2v"]
+
+[sub_resource type="AnimationNodeAnimation" id="AnimationNodeAnimation_clhke"]
+animation = &"Cage"
+
+[sub_resource type="AnimationNodeAnimation" id="AnimationNodeAnimation_eidd8"]
+
+[sub_resource type="AnimationNodeAnimation" id="AnimationNodeAnimation_3djkv"]
+animation = &"DuelDie"
+
+[sub_resource type="AnimationNodeAnimation" id="AnimationNodeAnimation_dimbk"]
+animation = &"DuelFire"
+
+[sub_resource type="AnimationNodeAnimation" id="AnimationNodeAnimation_gmmil"]
+animation = &"DuelNeutral"
+
+[sub_resource type="AnimationNodeAnimation" id="AnimationNodeAnimation_5bohr"]
+animation = &"DuelReady"
+
+[sub_resource type="AnimationNodeAnimation" id="AnimationNodeAnimation_oqf48"]
+animation = &"backflip"
+
+[sub_resource type="AnimationNodeAnimation" id="AnimationNodeAnimation_d2rp5"]
+animation = &"buttslap"
+
+[sub_resource type="AnimationNodeAnimation" id="AnimationNodeAnimation_g06fc"]
+animation = &"lurk"
+
+[sub_resource type="AnimationNodeAnimation" id="AnimationNodeAnimation_knnab"]
+animation = &"mindblown"
+
+[sub_resource type="AnimationNodeAnimation" id="AnimationNodeAnimation_82b1s"]
+animation = &"peng"
+
+[sub_resource type="AnimationNodeAnimation" id="AnimationNodeAnimation_mju3c"]
+animation = &"wave"
+
+[sub_resource type="AnimationNodeStateMachineTransition" id="AnimationNodeStateMachineTransition_mju3c"]
+advance_mode = 2
+advance_expression = "active_emote == \"BACKFLIP\""
+
+[sub_resource type="AnimationNodeStateMachineTransition" id="AnimationNodeStateMachineTransition_f6ml4"]
+advance_mode = 2
+advance_expression = "active_emote != \"BACKFLIP\""
+
+[sub_resource type="AnimationNodeStateMachineTransition" id="AnimationNodeStateMachineTransition_3djkv"]
+advance_mode = 2
+advance_expression = "active_emote == \"BUTTSLAP\""
+
+[sub_resource type="AnimationNodeStateMachineTransition" id="AnimationNodeStateMachineTransition_dimbk"]
+advance_mode = 2
+advance_expression = "active_emote == \"LURK\""
+
+[sub_resource type="AnimationNodeStateMachineTransition" id="AnimationNodeStateMachineTransition_5bohr"]
+advance_mode = 2
+advance_expression = "active_emote != \"BUTTSLAP\""
+
+[sub_resource type="AnimationNodeStateMachineTransition" id="AnimationNodeStateMachineTransition_eidd8"]
+advance_mode = 2
+advance_expression = "active_emote != \"LURK\""
+
+[sub_resource type="AnimationNodeStateMachineTransition" id="AnimationNodeStateMachineTransition_gmmil"]
+advance_mode = 2
+advance_expression = "active_emote == \"WAVE\""
+
+[sub_resource type="AnimationNodeStateMachineTransition" id="AnimationNodeStateMachineTransition_oy0hw"]
+advance_mode = 2
+advance_expression = "active_emote != \"WAVE\""
+
+[sub_resource type="AnimationNodeStateMachineTransition" id="AnimationNodeStateMachineTransition_evtd5"]
+advance_mode = 2
+advance_expression = "active_emote == \"PENG\""
+
+[sub_resource type="AnimationNodeStateMachineTransition" id="AnimationNodeStateMachineTransition_fh6bq"]
+advance_mode = 2
+advance_expression = "active_emote != \"PENG\""
+
+[sub_resource type="AnimationNodeStateMachineTransition" id="AnimationNodeStateMachineTransition_tmyf4"]
+advance_mode = 2
+advance_expression = "active_emote == \"MINDBLOWN\""
+
+[sub_resource type="AnimationNodeStateMachineTransition" id="AnimationNodeStateMachineTransition_mq4ri"]
+advance_mode = 2
+advance_expression = "active_emote != \"MINDBLOWN\""
+
+[sub_resource type="AnimationNodeStateMachine" id="AnimationNodeStateMachine_gmmil"]
+states/End/position = Vector2(984, 99.5556)
+states/backflip/node = SubResource("AnimationNodeAnimation_oqf48")
+states/backflip/position = Vector2(540.963, -84.3333)
+states/buttslap/node = SubResource("AnimationNodeAnimation_d2rp5")
+states/buttslap/position = Vector2(539.444, 99.7037)
+states/lurk/node = SubResource("AnimationNodeAnimation_g06fc")
+states/lurk/position = Vector2(540.289, 187.334)
+states/mindblown/node = SubResource("AnimationNodeAnimation_knnab")
+states/mindblown/position = Vector2(565.248, 537.375)
+states/peng/node = SubResource("AnimationNodeAnimation_82b1s")
+states/peng/position = Vector2(551.915, 427.375)
+states/wave/node = SubResource("AnimationNodeAnimation_mju3c")
+states/wave/position = Vector2(539.609, 307)
+transitions = ["Start", "backflip", SubResource("AnimationNodeStateMachineTransition_mju3c"), "backflip", "End", SubResource("AnimationNodeStateMachineTransition_f6ml4"), "Start", "buttslap", SubResource("AnimationNodeStateMachineTransition_3djkv"), "Start", "lurk", SubResource("AnimationNodeStateMachineTransition_dimbk"), "buttslap", "End", SubResource("AnimationNodeStateMachineTransition_5bohr"), "lurk", "End", SubResource("AnimationNodeStateMachineTransition_eidd8"), "Start", "wave", SubResource("AnimationNodeStateMachineTransition_gmmil"), "wave", "End", SubResource("AnimationNodeStateMachineTransition_oy0hw"), "Start", "peng", SubResource("AnimationNodeStateMachineTransition_evtd5"), "peng", "End", SubResource("AnimationNodeStateMachineTransition_fh6bq"), "Start", "mindblown", SubResource("AnimationNodeStateMachineTransition_tmyf4"), "mindblown", "End", SubResource("AnimationNodeStateMachineTransition_mq4ri")]
+graph_offset = Vector2(-118.085, 101.375)
+
+[sub_resource type="AnimationNodeAnimation" id="AnimationNodeAnimation_bnj68"]
+animation = &"Gamba"
+
+[sub_resource type="AnimationNodeAnimation" id="AnimationNodeAnimation_3ar2u"]
+animation = &"StandIdle"
+
+[sub_resource type="AnimationNodeAnimation" id="AnimationNodeAnimation_lmkpg"]
+animation = &"Walk"
+
+[sub_resource type="AnimationNodeBlendSpace1D" id="AnimationNodeBlendSpace1D_s3pmf"]
+blend_point_0/node = SubResource("AnimationNodeAnimation_3ar2u")
+blend_point_0/pos = 0.0
+blend_point_1/node = SubResource("AnimationNodeAnimation_lmkpg")
+blend_point_1/pos = 0.2
+
+[sub_resource type="AnimationNodeAnimation" id="AnimationNodeAnimation_nsocl"]
+animation = &"MailShow"
+play_mode = 1
+
+[sub_resource type="AnimationNodeAnimation" id="AnimationNodeAnimation_ttuqc"]
+animation = &"MailShow"
+
+[sub_resource type="AnimationNodeAnimation" id="AnimationNodeAnimation_aa3k3"]
+animation = &"MailShowIdle"
+
+[sub_resource type="AnimationNodeAnimation" id="AnimationNodeAnimation_6yjah"]
+animation = &"MailShowIdle"
+
+[sub_resource type="AnimationNodeAnimation" id="AnimationNodeAnimation_b64oc"]
+animation = &"StandIdle"
+
+[sub_resource type="AnimationNodeAnimation" id="AnimationNodeAnimation_f6ml4"]
+
+[sub_resource type="AnimationNodeAnimation" id="AnimationNodeAnimation_1r2s6"]
+animation = &"Talking"
+
+[sub_resource type="AnimationNodeAnimation" id="AnimationNodeAnimation_oy0hw"]
+
+[sub_resource type="AnimationNodeStateMachineTransition" id="AnimationNodeStateMachineTransition_wc4hs"]
+advance_mode = 2
+advance_expression = "state == BotState.StandIdle"
+
+[sub_resource type="AnimationNodeStateMachineTransition" id="AnimationNodeStateMachineTransition_gj816"]
+xfade_time = 0.2
+advance_mode = 2
+advance_expression = "state == BotState.Gambling"
+
+[sub_resource type="AnimationNodeStateMachineTransition" id="AnimationNodeStateMachineTransition_s5xyh"]
+xfade_time = 0.2
+advance_mode = 2
+advance_expression = "state == BotState.Speaking"
+
+[sub_resource type="AnimationNodeStateMachineTransition" id="AnimationNodeStateMachineTransition_1gud5"]
+xfade_time = 0.2
+advance_mode = 2
+advance_expression = "state != BotState.Speaking"
+
+[sub_resource type="AnimationNodeStateMachineTransition" id="AnimationNodeStateMachineTransition_8xdy3"]
+xfade_time = 0.2
+advance_mode = 2
+advance_expression = "state != BotState.Gambling"
+
+[sub_resource type="AnimationNodeStateMachineTransition" id="AnimationNodeStateMachineTransition_f0skk"]
+xfade_time = 0.2
+advance_mode = 2
+advance_expression = "state == BotState.PresentMail"
+
+[sub_resource type="AnimationNodeStateMachineTransition" id="AnimationNodeStateMachineTransition_fkgj5"]
+xfade_time = 0.2
+advance_mode = 2
+
+[sub_resource type="AnimationNodeStateMachineTransition" id="AnimationNodeStateMachineTransition_cbnql"]
+advance_mode = 2
+advance_expression = "state == BotState.Walking"
+
+[sub_resource type="AnimationNodeStateMachineTransition" id="AnimationNodeStateMachineTransition_imb8l"]
+xfade_time = 0.2
+switch_mode = 2
+advance_mode = 2
+
+[sub_resource type="AnimationNodeStateMachineTransition" id="AnimationNodeStateMachineTransition_kawyc"]
+advance_mode = 2
+advance_expression = "state != BotState.PresentMail"
+
+[sub_resource type="AnimationNodeStateMachineTransition" id="AnimationNodeStateMachineTransition_82b1s"]
+advance_mode = 2
+advance_expression = "state == BotState.Emote
+"
+
+[sub_resource type="AnimationNodeStateMachineTransition" id="AnimationNodeStateMachineTransition_knnab"]
+switch_mode = 2
+advance_mode = 2
+
+[sub_resource type="AnimationNodeStateMachineTransition" id="AnimationNodeStateMachineTransition_d2rp5"]
+advance_mode = 2
+advance_expression = "state == BotState.Emote"
+
+[sub_resource type="AnimationNodeStateMachineTransition" id="AnimationNodeStateMachineTransition_g06fc"]
+advance_mode = 2
+advance_expression = "state == BotState.Walking"
+
+[sub_resource type="AnimationNodeStateMachineTransition" id="AnimationNodeStateMachineTransition_clhke"]
+advance_mode = 2
+advance_expression = "state == BotState.StandIdle"
+
+[sub_resource type="AnimationNodeStateMachineTransition" id="AnimationNodeStateMachineTransition_oqf48"]
+advance_mode = 2
+advance_expression = "type == 'standard'"
+
+[sub_resource type="AnimationNodeStateMachineTransition" id="AnimationNodeStateMachineTransition_c4vio"]
+advance_mode = 2
+advance_expression = "state == BotState.Shooting"
+
+[sub_resource type="AnimationNodeStateMachineTransition" id="AnimationNodeStateMachineTransition_78m32"]
+advance_mode = 2
+advance_expression = "state == BotState.Lose"
+
+[sub_resource type="AnimationNodeStateMachineTransition" id="AnimationNodeStateMachineTransition_q335g"]
+advance_mode = 2
+advance_expression = "state == BotState.Ready"
+
+[sub_resource type="AnimationNodeStateMachineTransition" id="AnimationNodeStateMachineTransition_hcl62"]
+advance_mode = 2
+advance_expression = "type == 'shootout'"
+
+[sub_resource type="AnimationNodeStateMachineTransition" id="AnimationNodeStateMachineTransition_kou65"]
+advance_mode = 2
+advance_expression = "state == BotState.Idle"
+
+[sub_resource type="AnimationNodeStateMachineTransition" id="AnimationNodeStateMachineTransition_hbm4l"]
+advance_mode = 2
+advance_expression = "state == BotState.Ready"
+
+[sub_resource type="AnimationNodeStateMachineTransition" id="AnimationNodeStateMachineTransition_4dl0f"]
+advance_mode = 2
+advance_expression = "state == BotState.Ready"
+
+[sub_resource type="AnimationNodeStateMachineTransition" id="AnimationNodeStateMachineTransition_t6hw3"]
+advance_mode = 2
+advance_expression = "state == BotState.Ready"
+
+[sub_resource type="AnimationNodeStateMachineTransition" id="AnimationNodeStateMachineTransition_esyws"]
+advance_mode = 2
+advance_expression = "type == \"trivia\""
+
+[sub_resource type="AnimationNodeStateMachineTransition" id="AnimationNodeStateMachineTransition_eqx4a"]
+advance_mode = 2
+
+[resource]
+state_machine_type = 1
+states/Cage/node = SubResource("AnimationNodeAnimation_clhke")
+states/Cage/position = Vector2(585.29, 764.367)
+states/DuelBlank/node = SubResource("AnimationNodeAnimation_eidd8")
+states/DuelBlank/position = Vector2(404.875, 504.218)
+states/DuelDie/node = SubResource("AnimationNodeAnimation_3djkv")
+states/DuelDie/position = Vector2(1156.95, 631.63)
+states/DuelFire/node = SubResource("AnimationNodeAnimation_dimbk")
+states/DuelFire/position = Vector2(946.453, 505.594)
+states/DuelNeutral/node = SubResource("AnimationNodeAnimation_gmmil")
+states/DuelNeutral/position = Vector2(730.73, 426.408)
+states/DuelReady/node = SubResource("AnimationNodeAnimation_5bohr")
+states/DuelReady/position = Vector2(729.784, 624.308)
+states/Emotes/node = SubResource("AnimationNodeStateMachine_gmmil")
+states/Emotes/position = Vector2(213.307, 70.5957)
+states/End/position = Vector2(1484, 89.0956)
+states/Gamba/node = SubResource("AnimationNodeAnimation_bnj68")
+states/Gamba/position = Vector2(890.86, -33.9112)
+states/Locomotion/node = SubResource("AnimationNodeBlendSpace1D_s3pmf")
+states/Locomotion/position = Vector2(482.567, 16.62)
+states/MailHide/node = SubResource("AnimationNodeAnimation_nsocl")
+states/MailHide/position = Vector2(1085.01, 165.1)
+states/MailShow/node = SubResource("AnimationNodeAnimation_ttuqc")
+states/MailShow/position = Vector2(1085.53, 10.0425)
+states/MailShowIdle/node = SubResource("AnimationNodeAnimation_6yjah")
+states/MailShowIdle/position = Vector2(1286.83, 76.0125)
+"states/MailShowIdle 2/node" = SubResource("AnimationNodeAnimation_aa3k3")
+"states/MailShowIdle 2/position" = Vector2(829.883, -175.133)
+states/StandIdle/node = SubResource("AnimationNodeAnimation_b64oc")
+states/StandIdle/position = Vector2(758.13, 70.5713)
+states/StandardBot/node = SubResource("AnimationNodeAnimation_f6ml4")
+states/StandardBot/position = Vector2(468.889, 241.117)
+states/Start/position = Vector2(30.167, 358.429)
+states/Talking/node = SubResource("AnimationNodeAnimation_1r2s6")
+states/Talking/position = Vector2(891.614, 188.422)
+states/TriviaNeutral/node = SubResource("AnimationNodeAnimation_oy0hw")
+states/TriviaNeutral/position = Vector2(404.124, 805.367)
+transitions = ["Locomotion", "StandIdle", SubResource("AnimationNodeStateMachineTransition_wc4hs"), "StandIdle", "Gamba", SubResource("AnimationNodeStateMachineTransition_gj816"), "StandIdle", "Talking", SubResource("AnimationNodeStateMachineTransition_s5xyh"), "Talking", "StandIdle", SubResource("AnimationNodeStateMachineTransition_1gud5"), "Gamba", "StandIdle", SubResource("AnimationNodeStateMachineTransition_8xdy3"), "StandIdle", "MailShow", SubResource("AnimationNodeStateMachineTransition_f0skk"), "MailHide", "StandIdle", SubResource("AnimationNodeStateMachineTransition_fkgj5"), "StandIdle", "Locomotion", SubResource("AnimationNodeStateMachineTransition_cbnql"), "MailShow", "MailShowIdle", SubResource("AnimationNodeStateMachineTransition_imb8l"), "MailShowIdle", "MailHide", SubResource("AnimationNodeStateMachineTransition_kawyc"), "Locomotion", "Emotes", SubResource("AnimationNodeStateMachineTransition_82b1s"), "Emotes", "Locomotion", SubResource("AnimationNodeStateMachineTransition_knnab"), "StandardBot", "Emotes", SubResource("AnimationNodeStateMachineTransition_d2rp5"), "StandardBot", "Locomotion", SubResource("AnimationNodeStateMachineTransition_g06fc"), "StandardBot", "StandIdle", SubResource("AnimationNodeStateMachineTransition_clhke"), "Start", "StandardBot", SubResource("AnimationNodeStateMachineTransition_oqf48"), "DuelReady", "DuelFire", SubResource("AnimationNodeStateMachineTransition_c4vio"), "DuelFire", "DuelDie", SubResource("AnimationNodeStateMachineTransition_78m32"), "DuelNeutral", "DuelReady", SubResource("AnimationNodeStateMachineTransition_q335g"), "Start", "DuelBlank", SubResource("AnimationNodeStateMachineTransition_hcl62"), "DuelBlank", "DuelNeutral", SubResource("AnimationNodeStateMachineTransition_kou65"), "DuelBlank", "DuelReady", SubResource("AnimationNodeStateMachineTransition_hbm4l"), "DuelFire", "DuelReady", SubResource("AnimationNodeStateMachineTransition_4dl0f"), "DuelDie", "DuelReady", SubResource("AnimationNodeStateMachineTransition_t6hw3"), "Start", "TriviaNeutral", SubResource("AnimationNodeStateMachineTransition_esyws"), "TriviaNeutral", "Cage", SubResource("AnimationNodeStateMachineTransition_eqx4a")]
+graph_offset = Vector2(-110.71, 663.7)

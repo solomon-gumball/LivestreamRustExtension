@@ -15,6 +15,11 @@ run/main_scene="uid://1j36jj8cwtkx"
 config/features=PackedStringArray("4.6", "GL Compatibility")
 config/icon="res://icon.svg"
 
+[autoload]
+
+Network="*uid://dr4ycnsym07ms"
+ImageLoader="*uid://cs4ky8up2cqd3"
+
 [dotnet]
 
 project/assembly_name="livestream-rust-extension"

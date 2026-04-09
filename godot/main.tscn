@@ -1,0 +1,26 @@
+[gd_scene format=3 uid="uid://1j36jj8cwtkx"]
+
+[ext_resource type="Script" uid="uid://hajtbhl1tijf" path="res://start_scene.gd" id="1_ig7tw"]
+[ext_resource type="PackedScene" uid="uid://crkh8hdu5af84" path="res://addons/livestream-rust/gumbot/gumbot.tscn" id="2_0xm2m"]
+
+[sub_resource type="Environment" id="Environment_mbe3m"]
+background_mode = 1
+
+[node name="Profile" type="Node3D" unique_id=920442990]
+script = ExtResource("1_ig7tw")
+
+[node name="Camera3D" type="Camera3D" parent="." unique_id=259427562]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.40771213, 1.2424746)
+
+[node name="CSGBox3D" type="CSGBox3D" parent="." unique_id=1520334284]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.5, 0)
+size = Vector3(10, 1, 10)
+
+[node name="SpotLight3D" type="SpotLight3D" parent="." unique_id=528135367]
+transform = Transform3D(0.817155, 7.3059354e-08, -0.5764181, 0.32366204, 0.8274728, 0.45883733, 0.47697031, -0.56150585, 0.6761735, -1.4816501, 0.88017285, 1.0535457)
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="." unique_id=1570524533]
+environment = SubResource("Environment_mbe3m")
+
+[node name="gumbot" parent="." unique_id=574168232 instance=ExtResource("2_0xm2m")]
+unique_name_in_owner = true

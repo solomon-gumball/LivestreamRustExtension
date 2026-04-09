@@ -1,15 +1,14 @@
-extends Node2D
+extends Node3D
 
-@onready var network_handler: NetworkHandler = %NetworkHandler
+@onready var gumbot: GumBot = %gumbot
 
 func _ready() -> void:
-  network_handler.emote_triggered.connect(_handle_emote_triggered)
-  network_handler.chatter_updated.connect(_handle_chatter_updated)
-
-  # network_handler.scrolling_text_updated.connect(
+  Network.emote_triggered.connect(_handle_emote_triggered)
+  Network.chatter_updated.connect(_handle_chatter_updated)
 
 func _handle_chatter_updated(chatter: Chatter) -> void:
   print(chatter)
+  gumbot.chatter = chatter
 
 func _handle_emote_triggered(chatter: Chatter, emote: String) -> void:
   print('chatter ', chatter)
