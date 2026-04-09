@@ -4,11 +4,11 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "dev": "http-server public -S -C localhost.pem -K localhost-key.pem -p 5173 --header \"Cross-Origin-Opener-Policy: same-origin\" --header \"Cross-Origin-Embedder-Policy: require-corp\""
+    "dev": "npx http-server public -S -C localhost.pem -K localhost-key.pem -p 5173 --header \"Cross-Origin-Opener-Policy: same-origin\" --header \"Cross-Origin-Embedder-Policy: require-corp\""
   },
   "author": "",
   "license": "ISC",
   "devDependencies": {
-    "http": "^0.0.1-security"
+    "http-server": "^14.1.1"
   }
 }

@@ -74,9 +74,8 @@ var chatter: Chatter = null:
     for slot_name in chatter.equipped:
       var item_name = chatter.equipped[slot_name]
 
-      if item_name != null && Network.item_info.has(item_name):
-        var item_info = Network.item_info[item_name]
-
+      var item_info = Network.get_item_info(item_name)
+      if item_name != null:
         if item_info is WearableShopItem:
           var meshes_in_slot_to_hide = item_info.metadata.hide_meshes
           for mesh_name_to_hide in meshes_in_slot_to_hide:
@@ -135,7 +134,7 @@ var chatter: Chatter = null:
             mesh_to_add.rotation = item_info_wearable.metadata.rotation
         else:
           print("ERROR: NO ITEM DATA FOR %s" % item_name)
-          print(Network.item_info)
+          # print(Network.item_info)
 
 func fetch_clothing(asset_name: String, loaded_mesh_files: Dictionary[String, Node3D]) -> Node3D:
   var url = "%s/items/%s.glb" % [Network.get_database_server_url(), asset_name]

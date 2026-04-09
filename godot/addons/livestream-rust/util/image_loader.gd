@@ -73,7 +73,7 @@ func _clear_dir(dir_to_clear: String) -> void:
         dir.list_dir_end()
 
 func load_wearable_asset(asset_name: String) -> Node3D:
-  var url = "%s/items/%s.glb" % [Network.getDatabaseServerUrl(), asset_name]
+  var url = "%s/items/%s.glb" % [Network.get_database_server_url(), asset_name]
   return await load_glb(url, false)
 
 var _glb_cache: Dictionary[String, Node3D] = {}

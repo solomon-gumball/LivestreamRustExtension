@@ -3,49 +3,33 @@ use serde::Deserialize; // derive feature required in Cargo.toml
 
 #[derive(Deserialize, Clone)]
 pub struct EquippedData {
-    headgear: Option<String>,
-    right_hand_item: Option<String>,
-    tail: Option<String>,
-    arms: Option<String>,
-    torso: Option<String>,
-    legs: Option<String>,
+    pub headgear: Option<String>,
+    pub right_hand_item: Option<String>,
+    pub tail: Option<String>,
+    pub arms: Option<String>,
+    pub torso: Option<String>,
+    pub legs: Option<String>,
 }
 
 #[derive(Deserialize, Clone)]
 pub struct ChatterData {
-    id: String,
-    display_name: String,
-    login: String,
-    created_at: String,
-    marbles_won: u32,
-    duels_won: u32,
-    royales_won: u32,
-    gifts_given: u32,
-    color: String,
-    emote: String,
-    balance: f64,
-    last_active: String,
-    assets: Vec<String>,
-    messages_sent: u32,
-    followed_at: Option<String>,
-    equipped: EquippedData,
+    pub id: String,
+    pub display_name: String,
+    pub login: String,
+    pub created_at: String,
+    pub marbles_won: u32,
+    pub duels_won: u32,
+    pub royales_won: u32,
+    pub gifts_given: u32,
+    pub color: String,
+    pub emote: String,
+    pub balance: f64,
+    pub last_active: String,
+    pub assets: Vec<String>,
+    pub messages_sent: u32,
+    pub followed_at: Option<String>,
+    pub equipped: EquippedData,
 }
-
-#[derive(GodotClass)]
-#[class(base=RefCounted,init)]
-pub struct Equipped {
-    #[var] pub headgear: GString,
-    #[var] pub right_hand_item: GString,
-    #[var] pub tail: GString,
-    #[var] pub arms: GString,
-    #[var] pub torso: GString,
-    #[var] pub legs: GString,
-    base: Base<RefCounted>,
-}
-
-// impl IRefCounted for Equipped {
-
-// }
 
 #[derive(GodotClass)]
 #[class(base=RefCounted)]
@@ -65,7 +49,7 @@ pub struct Chatter {
     #[var] pub assets: Array<GString>,
     #[var] pub messages_sent: i64,
     #[var] pub followed_at: GString,
-    #[var] pub equipped: Gd<Equipped>,
+    #[var] pub equipped: Dictionary<GString, GString>,
     base: Base<RefCounted>,
 }
 
@@ -88,29 +72,24 @@ impl IRefCounted for Chatter {
             assets: Array::new(),
             messages_sent: 0,
             followed_at: GString::new(),
-            equipped: Equipped::new_gd(),
+            equipped: Dictionary::new(),
             base,
         }
     }
 }
 
-impl From<EquippedData> for Gd<Equipped> {
-  fn from(data: EquippedData) -> Self {
-    Gd::from_init_fn(|base| Equipped {
-      headgear: data.headgear.as_deref().unwrap_or("").into(),
-      right_hand_item: data.right_hand_item.as_deref().unwrap_or("").into(),
-      tail: data.tail.as_deref().unwrap_or("").into(),
-      arms: data.arms.as_deref().unwrap_or("").into(),
-      torso: data.torso.as_deref().unwrap_or("").into(),
-      legs: data.legs.as_deref().unwrap_or("").into(),
-      base: base,
-    })
-  }
+impl From<EquippedData> for Dictionary<GString, GString> {
+    fn from(data: EquippedData) -> Self {
+        let mut dict = Dictionary::new();
+        dict.set("headgear", data.headgear.as_deref().unwrap_or(""));
+        dict.set("right_hand_item", data.right_hand_item.as_deref().unwrap_or(""));
+        dict.set("tail", data.tail.as_deref().unwrap_or(""));
+        dict.set("arms", data.arms.as_deref().unwrap_or(""));
+        dict.set("torso", data.torso.as_deref().unwrap_or(""));
+        dict.set("legs", data.legs.as_deref().unwrap_or(""));
+        dict
+    }
 }
-
-// impl From<Array<GString>> for Vec<String> {
-
-// }
 
 impl From<ChatterData> for Gd<Chatter> {
     fn from(data: ChatterData) -> Self {
