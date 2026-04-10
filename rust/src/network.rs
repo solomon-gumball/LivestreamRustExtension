@@ -2,7 +2,7 @@
 
 use std::collections::HashMap;
 
-use godot::{classes::{WebSocketPeer, web_socket_peer::State}, obj::NewGd, prelude::*};
+use godot::{classes::{Timer, WebSocketPeer, timer, web_socket_peer::State}, obj::NewGd, prelude::*};
 use serde::Deserialize;
 
 use crate::{chatter::{Chatter, ChatterData}, shop::CommonShopTraits};
@@ -15,6 +15,7 @@ pub struct NetworkHandler {
     base: Base<Node>,
     socket: Gd<WebSocketPeer>,
     #[var] pub use_local_server: bool,
+    connection_timer: Gd<Timer>,
     item_info: HashMap<String, ShopItem>,
 }
 
@@ -167,7 +168,6 @@ impl NetworkHandler {
               market.iter().for_each(|item: &ShopItem| {
                 self.item_info.insert(item.common().name.clone(), item.clone());
               });
-            //   self.item_info = market.into_iter().map(|item| (item.name.clone(), item)).collect();
               self.subscribe(array!["SIMULATION"]);
             }
         }
@@ -182,10 +182,13 @@ impl INode for NetworkHandler {
           use_local_server: true,
           socket: WebSocketPeer::new_gd(),
           item_info: HashMap::new(),
+          connection_timer: Timer::new_alloc(),
         }
     }
 
     fn ready(&mut self) {
+        let timer = self.connection_timer.clone();
+        self.base_mut().add_child(&timer);
         self.connect_to_server(&self.get_ws_url());
     }
 
@@ -206,7 +209,7 @@ impl INode for NetworkHandler {
           
         }
         State::CLOSED => {
-          
+          godot_print!("WebSocket connection closed");
         }
         _ => {}
       }
