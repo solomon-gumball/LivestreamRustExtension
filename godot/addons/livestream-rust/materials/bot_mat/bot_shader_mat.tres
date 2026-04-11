@@ -5,6 +5,7 @@
 [ext_resource type="Texture2D" uid="uid://ba6mac1k3t38a" path="res://addons/livestream-rust/materials/bot_mat/bot_normals.png" id="4_1fsq7"]
 
 [resource]
+resource_local_to_scene = true
 render_priority = 0
 shader = ExtResource("1_ih83v")
 shader_parameter/albedo_texture = ExtResource("2_tdcyo")

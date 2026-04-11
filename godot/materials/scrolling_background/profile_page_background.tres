@@ -1,0 +1,15 @@
+[gd_resource type="ShaderMaterial" format=3 uid="uid://csotmk0m42uj7"]
+
+[ext_resource type="Shader" uid="uid://d27ep2cpoix5" path="res://materials/scrolling_background/scrolling_background.gdshader" id="1_e7ipb"]
+[ext_resource type="Texture2D" uid="uid://lai2e4svmeud" path="res://textures/gumbot_scrolling_banner.png" id="2_juxr5"]
+
+[resource]
+shader = ExtResource("1_e7ipb")
+shader_parameter/text_texture = ExtResource("2_juxr5")
+shader_parameter/scroll_speed = 0.2000000095
+shader_parameter/row_height = 0.1
+shader_parameter/texture_aspect_ratio = 3.40000015824012
+shader_parameter/rotation = -0.6615900006082001
+shader_parameter/uv_scale = 0.75500003260262
+shader_parameter/background_color = Color(0.9994286, 0.76574904, 0.45401907, 1)
+shader_parameter/text_color = Color(0.83, 0.44266668, 0, 0.0627451)

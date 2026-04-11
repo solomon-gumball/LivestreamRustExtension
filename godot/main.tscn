@@ -2,26 +2,52 @@
 
 [ext_resource type="Script" uid="uid://hajtbhl1tijf" path="res://start_scene.gd" id="1_ig7tw"]
 [ext_resource type="PackedScene" uid="uid://crkh8hdu5af84" path="res://addons/livestream-rust/gumbot/gumbot.tscn" id="2_0xm2m"]
+[ext_resource type="Material" uid="uid://csotmk0m42uj7" path="res://materials/scrolling_background/profile_page_background.tres" id="2_7mycd"]
+[ext_resource type="Shader" uid="uid://cw1km147x2fwu" path="res://addons/livestream-rust/materials/bot_mat/bot_shader.gdshader" id="3_lquwl"]
+[ext_resource type="Texture2D" uid="uid://cas3gr887xevi" path="res://addons/livestream-rust/materials/bot_mat/bot_albedo.png" id="4_7mycd"]
+[ext_resource type="Texture2D" uid="uid://ba6mac1k3t38a" path="res://addons/livestream-rust/materials/bot_mat/bot_normals.png" id="5_272bh"]
 
 [sub_resource type="Environment" id="Environment_mbe3m"]
-background_mode = 1
+background_mode = 3
+ambient_light_source = 2
 ambient_light_color = Color(1, 1, 1, 1)
+tonemap_mode = 2
+ssao_enabled = true
+glow_enabled = true
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_7mycd"]
+resource_local_to_scene = true
+render_priority = 0
+shader = ExtResource("3_lquwl")
+shader_parameter/albedo_texture = ExtResource("4_7mycd")
+shader_parameter/normal_map = ExtResource("5_272bh")
+shader_parameter/bot_color = Color(1, 0, 0, 1)
 
 [node name="Profile" type="Node3D" unique_id=920442990]
 script = ExtResource("1_ig7tw")
 
 [node name="Camera3D" type="Camera3D" parent="." unique_id=259427562]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.17550114, 0.38940644)
+transform = Transform3D(1, 0, 0, 0, 0.9953139, 0.09669699, 0, -0.09669699, 0.9953139, 0, 0.23984256, 0.39667585)
 
-[node name="CSGBox3D" type="CSGBox3D" parent="." unique_id=1520334284]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.5, 0)
-size = Vector3(10, 1, 10)
+[node name="DirectionalLight3D" type="DirectionalLight3D" parent="." unique_id=339057237]
+transform = Transform3D(0.18701158, 0.62628764, 0.75682944, 0.06279053, -0.77646685, 0.62702227, 0.98034906, -0.06973873, -0.18453321, 1.137617, 0.9017843, -0.071688496)
+light_color = Color(0.99646264, 0.82775444, 0.63832206, 1)
+light_energy = 5.0
 
-[node name="SpotLight3D" type="SpotLight3D" parent="." unique_id=528135367]
-transform = Transform3D(0.817155, 7.3059354e-08, -0.5764181, 0.32366204, 0.8274728, 0.45883733, 0.47697031, -0.56150585, 0.6761735, -1.4816501, 0.88017285, 1.0535457)
+[node name="CanvasLayer" type="CanvasLayer" parent="." unique_id=820797902]
+layer = -1
+
+[node name="ColorRect" type="ColorRect" parent="CanvasLayer" unique_id=1047817338]
+material = ExtResource("2_7mycd")
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
 
 [node name="WorldEnvironment" type="WorldEnvironment" parent="." unique_id=1570524533]
 environment = SubResource("Environment_mbe3m")
 
 [node name="gumbot" parent="." unique_id=574168232 instance=ExtResource("2_0xm2m")]
 unique_name_in_owner = true
+surface_mat = SubResource("ShaderMaterial_7mycd")

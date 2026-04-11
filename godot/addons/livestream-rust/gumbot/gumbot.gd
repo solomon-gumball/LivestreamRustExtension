@@ -7,8 +7,7 @@ class_name GumBot
 @export var mail_canvas: MeshInstance3D
 
 @export var scrolling_screen_label: Label
-
-var surface_mat: ShaderMaterial = null
+@export var surface_mat: ShaderMaterial
 
 var base_meshes = [
   "Arm",
@@ -22,12 +21,14 @@ var base_meshes = [
   "Sphere_001",
 ]
 var clothing_meshes_added: Array[Node3D] = []
+enum BotState { StandIdle, PresentMail, Speaking, Walking, Grabbed, Gambling, Emote }
+var bot_state: BotState = BotState.Walking
 
 var chatter: Chatter = null:
   set(new_value):
     if !is_inside_tree():
       return
-    print(chatter)
+
     var prev_chatter = chatter
     chatter = new_value
 
@@ -53,7 +54,6 @@ var chatter: Chatter = null:
 
     # Load all meshes
     var loaded_mesh_files: Dictionary[String, Node3D] = {}
-    return
 
     for slot_name in chatter.equipped:
       var item_name = chatter.equipped[slot_name]
@@ -104,7 +104,6 @@ var chatter: Chatter = null:
 
                 socket.add_child(mesh_to_add)
                 clothing_meshes_added.append(mesh_to_add)
-
                 mesh_to_add.scale = Vector3(1.0, 1.0, 1.0)
                 mesh_to_add.position = wearable_metadata.offset
                 mesh_to_add.rotation = wearable_metadata.rotation
@@ -152,7 +151,6 @@ var screen_mat: StandardMaterial3D = null
 func _ready() -> void:
   var dir = get_script().resource_path.get_base_dir()
 
-  surface_mat = shader_mat_template.duplicate()
   anim_tree.tree_root = anim_tree.tree_root.duplicate()
 
   var body: MeshInstance3D = $Armature/Skeleton3D/Body
@@ -164,13 +162,13 @@ func _ready() -> void:
   var arm: MeshInstance3D = $Armature/Skeleton3D/Arm
   var button: MeshInstance3D = $Armature/Skeleton3D/Button
 
-  arm.set_surface_override_material(0, surface_mat)
-  body.set_surface_override_material(0, surface_mat)
-  sphere.set_surface_override_material(0, surface_mat)
-  hand_l.set_surface_override_material(0, surface_mat)
-  hand_r.set_surface_override_material(0, surface_mat)
-  button.set_surface_override_material(0, surface_mat)
-  legs.set_surface_override_material(0, surface_mat)
+  # arm.set_surface_override_material(0, surface_mat)
+  # body.set_surface_override_material(0, surface_mat)
+  # sphere.set_surface_override_material(0, surface_mat)
+  # hand_l.set_surface_override_material(0, surface_mat)
+  # hand_r.set_surface_override_material(0, surface_mat)
+  # button.set_surface_override_material(0, surface_mat)
+  # legs.set_surface_override_material(0, surface_mat)
   
   anim_tree.advance_expression_base_node = NodePath("../..")
 

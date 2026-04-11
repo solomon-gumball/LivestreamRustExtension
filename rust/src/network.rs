@@ -9,16 +9,6 @@ use crate::{chatter::{Chatter, ChatterData}, shop::CommonShopTraits};
 use crate::mail::Mail;
 use crate::shop::ShopItem;
 
-#[derive(GodotClass)]
-#[class(base=Node)]
-pub struct NetworkHandler {
-    base: Base<Node>,
-    socket: Gd<WebSocketPeer>,
-    #[var] pub use_local_server: bool,
-    connection_timer: Gd<Timer>,
-    item_info: HashMap<String, ShopItem>,
-}
-
 #[derive(Deserialize)]
 pub struct DropData {
     coins: u32,
@@ -57,6 +47,24 @@ enum WsMessage {
     }
 }
 
+#[derive(PartialEq)]
+enum ConnectionState {
+  Connected,
+  Disconnected,
+  Connecting
+}
+
+#[derive(GodotClass)]
+#[class(base=Node)]
+pub struct NetworkHandler {
+    base: Base<Node>,
+    socket: Gd<WebSocketPeer>,
+    #[var] pub use_local_server: bool,
+    connection_timer: Gd<Timer>,
+    item_info: HashMap<String, ShopItem>,
+    connection_state: ConnectionState
+}
+
 #[godot_api]
 impl NetworkHandler {
     #[signal] fn emote_triggered(chatter: Gd<Chatter>, emote: GString);
@@ -84,11 +92,16 @@ impl NetworkHandler {
         return format!("{}://{}", protocol, self.get_server_domain());
     }
 
-    fn connect_to_server(&mut self, url: &str) {
+    fn connect_to_server(&mut self) {
+        self.connection_state = ConnectionState::Connecting;
+        self.connection_timer.stop();
+
+        let url = self.get_ws_url();
+        let error = self.socket.connect_to_url(&url);
         godot_print!("Connecting to WebSocket server at: {url}");
-        let error = self.socket.connect_to_url(url);
+
         if error != godot::global::Error::OK {
-            godot_error!("Failed to connect to WebSocket server: {error:?}");
+            godot_print!("Failed to connect to WebSocket server: {error:?}");
         } else {
             godot_print!("Successfully connected to WebSocket server.");
         }
@@ -183,22 +196,30 @@ impl INode for NetworkHandler {
           socket: WebSocketPeer::new_gd(),
           item_info: HashMap::new(),
           connection_timer: Timer::new_alloc(),
+          connection_state: ConnectionState::Disconnected
         }
     }
 
     fn ready(&mut self) {
+        self.connection_timer.set_wait_time(2.0);
         let timer = self.connection_timer.clone();
+        timer.signals().timeout().connect_other(self, |this| {
+          if this.connection_state == ConnectionState::Disconnected {
+            this.connect_to_server();
+          }
+        });
         self.base_mut().add_child(&timer);
-        self.connect_to_server(&self.get_ws_url());
+        self.connect_to_server();
     }
 
     fn process(&mut self, _delta: f64) {
       self.socket.poll();
       match self.socket.get_ready_state() {
         State::CONNECTING => {
-
+          // godot_print!("WebSocket connection connecting!");
         }
         State::OPEN => {
+          self.connection_state = ConnectionState::Connected;
           while self.socket.get_available_packet_count() > 0 {
             let packet = self.socket.get_packet();
             let message_str = packet.get_string_from_utf8();
@@ -209,7 +230,11 @@ impl INode for NetworkHandler {
           
         }
         State::CLOSED => {
-          godot_print!("WebSocket connection closed");
+          if self.connection_state != ConnectionState::Disconnected {
+            godot_print!("WebSocket connection closed, starting timer");
+            self.connection_state = ConnectionState::Disconnected;
+            self.connection_timer.start();
+          }
         }
         _ => {}
       }

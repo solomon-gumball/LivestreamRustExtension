@@ -207,7 +207,7 @@ advance_expression = "state == BotState.StandIdle"
 
 [sub_resource type="AnimationNodeStateMachineTransition" id="AnimationNodeStateMachineTransition_oqf48"]
 advance_mode = 2
-advance_expression = "type == 'standard'"
+advance_expression = "true"
 
 [sub_resource type="AnimationNodeStateMachineTransition" id="AnimationNodeStateMachineTransition_c4vio"]
 advance_mode = 2
@@ -287,4 +287,4 @@ states/Talking/position = Vector2(891.614, 188.422)
 states/TriviaNeutral/node = SubResource("AnimationNodeAnimation_oy0hw")
 states/TriviaNeutral/position = Vector2(404.124, 805.367)
 transitions = ["Locomotion", "StandIdle", SubResource("AnimationNodeStateMachineTransition_wc4hs"), "StandIdle", "Gamba", SubResource("AnimationNodeStateMachineTransition_gj816"), "StandIdle", "Talking", SubResource("AnimationNodeStateMachineTransition_s5xyh"), "Talking", "StandIdle", SubResource("AnimationNodeStateMachineTransition_1gud5"), "Gamba", "StandIdle", SubResource("AnimationNodeStateMachineTransition_8xdy3"), "StandIdle", "MailShow", SubResource("AnimationNodeStateMachineTransition_f0skk"), "MailHide", "StandIdle", SubResource("AnimationNodeStateMachineTransition_fkgj5"), "StandIdle", "Locomotion", SubResource("AnimationNodeStateMachineTransition_cbnql"), "MailShow", "MailShowIdle", SubResource("AnimationNodeStateMachineTransition_imb8l"), "MailShowIdle", "MailHide", SubResource("AnimationNodeStateMachineTransition_kawyc"), "Locomotion", "Emotes", SubResource("AnimationNodeStateMachineTransition_82b1s"), "Emotes", "Locomotion", SubResource("AnimationNodeStateMachineTransition_knnab"), "StandardBot", "Emotes", SubResource("AnimationNodeStateMachineTransition_d2rp5"), "StandardBot", "Locomotion", SubResource("AnimationNodeStateMachineTransition_g06fc"), "StandardBot", "StandIdle", SubResource("AnimationNodeStateMachineTransition_clhke"), "Start", "StandardBot", SubResource("AnimationNodeStateMachineTransition_oqf48"), "DuelReady", "DuelFire", SubResource("AnimationNodeStateMachineTransition_c4vio"), "DuelFire", "DuelDie", SubResource("AnimationNodeStateMachineTransition_78m32"), "DuelNeutral", "DuelReady", SubResource("AnimationNodeStateMachineTransition_q335g"), "Start", "DuelBlank", SubResource("AnimationNodeStateMachineTransition_hcl62"), "DuelBlank", "DuelNeutral", SubResource("AnimationNodeStateMachineTransition_kou65"), "DuelBlank", "DuelReady", SubResource("AnimationNodeStateMachineTransition_hbm4l"), "DuelFire", "DuelReady", SubResource("AnimationNodeStateMachineTransition_4dl0f"), "DuelDie", "DuelReady", SubResource("AnimationNodeStateMachineTransition_t6hw3"), "Start", "TriviaNeutral", SubResource("AnimationNodeStateMachineTransition_esyws"), "TriviaNeutral", "Cage", SubResource("AnimationNodeStateMachineTransition_eqx4a")]
-graph_offset = Vector2(-110.71, 663.7)
+graph_offset = Vector2(-87.26879, 240.783)
