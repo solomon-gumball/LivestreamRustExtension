@@ -22,8 +22,9 @@ func _generate_cache_filename(url: String, ext: String) -> String:
 
 func load_asset_thumbnail(asset_name: String) -> ImageTexture:
   var url := "%s/items/%s.png" % [Network.get_database_server_url(), asset_name.to_lower()]
-  print(url)
   return await load_image(url)
+
+var debug_logging := true
 
 # Load an image from cache or download it
 func load_image(url: String, save_to_disk: bool = true, no_cached: bool = false) -> ImageTexture:
@@ -31,10 +32,12 @@ func load_image(url: String, save_to_disk: bool = true, no_cached: bool = false)
 
     if !no_cached:
         if _cache.has(filename):
+            if debug_logging: print("LOADER: Cached from MEMORY: ", url)
             return _cache[filename]
 
         # Check disk cache
         if FileAccess.file_exists(filename):
+            if debug_logging: print("LOADER: Cached from FILE: ", url)
             var img = Image.new()
             var err = img.load(filename)
             if err == OK:
@@ -42,6 +45,7 @@ func load_image(url: String, save_to_disk: bool = true, no_cached: bool = false)
                 _cache[filename] = img_texture
                 return img_texture
 
+    if debug_logging: print("[LOADER] url not cached: ", url)
     # Download if not cached
     var request = AwaitableHTTPRequest.new()
     add_child(request)
@@ -89,11 +93,13 @@ func load_glb(url: String, no_cached: bool = false) -> Node3D:
     if !no_cached:
         # Check memory cache
         if _glb_cache.has(filename):
+            if debug_logging: print("LOADER: Cached from MEMORY: ", url)
             return _glb_cache[filename]
 
         # Check disk cache
         if FileAccess.file_exists(filename):
             var file = FileAccess.open(filename, FileAccess.READ)
+            if debug_logging: print("LOADER: Cached from FILE: ", url)
             if file:
                 var glb_data = file.get_buffer(file.get_length())
                 file.close()
@@ -101,11 +107,13 @@ func load_glb(url: String, no_cached: bool = false) -> Node3D:
                 _glb_cache[filename] = glb_scene
                 return glb_scene
 
+    if debug_logging: print("[LOADER] url not cached: ", url)
     # Download if not cached
     var request = AwaitableHTTPRequest.new()
     add_child(request)
     var response := await request.async_request(url)
     request.queue_free()
+    if debug_logging: print("done fetching ", url)
 
     if response.success() and response.status_ok():
         var glb_data = response.bytes

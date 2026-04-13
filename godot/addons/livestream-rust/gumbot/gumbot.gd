@@ -3,7 +3,8 @@ class_name GumBot
 
 @onready var anim_tree: AnimationTree = $AnimationTree
 @onready var anim_player: AnimationPlayer = $AnimationPlayer
-@onready var sprite: Sprite3D = $Armature/Skeleton3D/Head_Socket/Sprite
+@onready var sprite: Sprite3D = %FaceSprite
+
 @export var mail_canvas: MeshInstance3D
 
 @export var scrolling_screen_label: Label
@@ -28,9 +29,9 @@ var chatter: Chatter = null:
   set(new_value):
     if !is_inside_tree():
       return
-
     var prev_chatter = chatter
     chatter = new_value
+    emote = chatter.emote
 
     if chatter == null: return
     # scrolling_screen_label.text = "%s GUM" % new_value.balance
@@ -42,7 +43,6 @@ var chatter: Chatter = null:
       if child is BoneAttachment3D && child.name.ends_with("_Socket"):
         var socket_key: String = child.name.replace("_Socket", "").replace("_", ".")
         sockets[socket_key] = child
-        print("Registered socket", socket_key)
 
     if prev_chatter != null:
       var should_skip_outfit_update = true
@@ -63,9 +63,11 @@ var chatter: Chatter = null:
         var name_lowered = item_name.to_lower()
         if !loaded_mesh_files.has(name_lowered):
           var clothing_node = await ImageLoader.load_wearable_asset(name_lowered)
+          print(clothing_node)
           if clothing_node != null:
             loaded_mesh_files[name_lowered] = clothing_node.duplicate()
 
+    print(loaded_mesh_files)
     for mesh_name in base_meshes:
       var mesh: MeshInstance3D = get_node("Armature/Skeleton3D/%s" % mesh_name)
       mesh.visible = true
@@ -80,7 +82,7 @@ var chatter: Chatter = null:
 
       var item_info: Variant = Network.get_item_info(item_name)
       if item_info != null:
-        if item_info is WearableShopItem:
+        if item_info is WearableShopItem and loaded_mesh_files.has((item_info as WearableShopItem).name.to_lower()):
           var meshes_in_slot_to_hide = item_info.metadata.hide_meshes
           for mesh_name_to_hide in meshes_in_slot_to_hide:
             var mesh: MeshInstance3D = get_node("Armature/Skeleton3D/%s" % mesh_name_to_hide)
@@ -145,8 +147,9 @@ var emote: String = "":
     if new_value == "" || new_value == emote: return
     emote = new_value
     var image_tex = await ImageLoader.load_emote(emote)
+    print("SETTING EMOTE ", image_tex)
+
     if image_tex != null:
-      print("Setting emote texture")
       sprite.texture = image_tex
 
 var shader_mat_template: ShaderMaterial = preload("res://addons/livestream-rust/materials/bot_mat/bot_shader_mat.tres")

@@ -32,7 +32,6 @@ func _update_grid_items() -> void:
     var wearable := asset as WearableShopItem
     if wearable.metadata.slot == selected_category:
       slot_wearables.append(wearable)
-  slot_wearables.shuffle()
 
   var asset_index := 0
   for grid_item in grid_items:

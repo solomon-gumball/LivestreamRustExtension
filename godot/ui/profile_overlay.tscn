@@ -11,6 +11,12 @@
 [node name="ProfileOverlay" type="CanvasLayer" unique_id=633817562]
 script = ExtResource("1_ia4v4")
 
+[node name="Label" type="Label" parent="." unique_id=480720909]
+offset_left = 980.0
+offset_top = 66.0
+offset_right = 1020.0
+offset_bottom = 89.0
+
 [node name="VBoxContainer" type="VBoxContainer" parent="." unique_id=1764661551]
 anchors_preset = 6
 anchor_left = 1.0

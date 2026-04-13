@@ -38,7 +38,7 @@
       function startGodot() {
         const engine = new Engine($GODOT_CONFIG);
         engine.startGame({
-          persistentPaths: [],
+          // persistentPaths: [],
           // Explicitly pass the canvas so Godot doesn't go hunting for it
           canvas: document.getElementById("canvas"),
         }).catch(function (err) {

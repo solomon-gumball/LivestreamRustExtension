@@ -2,7 +2,7 @@
 
 use std::collections::HashMap;
 
-use godot::{classes::{http_client, HttpRequest, Timer, WebSocketPeer, web_socket_peer::State}, obj::NewGd, prelude::*};
+use godot::{classes::{http_client, HttpRequest, TlsOptions, Timer, WebSocketPeer, web_socket_peer::State}, obj::NewGd, prelude::*};
 use serde::Deserialize;
 
 use crate::{chatter::{Chatter, ChatterData}, shop::CommonShopTraits};
@@ -100,6 +100,11 @@ impl NetworkHandler {
 
         let mut http = HttpRequest::new_alloc();
         self.base_mut().add_child(&http);
+        if self.use_local_server {
+            if let Some(tls) = TlsOptions::client_unsafe() {
+                http.set_tls_options(&tls);
+            }
+        }
         let cleanup = Callable::from_fn("free_http", {
             let mut h = http.clone();
             move |_args| { h.queue_free(); Variant::nil() }
@@ -121,14 +126,12 @@ impl NetworkHandler {
 
     #[func]
     fn get_database_server_url(&self) -> String {
-        let protocol = if self.use_local_server { "https" } else { "https" };
-        return format!("{}://{}", protocol, self.get_server_domain());
+        return format!("https://{}", self.get_server_domain());
     }
 
     #[func]
     fn get_ws_url(&self) -> String {
-        let protocol = if self.use_local_server { "wss" } else { "wss" };
-        return format!("{}://{}", protocol, self.get_server_domain());
+        return format!("wss://{}", self.get_server_domain());
     }
 
     fn connect_to_server(&mut self) {
@@ -136,7 +139,16 @@ impl NetworkHandler {
         self.connection_timer.stop();
         
         let url = self.get_ws_url();
-        let error = self.socket.connect_to_url(&url);
+        // Skip TLS cert validation for local dev — localhost has no real cert.
+        // Production uses a valid cert so normal validation applies there.
+        let error = if self.use_local_server {
+            let tls = TlsOptions::client_unsafe();
+            self.socket.connect_to_url_ex(&url)
+                .tls_client_options(tls.as_ref())
+                .done()
+        } else {
+            self.socket.connect_to_url(&url)
+        };
         godot_print!("Connecting to WebSocket server at: {url}");
 
         if error != godot::global::Error::OK {

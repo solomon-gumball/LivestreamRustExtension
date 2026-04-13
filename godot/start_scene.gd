@@ -8,7 +8,6 @@ func _ready() -> void:
   Network.chatter_updated.connect(_handle_chatter_updated)
 
 func _handle_chatter_updated(chatter: Chatter) -> void:
-  print(chatter)
   gumbot.chatter = chatter
   profile_overlay.chatter = chatter
   var anim_tree_playback: AnimationNodeStateMachinePlayback = gumbot.anim_tree.get("parameters/StateMachine/playback")
@@ -16,6 +15,5 @@ func _handle_chatter_updated(chatter: Chatter) -> void:
   # gumbot.bot_state = GumBot.BotState.Walking
 
 func _handle_emote_triggered(chatter: Chatter, emote: String) -> void:
-  print('chatter ', chatter)
   return
   

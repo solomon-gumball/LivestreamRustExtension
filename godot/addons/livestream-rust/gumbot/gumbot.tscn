@@ -6,6 +6,7 @@
 [ext_resource type="Shader" uid="uid://cw1km147x2fwu" path="res://addons/livestream-rust/materials/bot_mat/bot_shader.gdshader" id="3_vliq0"]
 [ext_resource type="Texture2D" uid="uid://cas3gr887xevi" path="res://addons/livestream-rust/materials/bot_mat/bot_albedo.png" id="4_ibskf"]
 [ext_resource type="Texture2D" uid="uid://ba6mac1k3t38a" path="res://addons/livestream-rust/materials/bot_mat/bot_normals.png" id="5_73u5r"]
+[ext_resource type="Texture2D" uid="uid://c53kbdrgxxvfc" path="res://icon.svg" id="6_ibskf"]
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_vliq0"]
 resource_local_to_scene = true
@@ -16,13 +17,18 @@ shader_parameter/normal_map = ExtResource("5_73u5r")
 shader_parameter/bot_color = Color(1, 0, 0, 1)
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_ibskf"]
+render_priority = -1
+transparency = 2
+alpha_scissor_threshold = 0.5
+alpha_antialiasing_mode = 0
 depth_draw_mode = 1
+albedo_color = Color(1, 1, 1, 0)
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_vliq0"]
 next_pass = SubResource("StandardMaterial3D_ibskf")
 transparency = 1
 depth_draw_mode = 1
-albedo_color = Color(0, 0, 0, 0.90588236)
+albedo_color = Color(0, 0, 0, 0.45882353)
 roughness = 0.5
 
 [sub_resource type="CapsuleShape3D" id="CapsuleShape3D_vqh4x"]
@@ -54,7 +60,13 @@ node_connections = [&"output", 0, &"Add2", &"Add2", 0, &"StateMachine", &"Add2",
 script = ExtResource("2_hyqf0")
 surface_mat = SubResource("ShaderMaterial_vliq0")
 
-[node name="Skeleton3D" parent="Armature" parent_id_path=PackedInt32Array(904467510) index="0" unique_id=904851796]
+[node name="Armature_Skeleton3D_Head_Socket#Sprite" type="Sprite3D" parent="." index="0" unique_id=1577695489]
+transform = Transform3D(0.0826766, 3.10835e-10, -2.40341e-12, -3.10838e-10, 0.0826767, -5.20774e-05, 2.18137e-12, 5.20774e-05, 0.0826766, 5.16793e-09, 0.0423677, 0.000717234)
+billboard = 1
+double_sided = false
+alpha_cut = 1
+
+[node name="Skeleton3D" parent="Armature" parent_id_path=PackedInt32Array(1451138399) index="0" unique_id=468736020]
 bones/1/position = Vector3(0, 0.11845954, 0)
 bones/1/rotation = Quaternion(-0.011914503, 0, 0, 0.999929)
 bones/2/rotation = Quaternion(1.4642302e-07, 0.23909603, 0.97099596, -5.8757713e-08)
@@ -94,28 +106,28 @@ transform = Transform3D(-0.99847734, 0.045087956, 0.03178565, -0.042910416, -0.9
 bone_name = "Hand.L"
 bone_idx = 16
 
-[node name="Arm" parent="Armature/Skeleton3D" index="1" unique_id=1378855239]
+[node name="Arm" parent="Armature/Skeleton3D" index="1" unique_id=1951755209]
 surface_material_override/0 = SubResource("ShaderMaterial_vliq0")
 
-[node name="Body" parent="Armature/Skeleton3D" index="2" unique_id=249371570]
+[node name="Body" parent="Armature/Skeleton3D" index="2" unique_id=1037548377]
 surface_material_override/0 = SubResource("ShaderMaterial_vliq0")
 
-[node name="Button" parent="Armature/Skeleton3D" index="3" unique_id=1644602812]
+[node name="Button" parent="Armature/Skeleton3D" index="3" unique_id=1979948359]
 surface_material_override/0 = SubResource("ShaderMaterial_vliq0")
 
-[node name="Circle" parent="Armature/Skeleton3D" index="4" unique_id=1148785307]
+[node name="Circle" parent="Armature/Skeleton3D" index="4" unique_id=1714891719]
 surface_material_override/0 = SubResource("ShaderMaterial_vliq0")
 
-[node name="Hand_L" parent="Armature/Skeleton3D" index="5" unique_id=2002370816]
+[node name="Hand_L" parent="Armature/Skeleton3D" index="5" unique_id=1597523216]
 surface_material_override/0 = SubResource("ShaderMaterial_vliq0")
 
-[node name="Hand_R" parent="Armature/Skeleton3D" index="6" unique_id=1373331783]
+[node name="Hand_R" parent="Armature/Skeleton3D" index="6" unique_id=159444134]
 surface_material_override/0 = SubResource("ShaderMaterial_vliq0")
 
-[node name="HeadCapsule" parent="Armature/Skeleton3D" index="7" unique_id=965752761]
+[node name="HeadCapsule" parent="Armature/Skeleton3D" index="7" unique_id=1235819010]
 surface_material_override/0 = SubResource("StandardMaterial3D_vliq0")
 
-[node name="Leg" parent="Armature/Skeleton3D" index="8" unique_id=1460616703]
+[node name="Leg" parent="Armature/Skeleton3D" index="8" unique_id=1798803591]
 surface_material_override/0 = SubResource("ShaderMaterial_vliq0")
 
 [node name="Head_Socket" type="BoneAttachment3D" parent="Armature/Skeleton3D" index="9" unique_id=1137685559]
@@ -123,11 +135,13 @@ transform = Transform3D(1, 8.565428e-09, 2.3834939e-07, -1.0394663e-08, 0.999970
 bone_name = "Head"
 bone_idx = 9
 
-[node name="Sprite" type="Sprite3D" parent="Armature/Skeleton3D/Head_Socket" index="0" unique_id=679654570]
+[node name="FaceSprite" type="Sprite3D" parent="Armature/Skeleton3D/Head_Socket" index="0" unique_id=679654570]
+unique_name_in_owner = true
 transform = Transform3D(0.0826766, 3.10835e-10, -2.40341e-12, -3.10838e-10, 0.0826767, -5.20774e-05, 2.18137e-12, 5.20774e-05, 0.0826766, 5.16793e-09, 0.0423677, 0.000717234)
 billboard = 1
 double_sided = false
 alpha_cut = 1
+texture = ExtResource("6_ibskf")
 
 [node name="Spine_Socket" type="BoneAttachment3D" parent="Armature/Skeleton3D" index="10" unique_id=365435926]
 transform = Transform3D(1, 8.565428e-09, 2.3834934e-07, -1.0394663e-08, 0.9999705, 0.0076756533, -2.3827658e-07, -0.0076756496, 0.99997056, 0, 0.14603291, -0.0006571862)
@@ -139,7 +153,7 @@ transform = Transform3D(1, 0, 2.443461e-07, 0, 1, 0, -2.443461e-07, 0, 1, 0, 0.1
 bone_name = "HeldItemBone"
 bone_idx = 25
 
-[node name="Sphere_001" parent="Armature/Skeleton3D" index="12" unique_id=1590232254]
+[node name="Sphere_001" parent="Armature/Skeleton3D" index="12" unique_id=485974389]
 surface_material_override/0 = SubResource("ShaderMaterial_vliq0")
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="." index="3" unique_id=701422005]

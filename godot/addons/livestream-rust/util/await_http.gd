@@ -25,19 +25,22 @@ var is_requesting := false  ## Whether the node is busy performing a request. Th
 ##         print(json["login"])                 # Swarkin
 ## [/codeblock]
 func async_request(url: String, custom_headers := PackedStringArray(), method := HTTPClient.Method.METHOD_GET, request_data := "") -> HTTPResult:
-	if is_requesting:
-		push_warning("AwaitableHTTPRequest is busy performing a request.")
-		return HTTPResult._from_error(Error.ERR_BUSY)
+  if is_requesting:
+    push_warning("AwaitableHTTPRequest is busy performing a request.")
+    return HTTPResult._from_error(Error.ERR_BUSY)
 
-	is_requesting = true
+  is_requesting = true
 
-	var err := request(url, custom_headers, method, request_data)
-	if err:
-		return HTTPResult._from_error(err)
+  if Network.use_local_server and url.match("localhost"):
+      set_tls_options(TLSOptions.client_unsafe())
 
-	@warning_ignore("unsafe_cast")
-	var result := await request_completed as Array
-	is_requesting = false
-	request_finished.emit()
+  var err := request(url, custom_headers, method, request_data)
+  if err:
+    return HTTPResult._from_error(err)
 
-	return HTTPResult._from_array(result)
+  @warning_ignore("unsafe_cast")
+  var result := await request_completed as Array
+  is_requesting = false
+  request_finished.emit()
+
+  return HTTPResult._from_array(result)
