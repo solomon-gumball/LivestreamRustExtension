@@ -40,7 +40,9 @@ var chatter: Chatter = null:
     var sockets: Dictionary = {}
     for child in all_skel_children:
       if child is BoneAttachment3D && child.name.ends_with("_Socket"):
-        sockets[child.name.replace("_Socket", "").replace("_", ".")] = child
+        var socket_key: String = child.name.replace("_Socket", "").replace("_", ".")
+        sockets[socket_key] = child
+        print("Registered socket", socket_key)
 
     if prev_chatter != null:
       var should_skip_outfit_update = true
@@ -87,6 +89,7 @@ var chatter: Chatter = null:
           var mesh_to_add: Node3D = loaded_mesh_files[item_name.to_lower()]
           # var mesh_to_add: Node3D = load("res://assets/items/meshes/%s.glb" % item_name.to_lower()).instantiate()
           var wearable_metadata = item_info.get("metadata")
+
           if wearable_metadata.get("mesh_type") == "skinned_mesh":
             var skinned_meshes: Array[MeshInstance3D] = []
             skinned_meshes.assign(Util.get_all_children_recursive(mesh_to_add).filter(func (child): return child is MeshInstance3D))
@@ -97,8 +100,9 @@ var chatter: Chatter = null:
               skinned_mesh.position = Vector3.ZERO
               clothing_meshes_added.append(skinned_mesh)
           else:
+
             var attach_to := wearable_metadata.get("attach_to") as String
-            if attach_to != null and attach_to.is_empty():
+            if attach_to != null and !attach_to.is_empty():
               if sockets.has(attach_to):
                 var socket = sockets[attach_to]
 

@@ -2,7 +2,7 @@
 
 use std::collections::HashMap;
 
-use godot::{classes::{Timer, WebSocketPeer, timer, web_socket_peer::State}, obj::NewGd, prelude::*};
+use godot::{classes::{http_client, HttpRequest, Timer, WebSocketPeer, web_socket_peer::State}, obj::NewGd, prelude::*};
 use serde::Deserialize;
 
 use crate::{chatter::{Chatter, ChatterData}, shop::CommonShopTraits};
@@ -62,7 +62,8 @@ pub struct NetworkHandler {
     #[var] pub use_local_server: bool,
     connection_timer: Gd<Timer>,
     item_info: HashMap<String, ShopItem>,
-    connection_state: ConnectionState
+    connection_state: ConnectionState,
+    #[var] pub auth_token: GString,
 }
 
 #[godot_api]
@@ -81,21 +82,59 @@ impl NetworkHandler {
     }
 
     #[func]
+    pub fn receive_auth_token(&mut self, token: GString) {
+        godot_print!("Twitch auth token received");
+        self.auth_token = token;
+    }
+
+    fn auth_request(&mut self, url: &str, method: http_client::Method, body: &str) {
+        if self.auth_token.is_empty() {
+            godot_error!("auth_request: no auth token — has onAuthorized fired yet?");
+            return;
+        }
+
+        let auth_header = format!("Authorization: Bearer {}", self.auth_token);
+        let mut headers = PackedStringArray::new();
+        headers.push(&GString::from("Content-Type: application/json"));
+        headers.push(&GString::from(&auth_header));
+
+        let mut http = HttpRequest::new_alloc();
+        self.base_mut().add_child(&http);
+        let cleanup = Callable::from_fn("free_http", {
+            let mut h = http.clone();
+            move |_args| { h.queue_free(); Variant::nil() }
+        });
+        http.connect("request_completed", &cleanup);
+        let _ = http.request_ex(&GString::from(url))
+            .custom_headers(&headers)
+            .method(method)
+            .request_data(&GString::from(body))
+            .done();
+    }
+
+    #[func]
+    fn wear_item(&mut self, item: GString) {
+        let url = format!("{}/wear-item", self.get_database_server_url());
+        let body = serde_json::json!({ "item": item.to_string() }).to_string();
+        self.auth_request(&url, http_client::Method::PUT, &body);
+    }
+
+    #[func]
     fn get_database_server_url(&self) -> String {
-        let protocol = if self.use_local_server { "http" } else { "https" };
+        let protocol = if self.use_local_server { "https" } else { "https" };
         return format!("{}://{}", protocol, self.get_server_domain());
     }
 
     #[func]
     fn get_ws_url(&self) -> String {
-        let protocol = if self.use_local_server { "ws" } else { "wss" };
+        let protocol = if self.use_local_server { "wss" } else { "wss" };
         return format!("{}://{}", protocol, self.get_server_domain());
     }
 
     fn connect_to_server(&mut self) {
         self.connection_state = ConnectionState::Connecting;
         self.connection_timer.stop();
-
+        
         let url = self.get_ws_url();
         let error = self.socket.connect_to_url(&url);
         godot_print!("Connecting to WebSocket server at: {url}");
@@ -111,7 +150,6 @@ impl NetworkHandler {
     fn get_item_info(&self, item_name: GString) -> Variant {
         self.item_info.get(&item_name.to_string())
             .map(|item| {
-                godot_print!("item found? {}", item.common().name);
                 item.clone().into()
             })
             .unwrap_or(Variant::nil())
@@ -177,13 +215,27 @@ impl NetworkHandler {
                 let chatter_obj: Gd<Chatter> = chatter.clone().into();
                 self.signals().chatter_updated().emit(&chatter_obj);
               }
-              godot_print!("Received store data {}", json);
+              // godot_print!("Received store data {}", json);
               market.iter().for_each(|item: &ShopItem| {
                 self.item_info.insert(item.common().name.clone(), item.clone());
               });
               self.subscribe(array!["SIMULATION"]);
             }
         }
+    }
+
+    #[func]
+    fn base_init(&mut self) {
+        self.connection_timer.set_wait_time(2.0);
+        let timer = self.connection_timer.clone();
+
+        timer.signals().timeout().connect_other(self, |this| {
+          if this.connection_state == ConnectionState::Disconnected {
+            this.connect_to_server();
+          }
+        });
+        self.base_mut().add_child(&timer);
+        self.connect_to_server();
     }
 }
 
@@ -196,20 +248,9 @@ impl INode for NetworkHandler {
           socket: WebSocketPeer::new_gd(),
           item_info: HashMap::new(),
           connection_timer: Timer::new_alloc(),
-          connection_state: ConnectionState::Disconnected
+          connection_state: ConnectionState::Disconnected,
+          auth_token: GString::new(),
         }
-    }
-
-    fn ready(&mut self) {
-        self.connection_timer.set_wait_time(2.0);
-        let timer = self.connection_timer.clone();
-        timer.signals().timeout().connect_other(self, |this| {
-          if this.connection_state == ConnectionState::Disconnected {
-            this.connect_to_server();
-          }
-        });
-        self.base_mut().add_child(&timer);
-        self.connect_to_server();
     }
 
     fn process(&mut self, _delta: f64) {

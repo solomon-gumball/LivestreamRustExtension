@@ -20,6 +20,11 @@ func _generate_cache_filename(url: String, ext: String) -> String:
     var hash = url.md5_text()
     return "%s.%s" % [hash, ext]
 
+func load_asset_thumbnail(asset_name: String) -> ImageTexture:
+  var url := "%s/items/%s.png" % [Network.get_database_server_url(), asset_name.to_lower()]
+  print(url)
+  return await load_image(url)
+
 # Load an image from cache or download it
 func load_image(url: String, save_to_disk: bool = true, no_cached: bool = false) -> ImageTexture:
     var filename = IMAGE_CACHE_DIR + _generate_cache_filename(url, "png")

@@ -1,6 +1,7 @@
 extends Node3D
 
 @onready var gumbot: GumBot = %gumbot
+@export var profile_overlay: ProfileOverlay
 
 func _ready() -> void:
   Network.emote_triggered.connect(_handle_emote_triggered)
@@ -9,6 +10,7 @@ func _ready() -> void:
 func _handle_chatter_updated(chatter: Chatter) -> void:
   print(chatter)
   gumbot.chatter = chatter
+  profile_overlay.chatter = chatter
   var anim_tree_playback: AnimationNodeStateMachinePlayback = gumbot.anim_tree.get("parameters/StateMachine/playback")
   anim_tree_playback.travel("Locomotion")
   # gumbot.bot_state = GumBot.BotState.Walking

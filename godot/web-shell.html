@@ -22,11 +22,20 @@
   </head>
   <body>
     <canvas id="canvas"></canvas>
-
     <script src="$GODOT_URL"></script>
     <script>
+      window.Twitch.ext.onAuthorized((auth) => {
+        const check_godot_interval = setInterval(() => {
+          if (window.twitchTokenCallback) {
+            console.log('calling token callback')
+            window.twitchTokenCallback(auth.token)
+            clearInterval(check_godot_interval)
+          } else {
+            console.log('NO callback')
+          }
+        }, 1000)
+      })
       function startGodot() {
-        console.log("STARTING GODOT!!!!")
         const engine = new Engine($GODOT_CONFIG);
         engine.startGame({
           persistentPaths: [],
@@ -40,7 +49,6 @@
       function waitForSize(callback) {
         const canvas = document.getElementById("canvas");
         // If we already have a size, go immediately
-        console.log(canvas.offsetWidth, canvas.offsetHeight)
         if (canvas.offsetWidth > 0 && canvas.offsetHeight > 0) {
           callback();
           return;
@@ -49,7 +57,6 @@
         // Otherwise poll until the iframe has been given dimensions
         const observer = new ResizeObserver(function (entries) {
           for (const entry of entries) {
-            console.log("observer fired", entry.contentRect)
             if (entry.contentRect.width > 0 && entry.contentRect.height > 0) {
               observer.disconnect();
               callback();
@@ -64,7 +71,6 @@
       //   startGodot()
       // }, 2000)
       window.addEventListener("load", function () {
-        console.log("LOAD EVENT FIRED")
         waitForSize(startGodot);
       });
     </script>

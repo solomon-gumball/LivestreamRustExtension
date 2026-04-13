@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Generator: Moho 14.2 build 20240604 -->
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg version="1.1" id="Frame_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="1280px" height="720px">
+<g id="Layer_13">
+<path fill="#ffffff" d="M 280.325 645.776 C 242.373 594.176 272.555 78.599 317.462 32.412 L 343.874 62.452 C 312.247 83.558 282.373 593.950 310.708 619.758 L 280.325 645.776 Z"/>
+<path fill="#ffffff" d="M 317.462 32.412 C 371.850 -8.483 922.130 37.417 969.751 85.506 L 939.368 111.524 C 916.226 76.979 371.187 31.511 343.874 62.452 L 317.462 32.412 Z"/>
+<path fill="none" stroke="#ffffff" stroke-width="1" stroke-linecap="butt" stroke-linejoin="round" d="M 317.462 32.412 L 343.874 62.452 "/>
+<path fill="#ffffff" d="M 969.751 85.506 C 1007.703 137.105 967.597 651.443 926.010 691.359 L 912.803 676.339 C 947.751 648.963 967.703 137.331 939.368 111.524 L 969.751 85.506 Z"/>
+<path fill="none" stroke="#ffffff" stroke-width="1" stroke-linecap="butt" stroke-linejoin="round" d="M 969.751 85.506 L 939.368 111.524 "/>
+<path fill="#ffffff" d="M 926.010 691.359 C 878.390 729.766 327.946 693.864 280.325 645.776 L 310.708 619.758 C 333.849 654.302 878.722 709.768 912.803 676.339 L 926.010 691.359 Z"/>
+<path fill="none" stroke="#ffffff" stroke-width="1" stroke-linecap="butt" stroke-linejoin="round" d="M 926.010 691.359 L 912.803 676.339 "/>
+</g>
+</svg>

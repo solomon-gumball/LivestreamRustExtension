@@ -3,7 +3,8 @@
 [ext_resource type="Script" uid="uid://hajtbhl1tijf" path="res://start_scene.gd" id="1_ig7tw"]
 [ext_resource type="PackedScene" uid="uid://crkh8hdu5af84" path="res://addons/livestream-rust/gumbot/gumbot.tscn" id="2_0xm2m"]
 [ext_resource type="Material" uid="uid://csotmk0m42uj7" path="res://materials/scrolling_background/profile_page_background.tres" id="2_7mycd"]
-[ext_resource type="Shader" uid="uid://cquhahc1n0qp0" path="res://materials/outline2/outline2.gdshader" id="2_272bh"]
+[ext_resource type="Shader" uid="uid://bqw622cobg44v" path="res://materials/outline/outline.gdshader" id="2_272bh"]
+[ext_resource type="PackedScene" uid="uid://dk46dldcxqfbu" path="res://ui/profile_overlay.tscn" id="3_5vw27"]
 [ext_resource type="Shader" uid="uid://cw1km147x2fwu" path="res://addons/livestream-rust/materials/bot_mat/bot_shader.gdshader" id="3_lquwl"]
 [ext_resource type="Texture2D" uid="uid://cas3gr887xevi" path="res://addons/livestream-rust/materials/bot_mat/bot_albedo.png" id="4_7mycd"]
 [ext_resource type="Texture2D" uid="uid://ba6mac1k3t38a" path="res://addons/livestream-rust/materials/bot_mat/bot_normals.png" id="5_272bh"]
@@ -14,11 +15,12 @@ flip_faces = true
 size = Vector2(2, 2)
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_272bh"]
-render_priority = 0
+render_priority = 127
 shader = ExtResource("2_272bh")
-shader_parameter/thickness = 2.0000000223518
+shader_parameter/thickness = 2.0
 shader_parameter/outline_color = Color(0, 0, 0, 1)
-shader_parameter/threshold = 0.00434999989125
+shader_parameter/threshold = 0.00356999991075
+shader_parameter/samples = 8
 
 [sub_resource type="Environment" id="Environment_mbe3m"]
 background_mode = 3
@@ -37,14 +39,16 @@ shader_parameter/albedo_texture = ExtResource("4_7mycd")
 shader_parameter/normal_map = ExtResource("5_272bh")
 shader_parameter/bot_color = Color(1, 0, 0, 1)
 
-[node name="Profile" type="Node3D" unique_id=920442990]
+[node name="Profile" type="Node3D" unique_id=920442990 node_paths=PackedStringArray("profile_overlay")]
 script = ExtResource("1_ig7tw")
+profile_overlay = NodePath("ProfileOverlay")
 
 [node name="Camera3D" type="Camera3D" parent="." unique_id=259427562]
 transform = Transform3D(1, 0, 0, 0, 0.9953139, 0.09669699, 0, -0.09669699, 0.9953139, 0, 0.297, 0.307)
 
 [node name="MeshInstance3D" type="MeshInstance3D" parent="Camera3D" unique_id=1814416131]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.06012258, -1.861503)
+visible = false
 mesh = SubResource("QuadMesh_5vw27")
 surface_material_override/0 = SubResource("ShaderMaterial_272bh")
 
@@ -52,6 +56,8 @@ surface_material_override/0 = SubResource("ShaderMaterial_272bh")
 transform = Transform3D(0.18701154, 0.62628764, 0.7568295, 0.062790595, -0.77646685, 0.62702227, 0.98034906, -0.06973864, -0.18453321, 1.137617, 0.9017843, -0.071688496)
 light_color = Color(0.99646264, 0.82775444, 0.63832206, 1)
 light_energy = 5.0
+
+[node name="ProfileOverlay" parent="." unique_id=633817562 instance=ExtResource("3_5vw27")]
 
 [node name="CanvasLayer" type="CanvasLayer" parent="." unique_id=820797902]
 layer = -1
@@ -70,5 +76,5 @@ compositor = SubResource("Compositor_kek77")
 
 [node name="gumbot" parent="." unique_id=574168232 instance=ExtResource("2_0xm2m")]
 unique_name_in_owner = true
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.042121172, -0.075279236)
+transform = Transform3D(0.8660254, 0, 0.5, 0, 1, 0, -0.5, 0, 0.8660254, -0.25937808, 0.042121172, -0.110468924)
 surface_mat = SubResource("ShaderMaterial_5vw27")

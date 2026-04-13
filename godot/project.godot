@@ -20,6 +20,12 @@ config/icon="res://icon.svg"
 ImageLoader="*uid://cs4ky8up2cqd3"
 Network="*res://addons/livestream-rust/network_handler_global.gd"
 
+[display]
+
+window/size/viewport_width=1600
+window/size/viewport_height=900
+window/stretch/mode="canvas_items"
+
 [dotnet]
 
 project/assembly_name="livestream-rust-extension"

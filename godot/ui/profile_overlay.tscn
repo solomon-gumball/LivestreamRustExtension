@@ -1,0 +1,265 @@
+[gd_scene format=3 uid="uid://dk46dldcxqfbu"]
+
+[ext_resource type="Script" uid="uid://bjoimq3r2neer" path="res://ui/profile_overlay.gd" id="1_ia4v4"]
+[ext_resource type="PackedScene" uid="uid://cgog6fj0n1sni" path="res://ui/screen_square_element.tscn" id="2_8yg2g"]
+[ext_resource type="Texture2D" uid="uid://cb8up1rfauvb3" path="res://ui/Headgear_icon.svg" id="3_5loy3"]
+[ext_resource type="Texture2D" uid="uid://bkvqqicg2nt5f" path="res://ui/Torso_icon.svg" id="4_3t5dm"]
+[ext_resource type="Texture2D" uid="uid://byuk2bxby5nkf" path="res://ui/Footwear_icon.svg" id="5_3t5dm"]
+[ext_resource type="Texture2D" uid="uid://blojm8exgsdvy" path="res://ui/Hand_icon.svg" id="6_tyu4j"]
+[ext_resource type="Texture2D" uid="uid://tmalfjow4en0" path="res://ui/Tail_icon.svg" id="7_5pum5"]
+
+[node name="ProfileOverlay" type="CanvasLayer" unique_id=633817562]
+script = ExtResource("1_ia4v4")
+
+[node name="VBoxContainer" type="VBoxContainer" parent="." unique_id=1764661551]
+anchors_preset = 6
+anchor_left = 1.0
+anchor_top = 0.5
+anchor_right = 1.0
+anchor_bottom = 0.5
+offset_left = -552.0
+offset_top = -37.5
+offset_right = -82.0
+offset_bottom = 37.5
+grow_horizontal = 0
+grow_vertical = 2
+theme_override_constants/separation = 20
+
+[node name="CategoriesHBox" type="HBoxContainer" parent="VBoxContainer" unique_id=1550927815]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 0
+
+[node name="ScreenSquare" parent="VBoxContainer/CategoriesHBox" unique_id=1256852975 instance=ExtResource("2_8yg2g")]
+custom_minimum_size = Vector2(110, 110)
+layout_mode = 2
+value = "headgear"
+show_border = false
+icon_size = 80.0
+icon_texture = ExtResource("3_5loy3")
+width = 120.0
+padding = -10.0
+y_offset = -2.0
+background_color = Color(0.9137255, 0.36862746, 0.24313726, 1)
+border_color = Color(0, 0, 0, 1)
+icon_color = Color(1, 1, 1, 0.5647059)
+
+[node name="ScreenSquare2" parent="VBoxContainer/CategoriesHBox" unique_id=1525262385 instance=ExtResource("2_8yg2g")]
+custom_minimum_size = Vector2(110, 110)
+layout_mode = 2
+value = "torso"
+show_border = false
+icon_size = 80.0
+icon_texture = ExtResource("4_3t5dm")
+width = 120.0
+padding = -10.0
+angle = -8.0
+y_offset = 12.0
+background_color = Color(0.9137255, 0.36862746, 0.24313726, 1)
+border_color = Color(0, 0, 0, 1)
+icon_color = Color(1, 1, 1, 0.5647059)
+
+[node name="ScreenSquare3" parent="VBoxContainer/CategoriesHBox" unique_id=1968861114 instance=ExtResource("2_8yg2g")]
+custom_minimum_size = Vector2(110, 110)
+layout_mode = 2
+value = "legs"
+show_border = false
+icon_size = 80.0
+icon_texture = ExtResource("5_3t5dm")
+width = 120.0
+padding = -10.0
+angle = 4.0
+y_offset = -2.0
+background_color = Color(0.9137255, 0.36862746, 0.24313726, 1)
+border_color = Color(0, 0, 0, 1)
+icon_color = Color(1, 1, 1, 0.5647059)
+
+[node name="ScreenSquare4" parent="VBoxContainer/CategoriesHBox" unique_id=48346443 instance=ExtResource("2_8yg2g")]
+custom_minimum_size = Vector2(110, 110)
+layout_mode = 2
+value = "right_hand_item"
+show_border = false
+icon_size = 80.0
+icon_texture = ExtResource("6_tyu4j")
+width = 120.0
+padding = -10.0
+angle = -8.0
+y_offset = 12.0
+background_color = Color(0.9137255, 0.36862746, 0.24313726, 1)
+border_color = Color(0, 0, 0, 1)
+icon_color = Color(1, 1, 1, 0.5647059)
+
+[node name="ScreenSquare5" parent="VBoxContainer/CategoriesHBox" unique_id=126754548 instance=ExtResource("2_8yg2g")]
+custom_minimum_size = Vector2(110, 110)
+layout_mode = 2
+value = "tail"
+show_border = false
+icon_size = 80.0
+icon_texture = ExtResource("7_5pum5")
+width = 120.0
+padding = -10.0
+angle = 2.0
+y_offset = -2.0
+background_color = Color(0.9137255, 0.36862746, 0.24313726, 1)
+border_color = Color(0, 0, 0, 1)
+icon_color = Color(1, 1, 1, 0.5647059)
+
+[node name="ScreenSquare6" parent="VBoxContainer/CategoriesHBox" unique_id=1061934097 instance=ExtResource("2_8yg2g")]
+custom_minimum_size = Vector2(110, 110)
+layout_mode = 2
+value = "arms"
+show_border = false
+icon_size = 80.0
+icon_texture = ExtResource("3_5loy3")
+width = 120.0
+padding = -10.0
+angle = -8.0
+y_offset = 1.0
+background_color = Color(0.9137255, 0.36862746, 0.24313726, 1)
+border_color = Color(0, 0, 0, 1)
+icon_color = Color(1, 1, 1, 0.5647059)
+
+[node name="ItemsGrid" type="GridContainer" parent="VBoxContainer" unique_id=920321413]
+unique_name_in_owner = true
+layout_mode = 2
+columns = 4
+
+[node name="ScreenSquare15" parent="VBoxContainer/ItemsGrid" unique_id=1456869249 instance=ExtResource("2_8yg2g")]
+custom_minimum_size = Vector2(210, 210)
+layout_mode = 2
+value = ""
+icon_size = 180.0
+width = 200.0
+padding = 10.0
+background_color = Color(0.9843137, 0.69411767, 0.4392157, 1)
+border_color = Color(0.95686275, 0.3882353, 0.25490198, 1)
+icon_color = Color(1, 1, 1, 1)
+
+[node name="ScreenSquare16" parent="VBoxContainer/ItemsGrid" unique_id=443645844 instance=ExtResource("2_8yg2g")]
+custom_minimum_size = Vector2(210, 210)
+layout_mode = 2
+value = ""
+icon_size = 180.0
+width = 200.0
+padding = 10.0
+angle = -8.0
+background_color = Color(0.9843137, 0.69411767, 0.4392157, 1)
+border_color = Color(0.95686275, 0.3882353, 0.25490198, 1)
+icon_color = Color(1, 1, 1, 1)
+
+[node name="ScreenSquare17" parent="VBoxContainer/ItemsGrid" unique_id=397995958 instance=ExtResource("2_8yg2g")]
+custom_minimum_size = Vector2(210, 210)
+layout_mode = 2
+value = ""
+icon_size = 180.0
+width = 200.0
+padding = 10.0
+background_color = Color(0.9843137, 0.69411767, 0.4392157, 1)
+border_color = Color(0.95686275, 0.3882353, 0.25490198, 1)
+icon_color = Color(1, 1, 1, 1)
+
+[node name="ScreenSquare18" parent="VBoxContainer/ItemsGrid" unique_id=1655613128 instance=ExtResource("2_8yg2g")]
+custom_minimum_size = Vector2(210, 210)
+layout_mode = 2
+value = ""
+icon_size = 180.0
+width = 200.0
+padding = 10.0
+angle = -8.0
+background_color = Color(0.9843137, 0.69411767, 0.4392157, 1)
+border_color = Color(0.95686275, 0.3882353, 0.25490198, 1)
+icon_color = Color(1, 1, 1, 1)
+
+[node name="ScreenSquare19" parent="VBoxContainer/ItemsGrid" unique_id=570712062 instance=ExtResource("2_8yg2g")]
+custom_minimum_size = Vector2(210, 210)
+layout_mode = 2
+value = ""
+icon_size = 180.0
+width = 200.0
+padding = 10.0
+angle = -8.0
+background_color = Color(0.9843137, 0.69411767, 0.4392157, 1)
+border_color = Color(0.95686275, 0.3882353, 0.25490198, 1)
+icon_color = Color(1, 1, 1, 1)
+
+[node name="ScreenSquare20" parent="VBoxContainer/ItemsGrid" unique_id=982541346 instance=ExtResource("2_8yg2g")]
+custom_minimum_size = Vector2(210, 210)
+layout_mode = 2
+value = ""
+icon_size = 180.0
+width = 200.0
+padding = 10.0
+background_color = Color(0.9843137, 0.69411767, 0.4392157, 1)
+border_color = Color(0.95686275, 0.3882353, 0.25490198, 1)
+icon_color = Color(1, 1, 1, 1)
+
+[node name="ScreenSquare21" parent="VBoxContainer/ItemsGrid" unique_id=2059366537 instance=ExtResource("2_8yg2g")]
+custom_minimum_size = Vector2(210, 210)
+layout_mode = 2
+value = ""
+icon_size = 180.0
+width = 200.0
+padding = 10.0
+angle = -8.0
+background_color = Color(0.9843137, 0.69411767, 0.4392157, 1)
+border_color = Color(0.95686275, 0.3882353, 0.25490198, 1)
+icon_color = Color(1, 1, 1, 1)
+
+[node name="ScreenSquare22" parent="VBoxContainer/ItemsGrid" unique_id=1897370901 instance=ExtResource("2_8yg2g")]
+custom_minimum_size = Vector2(210, 210)
+layout_mode = 2
+value = ""
+icon_size = 180.0
+width = 200.0
+padding = 10.0
+angle = -8.0
+background_color = Color(0.9843137, 0.69411767, 0.4392157, 1)
+border_color = Color(0.95686275, 0.3882353, 0.25490198, 1)
+icon_color = Color(1, 1, 1, 1)
+
+[node name="ScreenSquare23" parent="VBoxContainer/ItemsGrid" unique_id=1994442305 instance=ExtResource("2_8yg2g")]
+custom_minimum_size = Vector2(210, 210)
+layout_mode = 2
+value = ""
+icon_size = 180.0
+width = 200.0
+padding = 10.0
+background_color = Color(0.9843137, 0.69411767, 0.4392157, 1)
+border_color = Color(0.95686275, 0.3882353, 0.25490198, 1)
+icon_color = Color(1, 1, 1, 1)
+
+[node name="ScreenSquare24" parent="VBoxContainer/ItemsGrid" unique_id=709614468 instance=ExtResource("2_8yg2g")]
+custom_minimum_size = Vector2(210, 210)
+layout_mode = 2
+value = ""
+icon_size = 180.0
+width = 200.0
+padding = 10.0
+angle = -8.0
+background_color = Color(0.9843137, 0.69411767, 0.4392157, 1)
+border_color = Color(0.95686275, 0.3882353, 0.25490198, 1)
+icon_color = Color(1, 1, 1, 1)
+
+[node name="ScreenSquare25" parent="VBoxContainer/ItemsGrid" unique_id=814917601 instance=ExtResource("2_8yg2g")]
+custom_minimum_size = Vector2(210, 210)
+layout_mode = 2
+value = ""
+icon_size = 180.0
+width = 200.0
+padding = 10.0
+background_color = Color(0.9843137, 0.69411767, 0.4392157, 1)
+border_color = Color(0.95686275, 0.3882353, 0.25490198, 1)
+icon_color = Color(1, 1, 1, 1)
+
+[node name="ScreenSquare14" parent="VBoxContainer/ItemsGrid" unique_id=2017855364 instance=ExtResource("2_8yg2g")]
+custom_minimum_size = Vector2(210, 210)
+layout_mode = 2
+value = ""
+icon_size = 180.0
+width = 200.0
+padding = 10.0
+angle = -8.0
+background_color = Color(0.9843137, 0.69411767, 0.4392157, 1)
+border_color = Color(0.95686275, 0.3882353, 0.25490198, 1)
+icon_color = Color(1, 1, 1, 1)
