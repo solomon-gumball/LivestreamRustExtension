@@ -44,12 +44,22 @@ func _update_grid_items() -> void:
       grid_item.value = ""
       grid_item.icon_texture = null
 
+var transition_interval := 0.04
 var selected_category: String = "headgear":
   set(category):
     selected_category = category
     for category_square in category_squares:
       category_square.icon_color = Color.WHITE if category_square.value == category else Color(1.0, 1.0, 1.0, 0.5)
+    for grid_item in grid_items:
+      grid_item.transition(false)
+      await get_tree().create_timer(transition_interval).timeout
+    
+    await get_tree().create_timer(0.2).timeout
     _update_grid_items()
+
+    for grid_item in grid_items:
+      grid_item.transition(true)
+      await get_tree().create_timer(transition_interval).timeout
 
 var category_squares: Array[ScreenSquare] = []
 

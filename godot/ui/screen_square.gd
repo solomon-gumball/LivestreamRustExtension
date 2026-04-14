@@ -45,6 +45,41 @@ signal on_selected(value: String)
 @export var icon_color: Color = Color.BLACK:
   set(v): icon_color = v; _update_layout()
 
+var transition_tween: Tween
+var transition_duration: float = 0.4
+var transition_rotation_amount: float = 250.0
+var in_transition: bool = false
+func transition(transition_in: bool) -> void:
+  if transition_tween:
+    transition_tween.kill()
+  
+  in_transition = true
+  if transition_in:
+    transition_tween = get_tree().create_tween().set_parallel(true)
+    transition_tween\
+      .tween_property(container, 'scale', Vector2(1.0, 1.0), transition_duration)\
+      .set_ease(Tween.EASE_OUT)\
+      .set_trans(Tween.TRANS_CUBIC)
+    transition_tween\
+      .tween_property(container, 'rotation_degrees', angle, transition_duration)\
+      .from(angle - transition_rotation_amount)\
+      .set_ease(Tween.EASE_OUT)\
+      .set_trans(Tween.TRANS_QUAD)
+  
+  else:
+    transition_tween = get_tree().create_tween().set_parallel(true)
+    transition_tween\
+      .tween_property(container, 'scale', Vector2(0.0, 0.0), transition_duration)\
+      .set_ease(Tween.EASE_IN)\
+      .set_trans(Tween.TRANS_QUAD)
+    transition_tween\
+      .tween_property(container, 'rotation_degrees', angle + transition_rotation_amount, transition_duration)\
+      .set_ease(Tween.EASE_IN)\
+      .set_trans(Tween.TRANS_QUAD)
+    
+  await transition_tween.finished
+  in_transition = false
+
 func _ready() -> void:
   _update_layout()
   tex_rect.mouse_entered.connect(_handle_hover.bind(true))
@@ -53,6 +88,8 @@ func _ready() -> void:
 
 var container_scale_tween : Tween
 func _handle_hover(hover: bool) -> void:
+  if in_transition:
+    return
   if container_scale_tween:
     container_scale_tween.kill()
   container_scale_tween = get_tree().create_tween()
