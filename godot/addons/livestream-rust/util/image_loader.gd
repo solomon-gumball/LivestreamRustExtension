@@ -24,7 +24,7 @@ func load_asset_thumbnail(asset_name: String) -> ImageTexture:
   var url := "%s/items/%s.png" % [Network.get_database_server_url(), asset_name.to_lower()]
   return await load_image(url)
 
-var debug_logging := true
+var debug_logging := false
 
 # Load an image from cache or download it
 func load_image(url: String, save_to_disk: bool = true, no_cached: bool = false) -> ImageTexture:

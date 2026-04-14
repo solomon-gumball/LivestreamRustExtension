@@ -63,11 +63,9 @@ var chatter: Chatter = null:
         var name_lowered = item_name.to_lower()
         if !loaded_mesh_files.has(name_lowered):
           var clothing_node = await ImageLoader.load_wearable_asset(name_lowered)
-          print(clothing_node)
           if clothing_node != null:
             loaded_mesh_files[name_lowered] = clothing_node.duplicate()
 
-    print(loaded_mesh_files)
     for mesh_name in base_meshes:
       var mesh: MeshInstance3D = get_node("Armature/Skeleton3D/%s" % mesh_name)
       mesh.visible = true
@@ -79,10 +77,10 @@ var chatter: Chatter = null:
     var skeleton: Skeleton3D = $Armature/Skeleton3D
     for slot_name in chatter.equipped:
       var item_name = chatter.equipped[slot_name]
-
-      var item_info: Variant = Network.get_item_info(item_name)
+      if item_name == null: continue
+      var item_info: ShopItem = Network.get_item_info(item_name)
       if item_info != null:
-        if item_info is WearableShopItem and loaded_mesh_files.has((item_info as WearableShopItem).name.to_lower()):
+        if item_info is ShopItem.WearableShopItem and loaded_mesh_files.has((item_info as ShopItem.WearableShopItem).name.to_lower()):
           var meshes_in_slot_to_hide = item_info.metadata.hide_meshes
           for mesh_name_to_hide in meshes_in_slot_to_hide:
             var mesh: MeshInstance3D = get_node("Armature/Skeleton3D/%s" % mesh_name_to_hide)
@@ -147,7 +145,6 @@ var emote: String = "":
     if new_value == "" || new_value == emote: return
     emote = new_value
     var image_tex = await ImageLoader.load_emote(emote)
-    print("SETTING EMOTE ", image_tex)
 
     if image_tex != null:
       sprite.texture = image_tex

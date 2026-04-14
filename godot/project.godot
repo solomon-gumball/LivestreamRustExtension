@@ -11,14 +11,15 @@ config_version=5
 [application]
 
 config/name="livestream-rust-extension"
-run/main_scene="uid://1j36jj8cwtkx"
+run/main_scene="uid://4fbhgplmr2ub"
 config/features=PackedStringArray("4.6", "GL Compatibility")
 config/icon="res://icon.svg"
 
 [autoload]
 
 ImageLoader="*uid://cs4ky8up2cqd3"
-Network="*res://addons/livestream-rust/network_handler_global.gd"
+Network="*uid://cgt1vmvhiscn8"
+DebugScreenLayout="*uid://dlkq1m5uudr86"
 
 [display]
 

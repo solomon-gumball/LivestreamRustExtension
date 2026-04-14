@@ -1,0 +1,115 @@
+[gd_scene format=3 uid="uid://4fbhgplmr2ub"]
+
+[ext_resource type="Script" uid="uid://dg0yh4qwwvcey" path="res://multiplayer_scene.gd" id="1_r1ube"]
+[ext_resource type="PackedScene" uid="uid://crkh8hdu5af84" path="res://addons/livestream-rust/gumbot/gumbot.tscn" id="1_wuni8"]
+[ext_resource type="FontFile" uid="uid://dk7ngb77pf70y" path="res://fonts/HomeVideoBold-R90Dv.ttf" id="2_ox3ly"]
+[ext_resource type="Shader" uid="uid://cw1km147x2fwu" path="res://addons/livestream-rust/materials/bot_mat/bot_shader.gdshader" id="2_r1ube"]
+[ext_resource type="FontFile" uid="uid://7uibxoligyvb" path="res://fonts/HomeVideo-BLG6G.ttf" id="2_sqe1x"]
+[ext_resource type="Texture2D" uid="uid://cas3gr887xevi" path="res://addons/livestream-rust/materials/bot_mat/bot_albedo.png" id="3_ox3ly"]
+[ext_resource type="Texture2D" uid="uid://ba6mac1k3t38a" path="res://addons/livestream-rust/materials/bot_mat/bot_normals.png" id="4_sqe1x"]
+
+[sub_resource type="Theme" id="Theme_fxi6q"]
+default_font = ExtResource("2_sqe1x")
+default_font_size = 50
+
+[sub_resource type="LabelSettings" id="LabelSettings_sqe1x"]
+font = ExtResource("2_ox3ly")
+font_size = 40
+
+[sub_resource type="Environment" id="Environment_r1ube"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_fxi6q"]
+resource_local_to_scene = true
+render_priority = 0
+shader = ExtResource("2_r1ube")
+shader_parameter/albedo_texture = ExtResource("3_ox3ly")
+shader_parameter/normal_map = ExtResource("4_sqe1x")
+shader_parameter/bot_color = Color(1, 0, 0, 1)
+
+[node name="Node3D" type="Node3D" unique_id=1551556878 node_paths=PackedStringArray("gumbot")]
+script = ExtResource("1_r1ube")
+gumbot = NodePath("gumbot")
+
+[node name="CanvasLayer" type="CanvasLayer" parent="." unique_id=1814783549]
+
+[node name="DebugRect" type="ColorRect" parent="CanvasLayer" unique_id=612512015]
+unique_name_in_owner = true
+offset_left = 32.0
+offset_top = 720.0
+offset_right = 186.0
+offset_bottom = 819.0
+color = Color(1, 0.07058824, 0.09411765, 1)
+
+[node name="TestRPCButton" type="Button" parent="CanvasLayer" unique_id=412995301]
+unique_name_in_owner = true
+anchors_preset = 2
+anchor_top = 1.0
+anchor_bottom = 1.0
+offset_top = -8.0
+offset_right = 278.0
+grow_vertical = 0
+theme = SubResource("Theme_fxi6q")
+text = "TEST RPC"
+
+[node name="LobbyListContainer" type="VBoxContainer" parent="CanvasLayer" unique_id=1966416422]
+unique_name_in_owner = true
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -20.0
+offset_top = -20.0
+offset_right = 20.0
+offset_bottom = 20.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="LobbyIdInput" type="LineEdit" parent="CanvasLayer/LobbyListContainer" unique_id=1936626913]
+unique_name_in_owner = true
+layout_mode = 2
+theme = SubResource("Theme_fxi6q")
+placeholder_text = "ID"
+
+[node name="JoinGameButton" type="Button" parent="CanvasLayer/LobbyListContainer" unique_id=590355809]
+unique_name_in_owner = true
+layout_mode = 2
+theme = SubResource("Theme_fxi6q")
+text = "JOIN GAME"
+
+[node name="LobbyInfoPanel" type="VBoxContainer" parent="CanvasLayer" unique_id=552457487]
+unique_name_in_owner = true
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -20.0
+offset_right = 20.0
+offset_bottom = 40.0
+grow_horizontal = 2
+
+[node name="LobbyNameLabel" type="Label" parent="CanvasLayer/LobbyInfoPanel" unique_id=1386173333]
+unique_name_in_owner = true
+layout_mode = 2
+text = "IN LOBBY dpVeBJeFQLKSYmyF"
+label_settings = SubResource("LabelSettings_sqe1x")
+horizontal_alignment = 1
+
+[node name="ClientIdLabel" type="Label" parent="CanvasLayer/LobbyInfoPanel" unique_id=741555257]
+unique_name_in_owner = true
+layout_mode = 2
+text = "CLIENT 329024"
+label_settings = SubResource("LabelSettings_sqe1x")
+horizontal_alignment = 1
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="." unique_id=1219707593]
+environment = SubResource("Environment_r1ube")
+
+[node name="gumbot" parent="." unique_id=2126276004 instance=ExtResource("1_wuni8")]
+surface_mat = SubResource("ShaderMaterial_fxi6q")
+
+[node name="Camera3D" type="Camera3D" parent="gumbot" unique_id=1295238520]
+transform = Transform3D(-1, 0, -8.742278e-08, -8.889269e-09, 0.994817, 0.10168138, 8.696966e-08, 0.10168138, -0.994817, 3.700437e-18, 0.34625244, -0.43583605)
+
+[node name="CSGBox3D" type="CSGBox3D" parent="." unique_id=661981702]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -3.4316406, 0)
+size = Vector3(10, 6.8632813, 10)

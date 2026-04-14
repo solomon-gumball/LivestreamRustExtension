@@ -5,7 +5,8 @@ EXPORT_PATH = ../web/public/index.html
 
 .PHONY: export build-rust
 
-export: build-rust
+# export: build-rust
+export:
 	$(GODOT) --headless --path $(GODOT_PROJECT) --export-debug "$(EXPORT_PRESET)" "$(EXPORT_PATH)"
 
 EMSDK_SYSROOT = $(HOME)/emsdk/upstream/emscripten/cache/sysroot

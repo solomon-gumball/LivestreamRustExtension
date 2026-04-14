@@ -37,7 +37,7 @@ ssao_enabled = true
 
 [sub_resource type="Compositor" id="Compositor_kek77"]
 
-[sub_resource type="ShaderMaterial" id="ShaderMaterial_efxa6"]
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_kek77"]
 resource_local_to_scene = true
 render_priority = 0
 shader = ExtResource("3_lquwl")
@@ -120,4 +120,4 @@ compositor = SubResource("Compositor_kek77")
 [node name="gumbot" parent="." unique_id=574168232 instance=ExtResource("2_0xm2m")]
 unique_name_in_owner = true
 transform = Transform3D(0.76339024, 0, 0.64593744, 0, 1, 0, -0.64593744, 0, 0.76339024, -0.2831327, 0.042121172, -0.098897584)
-surface_mat = SubResource("ShaderMaterial_efxa6")
+surface_mat = SubResource("ShaderMaterial_kek77")

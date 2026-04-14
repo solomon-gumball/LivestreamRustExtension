@@ -24,12 +24,12 @@ func _handle_item_selected(value: String) -> void:
 func _update_grid_items() -> void:
   if !is_node_ready() or chatter == null: return
 
-  var slot_wearables: Array[WearableShopItem] = []
+  var slot_wearables: Array[ShopItem.WearableShopItem] = []
   for asset_name in chatter.assets:
     var asset = Network.get_item_info(asset_name)
-    if asset is not WearableShopItem:
+    if asset is not ShopItem.WearableShopItem:
       continue
-    var wearable := asset as WearableShopItem
+    var wearable := asset as ShopItem.WearableShopItem
     if wearable.metadata.slot == selected_category:
       slot_wearables.append(wearable)
 
