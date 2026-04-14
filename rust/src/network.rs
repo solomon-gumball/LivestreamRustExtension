@@ -8,6 +8,7 @@ use serde::Deserialize;
 use crate::{chatter::{Chatter, ChatterData}, shop::CommonShopTraits};
 use crate::mail::Mail;
 use crate::shop::ShopItem;
+use crate::multiplayer_session::{MultiplayerSessionHandler, RtcWsMessage};
 
 #[derive(Deserialize)]
 pub struct DropData {
@@ -64,6 +65,7 @@ pub struct NetworkHandler {
     item_info: HashMap<String, ShopItem>,
     connection_state: ConnectionState,
     #[var] pub auth_token: GString,
+    pub multiplayer_session: Gd<MultiplayerSessionHandler>,
 }
 
 #[godot_api]
@@ -167,6 +169,14 @@ impl NetworkHandler {
             .unwrap_or(Variant::nil())
     }
 
+    /// Send a raw JSON string over the WebSocket.  Called by child nodes (e.g.
+    /// MultiplayerSessionHandler) that need to emit messages without holding a
+    /// direct Rust reference to this handler.
+    #[func]
+    pub fn send_ws_text(&mut self, text: GString) {
+        let _ = self.socket.send_text(&text);
+    }
+
     #[func]
     fn subscribe(&mut self, channels: Array<GString>) {
         let message_arr: Vec<String> = channels.iter_shared()
@@ -187,10 +197,18 @@ impl NetworkHandler {
 
         let msg: WsMessage = match serde_json::from_str(&json) {
             Ok(m) => m,
-            Err(e) => {
-                // godot_print!("{json}");
-                // Do NOT log the json string here, if it's too big it can crash you pc!
-                godot_error!("Failed to parse WS message: {e}");
+            Err(_) => {
+                // Not a NetworkHandler message — try delegating to the
+                // MultiplayerSessionHandler before giving up.
+                match serde_json::from_str::<RtcWsMessage>(&json) {
+                    Ok(rtc) => {
+                        self.multiplayer_session.bind_mut().handle_rtc_message(rtc.into());
+                    }
+                    Err(e) => {
+                        // Do NOT log the json string here — large payloads can crash the PC.
+                        godot_error!("Failed to parse WS message: {e}");
+                    }
+                }
                 return;
             }
         };
@@ -247,6 +265,10 @@ impl NetworkHandler {
           }
         });
         self.base_mut().add_child(&timer);
+
+        let session = self.multiplayer_session.clone();
+        self.base_mut().add_child(&session);
+
         self.connect_to_server();
     }
 }
@@ -262,6 +284,7 @@ impl INode for NetworkHandler {
           connection_timer: Timer::new_alloc(),
           connection_state: ConnectionState::Disconnected,
           auth_token: GString::new(),
+          multiplayer_session: MultiplayerSessionHandler::new_alloc(),
         }
     }
 
