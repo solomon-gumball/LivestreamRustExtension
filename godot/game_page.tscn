@@ -40,16 +40,35 @@ offset_right = 186.0
 offset_bottom = 819.0
 color = Color(1, 0.07058824, 0.09411765, 1)
 
-[node name="TestRPCButton" type="Button" parent="CanvasLayer" unique_id=412995301]
-unique_name_in_owner = true
-anchors_preset = 2
+[node name="HBoxContainer" type="HBoxContainer" parent="CanvasLayer" unique_id=1557344406]
+anchors_preset = 3
+anchor_left = 1.0
 anchor_top = 1.0
+anchor_right = 1.0
 anchor_bottom = 1.0
-offset_top = -8.0
-offset_right = 278.0
+offset_left = -248.0
+offset_top = -53.0
+grow_horizontal = 0
 grow_vertical = 0
+theme_override_constants/separation = 10
+
+[node name="CloseLobbyButton" type="Button" parent="CanvasLayer/HBoxContainer" unique_id=412995301]
+unique_name_in_owner = true
+layout_mode = 2
 theme = SubResource("Theme_fxi6q")
-text = "TEST RPC"
+text = "CLOSE LOBBY"
+
+[node name="StartGameButton" type="Button" parent="CanvasLayer/HBoxContainer" unique_id=1589335327]
+unique_name_in_owner = true
+layout_mode = 2
+theme = SubResource("Theme_fxi6q")
+text = "START GAME"
+
+[node name="HostGameButton" type="Button" parent="CanvasLayer/HBoxContainer" unique_id=836802073]
+unique_name_in_owner = true
+layout_mode = 2
+theme = SubResource("Theme_fxi6q")
+text = "HOST GAME"
 
 [node name="CenterInfoLabel" type="RichTextLabel" parent="CanvasLayer" unique_id=395124137]
 unique_name_in_owner = true
@@ -114,12 +133,10 @@ horizontal_alignment = 1
 [node name="WorldEnvironment" type="WorldEnvironment" parent="." unique_id=1219707593]
 environment = SubResource("Environment_r1ube")
 
+[node name="Camera3D" type="Camera3D" parent="." unique_id=1295238520]
+transform = Transform3D(-0.9999256, 0.0012404516, -0.012136259, -8.798377e-09, 0.994817, 0.101681344, 0.0121994885, 0.101673774, -0.994743, 0.005316977, 0.32955688, -0.37962487)
+projection = 1
+
 [node name="gumbot" parent="." unique_id=2126276004 instance=ExtResource("4_43xba")]
+transform = Transform3D(-0.9408098, 0, 0.33893508, 0, 1, 0, -0.33893508, 0, -0.9408098, -0.6849959, -0.30148157, 0.73511076)
 surface_mat = SubResource("ShaderMaterial_jjmn7")
-
-[node name="Camera3D" type="Camera3D" parent="gumbot" unique_id=1295238520]
-transform = Transform3D(-1, 0, -8.742278e-08, -8.889269e-09, 0.994817, 0.10168138, 8.696966e-08, 0.10168138, -0.994817, 3.700437e-18, 0.34625244, -0.43583605)
-
-[node name="CSGBox3D" type="CSGBox3D" parent="." unique_id=661981702]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -3.4316406, 0)
-size = Vector3(10, 6.8632813, 10)

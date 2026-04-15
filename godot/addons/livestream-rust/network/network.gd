@@ -27,6 +27,7 @@ var action_queue: Array[Message.QueueAction] = []
 var active_chatters: Array[Chatter] = []
 var leaderboard: Array[Chatter] = []
 var drops: Message.DropData = Message.DropData.new()
+var current_chatter_id: String = ""
 var multiplayer_client: MultiplayerClient
 var current_chatter: Chatter
 

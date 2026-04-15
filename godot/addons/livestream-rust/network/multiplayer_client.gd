@@ -4,6 +4,12 @@ class_name MultiplayerClient
 var rtc_mp := WebRTCMultiplayerPeer.new()
 var sealed: bool = false
 
+# Player calls join lobby to create a new lobby on the server
+# Server responds with "rtc-peer-id" which triggers the connected signal
+# This signal 
+
+signal packet_received(id: int, packet: Dictionary)
+
 func _init() -> void:
   connected.connect(_connected)
   disconnected.connect(_disconnected)
@@ -17,6 +23,9 @@ func _init() -> void:
   peer_connected.connect(_peer_connected)
   peer_disconnected.connect(_peer_disconnected)
 
+func _ready() -> void:
+  get_tree().multiplayer_poll = false
+
 func start(url: String, _lobby: String = "", _mesh: bool = true) -> void:
   stop()
   sealed = false
@@ -27,7 +36,6 @@ func start(url: String, _lobby: String = "", _mesh: bool = true) -> void:
 func stop() -> void:
   multiplayer.multiplayer_peer = null
   rtc_mp.close()
-  # close()
 
 func _create_peer(id: int) -> WebRTCPeerConnection:
   var peer: WebRTCPeerConnection = WebRTCPeerConnection.new()
@@ -123,5 +131,25 @@ func _candidate_received(id: int, mid: String, index: int, sdp: String) -> void:
   if rtc_mp.has_peer(id):
     rtc_mp.get_peer(id).connection.add_ice_candidate(mid, index, sdp)
 
-# func _process(_delta: float) -> void:
-#   rtc_mp.poll()
+func send_packet(packet: Dictionary) -> void:
+  if not lobby:
+    print("Can't send packet, not in lobby")
+    return
+  # print("Sending packet: ", packet)
+
+  for peer_id in rtc_mp.get_peers():
+    print("my id=%d, connected peer: %d" % [rtc_mp.get_unique_id(), peer_id])
+
+  var packet_data: PackedByteArray = var_to_bytes(packet)
+  rtc_mp.set_target_peer(MultiplayerPeer.TARGET_PEER_BROADCAST)
+  rtc_mp.put_packet(packet_data)
+  
+func _process(_delta):
+  rtc_mp.poll()
+
+  while rtc_mp.get_available_packet_count() > 0:
+    var data: PackedByteArray = rtc_mp.get_packet()
+    var sender_id: int = rtc_mp.get_packet_peer()
+    var message := bytes_to_var(data)
+    print("from %d: %s" % [sender_id, message])
+    packet_received.emit(sender_id, message)

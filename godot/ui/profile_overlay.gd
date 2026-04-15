@@ -67,10 +67,10 @@ class ApparelCategory:
   var key: String
   var icon: Texture2D
   
-  static func from_data(key: String, icon: Texture2D) -> ApparelCategory:
+  static func from_data(in_key: String, in_icon: Texture2D) -> ApparelCategory:
     var category = ApparelCategory.new()
-    category.key = key
-    category.icon = icon
+    category.key = in_key
+    category.icon = in_icon
     return category
 
 func _ready() -> void:

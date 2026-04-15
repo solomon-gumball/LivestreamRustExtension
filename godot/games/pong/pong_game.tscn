@@ -1,0 +1,30 @@
+[gd_scene format=3 uid="uid://s2gi2fhmi7ir"]
+
+[ext_resource type="Script" uid="uid://cp25ws8vhg2f5" path="res://games/pong/pong_game.gd" id="1_0ehfm"]
+[ext_resource type="PackedScene" uid="uid://b2ne4k7x0p3jp" path="res://games/pong/pong_paddle.tscn" id="2_racd5"]
+
+[sub_resource type="Environment" id="Environment_racd5"]
+glow_enabled = true
+
+[node name="PongGameScene" type="Node3D" unique_id=632967591]
+script = ExtResource("1_0ehfm")
+
+[node name="DirectionalLight3D" type="DirectionalLight3D" parent="." unique_id=408204329]
+transform = Transform3D(1, 0, 0, 0, 0.6140786, 0.7892449, 0, -0.7892449, 0.6140786, 0, 2.1573846, 1.72217)
+
+[node name="PongPaddleL" parent="." unique_id=372987713 instance=ExtResource("2_racd5")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.006736815, -1.8393409)
+
+[node name="PongPaddleR" parent="." unique_id=1745273558 instance=ExtResource("2_racd5")]
+transform = Transform3D(-1, 0, -8.742278e-08, 0, 1, 0, 8.742278e-08, 0, -1, 0, 0.006736815, 1.9203131)
+
+[node name="Camera3D" type="Camera3D" parent="." unique_id=481627781]
+transform = Transform3D(-4.371139e-08, 1, 4.371139e-08, 0, -4.371139e-08, 1, 1, 4.371139e-08, 1.9106855e-15, 0, 3.5757265, 0)
+fov = 45.0
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="." unique_id=1164650713]
+environment = SubResource("Environment_racd5")
+
+[node name="CSGBox3D" type="CSGBox3D" parent="." unique_id=398952350]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.5, 0)
+size = Vector3(10, 1, 10)

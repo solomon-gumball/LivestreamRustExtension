@@ -1,0 +1,33 @@
+[gd_scene format=3 uid="uid://b2ne4k7x0p3jp"]
+
+[ext_resource type="Script" uid="uid://r4qdvgkrv6jj" path="res://games/pong/pong_paddle.gd" id="1_a14gn"]
+[ext_resource type="PackedScene" uid="uid://crkh8hdu5af84" path="res://addons/livestream-rust/gumbot/gumbot.tscn" id="1_u5md4"]
+[ext_resource type="Shader" uid="uid://cw1km147x2fwu" path="res://addons/livestream-rust/materials/bot_mat/bot_shader.gdshader" id="2_a14gn"]
+[ext_resource type="Texture2D" uid="uid://cas3gr887xevi" path="res://addons/livestream-rust/materials/bot_mat/bot_albedo.png" id="3_v7xyw"]
+[ext_resource type="Texture2D" uid="uid://ba6mac1k3t38a" path="res://addons/livestream-rust/materials/bot_mat/bot_normals.png" id="4_51saw"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_cnxoy"]
+resource_local_to_scene = true
+render_priority = 0
+shader = ExtResource("2_a14gn")
+shader_parameter/albedo_texture = ExtResource("3_v7xyw")
+shader_parameter/normal_map = ExtResource("4_51saw")
+shader_parameter/bot_color = Color(1, 0, 0, 1)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_u5md4"]
+emission_enabled = true
+emission = Color(0.13333334, 0.7019608, 0.95686275, 1)
+emission_energy_multiplier = 5.0
+
+[node name="PongPaddle" type="Node3D" unique_id=372987713]
+script = ExtResource("1_a14gn")
+
+[node name="GumBot" parent="." unique_id=2126276004 instance=ExtResource("1_u5md4")]
+unique_name_in_owner = true
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -0.164)
+surface_mat = SubResource("ShaderMaterial_cnxoy")
+
+[node name="CSGBox3D" type="CSGBox3D" parent="." unique_id=693081303]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.11558321, 0)
+size = Vector3(1, 0.22625732, 0.1)
+material = SubResource("StandardMaterial3D_u5md4")

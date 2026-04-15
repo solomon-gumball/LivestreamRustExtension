@@ -12,10 +12,10 @@ func _ready() -> void:
 
 func _store_data_received() -> void:
   if DebugScreenLayout.window_index == 0:
-    Network.subscribe(['SIMULATION', '22445910']) # solomongumbal1
+    Network.subscribe(['LOBBIES', '22445910']) # solomongumbal1
   # elif DebugScreenLayout.window_index == 1:
   else:
-    Network.subscribe(['SIMULATION', '1273990990']) # solomongumbot
+    Network.subscribe(['LOBBIES', '1273990990']) # solomongumbot
 
 func _handle_chatter_updated(chatter: Chatter) -> void:
   if Network.current_chatter:
@@ -25,6 +25,6 @@ func _handle_chatter_updated(chatter: Chatter) -> void:
     anim_tree_playback.travel("Locomotion")
     # gumbot.bot_state = GumBot.BotState.Walking
 
-func _handle_emote_triggered(chatter: Chatter, emote: String) -> void:
+func _handle_emote_triggered(_chatter: Chatter, _emote: String) -> void:
   return
   

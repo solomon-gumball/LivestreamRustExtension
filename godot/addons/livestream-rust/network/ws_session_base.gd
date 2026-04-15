@@ -3,7 +3,7 @@ extends Node
 
 @export var autojoin: bool = true
 @export var lobby: String = ""  # Will create a new lobby if empty.
-@export var mesh: bool = true  # Will use the lobby host as relay otherwise.
+@export var mesh: bool = false  # Will use the lobby host as relay otherwise.
 
 signal lobby_joined(lobby: String)
 signal connected(id: int, use_mesh: bool)

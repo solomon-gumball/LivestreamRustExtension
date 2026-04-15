@@ -49,7 +49,7 @@ var chatter: Chatter = null:
       if prev_chatter.equipped.size() != chatter.equipped.size():
         should_skip_outfit_update = false
       for slot_name in prev_chatter.equipped:
-        if prev_chatter.equipped[slot_name] != chatter.equipped[slot_name]:
+        if prev_chatter.equipped.get(slot_name, "") != chatter.equipped.get(slot_name, ""):
           should_skip_outfit_update = false
       if should_skip_outfit_update:
         return
