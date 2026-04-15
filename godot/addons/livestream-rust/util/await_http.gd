@@ -31,7 +31,8 @@ func async_request(url: String, custom_headers := PackedStringArray(), method :=
 
   is_requesting = true
 
-  if Network.use_local_server and url.match("localhost"):
+  if Network.use_local_server and url.contains("localhost"):
+      print("USING LOCAL SERVER!!")
       set_tls_options(TLSOptions.client_unsafe())
 
   var err := request(url, custom_headers, method, request_data)

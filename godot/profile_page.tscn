@@ -1,14 +1,14 @@
 [gd_scene format=3 uid="uid://1j36jj8cwtkx"]
 
-[ext_resource type="Script" uid="uid://hajtbhl1tijf" path="res://start_scene.gd" id="1_ig7tw"]
-[ext_resource type="PackedScene" uid="uid://crkh8hdu5af84" path="res://addons/livestream-rust/gumbot/gumbot.tscn" id="2_0xm2m"]
-[ext_resource type="Material" uid="uid://csotmk0m42uj7" path="res://materials/scrolling_background/profile_page_background.tres" id="2_7mycd"]
-[ext_resource type="Shader" uid="uid://bqw622cobg44v" path="res://materials/outline/outline.gdshader" id="2_272bh"]
-[ext_resource type="PackedScene" uid="uid://dk46dldcxqfbu" path="res://ui/profile_overlay.tscn" id="3_5vw27"]
-[ext_resource type="Shader" uid="uid://cw1km147x2fwu" path="res://addons/livestream-rust/materials/bot_mat/bot_shader.gdshader" id="3_lquwl"]
-[ext_resource type="Texture2D" uid="uid://cas3gr887xevi" path="res://addons/livestream-rust/materials/bot_mat/bot_albedo.png" id="4_7mycd"]
-[ext_resource type="Texture2D" uid="uid://ba6mac1k3t38a" path="res://addons/livestream-rust/materials/bot_mat/bot_normals.png" id="5_272bh"]
-[ext_resource type="FontFile" uid="uid://7uibxoligyvb" path="res://fonts/HomeVideo-BLG6G.ttf" id="5_kek77"]
+[ext_resource type="Script" uid="uid://hajtbhl1tijf" path="res://profile_page.gd" id="1_4t1q5"]
+[ext_resource type="Shader" uid="uid://bqw622cobg44v" path="res://materials/outline/outline.gdshader" id="2_8w77y"]
+[ext_resource type="PackedScene" uid="uid://dk46dldcxqfbu" path="res://ui/profile_overlay.tscn" id="3_otial"]
+[ext_resource type="Material" uid="uid://csotmk0m42uj7" path="res://materials/scrolling_background/profile_page_background.tres" id="4_ccln5"]
+[ext_resource type="FontFile" uid="uid://7uibxoligyvb" path="res://fonts/HomeVideo-BLG6G.ttf" id="5_r0dyc"]
+[ext_resource type="PackedScene" uid="uid://crkh8hdu5af84" path="res://addons/livestream-rust/gumbot/gumbot.tscn" id="6_xf7cx"]
+[ext_resource type="Shader" uid="uid://cw1km147x2fwu" path="res://addons/livestream-rust/materials/bot_mat/bot_shader.gdshader" id="7_a81ce"]
+[ext_resource type="Texture2D" uid="uid://cas3gr887xevi" path="res://addons/livestream-rust/materials/bot_mat/bot_albedo.png" id="8_naqa7"]
+[ext_resource type="Texture2D" uid="uid://ba6mac1k3t38a" path="res://addons/livestream-rust/materials/bot_mat/bot_normals.png" id="9_61bb4"]
 
 [sub_resource type="QuadMesh" id="QuadMesh_5vw27"]
 lightmap_size_hint = Vector2i(12, 12)
@@ -17,14 +17,14 @@ size = Vector2(2, 2)
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_272bh"]
 render_priority = 127
-shader = ExtResource("2_272bh")
+shader = ExtResource("2_8w77y")
 shader_parameter/thickness = 2.0
 shader_parameter/outline_color = Color(0, 0, 0, 1)
 shader_parameter/threshold = 0.00356999991075
 shader_parameter/samples = 8
 
 [sub_resource type="LabelSettings" id="LabelSettings_4c57u"]
-font = ExtResource("5_kek77")
+font = ExtResource("5_r0dyc")
 font_size = 60
 font_color = Color(0.9137255, 0.36862746, 0.24313726, 1)
 
@@ -37,16 +37,16 @@ ssao_enabled = true
 
 [sub_resource type="Compositor" id="Compositor_kek77"]
 
-[sub_resource type="ShaderMaterial" id="ShaderMaterial_kek77"]
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_6ob2x"]
 resource_local_to_scene = true
 render_priority = 0
-shader = ExtResource("3_lquwl")
-shader_parameter/albedo_texture = ExtResource("4_7mycd")
-shader_parameter/normal_map = ExtResource("5_272bh")
+shader = ExtResource("7_a81ce")
+shader_parameter/albedo_texture = ExtResource("8_naqa7")
+shader_parameter/normal_map = ExtResource("9_61bb4")
 shader_parameter/bot_color = Color(1, 0, 0, 1)
 
 [node name="Profile" type="Node3D" unique_id=920442990 node_paths=PackedStringArray("profile_overlay")]
-script = ExtResource("1_ig7tw")
+script = ExtResource("1_4t1q5")
 profile_overlay = NodePath("ProfileOverlay")
 
 [node name="Camera3D" type="Camera3D" parent="." unique_id=259427562]
@@ -63,13 +63,13 @@ transform = Transform3D(0.18701154, 0.62628764, 0.7568295, 0.062790595, -0.77646
 light_color = Color(0.99646264, 0.82775444, 0.63832206, 1)
 light_energy = 5.0
 
-[node name="ProfileOverlay" parent="." unique_id=633817562 instance=ExtResource("3_5vw27")]
+[node name="ProfileOverlay" parent="." unique_id=633817562 instance=ExtResource("3_otial")]
 
 [node name="CanvasLayer" type="CanvasLayer" parent="." unique_id=820797902]
 layer = -1
 
 [node name="ColorRect" type="ColorRect" parent="CanvasLayer" unique_id=1047817338]
-material = ExtResource("2_7mycd")
+material = ExtResource("4_ccln5")
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
@@ -90,10 +90,10 @@ color = Color(0.9764706, 0.54509807, 0.3529412, 1)
 
 [node name="Label" type="Label" parent="CanvasLayer/ColorRect2" unique_id=864613375]
 layout_mode = 0
-offset_left = 41.146828
-offset_top = 71.93035
-offset_right = 708.3726
-offset_bottom = 125.93035
+offset_left = 125.06131
+offset_top = 70.40746
+offset_right = 792.2871
+offset_bottom = 124.40746
 text = "SolomonGumbal1"
 label_settings = SubResource("LabelSettings_4c57u")
 horizontal_alignment = 1
@@ -117,7 +117,7 @@ color = Color(0.9764706, 0.54509807, 0.3529412, 1)
 environment = SubResource("Environment_mbe3m")
 compositor = SubResource("Compositor_kek77")
 
-[node name="gumbot" parent="." unique_id=574168232 instance=ExtResource("2_0xm2m")]
+[node name="gumbot" parent="." unique_id=574168232 instance=ExtResource("6_xf7cx")]
 unique_name_in_owner = true
 transform = Transform3D(0.76339024, 0, 0.64593744, 0, 1, 0, -0.64593744, 0, 0.76339024, -0.2831327, 0.042121172, -0.098897584)
-surface_mat = SubResource("ShaderMaterial_kek77")
+surface_mat = SubResource("ShaderMaterial_6ob2x")

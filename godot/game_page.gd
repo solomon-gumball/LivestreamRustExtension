@@ -1,3 +1,4 @@
+class_name GamePage
 extends Node3D
 
 @export var gumbot: GumBot
@@ -14,20 +15,12 @@ func _ready() -> void:
   lobby_info_panel.visible = false
   Network.chatter_updated.connect(_handle_chatter_updated)
   Network.multiplayer_client.lobby_joined.connect(_lobby_joined)
-  Network.store_data_received.connect(_store_data_received)
 
   test_rpc_button.pressed.connect(test_rpc.rpc)
 
 @rpc("any_peer", "call_local")
 func test_rpc() -> void:
   debug_rect.visible = !debug_rect.visible
-
-func _store_data_received() -> void:
-  if DebugScreenLayout.window_index == 0:
-    Network.subscribe(['SIMULATION', '22445910']) # solomongumbal1
-  # elif DebugScreenLayout.window_index == 1:
-  else:
-    Network.subscribe(['SIMULATION', '1273990990']) # solomongumbot
 
 func _lobby_joined(_lobby: String) -> void:
   lobby_name_label.text = "Lobby: %s" % _lobby
