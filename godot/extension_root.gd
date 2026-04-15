@@ -16,6 +16,7 @@ func _ready() -> void:
   Network.store_data_received.connect(_store_data_received)
   profile_button.pressed.connect(_navigate_to_page.bind(ExtensionPage.Profile))
   game_button.pressed.connect(_navigate_to_page.bind(ExtensionPage.Game))
+  _navigate_to_page(ExtensionPage.Game)
 
 func _navigate_to_page(page: int) -> void:
   var new_page: Node

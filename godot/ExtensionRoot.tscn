@@ -1,6 +1,5 @@
 [gd_scene format=3 uid="uid://bpcipix6qbuo2"]
 
-[ext_resource type="PackedScene" uid="uid://1j36jj8cwtkx" path="res://profile_page.tscn" id="1_lsi7y"]
 [ext_resource type="Script" uid="uid://tbmxic5233qe" path="res://extension_root.gd" id="1_on8yo"]
 [ext_resource type="Texture2D" uid="uid://mbscocp2a2oi" path="res://ui/Game_icon.svg" id="2_hgpoc"]
 [ext_resource type="Texture2D" uid="uid://cdjd74jbkf8x2" path="res://ui/Outfit_icon.svg" id="2_vg8q4"]
@@ -23,7 +22,7 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("1_on8yo")
-active_page = NodePath("Profile")
+active_page = NodePath("")
 
 [node name="CanvasLayer" type="CanvasLayer" parent="." unique_id=941123695]
 
@@ -53,5 +52,3 @@ unique_name_in_owner = true
 layout_mode = 2
 theme = SubResource("Theme_on8yo")
 icon = ExtResource("2_hgpoc")
-
-[node name="Profile" parent="." unique_id=920442990 instance=ExtResource("1_lsi7y")]

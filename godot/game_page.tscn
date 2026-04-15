@@ -51,31 +51,41 @@ grow_vertical = 0
 theme = SubResource("Theme_fxi6q")
 text = "TEST RPC"
 
-[node name="LobbyListContainer" type="VBoxContainer" parent="CanvasLayer" unique_id=1966416422]
+[node name="CenterInfoLabel" type="RichTextLabel" parent="CanvasLayer" unique_id=395124137]
 unique_name_in_owner = true
 anchors_preset = 8
 anchor_left = 0.5
 anchor_top = 0.5
 anchor_right = 0.5
 anchor_bottom = 0.5
-offset_left = -20.0
-offset_top = -20.0
-offset_right = 20.0
-offset_bottom = 20.0
+offset_left = -325.0
+offset_top = -174.0
+offset_right = 325.0
+offset_bottom = 174.0
 grow_horizontal = 2
 grow_vertical = 2
+theme_override_fonts/normal_font = ExtResource("2_p5ued")
+theme_override_fonts/bold_font = ExtResource("2_p5ued")
+theme_override_fonts/bold_italics_font = ExtResource("2_p5ued")
+theme_override_fonts/italics_font = ExtResource("2_p5ued")
+theme_override_fonts/mono_font = ExtResource("2_p5ued")
+bbcode_enabled = true
+text = "[font_size=50]JOINING[/font_size]
+[font_size=120]PONG[/font_size]
+[font_size=50]
+STAKES....[color=green]100 gum[/color][/font_size]
+[font_size=50]PLAYERS.........2[/font_size]
+[font_size=50]SPECTATORS......4[/font_size]
 
-[node name="LobbyIdInput" type="LineEdit" parent="CanvasLayer/LobbyListContainer" unique_id=1936626913]
-unique_name_in_owner = true
-layout_mode = 2
-theme = SubResource("Theme_fxi6q")
-placeholder_text = "ID"
+"
+fit_content = true
+horizontal_alignment = 1
 
-[node name="JoinGameButton" type="Button" parent="CanvasLayer/LobbyListContainer" unique_id=590355809]
-unique_name_in_owner = true
-layout_mode = 2
-theme = SubResource("Theme_fxi6q")
-text = "JOIN GAME"
+[node name="Label" type="Label" parent="CanvasLayer" unique_id=48250606]
+offset_left = 661.0
+offset_top = 495.5
+offset_right = 939.0
+offset_bottom = 518.5
 
 [node name="LobbyInfoPanel" type="VBoxContainer" parent="CanvasLayer" unique_id=552457487]
 unique_name_in_owner = true
