@@ -13,6 +13,7 @@ signal gifted_subs(username: String, count: int)
 signal chat_message_received(message: Message.Chat)
 signal file_changed(file_name: String)
 signal chatter_updated(chatter: Chatter)
+signal lobbies_updated(lobbies: Array[Lobby])
 signal debug_image_received(base64: String)
 signal leaderboard_updated(leaderboard: Array[Chatter])
 signal onscreen_notification_received(message: Message.OnScreenNotification)
@@ -250,7 +251,12 @@ func handle_remote_message(message: Variant) -> void:
       scrolling_text = message.get("scrolling_text", "NO TEXT PROVIDED")
       drops = store_data.drops
       store_data_received.emit()
-    
+    "rtc-lobbies-updated":
+      var lobbies: Array[Lobby] = []
+      for lobby_data in message.lobbies:
+        lobbies.append(Lobby.from_data(lobby_data))
+      lobbies_updated.emit(lobbies)
+
   multiplayer_client.handle_ws_message(message)
 
 func handle_remote_socket_process():
