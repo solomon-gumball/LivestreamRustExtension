@@ -13,13 +13,17 @@ script = ExtResource("1_0ehfm")
 transform = Transform3D(1, 0, 0, 0, 0.6140786, 0.7892449, 0, -0.7892449, 0.6140786, 0, 2.1573846, 1.72217)
 
 [node name="PongPaddleL" parent="." unique_id=372987713 instance=ExtResource("2_racd5")]
+unique_name_in_owner = true
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.006736815, -1.8393409)
 
 [node name="PongPaddleR" parent="." unique_id=1745273558 instance=ExtResource("2_racd5")]
+unique_name_in_owner = true
 transform = Transform3D(-1, 0, -8.742278e-08, 0, 1, 0, 8.742278e-08, 0, -1, 0, 0.006736815, 1.9203131)
 
-[node name="Camera3D" type="Camera3D" parent="." unique_id=481627781]
-transform = Transform3D(-4.371139e-08, 1, 4.371139e-08, 0, -4.371139e-08, 1, 1, 4.371139e-08, 1.9106855e-15, 0, 3.5757265, 0)
+[node name="Camera" type="Camera3D" parent="." unique_id=481627781]
+unique_name_in_owner = true
+transform = Transform3D(-4.371139e-08, 1, 4.371139e-08, 0, -4.371139e-08, 1, 1, 4.371139e-08, 1.9106855e-15, 0, 4.6417165, 0)
+current = true
 fov = 45.0
 
 [node name="WorldEnvironment" type="WorldEnvironment" parent="." unique_id=1164650713]

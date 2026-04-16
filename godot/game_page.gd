@@ -168,7 +168,10 @@ func _lobbies_updated(lobbies: Array[Lobby]) -> void:
         game_state = GameState.JoiningLobby
       
     GameState.InLobby, GameState.JoiningLobby:
-      if new_lobby.peers.has(Network.current_chatter.id):
+      var is_in_lobby: bool = new_lobby.peers.any(func (peer):
+        return peer.chatter_id == Network.current_chatter.id
+      )
+      if is_in_lobby:
         if new_lobby.started:
           game_state = GameState.InGame
         else:
