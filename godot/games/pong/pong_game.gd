@@ -48,5 +48,12 @@ func _handle_chatter_updated(chatter: Chatter) -> void:
   if chatters.has(pong_paddle_r.chatter_id):
     pong_paddle_r.chatter = chatters[pong_paddle_r.chatter_id]
 
+func _input(event: InputEvent) -> void:
+  if event is InputEventKey and event.pressed:
+    if event.keycode == KEY_W or event.keycode == KEY_UP:
+      pong_paddle_l.add_movement_input(Vector2(0, -1))
+    elif event.keycode == KEY_S or event.keycode == KEY_DOWN:
+      pong_paddle_l.add_movement_input(Vector2(0, 1))
+
 func _handle_peer_packet(id: int, packet: Dictionary) -> void:
   print("PONG GAME GOT PACKET: ", packet, " from ", id)
