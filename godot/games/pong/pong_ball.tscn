@@ -1,0 +1,26 @@
+[gd_scene format=3 uid="uid://tbua2sk7gi2p"]
+
+[ext_resource type="Script" uid="uid://beq5kaqaqnvpq" path="res://games/pong/pong_ball.gd" id="1_c3wl3"]
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_racd5"]
+size = Vector3(0.1, 0.1, 0.1)
+
+[sub_resource type="BoxMesh" id="BoxMesh_racd5"]
+size = Vector3(0.1, 0.1, 0.1)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_u5md4"]
+emission_enabled = true
+emission = Color(0.13333334, 0.7019608, 0.95686275, 1)
+emission_energy_multiplier = 3.0
+
+[node name="PongBall" type="Area3D" unique_id=1819344637]
+monitoring = false
+monitorable = false
+script = ExtResource("1_c3wl3")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="." unique_id=1270520286]
+shape = SubResource("BoxShape3D_racd5")
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="." unique_id=489528167]
+mesh = SubResource("BoxMesh_racd5")
+surface_material_override/0 = SubResource("StandardMaterial3D_u5md4")

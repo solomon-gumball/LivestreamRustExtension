@@ -3,22 +3,50 @@
 [ext_resource type="Script" uid="uid://cp25ws8vhg2f5" path="res://games/pong/pong_game.gd" id="1_0ehfm"]
 [ext_resource type="PackedScene" uid="uid://b2ne4k7x0p3jp" path="res://games/pong/pong_paddle.tscn" id="2_racd5"]
 
+[sub_resource type="BoxShape3D" id="BoxShape3D_racd5"]
+size = Vector3(10, 1, 1)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_433xj"]
+size = Vector3(10, 1, 1)
+
 [sub_resource type="Environment" id="Environment_racd5"]
+background_mode = 1
 glow_enabled = true
+
+[sub_resource type="QuadMesh" id="QuadMesh_racd5"]
+
+[sub_resource type="Gradient" id="Gradient_racd5"]
+interpolation_mode = 1
+offsets = PackedFloat32Array(0, 0.5387097)
+colors = PackedColorArray(0, 0, 0, 0, 18.892157, 18.892157, 18.892157, 1)
+
+[sub_resource type="GradientTexture1D" id="GradientTexture1D_433xj"]
+gradient = SubResource("Gradient_racd5")
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_r2ito"]
+transparency = 2
+alpha_scissor_threshold = 0.5
+alpha_antialiasing_mode = 0
+albedo_texture = SubResource("GradientTexture1D_433xj")
+emission_enabled = true
+emission_energy_multiplier = 3.0
+emission_texture = SubResource("GradientTexture1D_433xj")
+uv1_scale = Vector3(30, 30, 30)
 
 [node name="PongGameScene" type="Node3D" unique_id=632967591]
 script = ExtResource("1_0ehfm")
+paddle_start_distance = 2.2
 
 [node name="DirectionalLight3D" type="DirectionalLight3D" parent="." unique_id=408204329]
 transform = Transform3D(1, 0, 0, 0, 0.6140786, 0.7892449, 0, -0.7892449, 0.6140786, 0, 2.1573846, 1.72217)
 
 [node name="PongPaddleL" parent="." unique_id=372987713 instance=ExtResource("2_racd5")]
 unique_name_in_owner = true
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.006736815, -1.8393409)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.006736815, -2.2)
 
 [node name="PongPaddleR" parent="." unique_id=1745273558 instance=ExtResource("2_racd5")]
 unique_name_in_owner = true
-transform = Transform3D(-1, 0, -8.742278e-08, 0, 1, 0, 8.742278e-08, 0, -1, 0, 0.006736815, 1.9203131)
+transform = Transform3D(-1, 0, -8.742278e-08, 0, 1, 0, 8.742278e-08, 0, -1, 0, 0, 2.2)
 
 [node name="Camera" type="Camera3D" parent="." unique_id=481627781]
 unique_name_in_owner = true
@@ -26,9 +54,49 @@ transform = Transform3D(-4.371139e-08, 1, 4.371139e-08, 0, -4.371139e-08, 1, 1, 
 current = true
 fov = 45.0
 
+[node name="PongSpawnLocation" type="Marker3D" parent="." unique_id=1025138863]
+unique_name_in_owner = true
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.17301774, 0)
+
+[node name="ScoreRegion" type="Area3D" parent="." unique_id=1300623194]
+transform = Transform3D(-4.371139e-08, 0, 1, 0, 1, 0, -1, 0, -4.371139e-08, 1.623, 0.399, 0)
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="ScoreRegion" unique_id=1790969097]
+transform = Transform3D(-4.371139e-08, 0, 1, 0, 1, 0, -1, 0, -4.371139e-08, 3.1932614, 0, -1.4715875)
+shape = SubResource("BoxShape3D_racd5")
+
+[node name="CollisionShape3D2" type="CollisionShape3D" parent="ScoreRegion" unique_id=606438610]
+transform = Transform3D(-4.371139e-08, 0, 1, 0, 1, 0, -1, 0, -4.371139e-08, -3.4622478, 0, -1.4715872)
+shape = SubResource("BoxShape3D_racd5")
+
+[node name="WallTop" type="Area3D" parent="." unique_id=1251931660]
+transform = Transform3D(-4.371139e-08, 0, 1, 0, 1, 0, -1, 0, -4.371139e-08, 1.623, 0.399, 0)
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="WallTop" unique_id=1843961124]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0.5)
+shape = SubResource("BoxShape3D_433xj")
+
+[node name="CSGBox3D" type="CSGBox3D" parent="WallTop/CollisionShape3D" unique_id=1689618756]
+size = Vector3(10, 1, 1)
+
+[node name="WallBottom" type="Area3D" parent="." unique_id=486406214]
+transform = Transform3D(-4.371139e-08, 0, -1, 0, 1, 0, 1, 0, -4.371139e-08, -1.623, 0.399, 0)
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="WallBottom" unique_id=2073819807]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0.5)
+shape = SubResource("BoxShape3D_433xj")
+
+[node name="CSGBox3D" type="CSGBox3D" parent="WallBottom/CollisionShape3D" unique_id=304210500]
+size = Vector3(10, 1, 1)
+
 [node name="WorldEnvironment" type="WorldEnvironment" parent="." unique_id=1164650713]
 environment = SubResource("Environment_racd5")
 
 [node name="CSGBox3D" type="CSGBox3D" parent="." unique_id=398952350]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.5, 0)
 size = Vector3(10, 1, 10)
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="." unique_id=1783122201]
+transform = Transform3D(8.628619, 0, 0, 0, 2.1779676e-09, 1.0000002, 0, 0.049826086, -4.3711395e-08, 0, 0.008476796, -3.7053255e-10)
+mesh = SubResource("QuadMesh_racd5")
+surface_material_override/0 = SubResource("StandardMaterial3D_r2ito")

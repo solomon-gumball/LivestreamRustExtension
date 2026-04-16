@@ -8,15 +8,9 @@
 [ext_resource type="Texture2D" uid="uid://cas3gr887xevi" path="res://addons/livestream-rust/materials/bot_mat/bot_albedo.png" id="6_cy2wj"]
 [ext_resource type="Texture2D" uid="uid://ba6mac1k3t38a" path="res://addons/livestream-rust/materials/bot_mat/bot_normals.png" id="7_x3urd"]
 
-[sub_resource type="Theme" id="Theme_fxi6q"]
-default_font = ExtResource("2_p5ued")
-default_font_size = 50
-
-[sub_resource type="LabelSettings" id="LabelSettings_sqe1x"]
-font = ExtResource("3_nspls")
-font_size = 40
-
-[sub_resource type="Environment" id="Environment_r1ube"]
+[sub_resource type="Environment" id="Environment_racd5"]
+background_mode = 1
+glow_enabled = true
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_jjmn7"]
 resource_local_to_scene = true
@@ -26,52 +20,114 @@ shader_parameter/albedo_texture = ExtResource("6_cy2wj")
 shader_parameter/normal_map = ExtResource("7_x3urd")
 shader_parameter/bot_color = Color(1, 0, 0, 1)
 
-[node name="Node3D" type="Node3D" unique_id=1551556878 node_paths=PackedStringArray("gumbot")]
+[sub_resource type="LabelSettings" id="LabelSettings_jjmn7"]
+font = ExtResource("2_p5ued")
+font_size = 40
+
+[sub_resource type="Theme" id="Theme_fxi6q"]
+default_font = ExtResource("2_p5ued")
+default_font_size = 50
+
+[sub_resource type="LabelSettings" id="LabelSettings_sqe1x"]
+font = ExtResource("3_nspls")
+font_size = 40
+
+[node name="GamePage" type="Control" unique_id=528837551 node_paths=PackedStringArray("gumbot")]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
 script = ExtResource("1_jjmn7")
-gumbot = NodePath("gumbot")
+gumbot = NodePath("SubViewportContainer/SubViewport/GameRootNode/gumbot")
 
-[node name="CanvasLayer" type="CanvasLayer" parent="." unique_id=1814783549]
+[node name="SubViewportContainer" type="SubViewportContainer" parent="." unique_id=1824508744]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+stretch = true
 
-[node name="DebugRect" type="ColorRect" parent="CanvasLayer" unique_id=612512015]
+[node name="SubViewport" type="SubViewport" parent="SubViewportContainer" unique_id=1485304244]
+transparent_bg = true
+handle_input_locally = false
+size = Vector2i(1600, 900)
+render_target_update_mode = 4
+
+[node name="GameRootNode" type="Node3D" parent="SubViewportContainer/SubViewport" unique_id=438430134]
 unique_name_in_owner = true
-offset_left = 32.0
-offset_top = 720.0
-offset_right = 186.0
-offset_bottom = 819.0
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="SubViewportContainer/SubViewport/GameRootNode" unique_id=1219707593]
+environment = SubResource("Environment_racd5")
+
+[node name="Camera3D" type="Camera3D" parent="SubViewportContainer/SubViewport/GameRootNode" unique_id=1295238520]
+transform = Transform3D(-0.9999256, 0.0012404516, -0.012136259, -8.798377e-09, 0.994817, 0.101681344, 0.0121994885, 0.101673774, -0.994743, 0.005316977, 0.32955688, -0.37962487)
+projection = 1
+current = true
+
+[node name="gumbot" parent="SubViewportContainer/SubViewport/GameRootNode" unique_id=2126276004 instance=ExtResource("4_43xba")]
+transform = Transform3D(-0.9408098, 0, 0.33893508, 0, 1, 0, -0.33893508, 0, -0.9408098, -0.6849959, -0.30148157, 0.73511076)
+surface_mat = SubResource("ShaderMaterial_jjmn7")
+
+[node name="DebugRect" type="ColorRect" parent="." unique_id=612512015]
+unique_name_in_owner = true
+layout_mode = 1
+offset_right = 154.0
+offset_bottom = 99.0
 color = Color(1, 0.07058824, 0.09411765, 1)
 
-[node name="HBoxContainer" type="HBoxContainer" parent="CanvasLayer" unique_id=1557344406]
+[node name="DebugList" type="VBoxContainer" parent="." unique_id=530462991]
+layout_mode = 1
+anchors_preset = 1
+anchor_left = 1.0
+anchor_right = 1.0
+offset_bottom = 53.0
+grow_horizontal = 0
+
+[node name="PingLabel" type="Label" parent="DebugList" unique_id=2000886091]
+unique_name_in_owner = true
+layout_mode = 2
+text = "PING: XXms"
+label_settings = SubResource("LabelSettings_jjmn7")
+
+[node name="HBoxContainer" type="HBoxContainer" parent="." unique_id=1557344406]
+layout_mode = 1
 anchors_preset = 3
 anchor_left = 1.0
 anchor_top = 1.0
 anchor_right = 1.0
 anchor_bottom = 1.0
-offset_left = -248.0
+offset_left = -944.0
 offset_top = -53.0
 grow_horizontal = 0
 grow_vertical = 0
 theme_override_constants/separation = 10
+alignment = 2
 
-[node name="CloseLobbyButton" type="Button" parent="CanvasLayer/HBoxContainer" unique_id=412995301]
+[node name="CloseLobbyButton" type="Button" parent="HBoxContainer" unique_id=412995301]
 unique_name_in_owner = true
 layout_mode = 2
 theme = SubResource("Theme_fxi6q")
 text = "CLOSE LOBBY"
 
-[node name="StartGameButton" type="Button" parent="CanvasLayer/HBoxContainer" unique_id=1589335327]
+[node name="StartGameButton" type="Button" parent="HBoxContainer" unique_id=1589335327]
 unique_name_in_owner = true
 layout_mode = 2
 theme = SubResource("Theme_fxi6q")
 text = "START GAME"
 
-[node name="HostGameButton" type="Button" parent="CanvasLayer/HBoxContainer" unique_id=836802073]
+[node name="HostGameButton" type="Button" parent="HBoxContainer" unique_id=836802073]
 unique_name_in_owner = true
 layout_mode = 2
 theme = SubResource("Theme_fxi6q")
 text = "HOST GAME"
 
-[node name="CenterInfoLabel" type="RichTextLabel" parent="CanvasLayer" unique_id=395124137]
+[node name="CenterInfoLabel" type="RichTextLabel" parent="." unique_id=395124137]
 unique_name_in_owner = true
+layout_mode = 1
 anchors_preset = 8
 anchor_left = 0.5
 anchor_top = 0.5
@@ -100,43 +156,34 @@ STAKES....[color=green]100 gum[/color][/font_size]
 fit_content = true
 horizontal_alignment = 1
 
-[node name="Label" type="Label" parent="CanvasLayer" unique_id=48250606]
+[node name="Label" type="Label" parent="." unique_id=48250606]
+layout_mode = 0
 offset_left = 661.0
 offset_top = 495.5
 offset_right = 939.0
 offset_bottom = 518.5
 
-[node name="LobbyInfoPanel" type="VBoxContainer" parent="CanvasLayer" unique_id=552457487]
+[node name="LobbyInfoPanel" type="VBoxContainer" parent="." unique_id=552457487]
 unique_name_in_owner = true
+layout_mode = 1
 anchors_preset = 5
 anchor_left = 0.5
 anchor_right = 0.5
-offset_left = -20.0
-offset_right = 20.0
-offset_bottom = 40.0
+offset_left = -300.0
+offset_right = 300.0
+offset_bottom = 76.0
 grow_horizontal = 2
 
-[node name="LobbyNameLabel" type="Label" parent="CanvasLayer/LobbyInfoPanel" unique_id=1386173333]
+[node name="LobbyNameLabel" type="Label" parent="LobbyInfoPanel" unique_id=1386173333]
 unique_name_in_owner = true
 layout_mode = 2
 text = "IN LOBBY dpVeBJeFQLKSYmyF"
 label_settings = SubResource("LabelSettings_sqe1x")
 horizontal_alignment = 1
 
-[node name="ClientIdLabel" type="Label" parent="CanvasLayer/LobbyInfoPanel" unique_id=741555257]
+[node name="ClientIdLabel" type="Label" parent="LobbyInfoPanel" unique_id=741555257]
 unique_name_in_owner = true
 layout_mode = 2
 text = "CLIENT 329024"
 label_settings = SubResource("LabelSettings_sqe1x")
 horizontal_alignment = 1
-
-[node name="WorldEnvironment" type="WorldEnvironment" parent="." unique_id=1219707593]
-environment = SubResource("Environment_r1ube")
-
-[node name="Camera3D" type="Camera3D" parent="." unique_id=1295238520]
-transform = Transform3D(-0.9999256, 0.0012404516, -0.012136259, -8.798377e-09, 0.994817, 0.101681344, 0.0121994885, 0.101673774, -0.994743, 0.005316977, 0.32955688, -0.37962487)
-projection = 1
-
-[node name="gumbot" parent="." unique_id=2126276004 instance=ExtResource("4_43xba")]
-transform = Transform3D(-0.9408098, 0, 0.33893508, 0, 1, 0, -0.33893508, 0, -0.9408098, -0.6849959, -0.30148157, 0.73511076)
-surface_mat = SubResource("ShaderMaterial_jjmn7")

@@ -1,5 +1,5 @@
 class_name GamePage
-extends Node3D
+extends Control
 
 @export var gumbot: GumBot
 @onready var lobby_name_label: Label = %LobbyNameLabel
@@ -12,6 +12,8 @@ extends Node3D
 @onready var start_game_button: Button = %StartGameButton
 @onready var close_lobby_button: Button = %CloseLobbyButton
 @onready var host_game_button: Button = %HostGameButton
+@onready var game_root_node: Node3D = %GameRootNode
+@onready var ping_label: Label = %PingLabel
 
 var info_tween: Tween
 var current_lobby: Lobby:
@@ -80,7 +82,7 @@ var game_state: GameState:
 
           game_scene = pong_game_template.instantiate()
           game_scene.lobby = current_lobby
-          add_child(game_scene)
+          game_root_node.add_child(game_scene)
 
 func _type_text(text: String, speed: float, repeat: bool) -> void:
   if info_tween:
@@ -114,7 +116,12 @@ func _ready() -> void:
   close_lobby_button.pressed.connect(_close_lobby)
   start_game_button.pressed.connect(_start_game)
 
+  Network.multiplayer_client.ping_check_completed.connect(_update_ping_label)
+
   game_state = GameState.LookingForLobby
+
+func _update_ping_label(msec_ping: float) -> void:
+  ping_label.text = "PING: %sms" % int(msec_ping)
 
 func _store_data_received() -> void:
   Network.send_socket_message({ "type": "rtc-fetch-lobbies" })

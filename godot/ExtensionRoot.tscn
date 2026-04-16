@@ -14,7 +14,7 @@ Button/styles/hover = null
 Button/styles/normal = SubResource("StyleBoxEmpty_vg8q4")
 Button/styles/pressed = SubResource("StyleBoxEmpty_hgpoc")
 
-[node name="ExtensionRoot" type="Control" unique_id=1103082465 node_paths=PackedStringArray("active_page")]
+[node name="ExtensionRoot" type="Control" unique_id=1103082465]
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
@@ -22,9 +22,17 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("1_on8yo")
-active_page = NodePath("")
 
 [node name="CanvasLayer" type="CanvasLayer" parent="." unique_id=941123695]
+
+[node name="PageContainer" type="Control" parent="CanvasLayer" unique_id=1859035000]
+unique_name_in_owner = true
+layout_mode = 3
+anchors_preset = 0
+offset_left = 140.0
+offset_top = 5.0
+offset_right = 1612.0
+offset_bottom = 911.0
 
 [node name="ColorRect" type="ColorRect" parent="CanvasLayer" unique_id=498058461]
 offset_left = -48.0

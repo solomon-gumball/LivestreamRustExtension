@@ -6,6 +6,7 @@ var current_chatter: Chatter
 @export var active_page: Node
 @onready var profile_button: Button = %ProfileButton
 @onready var game_button: Button = %GameButton
+@onready var page_container: Control = %PageContainer
 
 var profile_page_template: PackedScene = preload("res://profile_page.tscn")
 var game_page_template: PackedScene = preload("res://game_page.tscn")
@@ -27,11 +28,11 @@ func _navigate_to_page(page: int) -> void:
       new_page = game_page_template.instantiate()
     
   if active_page:
-    remove_child(active_page)
+    page_container.remove_child(active_page)
     active_page.queue_free()
 
   active_page = new_page
-  add_child(new_page)  
+  page_container.add_child(new_page)
 
 func _store_data_received() -> void:
   if DebugScreenLayout.window_index == 0:

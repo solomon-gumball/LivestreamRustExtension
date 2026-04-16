@@ -1,5 +1,5 @@
 class_name ProfilePage
-extends Node3D
+extends Control
 
 @onready var gumbot: GumBot = %gumbot
 @export var profile_overlay: ProfileOverlay

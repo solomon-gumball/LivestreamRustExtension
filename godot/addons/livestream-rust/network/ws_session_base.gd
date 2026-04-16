@@ -66,7 +66,6 @@ func send_candidate(id: int, mid: String, index: int, sdp: String) -> Error:
 	return Network.send_socket_message({ "type": "rtc-candidate", "dest_peer_id": id, "candidate": "%s\n%d\n%s" % [mid, index, sdp] })
 
 func send_offer(id: int, offer: String) -> Error:
-	print("SENT OFFER TO %d !!!" % id)
 	return Network.send_socket_message({ "type": "rtc-offer", "dest_peer_id": id, "sdp": offer })
 
 func send_answer(id: int, answer: String) -> Error:

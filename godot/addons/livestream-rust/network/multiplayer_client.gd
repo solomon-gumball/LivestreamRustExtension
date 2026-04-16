@@ -23,18 +23,26 @@ func _init() -> void:
   peer_connected.connect(_peer_connected)
   peer_disconnected.connect(_peer_disconnected)
 
+var ping_timer: Timer
+
 func _ready() -> void:
   get_tree().multiplayer_poll = false
+
+  ping_timer = Timer.new()
+  ping_timer.autostart = false
+  ping_timer.one_shot = false
+  ping_timer.timeout.connect(_check_ping)
+  add_child(ping_timer)
 
 func start(url: String, _lobby: String = "", _mesh: bool = true) -> void:
   stop()
   sealed = false
   mesh = _mesh
   lobby = _lobby
-  # connect_to_url(url)
 
 func stop() -> void:
   multiplayer.multiplayer_peer = null
+  ping_timer.stop()
   rtc_mp.close()
 
 func _create_peer(id: int) -> WebRTCPeerConnection:
@@ -92,6 +100,9 @@ func _connected(id: int, use_mesh: bool) -> void:
     rtc_mp.create_server()
   else:
     rtc_mp.create_client(id)
+  
+  _check_ping()
+  ping_timer.start(5.0)
   multiplayer.multiplayer_peer = rtc_mp
 
   multiplayer.peer_connected.connect(func(pid): print("RTC peer connected: ", pid))
@@ -131,25 +142,49 @@ func _candidate_received(id: int, mid: String, index: int, sdp: String) -> void:
   if rtc_mp.has_peer(id):
     rtc_mp.get_peer(id).connection.add_ice_candidate(mid, index, sdp)
 
-func send_packet(packet: Dictionary) -> void:
+func send_packet(packet: Dictionary, target_peer: int = MultiplayerPeer.TARGET_PEER_BROADCAST) -> void:
   if not lobby:
     print("Can't send packet, not in lobby")
     return
-  # print("Sending packet: ", packet)
-
-  for peer_id in rtc_mp.get_peers():
-    print("my id=%d, connected peer: %d" % [rtc_mp.get_unique_id(), peer_id])
 
   var packet_data: PackedByteArray = var_to_bytes(packet)
-  rtc_mp.set_target_peer(MultiplayerPeer.TARGET_PEER_BROADCAST)
+  rtc_mp.set_target_peer(target_peer)
   rtc_mp.put_packet(packet_data)
   
+enum GlobalNetCommand {
+  Ping = 1000, Pong
+}
+
+func my_peer_id() -> int:
+  return rtc_mp.get_unique_id()
+
+func is_authority() -> bool:
+  return rtc_mp.get_unique_id() == 1
+
+func _check_ping() -> void:
+  if !is_authority():
+    send_packet({
+      "type": GlobalNetCommand.Ping,
+      "sent_at": Time.get_ticks_msec()
+    }, MultiplayerPeer.TARGET_PEER_SERVER)
+
+signal ping_check_completed(new_ping_ms: float)
+
 func _process(_delta):
   rtc_mp.poll()
 
   while rtc_mp.get_available_packet_count() > 0:
-    var data: PackedByteArray = rtc_mp.get_packet()
     var sender_id: int = rtc_mp.get_packet_peer()
+    var data: PackedByteArray = rtc_mp.get_packet()
     var message := bytes_to_var(data)
-    print("from %d: %s" % [sender_id, message])
+  
+    match message.type:
+      GlobalNetCommand.Ping:
+        send_packet({
+          "type": GlobalNetCommand.Pong,
+          "sent_at": message.get("sent_at", 0)
+        }, sender_id)
+      GlobalNetCommand.Pong:
+        ping_check_completed.emit(Time.get_ticks_msec() - message.get("sent_at", 0))
+
     packet_received.emit(sender_id, message)
