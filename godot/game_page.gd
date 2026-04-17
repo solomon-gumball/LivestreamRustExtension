@@ -15,7 +15,7 @@ extends Control
 @onready var game_root_node: Node3D = %GameRootNode
 @onready var ping_label: Label = %PingLabel
 
-@onready var state_machine: StateMachine = %StateMachine
+# @onready var state_machine: StateMachine = %StateMachine
 
 var info_tween: Tween
 var current_lobby: Lobby:
@@ -49,9 +49,10 @@ var game_state: GameState:
     var old_value = game_state
     game_state = new_value
 
-    if current_lobby:
-      print(current_lobby.started)
+    # if current_lobby:
+    #   print(current_lobby.started)
 
+    # print('prev state -> ', old_value, ' new state -> ', new_value)
     if old_value != new_value:
       if game_scene:
         game_scene.queue_free()
@@ -121,6 +122,7 @@ func _ready() -> void:
   Network.multiplayer_client.ping_check_completed.connect(_update_ping_label)
 
   game_state = GameState.LookingForLobby
+  Network.socket_connection_status_changed.connect(_handle_net_state_changed)
 
 func _update_ping_label(msec_ping: float) -> void:
   ping_label.text = "PING: %sms" % int(msec_ping)
@@ -153,6 +155,8 @@ func _host_game() -> void:
   Network.multiplayer_client.join_lobby("")
 
 func _lobbies_updated(lobbies: Array[Lobby]) -> void:
+  print('_lobbies_updated')
+
   if Network.current_chatter == null: return
   if lobbies.size() == 0:
     game_state = GameState.LookingForLobby
@@ -165,29 +169,98 @@ func _lobbies_updated(lobbies: Array[Lobby]) -> void:
 
   if new_lobby:
     current_lobby = new_lobby
-
   match game_state:
     GameState.LookingForLobby:
       if new_lobby:
-        Network.multiplayer_client.join_lobby(new_lobby.name)
-        game_state = GameState.JoiningLobby
+        var is_already_in_lobby: bool = new_lobby.peers.any(func (peer):
+          return peer.chatter_id == Network.current_chatter.id
+        )
+        print("is_in_lobby=", is_already_in_lobby, " started=", new_lobby.started)
+
+        # Cases:
+        #
+        # - [Host who just created the lobby]: already in peer list and rtc_mp
+        # initialized via rtc-peer-id — skip join, just advance state.
+        # 
+        # - [Reconnecting non-host]: already in peer list but rtc_mp was reset by stop(),
+        # so fall through to join_lobby to re-initialize via a fresh rtc-peer-id.
+        #
+        # - [New non-host joining]: not in peer list yet, always calls join_lobby.
+        #
+        if is_already_in_lobby and Network.multiplayer_client.is_initialized():
+          if new_lobby.started:
+            game_state = GameState.InGame
+          else:
+            game_state = GameState.JoiningLobby
+        else:
+          Network.multiplayer_client.join_lobby(new_lobby.name)
       
     GameState.InLobby, GameState.JoiningLobby:
       var is_in_lobby: bool = new_lobby.peers.any(func (peer):
         return peer.chatter_id == Network.current_chatter.id
       )
+      # print("is_in_lobby=", is_in_lobby, " started=", new_lobby.started)
       if is_in_lobby:
         if new_lobby.started:
           game_state = GameState.InGame
         else:
           game_state = GameState.InLobby
+    # GameState.InGame:
+    #   if new_lobby:
+    #     var is_in_lobby: bool = new_lobby.peers.any(func (peer):
+    #       return peer.chatter_id == Network.current_chatter.id
+    #     )
+    #     if not is_in_lobby:
+    #       Network.multiplayer_client.join_lobby(new_lobby.name)
 
 func _lobby_joined(_lobby: String) -> void:
   lobby_name_label.text = "Lobby: %s" % _lobby
-  client_id_label.text = "Client ID: %d" % Network.multiplayer_client.rtc_mp.get_unique_id()
+  client_id_label.text = "Peer ID: %d" % Network.multiplayer_client.my_peer_id()
   lobby_info_panel.visible = true
-  print("Joined lobby: %s" % _lobby)
 
 func _handle_chatter_updated(chatter: Chatter) -> void:
   if chatter:
     gumbot.chatter = chatter
+
+func _handle_net_state_changed(connected: bool) -> void:
+  if !connected:
+    current_lobby = null
+    game_state = GameState.LookingForLobby
+  else:
+    current_lobby = null
+    Network.send_socket_message({ "type": "rtc-fetch-lobbies" })
+  # if connected and current_lobby:
+  #   game_state = GameState.JoiningLobby
+  #   current_lobby = 
+    
+
+# class GamePageState extends State:
+#   var lobby: Lobby
+
+# class LookingForLobbyState extends State:
+#   func enter_state(_previous_state: State) -> void:
+#     Network.multiplayer_client.lobbies_updated.connect(_handle_lobbies_updated)
+#   func exit_state() -> void: pass
+
+#   func _handle_lobbies_updated(lobbies: Array[Lobby]) -> void:
+#     if lobbies.size() > 0:
+#       Network.multiplayer_client.join_lobby(lobbies[0].name)
+
+# class JoiningLobbyState extends State:
+#   signal did_leave_lobby
+#   func enter_state(_previous_state: State) -> void:
+#     lobby_info_panel.visible = true
+#     Network.multiplayer_client.lobbies_updated.connect(_handle_lobbies_updated)
+  
+#   func _handle_lobbies_updated(lobbies: Array[Lobby]) -> void:
+#     if lobbies.size() == 0:
+#       did_leave_lobby.emit()
+#       return
+#     var new_lobby_data: Lobby = lobbies[0]
+#     if new_lobby_data
+
+#   func exit_state() -> void: pass
+
+#   func _handle_lobbies_updated(lobbies: Array[Lobby]) -> void:
+#     if lobbies.size() > 0:
+#       Network.multiplayer_client.join_lobby(lobbies[0].name)

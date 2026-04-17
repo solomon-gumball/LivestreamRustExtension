@@ -45,11 +45,11 @@ func _navigate_to_page(page: int) -> void:
 func _store_data_received() -> void:
   if DebugScreenLayout.window_index == 0:
     # Network.current_chatter_id = '22445910'
-    Network.subscribe(['22445910', 'LOBBIES']) # solomongumbal1
+    Network.subscribe(['LOBBIES'], '22445910') # solomongumbal1
   # elif DebugScreenLayout.window_index == 1:
   else:
     # Network.current_chatter_id = '1273990990'
-    Network.subscribe(['1273990990', 'LOBBIES']) # solomongumbot
+    Network.subscribe(['LOBBIES'], '1273990990') # solomongumbot
 
 func _handle_chatter_updated(chatter: Chatter) -> void:
   current_chatter = chatter

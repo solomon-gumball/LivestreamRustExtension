@@ -153,10 +153,11 @@ func slots_activated(uuid: String, gumbucksWon: float) -> void:
     "gumbucksWon": gumbucksWon
   }))
 
-func subscribe(channels: Array[String]) -> void:
+func subscribe(channels: Array[String], debugAuthId: String = "") -> void:
   remote_server_socket.send_text(JSON.stringify({
     "type": "subscribe",
-    "channels": channels
+    "channels": channels,
+    "debugAuthId": debugAuthId
   }))
 
 var item_info: Dictionary = {}
@@ -234,7 +235,6 @@ func handle_remote_message(message: Variant) -> void:
       store_data_received.emit()
     "authenticated":
       turn_credentials = message.turnCredentials
-      print(turn_credentials)
 
   multiplayer_client.handle_ws_message(message)
 
@@ -263,7 +263,6 @@ var connection_status: ConnectionStatus = ConnectionStatus.None:
     connection_status = new_connection_status
 
     if new_connection_status != previous_status:
-      print('Connection state: ', previous_status, ' => ', new_connection_status)
       socket_connection_status_changed.emit(new_connection_status == ConnectionStatus.Connected)
 
       if new_connection_status == ConnectionStatus.Disconnected:
@@ -297,6 +296,7 @@ func _input(event: InputEvent) -> void:
     if remote_server_socket.get_ready_state() == WebSocketPeer.STATE_OPEN:
       debug_force_disconnected = true
       remote_server_socket.close()
+      print('peer ', multiplayer_client.my_peer_id(), ' is disconnecting')
     else:
       debug_force_disconnected = false
       # remote_server_socket = WebSocketPeer.new()

@@ -11,8 +11,8 @@ signal connected(id: int, use_mesh: bool)
 # Peer leaves lobby (explicitly or by terminating ws connection)
 signal disconnected()
 
-# Some other peer joined lobby (explicitly or by terminating ws connection)
-signal peer_connected(id: int)
+# Some other peer joined lobby and wants to establish webRTC connection
+signal peer_joined(id: int)
 
 # Some other peer left lobby (explicitly or by terminating ws connection)
 signal peer_disconnected(id: int)
@@ -43,7 +43,6 @@ func handle_ws_message(parsed: Variant) -> bool:
   if type.is_empty():
     return false
   
-  # print("rtc type: %s" % type)
   match type:
     "rtc-peer-id":
       connected.emit(int(msg.get("peer_id", 0)), bool(msg.get("mesh_mode", false)))
@@ -52,12 +51,11 @@ func handle_ws_message(parsed: Variant) -> bool:
       lobby_joined.emit(current_lobby_id)
     "rtc-lobby-sealed":
       lobby_sealed.emit()
-    "rtc-peer-connected":
-      peer_connected.emit(int(msg.get("peer_id", 0)))
+    "rtc-peer-joined":
+      peer_joined.emit(int(msg.get("peer_id", 0)))
     "rtc-peer-disconnected":
       peer_disconnected.emit(int(msg.get("peer_id", 0)))
     "rtc-offer":
-      print("GOT OFFER FROM: %s" % str(msg.get("from_peer_id", 0)))
       offer_received.emit(int(msg.get("from_peer_id", 0)), str(msg.get("sdp", "")))
     "rtc-answer":
       answer_received.emit(int(msg.get("from_peer_id", 0)), str(msg.get("sdp", "")))

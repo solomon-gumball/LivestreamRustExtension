@@ -52,11 +52,19 @@ func _ready() -> void:
 
   _handle_chatter_updated(Network.current_chatter)
 
+  print("IS AUTHORITY? ", Network.multiplayer_client.is_authority())
+
   if Network.multiplayer_client.is_authority():
+    Network.multiplayer_client.rtc_peer_ready.connect(_on_player_joined)
+
     await get_tree().create_timer(1.0).timeout
     score_region_l.body_entered.connect(_area_entered)
     score_region_r.body_entered.connect(_area_entered)
     _start_round()
+
+func _on_player_joined(peer_id: int) -> void:
+  print("PEER IS READY => ", peer_id)
+    # send_refresh_state(peer_id)  # target that specific peer only
 
 func _area_entered(candidate: Node) -> void:
   if candidate == ball:
@@ -74,8 +82,8 @@ func _start_round() -> void:
   if ball:
     ball.queue_free()
   ball = ball_template.instantiate()
-  ball.global_position = pong_spawn_location.global_position
   add_child(ball)
+  ball.global_position = pong_spawn_location.global_position
 
   if Network.multiplayer_client.is_authority():
     Network.multiplayer_client.send_packet(

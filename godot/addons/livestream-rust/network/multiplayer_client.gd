@@ -9,6 +9,7 @@ var sealed: bool = false
 # This signal 
 
 signal packet_received(id: int, packet: Dictionary)
+signal rtc_peer_ready(peer_id: int)
 
 func _init() -> void:
   connected.connect(_connected)
@@ -19,7 +20,7 @@ func _init() -> void:
   candidate_received.connect(_candidate_received)
 
   lobby_sealed.connect(_lobby_sealed)
-  peer_connected.connect(_peer_connected)
+  peer_joined.connect(_peer_joined)
   peer_disconnected.connect(_peer_disconnected)
 
 var ping_timer: Timer
@@ -37,6 +38,17 @@ func stop() -> void:
   multiplayer.multiplayer_peer = null
   ping_timer.stop()
   rtc_mp.close()
+
+  # In Godot, close() on a WebRTCMultiplayerPeer doesn't fully reset
+  # it for reuse — create_client() has an internal guard
+  # (ERR_FAIL_COND_V(network_mode != MODE_NONE, ...)) that silently fails 
+  # if the mode wasn't cleanly reset, leaving the peer stuck in its old
+  # MODE_CLIENT state. Then when _peer_joined fires with a non-1 ID 
+  # (any peer other than the host), add_peer rejects it.
+
+  rtc_mp = WebRTCMultiplayerPeer.new()
+  _offer_sent.clear()
+  print("CLOSINGGGGG!")
 
 func _create_peer(id: int) -> WebRTCPeerConnection:
   var peer: WebRTCPeerConnection = WebRTCPeerConnection.new()
@@ -93,7 +105,6 @@ func _offer_created(type: String, data: String, id: int) -> void:
       send_answer(id, data)
 
 func _peer_disconnected(id: int) -> void:
-  print("Peer disconnected: %d" % id)
   _offer_sent.erase(id)
   if rtc_mp.has_peer(id):
       rtc_mp.remove_peer(id)
@@ -107,6 +118,8 @@ func _connected(id: int, use_mesh: bool) -> void:
     rtc_mp.create_server()
   else:
     rtc_mp.create_client(id)
+
+  rtc_mp.peer_connected.connect(func(peer_id): rtc_peer_ready.emit(peer_id))
   
   _check_ping()
   ping_timer.start(5.0)
@@ -116,12 +129,10 @@ func _lobby_sealed() -> void:
   sealed = true
 
 func _disconnected() -> void:
-  # print("Disconnected: %d: %s" % [code, reason])
-  if not sealed:
-    stop() # Unexpected disconnect
+  sealed = false
+  stop()
 
-func _peer_connected(id: int) -> void:
-  print("Peer connected: %d" % id)
+func _peer_joined(id: int) -> void:
   _create_peer(id)
 
 # func _peer_disconnected(id: int) -> void:
@@ -129,12 +140,10 @@ func _peer_connected(id: int) -> void:
 #     rtc_mp.remove_peer(id)
 
 func _offer_received(id: int, offer: String) -> void:
-  # print("Got offer: %d" % id)
   if rtc_mp.has_peer(id):
     rtc_mp.get_peer(id).connection.set_remote_description("offer", offer)
 
 func _answer_received(id: int, answer: String) -> void:
-  # print("Got answer: %d" % id)
   if rtc_mp.has_peer(id):
     rtc_mp.get_peer(id).connection.set_remote_description("answer", answer)
 
@@ -168,12 +177,15 @@ func is_net_connected() -> bool:
   return rtc_mp.get_connection_status() == MultiplayerPeer.CONNECTION_CONNECTED
 
 func my_peer_id() -> int:
-  if is_net_connected():
+  # if is_net_connected():
     return rtc_mp.get_unique_id()
-  return -1
+  # return -1
 
 func is_authority() -> bool:
   return rtc_mp.get_unique_id() == 1
+
+func is_initialized() -> bool:
+  return rtc_mp.get_connection_status() != MultiplayerPeer.CONNECTION_DISCONNECTED
 
 func _check_ping() -> void:
   if !is_authority():
