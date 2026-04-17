@@ -1,6 +1,11 @@
 extends Node3D
 class_name PongPaddle
 
+const MAX_SPEED = 2.0
+const MAX_RANGE = 1.5
+const ACCELERATION = 0.1
+const DECELERATION = 5.0
+
 var peer_id: int
 var chatter: Chatter:
   set(new_chatter):
@@ -14,23 +19,18 @@ var velocity: Vector3 = Vector3.ZERO
 @onready var collision_body: StaticBody3D = %PaddleCollisionArea
 
 func _ready() -> void:
-  sync_position = position
+  sync_state = PongEntity.new()
+  sync_state.position = position
+  sync_state.velocity = velocity
 
 var movement_input: Vector2 = Vector2.ZERO
 func add_movement_input(direction: Vector2) -> void:
   movement_input = direction
 
-const MAX_SPEED = 2.0
-const MAX_RANGE = 1.5
-const ACCELERATION = 0.1
-const DECELERATION = 5.0
+func has_authority():
+  return sync_state.owner == Network.multiplayer_client.my_peer_id()
 
-var has_authority := false:
-  set(new_val):
-    has_authority = new_val
-
-var sync_position: Vector3 = Vector3.ZERO
-var sync_velocity: Vector3 = Vector3.ZERO
+var sync_state: PongEntity
 
 func _phys_move(delta: float) -> void:
   position += velocity * delta
@@ -38,7 +38,7 @@ func _phys_move(delta: float) -> void:
   movement_input = Vector2.ZERO
 
 func _physics_process(delta: float) -> void:
-  if has_authority:
+  if has_authority():
     var accel = movement_input.y * ACCELERATION
     velocity.x += accel
     velocity.x = clamp(velocity.x, -MAX_SPEED, MAX_SPEED)
@@ -46,14 +46,15 @@ func _physics_process(delta: float) -> void:
     if movement_input.y == 0:
       velocity.x = lerpf(velocity.x, 0.0, delta * DECELERATION)
 
+  else:
+    position = lerp(position, sync_state.position, delta * 10.0)
+    velocity = lerp(velocity, sync_state.velocity, delta * 10.0)
+  
+  _phys_move(delta)
+
+  if has_authority():
     Network.multiplayer_client.send_packet({
       "type": PongGame.PongGameMessage.PaddleMove,
       "position": position,
       "velocity": velocity
     })
-
-  else:
-    position = lerp(position, sync_position, delta * 10.0)
-    velocity = lerp(velocity, sync_velocity, delta * 10.0)
-  
-  _phys_move(delta)

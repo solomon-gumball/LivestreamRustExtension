@@ -164,7 +164,7 @@ func send_packet(
     if PRINT_DEBUG: print("Attempting to send packet while not connected")
     return
 
-  var packet_data: PackedByteArray = var_to_bytes(packet)
+  var packet_data: PackedByteArray = var_to_bytes_with_objects(packet)
   rtc_mp.set_target_peer(target_peer)
   rtc_mp.set_transfer_mode(transfer_mode)
   rtc_mp.put_packet(packet_data)
@@ -202,7 +202,7 @@ func _process(_delta):
   while rtc_mp.get_available_packet_count() > 0:
     var sender_id: int = rtc_mp.get_packet_peer()
     var data: PackedByteArray = rtc_mp.get_packet()
-    var message := bytes_to_var(data)
+    var message := bytes_to_var_with_objects(data)
   
     match message.type:
       GlobalNetCommand.Ping:

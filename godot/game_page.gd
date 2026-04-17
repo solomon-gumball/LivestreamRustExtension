@@ -155,8 +155,6 @@ func _host_game() -> void:
   Network.multiplayer_client.join_lobby("")
 
 func _lobbies_updated(lobbies: Array[Lobby]) -> void:
-  print('_lobbies_updated')
-
   if Network.current_chatter == null: return
   if lobbies.size() == 0:
     game_state = GameState.LookingForLobby
