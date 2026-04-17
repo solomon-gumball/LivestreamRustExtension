@@ -15,7 +15,7 @@ extends Control
 @onready var game_root_node: Node3D = %GameRootNode
 @onready var ping_label: Label = %PingLabel
 
-# @onready var state_machine: StateMachine = %StateMachine
+@onready var state_machine: StateMachine = %StateMachine
 
 var info_tween: Tween
 var current_lobby: Lobby:
@@ -105,6 +105,7 @@ func _ready() -> void:
   lobby_info_panel.visible = false
 
   center_info_label.text = ""
+  # state_machine.change_state(LookingForLobbyState.new(self))
 
   Network.chatter_updated.connect(_handle_chatter_updated)
   Network.multiplayer_client.lobby_joined.connect(_lobby_joined)
@@ -232,21 +233,27 @@ func _handle_net_state_changed(connected: bool) -> void:
   #   current_lobby = 
     
 
-# class GamePageState extends State:
-#   var lobby: Lobby
+class GamePageState extends State:
+  var page: GamePage
+  func _init(_page: GamePage):
+    page = _page
 
-# class LookingForLobbyState extends State:
-#   func enter_state(_previous_state: State) -> void:
-#     Network.multiplayer_client.lobbies_updated.connect(_handle_lobbies_updated)
-#   func exit_state() -> void: pass
+class LookingForLobbyState extends GamePageState:
+  var lobby: Lobby
+  func enter_state(_previous_state: State) -> void:
+    page.center_info_label.text = LOOKING_TEXT
+    Network.multiplayer_client.lobbies_updated.connect(_handle_lobbies_updated)
 
-#   func _handle_lobbies_updated(lobbies: Array[Lobby]) -> void:
-#     if lobbies.size() > 0:
-#       Network.multiplayer_client.join_lobby(lobbies[0].name)
+  func _handle_lobbies_updated(lobbies: Array[Lobby]) -> void:
+    if lobbies.size() > 0:
+      Network.multiplayer_client.join_lobby(lobbies[0].name)
 
-# class JoiningLobbyState extends State:
+# class JoiningLobbyState extends GamePageState:
 #   signal did_leave_lobby
 #   func enter_state(_previous_state: State) -> void:
+#     if previous_state is LookingForLobbyState:
+#       lobby = (previous_state as LookingForLobbyState).lobby
+#       pass
 #     lobby_info_panel.visible = true
 #     Network.multiplayer_client.lobbies_updated.connect(_handle_lobbies_updated)
   
@@ -255,7 +262,6 @@ func _handle_net_state_changed(connected: bool) -> void:
 #       did_leave_lobby.emit()
 #       return
 #     var new_lobby_data: Lobby = lobbies[0]
-#     if new_lobby_data
 
 #   func exit_state() -> void: pass
 

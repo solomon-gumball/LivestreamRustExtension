@@ -7,12 +7,13 @@
 [ext_resource type="Shader" uid="uid://cw1km147x2fwu" path="res://materials/bot_mat/bot_shader.gdshader" id="5_k3023"]
 [ext_resource type="Texture2D" uid="uid://cas3gr887xevi" path="res://materials/bot_mat/bot_albedo.png" id="6_cy2wj"]
 [ext_resource type="Texture2D" uid="uid://ba6mac1k3t38a" path="res://materials/bot_mat/bot_normals.png" id="7_x3urd"]
+[ext_resource type="Script" uid="uid://d2ybq2ovami5x" path="res://util/state_machine.gd" id="8_hb8fn"]
 
 [sub_resource type="Environment" id="Environment_racd5"]
 background_mode = 1
 glow_enabled = true
 
-[sub_resource type="ShaderMaterial" id="ShaderMaterial_jjmn7"]
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_whhsp"]
 resource_local_to_scene = true
 render_priority = 0
 shader = ExtResource("5_k3023")
@@ -70,7 +71,7 @@ current = true
 
 [node name="gumbot" parent="SubViewportContainer/SubViewport/GameRootNode" unique_id=2126276004 instance=ExtResource("4_43xba")]
 transform = Transform3D(-0.9408098, 0, 0.33893508, 0, 1, 0, -0.33893508, 0, -0.9408098, -0.6849959, -0.30148157, 0.73511076)
-surface_mat = SubResource("ShaderMaterial_jjmn7")
+surface_mat = SubResource("ShaderMaterial_whhsp")
 
 [node name="DebugRect" type="ColorRect" parent="." unique_id=612512015]
 unique_name_in_owner = true
@@ -187,3 +188,8 @@ layout_mode = 2
 text = "CLIENT 329024"
 label_settings = SubResource("LabelSettings_sqe1x")
 horizontal_alignment = 1
+
+[node name="StateMachine" type="Node" parent="." unique_id=1404217897]
+unique_name_in_owner = true
+script = ExtResource("8_hb8fn")
+metadata/_custom_type_script = "uid://d2ybq2ovami5x"

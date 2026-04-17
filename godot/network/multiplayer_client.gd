@@ -1,27 +1,28 @@
-extends WsSessionBase
+extends Node
 class_name MultiplayerClient
 
-var rtc_mp := WebRTCMultiplayerPeer.new()
-var sealed: bool = false
+@export var autojoin: bool = true
+@export var current_lobby_id: String = ""  # Will create a new lobby if empty.
+@export var mesh: bool = false  # Will use the lobby host as relay otherwise.
 
-# Player calls join lobby to create a new lobby on the server
-# Server responds with "rtc-peer-id" which triggers the connected signal
-# This signal 
+signal lobby_joined(lobby: String)
+signal disconnected()
+signal lobbies_updated(lobbies: Array[Lobby])
+signal current_lobby_updated(lobby: Lobby)
 
 signal packet_received(id: int, packet: Dictionary)
 signal rtc_peer_ready(peer_id: int)
 
+var all_lobbies: Dictionary[String, Lobby] = {}
+
+func current_lobby() -> Lobby:
+  return all_lobbies.get(current_lobby_id, null)
+
+var rtc_mp := WebRTCMultiplayerPeer.new()
+var sealed: bool = false
+
 func _init() -> void:
-  connected.connect(_connected)
   disconnected.connect(_disconnected)
-
-  offer_received.connect(_offer_received)
-  answer_received.connect(_answer_received)
-  candidate_received.connect(_candidate_received)
-
-  lobby_sealed.connect(_lobby_sealed)
-  peer_joined.connect(_peer_joined)
-  peer_disconnected.connect(_peer_disconnected)
 
 var ping_timer: Timer
 
@@ -41,14 +42,13 @@ func stop() -> void:
 
   # In Godot, close() on a WebRTCMultiplayerPeer doesn't fully reset
   # it for reuse — create_client() has an internal guard
-  # (ERR_FAIL_COND_V(network_mode != MODE_NONE, ...)) that silently fails 
+  # (ERR_FAIL_COND_V(network_mode != MODE_NONE, ...)) that silently fails
   # if the mode wasn't cleanly reset, leaving the peer stuck in its old
-  # MODE_CLIENT state. Then when _peer_joined fires with a non-1 ID 
+  # MODE_CLIENT state. Then when _peer_joined fires with a non-1 ID
   # (any peer other than the host), add_peer rejects it.
 
   rtc_mp = WebRTCMultiplayerPeer.new()
   _offer_sent.clear()
-  print("CLOSINGGGGG!")
 
 func _create_peer(id: int) -> WebRTCPeerConnection:
   var peer: WebRTCPeerConnection = WebRTCPeerConnection.new()
@@ -69,7 +69,7 @@ func _create_peer(id: int) -> WebRTCPeerConnection:
   peer.ice_candidate_created.connect(_new_ice_candidate.bind(id))
   rtc_mp.add_peer(peer, id)
 
-  if id < rtc_mp.get_unique_id(): # Ensure 
+  if id < rtc_mp.get_unique_id(): # Ensure
     # Send an offer to this peer
     peer.create_offer()
   return peer
@@ -77,8 +77,6 @@ func _create_peer(id: int) -> WebRTCPeerConnection:
 var relay_only_candidates: bool = true
 const PRINT_DEBUG: bool = false
 
-# We have a new ICE candidate from the WebRTC connection.
-# This should be sent to every other peer.
 func _new_ice_candidate(mid_name: String, index_name: int, sdp_name: String, id: int) -> void:
   if PRINT_DEBUG: print("new ice candidate: %d: %s %d %s" % [id, mid_name, index_name, sdp_name])
   if relay_only_candidates and "typ relay" not in sdp_name:
@@ -87,9 +85,6 @@ func _new_ice_candidate(mid_name: String, index_name: int, sdp_name: String, id:
 
 var _offer_sent: Dictionary = {}  # id -> bool
 
-# We have an SDP document to send to the given peer. 
-# If it's an offer, we need to send it to the server to relay to the peer.
-# If it's an answer, we can send it directly to the peer.
 func _offer_created(type: String, data: String, id: int) -> void:
   if PRINT_DEBUG: print("offer created: %d: %s" % [id, type])
   if not rtc_mp.has_peer(id):
@@ -103,6 +98,74 @@ func _offer_created(type: String, data: String, id: int) -> void:
       send_offer(id, data)
   else:
       send_answer(id, data)
+
+func handle_ws_message(parsed: Variant) -> bool:
+  if typeof(parsed) != TYPE_DICTIONARY:
+    return false
+  var msg: Dictionary = parsed
+  var type: String = msg.get("type", "")
+  if type.is_empty():
+    return false
+
+  match type:
+    "rtc-peer-id":
+      _connected(int(msg.get("peer_id", 0)), bool(msg.get("mesh_mode", false)))
+    "rtc-lobby-joined":
+      current_lobby_id = str(msg.get("lobby_name", ""))
+      lobby_joined.emit(current_lobby_id)
+    "rtc-lobby-sealed":
+      _lobby_sealed()
+    "rtc-peer-joined":
+      _peer_joined(int(msg.get("peer_id", 0)))
+    "rtc-peer-disconnected":
+      _peer_disconnected(int(msg.get("peer_id", 0)))
+    "rtc-offer":
+      _offer_received(int(msg.get("from_peer_id", 0)), str(msg.get("sdp", "")))
+    "rtc-answer":
+      _answer_received(int(msg.get("from_peer_id", 0)), str(msg.get("sdp", "")))
+    "rtc-candidate":
+      var from_id: int = int(msg.get("from_peer_id", 0))
+      var parts: PackedStringArray = str(msg.get("candidate", "")).split("\n", false)
+      if parts.size() != 3:
+        return false
+      if not parts[1].is_valid_int():
+        return false
+      _candidate_received(from_id, parts[0], parts[1].to_int(), parts[2])
+    "rtc-lobbies-updated":
+      var prev_lobby = current_lobby()
+      var lobbies: Array[Lobby] = []
+      for lobby_data in msg.get("lobbies", []):
+        lobbies.append(Lobby.from_data(lobby_data))
+      all_lobbies = {}
+      for lobby in lobbies:
+        all_lobbies[lobby.name] = lobby
+      lobbies_updated.emit(lobbies)
+      var new_lobby = current_lobby()
+      # TODO: Fix this equivalence check
+      if prev_lobby != new_lobby:
+        current_lobby_updated.emit()
+    _:
+      return false
+
+  return true  # Parsed.
+
+func join_lobby(lobby_name: String) -> Error:
+  if lobby_name.is_empty():
+    return Network.send_socket_message({ "type": "rtc-create-lobby", "mesh_mode": mesh })
+  else:
+    return Network.send_socket_message({ "type": "rtc-join-lobby", "lobby_name": lobby_name })
+
+func seal_lobby() -> Error:
+  return Network.send_socket_message({ "type": "rtc-seal-lobby" })
+
+func send_candidate(id: int, mid: String, index: int, sdp: String) -> Error:
+  return Network.send_socket_message({ "type": "rtc-candidate", "dest_peer_id": id, "candidate": "%s\n%d\n%s" % [mid, index, sdp] })
+
+func send_offer(id: int, offer: String) -> Error:
+  return Network.send_socket_message({ "type": "rtc-offer", "dest_peer_id": id, "sdp": offer })
+
+func send_answer(id: int, answer: String) -> Error:
+  return Network.send_socket_message({ "type": "rtc-answer", "dest_peer_id": id, "sdp": answer })
 
 func _peer_disconnected(id: int) -> void:
   _offer_sent.erase(id)
@@ -120,7 +183,7 @@ func _connected(id: int, use_mesh: bool) -> void:
     rtc_mp.create_client(id)
 
   rtc_mp.peer_connected.connect(func(peer_id): rtc_peer_ready.emit(peer_id))
-  
+
   _check_ping()
   ping_timer.start(5.0)
   multiplayer.multiplayer_peer = rtc_mp
@@ -134,10 +197,6 @@ func _disconnected() -> void:
 
 func _peer_joined(id: int) -> void:
   _create_peer(id)
-
-# func _peer_disconnected(id: int) -> void:
-#   if rtc_mp.has_peer(id):
-#     rtc_mp.remove_peer(id)
 
 func _offer_received(id: int, offer: String) -> void:
   if rtc_mp.has_peer(id):
@@ -168,7 +227,7 @@ func send_packet(
   rtc_mp.set_target_peer(target_peer)
   rtc_mp.set_transfer_mode(transfer_mode)
   rtc_mp.put_packet(packet_data)
-  
+
 enum GlobalNetCommand {
   Ping = 1000, Pong
 }
@@ -203,7 +262,7 @@ func _process(_delta):
     var sender_id: int = rtc_mp.get_packet_peer()
     var data: PackedByteArray = rtc_mp.get_packet()
     var message: Variant = bytes_to_var_with_objects(data)
-  
+
     match message.type:
       GlobalNetCommand.Ping:
         send_packet({
