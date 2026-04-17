@@ -15,6 +15,8 @@ extends Control
 @onready var game_root_node: Node3D = %GameRootNode
 @onready var ping_label: Label = %PingLabel
 
+@onready var state_machine: StateMachine = %StateMachine
+
 var info_tween: Tween
 var current_lobby: Lobby:
   set(new_val):
@@ -146,10 +148,6 @@ func _start_game() -> void:
       "type": "rtc-start-game",
       "lobby_id": current_lobby.name
     })
-
-# @rpc("any_peer", "call_local")
-# func test_rpc() -> void:
-#   debug_rect.visible = !debug_rect.visible
 
 func _host_game() -> void:
   Network.multiplayer_client.join_lobby("")

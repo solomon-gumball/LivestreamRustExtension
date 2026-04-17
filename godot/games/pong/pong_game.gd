@@ -96,6 +96,8 @@ func _handle_chatter_updated(chatter: Chatter) -> void:
 func _physics_process(_delta: float) -> void:
   if Engine.is_editor_hint():
     return
+  if !Network.multiplayer_client.is_net_connected(): return
+
   var my_player_paddle: PongPaddle = pong_paddles_by_peer_id.get(Network.multiplayer_client.rtc_mp.get_unique_id())
   if my_player_paddle == null: return
 

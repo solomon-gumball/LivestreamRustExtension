@@ -151,7 +151,7 @@ func send_packet(
   if not current_lobby():
     if PRINT_DEBUG: print("Can't send packet, not in lobby")
     return
-  if rtc_mp.get_connection_status() != MultiplayerPeer.CONNECTION_CONNECTED:
+  if !is_net_connected():
     if PRINT_DEBUG: print("Attempting to send packet while not connected")
     return
 
@@ -164,8 +164,13 @@ enum GlobalNetCommand {
   Ping = 1000, Pong
 }
 
+func is_net_connected() -> bool:
+  return rtc_mp.get_connection_status() == MultiplayerPeer.CONNECTION_CONNECTED
+
 func my_peer_id() -> int:
-  return rtc_mp.get_unique_id()
+  if is_net_connected():
+    return rtc_mp.get_unique_id()
+  return -1
 
 func is_authority() -> bool:
   return rtc_mp.get_unique_id() == 1

@@ -30,6 +30,7 @@ var drops: Message.DropData = Message.DropData.new()
 var current_chatter_id: String = ""
 var multiplayer_client: MultiplayerClient
 var current_chatter: Chatter
+var reconnect_timer: Timer
 
 var scrolling_text: String = "":
   set(new_text):
@@ -57,12 +58,19 @@ func getWsServerUrl() -> String:
 var inbox_size = 10
 func _ready() -> void:
   remote_server_socket = WebSocketPeer.new()
+
   _try_connect_to_remote_server()
 
   if OS.get_name() == "Web":
     callback = JavaScriptBridge.create_callback(_on_twitch_authorized)
     JavaScriptBridge.get_interface("window").twitchTokenCallback = callback
   
+  reconnect_timer = Timer.new()
+  reconnect_timer.autostart = false
+  reconnect_timer.one_shot = false
+  reconnect_timer.timeout.connect(_try_connect_to_remote_server)
+  add_child(reconnect_timer)
+
   multiplayer_client = MultiplayerClient.new()
   add_child(multiplayer_client)
 
@@ -233,47 +241,42 @@ func handle_remote_message(message: Variant) -> void:
 var turn_credentials: Dictionary = {}
 
 enum ConnectionStatus {
-  Connecting,
+  None,
   Connected,
-  Disconnected,
-  Reconnecting
+  Disconnected
 }
 
 func _try_connect_to_remote_server() -> void:
+  if debug_force_disconnected: return
+
   var url = getWsServerUrl()
   var err = remote_server_socket.connect_to_url(url, TLSOptions.client_unsafe() if use_local_server else null)
+  print("Attempting to connect to server")
 
   if err != OK:
     print("Error connecting to remote server: %d" % err)
     connection_status = ConnectionStatus.Disconnected
 
-func socket_is_connected() -> bool:
-   return connection_status == ConnectionStatus.Connected or \
-    connection_status == ConnectionStatus.Connecting
-
-var connection_status: ConnectionStatus = ConnectionStatus.Connecting:
+var connection_status: ConnectionStatus = ConnectionStatus.None:
   set(new_connection_status):
     var previous_status = connection_status
     connection_status = new_connection_status
 
     if new_connection_status != previous_status:
-      socket_connection_status_changed.emit(socket_is_connected())
+      print('Connection state: ', previous_status, ' => ', new_connection_status)
+      socket_connection_status_changed.emit(new_connection_status == ConnectionStatus.Connected)
 
       if new_connection_status == ConnectionStatus.Disconnected:
+        reconnect_timer.start(2.0)
         multiplayer_client.disconnected.emit()
-        await get_tree().create_timer(3).timeout
-        connection_status = ConnectionStatus.Reconnecting
-        _try_connect_to_remote_server()
+      else:
+        reconnect_timer.stop()
 
 var debug_force_disconnected := false
 func _process(_delta: float) -> void:
-  # Do not poll the socket if we're already disconnected
-  # We will attempt to reconnect after a delay
-
   remote_server_socket.poll()
 
   var state = remote_server_socket.get_ready_state()
-  # print(state)
   match state:
     WebSocketPeer.STATE_OPEN:
       connection_status = ConnectionStatus.Connected
@@ -286,17 +289,16 @@ func _process(_delta: float) -> void:
       pass
     WebSocketPeer.STATE_CLOSED:
       var code = remote_server_socket.get_close_code()
-      print("WebSocket closed with code: %d. Clean: %s" % [code, code != -1])
+      # print("WebSocket closed with code: %d. Clean: %s" % [code, code != -1])
       connection_status = ConnectionStatus.Disconnected
 
 func _input(event: InputEvent) -> void:
   if Input.is_action_just_pressed("DebugToggleNetwork"):
     if remote_server_socket.get_ready_state() == WebSocketPeer.STATE_OPEN:
       debug_force_disconnected = true
-      connection_status = ConnectionStatus.Disconnected
       remote_server_socket.close()
     else:
       debug_force_disconnected = false
-      remote_server_socket = WebSocketPeer.new()
-      connection_status = ConnectionStatus.Disconnected
-      _try_connect_to_remote_server()
+      # remote_server_socket = WebSocketPeer.new()
+      # connection_status = ConnectionStatus.Disconnected
+      # _try_connect_to_remote_server()
