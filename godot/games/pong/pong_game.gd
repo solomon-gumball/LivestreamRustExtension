@@ -19,6 +19,8 @@ var pong_paddles_by_chatter_id: Dictionary[String, PongPaddle] = {}
 @onready var camera: Camera3D = %Camera
 @onready var is_game_host: bool = lobby.host_chatter_id == Network.current_chatter.id
 @onready var pong_spawn_location: Marker3D = %PongSpawnLocation
+@onready var score_region_l: Area3D = %ScoreRegionL
+@onready var score_region_r: Area3D = %ScoreRegionR
 
 @export var paddle_start_distance: float = 2.0:
   set(start_distance):
@@ -31,9 +33,8 @@ func _ready() -> void:
   if Engine.is_editor_hint():
     return
 
-  camera.current = true
   Network.multiplayer_client.packet_received.connect(_handle_peer_packet)
-  # Network.multiplayer_client.send_packet({ "type": PongGameMessage.BallPosition })
+  Network.chatter_updated.connect(_handle_chatter_updated)
 
   pong_paddles_by_peer_id[lobby.peers[0].peer_id] = pong_paddle_l
   pong_paddles_by_chatter_id[lobby.peers[0].chatter_id] = pong_paddle_l
@@ -42,12 +43,7 @@ func _ready() -> void:
   pong_paddles_by_peer_id[lobby.peers[1].peer_id] = pong_paddle_r
   pong_paddles_by_chatter_id[lobby.peers[1].chatter_id] = pong_paddle_r
   pong_paddle_r.has_authority = lobby.peers[1].chatter_id == Network.current_chatter.id
-  # print('--------')
-  # print('mp peer => ', Network.multiplayer_client.rtc_mp.get_unique_id())
-  # for peer in lobby.peers:
-  #   print('lobby peer => ', peer.peer_id)
 
-  Network.chatter_updated.connect(_handle_chatter_updated)
   var sub_channels: Array[String] = []
   for peer in lobby.peers:
     sub_channels.append(peer.chatter_id)
@@ -58,12 +54,23 @@ func _ready() -> void:
 
   if Network.multiplayer_client.is_authority():
     await get_tree().create_timer(1.0).timeout
+    score_region_l.body_entered.connect(_area_entered)
+    score_region_r.body_entered.connect(_area_entered)
     _start_round()
+
+func _area_entered(candidate: Node) -> void:
+  if candidate == ball:
+    ball.is_finished = true
+
+  Network.multiplayer_client.send_packet({
+    "type": PongGame.PongGameMessage.RoundComplete
+  })
+  await get_tree().create_timer(1.0).timeout
+  _start_round()
 
 var ball: PongBall = null
 var ball_template: PackedScene = preload("res://games/pong/pong_ball.tscn")
 func _start_round() -> void:
-  # print('starting on', Network.multiplayer_client.my_peer_id())
   if ball:
     ball.queue_free()
   ball = ball_template.instantiate()
@@ -71,23 +78,22 @@ func _start_round() -> void:
   add_child(ball)
 
   if Network.multiplayer_client.is_authority():
-    Network.multiplayer_client.send_packet({ "type": PongGameMessage.StartRound })
+    Network.multiplayer_client.send_packet(
+      { "type": PongGameMessage.StartRound },
+      MultiplayerPeer.TARGET_PEER_BROADCAST,
+      MultiplayerPeer.TRANSFER_MODE_RELIABLE
+    )
     ball.has_authority = true
-    ball.finished.connect(_handle_ball_finished)
     ball.start()
   else:
     ball.has_authority = false
-
-func _handle_ball_finished() -> void:
-  await get_tree().create_timer(1.0).timeout
-  _start_round()
 
 func _handle_chatter_updated(chatter: Chatter) -> void:
   var paddle = pong_paddles_by_chatter_id[chatter.id]
   if paddle:
     paddle.chatter = chatter
   
-func _physics_process(delta: float) -> void:
+func _physics_process(_delta: float) -> void:
   if Engine.is_editor_hint():
     return
   var my_player_paddle: PongPaddle = pong_paddles_by_peer_id.get(Network.multiplayer_client.rtc_mp.get_unique_id())

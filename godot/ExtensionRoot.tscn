@@ -2,6 +2,7 @@
 
 [ext_resource type="Script" uid="uid://tbmxic5233qe" path="res://extension_root.gd" id="1_on8yo"]
 [ext_resource type="Texture2D" uid="uid://mbscocp2a2oi" path="res://ui/Game_icon.svg" id="2_hgpoc"]
+[ext_resource type="PackedScene" uid="uid://cpfdkqp87e1rj" path="res://ui/alert_layer.tscn" id="2_on8yo"]
 [ext_resource type="Texture2D" uid="uid://cdjd74jbkf8x2" path="res://ui/Outfit_icon.svg" id="2_vg8q4"]
 
 [sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_vg8q4"]
@@ -22,6 +23,10 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("1_on8yo")
+
+[node name="AlertLayer" parent="." unique_id=1583613566 instance=ExtResource("2_on8yo")]
+unique_name_in_owner = true
+visible = false
 
 [node name="CanvasLayer" type="CanvasLayer" parent="." unique_id=941123695]
 

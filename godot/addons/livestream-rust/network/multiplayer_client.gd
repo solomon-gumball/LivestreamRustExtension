@@ -18,7 +18,6 @@ func _init() -> void:
   answer_received.connect(_answer_received)
   candidate_received.connect(_candidate_received)
 
-  lobby_joined.connect(_lobby_joined)
   lobby_sealed.connect(_lobby_sealed)
   peer_connected.connect(_peer_connected)
   peer_disconnected.connect(_peer_disconnected)
@@ -34,12 +33,6 @@ func _ready() -> void:
   ping_timer.timeout.connect(_check_ping)
   add_child(ping_timer)
 
-func start(url: String, _lobby: String = "", _mesh: bool = true) -> void:
-  stop()
-  sealed = false
-  mesh = _mesh
-  lobby = _lobby
-
 func stop() -> void:
   multiplayer.multiplayer_peer = null
   ping_timer.stop()
@@ -48,52 +41,66 @@ func stop() -> void:
 func _create_peer(id: int) -> WebRTCPeerConnection:
   var peer: WebRTCPeerConnection = WebRTCPeerConnection.new()
 
-  # Use a public STUN server for moderate NAT traversal.
-  # Note that STUN cannot punch through strict NATs (such as most mobile connections),
-  # in which case TURN is required. TURN generally does not have public servers available,
-  # as it requires much greater resources to host (all traffic goes through
-  # the TURN server, instead of only performing the initial connection).
   peer.initialize({
-    "iceServers": [ { "urls": ["stun:stun.l.google.com:19302"] } ]
+    "iceServers": [
+      { "urls": ["stun:stun.l.google.com:19302"] },
+      {
+        "urls": ["turn:34.125.221.69:3478"],
+        "username": Network.turn_credentials.get("username", ""),
+        # "credential": "incorrectpasswordtest",
+        "credential": Network.turn_credentials.get("password", "")
+      }
+    ]
   })
-  peer.session_description_created.connect(_offer_created.bind(id))
-  print("signal connected: ", peer.session_description_created.is_connected(_offer_created.bind(id)))
 
+  peer.session_description_created.connect(_offer_created.bind(id))
   peer.ice_candidate_created.connect(_new_ice_candidate.bind(id))
   rtc_mp.add_peer(peer, id)
-  print("Creating peer: remote_id=%d, my_id=%d, will_offer=%s" % [id, rtc_mp.get_unique_id(), id < rtc_mp.get_unique_id()])
-  if id < rtc_mp.get_unique_id():  # So lobby creator never creates offers.
-    print("CREATING OFFER ", peer.create_offer())
+
+  if id < rtc_mp.get_unique_id(): # Ensure 
+    # Send an offer to this peer
+    peer.create_offer()
   return peer
 
+var relay_only_candidates: bool = true
+const PRINT_DEBUG: bool = false
+
+# We have a new ICE candidate from the WebRTC connection.
+# This should be sent to every other peer.
 func _new_ice_candidate(mid_name: String, index_name: int, sdp_name: String, id: int) -> void:
-  print("new ice candidate: %d: %s %d %s" % [id, mid_name, index_name, sdp_name])
+  if PRINT_DEBUG: print("new ice candidate: %d: %s %d %s" % [id, mid_name, index_name, sdp_name])
+  if relay_only_candidates and "typ relay" not in sdp_name:
+    return
   send_candidate(id, mid_name, index_name, sdp_name)
 
 var _offer_sent: Dictionary = {}  # id -> bool
 
+# We have an SDP document to send to the given peer. 
+# If it's an offer, we need to send it to the server to relay to the peer.
+# If it's an answer, we can send it directly to the peer.
 func _offer_created(type: String, data: String, id: int) -> void:
-    print("offer created: %d: %s" % [id, type])
-    if not rtc_mp.has_peer(id):
-        return
-    rtc_mp.get_peer(id).connection.set_local_description(type, data)
-    if type == "offer":
-        if _offer_sent.get(id, false):
-            print("duplicate offer for %d, skipping" % id)
-            return
-        _offer_sent[id] = true
-        send_offer(id, data)
-    else:
-        send_answer(id, data)
+  if PRINT_DEBUG: print("offer created: %d: %s" % [id, type])
+  if not rtc_mp.has_peer(id):
+      return
+  rtc_mp.get_peer(id).connection.set_local_description(type, data)
+  if type == "offer":
+      if _offer_sent.get(id, false):
+          if PRINT_DEBUG: print("duplicate offer for %d, skipping" % id)
+          return
+      _offer_sent[id] = true
+      send_offer(id, data)
+  else:
+      send_answer(id, data)
 
 func _peer_disconnected(id: int) -> void:
-    _offer_sent.erase(id)
-    if rtc_mp.has_peer(id):
-        rtc_mp.remove_peer(id)
+  print("Peer disconnected: %d" % id)
+  _offer_sent.erase(id)
+  if rtc_mp.has_peer(id):
+      rtc_mp.remove_peer(id)
 
 func _connected(id: int, use_mesh: bool) -> void:
   var is_server := id == 1
-  print("Connected %d (server=%s), mesh: %s" % [id, is_server, use_mesh])
+  if PRINT_DEBUG: print("Connected %d (server=%s), mesh: %s" % [id, is_server, use_mesh])
   if use_mesh:
     rtc_mp.create_mesh(id)
   elif is_server:
@@ -104,13 +111,6 @@ func _connected(id: int, use_mesh: bool) -> void:
   _check_ping()
   ping_timer.start(5.0)
   multiplayer.multiplayer_peer = rtc_mp
-
-  multiplayer.peer_connected.connect(func(pid): print("RTC peer connected: ", pid))
-  multiplayer.connected_to_server.connect(func(): print("RTC connected to server"))
-  multiplayer.connection_failed.connect(func(): print("RTC connection FAILED"))
-
-func _lobby_joined(_lobby: String) -> void:
-  lobby = _lobby
 
 func _lobby_sealed() -> void:
   sealed = true
@@ -129,12 +129,12 @@ func _peer_connected(id: int) -> void:
 #     rtc_mp.remove_peer(id)
 
 func _offer_received(id: int, offer: String) -> void:
-  print("Got offer: %d" % id)
+  # print("Got offer: %d" % id)
   if rtc_mp.has_peer(id):
     rtc_mp.get_peer(id).connection.set_remote_description("offer", offer)
 
 func _answer_received(id: int, answer: String) -> void:
-  print("Got answer: %d" % id)
+  # print("Got answer: %d" % id)
   if rtc_mp.has_peer(id):
     rtc_mp.get_peer(id).connection.set_remote_description("answer", answer)
 
@@ -142,13 +142,22 @@ func _candidate_received(id: int, mid: String, index: int, sdp: String) -> void:
   if rtc_mp.has_peer(id):
     rtc_mp.get_peer(id).connection.add_ice_candidate(mid, index, sdp)
 
-func send_packet(packet: Dictionary, target_peer: int = MultiplayerPeer.TARGET_PEER_BROADCAST) -> void:
-  if not lobby:
-    print("Can't send packet, not in lobby")
+func send_packet(
+  packet: Dictionary,
+  target_peer: int = MultiplayerPeer.TARGET_PEER_BROADCAST,
+  transfer_mode: int = MultiplayerPeer.TRANSFER_MODE_UNRELIABLE_ORDERED
+) -> void:
+
+  if not current_lobby():
+    if PRINT_DEBUG: print("Can't send packet, not in lobby")
+    return
+  if rtc_mp.get_connection_status() != MultiplayerPeer.CONNECTION_CONNECTED:
+    if PRINT_DEBUG: print("Attempting to send packet while not connected")
     return
 
   var packet_data: PackedByteArray = var_to_bytes(packet)
   rtc_mp.set_target_peer(target_peer)
+  rtc_mp.set_transfer_mode(transfer_mode)
   rtc_mp.put_packet(packet_data)
   
 enum GlobalNetCommand {

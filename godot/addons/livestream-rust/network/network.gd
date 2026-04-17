@@ -13,7 +13,6 @@ signal gifted_subs(username: String, count: int)
 signal chat_message_received(message: Message.Chat)
 signal file_changed(file_name: String)
 signal chatter_updated(chatter: Chatter)
-signal lobbies_updated(lobbies: Array[Lobby])
 signal debug_image_received(base64: String)
 signal leaderboard_updated(leaderboard: Array[Chatter])
 signal onscreen_notification_received(message: Message.OnScreenNotification)
@@ -22,6 +21,7 @@ signal cam_updated(user_name: String)
 signal primary_notification_received(notification: Message.PrimaryNotification)
 signal inbox_loaded(mail: Array[Message.ShowMailRequest.Mail])
 signal scrolling_text_updated(new_scrolling_text: String)
+signal socket_connection_status_changed(is_connected: bool)
 
 var action_queue: Array[Message.QueueAction] = []
 var active_chatters: Array[Chatter] = []
@@ -43,20 +43,6 @@ func add_or_update_chatter(chatter: Chatter) -> void:
       return
   active_chatters.append(chatter)
 
-var remote_socket_is_connected: bool = false:
-  set(new_is_connected):
-    should_poll_remote_socket = new_is_connected
-    # Overlay.update_remote_connection_status(new_is_connected)
-
-    var previously_connected = remote_socket_is_connected
-    remote_socket_is_connected = new_is_connected
-
-    if !new_is_connected && previously_connected:
-      multiplayer_client.disconnected.emit()
-      await get_tree().create_timer(3).timeout
-      _try_connect_to_remote_server()
-
-var should_poll_remote_socket: bool = false
 var use_local_server: bool = true
 
 func getServerDomain() -> String:
@@ -126,20 +112,6 @@ func fetchAudienceMembers(count: int, participants: Array[Chatter]) -> Array[Cha
     
     return chatters
   return []
-
-func _try_connect_to_remote_server() -> void:
-  var url = getWsServerUrl()
-  print("Attempting to connect to remote server at %s" % url)
-  var err = remote_server_socket.connect_to_url(url, TLSOptions.client_unsafe() if use_local_server else null)
-
-  if err == OK:
-    remote_socket_is_connected = true
-    await get_tree().create_timer(2).timeout
-  else:
-    # print("Error connecting to server: ", err)
-    await get_tree().create_timer(3).timeout
-    _try_connect_to_remote_server()
-  return
 
 func drops_redeemed(bot: GumBot, coins: int, stacks: int) -> void:
   remote_server_socket.send_text(JSON.stringify({
@@ -252,20 +224,59 @@ func handle_remote_message(message: Variant) -> void:
       scrolling_text = message.get("scrolling_text", "NO TEXT PROVIDED")
       drops = store_data.drops
       store_data_received.emit()
-    "rtc-lobbies-updated":
-      var lobbies: Array[Lobby] = []
-      for lobby_data in message.lobbies:
-        lobbies.append(Lobby.from_data(lobby_data))
-      lobbies_updated.emit(lobbies)
+    "authenticated":
+      turn_credentials = message.turnCredentials
+      print(turn_credentials)
 
   multiplayer_client.handle_ws_message(message)
 
-func handle_remote_socket_process():
+var turn_credentials: Dictionary = {}
+
+enum ConnectionStatus {
+  None,
+  Connecting,
+  Connected,
+  Disconnected
+}
+
+func _try_connect_to_remote_server() -> void:
+  var url = getWsServerUrl()
+  var err = remote_server_socket.connect_to_url(url, TLSOptions.client_unsafe() if use_local_server else null)
+  
+  print("Attempting to connect to remote server at %s" % url)
+  connection_status = ConnectionStatus.Connecting
+
+  if err != OK:
+    # print("Error connecting to remote server: %d" % err)
+    connection_status = ConnectionStatus.Disconnected
+
+var connection_status: ConnectionStatus = ConnectionStatus.None:
+  set(new_connection_status):
+    var previous_status = connection_status
+    connection_status = new_connection_status
+
+    if new_connection_status != previous_status:
+      var is_disconnected = new_connection_status == ConnectionStatus.Disconnected
+      print("emmitting connected=", !is_disconnected)
+      socket_connection_status_changed.emit(!is_disconnected)
+
+      if is_disconnected:
+        multiplayer_client.disconnected.emit()
+        await get_tree().create_timer(3).timeout
+        _try_connect_to_remote_server()
+
+func _process(_delta: float) -> void:
+  # Do not poll the socket if we're already disconnected
+  # We will attempt to reconnect after a delay
+  if connection_status == ConnectionStatus.Disconnected:
+    return
+
   remote_server_socket.poll()
 
   var state = remote_server_socket.get_ready_state()
   match state:
     WebSocketPeer.STATE_OPEN:
+      connection_status = ConnectionStatus.Connected
       while remote_server_socket.get_available_packet_count() > 0:
         var packet = remote_server_socket.get_packet()
         var message = JSON.parse_string(packet.get_string_from_utf8())
@@ -276,14 +287,4 @@ func handle_remote_socket_process():
     WebSocketPeer.STATE_CLOSED:
       var code = remote_server_socket.get_close_code()
       print("WebSocket closed with code: %d. Clean: %s" % [code, code != -1])
-      remote_socket_is_connected = false
-
-func _process(_delta: float) -> void:
-  if should_poll_remote_socket:
-    handle_remote_socket_process()
-
-# func _input(_event: InputEvent) -> void:
-#   if Input.is_action_just_pressed("refetch_store_data"):
-#       remote_server_socket.send_text(JSON.stringify({
-#         "type": "refresh-store-data"
-#       }))
+      connection_status = ConnectionStatus.Disconnected

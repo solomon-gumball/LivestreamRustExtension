@@ -11,7 +11,7 @@ var chatter_id: String
 var velocity: Vector3 = Vector3.ZERO
 
 @onready var gumbot: GumBot = %GumBot
-@onready var collision_area: Area3D = %PaddleCollisionArea
+@onready var collision_body: StaticBody3D = %PaddleCollisionArea
 
 func _ready() -> void:
   sync_position = position
@@ -28,10 +28,6 @@ const DECELERATION = 5.0
 var has_authority := false:
   set(new_val):
     has_authority = new_val
-    # collision_area.area_entered.connect(_puck_did_enter)
-
-# func _puck_did_enter(puck: PongPuck) -> void:
-
 
 var sync_position: Vector3 = Vector3.ZERO
 var sync_velocity: Vector3 = Vector3.ZERO
@@ -58,6 +54,6 @@ func _physics_process(delta: float) -> void:
 
   else:
     position = lerp(position, sync_position, delta * 10.0)
-    velocity = lerp(position, sync_velocity, delta * 10.0)
+    velocity = lerp(velocity, sync_velocity, delta * 10.0)
   
   _phys_move(delta)

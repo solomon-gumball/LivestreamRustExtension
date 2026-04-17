@@ -13,9 +13,8 @@ emission_enabled = true
 emission = Color(0.13333334, 0.7019608, 0.95686275, 1)
 emission_energy_multiplier = 3.0
 
-[node name="PongBall" type="Area3D" unique_id=1819344637]
-monitoring = false
-monitorable = false
+[node name="PongBall" type="CharacterBody3D" unique_id=1722297091]
+motion_mode = 1
 script = ExtResource("1_c3wl3")
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="." unique_id=1270520286]

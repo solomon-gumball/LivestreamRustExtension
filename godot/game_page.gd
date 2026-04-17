@@ -105,7 +105,7 @@ func _ready() -> void:
 
   Network.chatter_updated.connect(_handle_chatter_updated)
   Network.multiplayer_client.lobby_joined.connect(_lobby_joined)
-  Network.lobbies_updated.connect(_lobbies_updated)
+  Network.multiplayer_client.lobbies_updated.connect(_lobbies_updated)
   Network.store_data_received.connect(_store_data_received)
   if Network.current_chatter:
     Network.send_socket_message({ "type": "rtc-fetch-lobbies" })
