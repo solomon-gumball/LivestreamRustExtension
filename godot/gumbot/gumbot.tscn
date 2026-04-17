@@ -1,0 +1,168 @@
+[gd_scene format=3 uid="uid://crkh8hdu5af84"]
+
+[ext_resource type="PackedScene" uid="uid://docjqt7r2jm4i" path="res://blender/gumbot.blend" id="1_vqh4x"]
+[ext_resource type="Script" uid="uid://bau1ww16i3iuu" path="res://gumbot/gumbot.gd" id="2_hyqf0"]
+[ext_resource type="AnimationNodeStateMachine" uid="uid://bhmvb2r1oed2v" path="res://gumbot/gumbot_state_tree.tres" id="3_smtre"]
+[ext_resource type="Shader" uid="uid://cw1km147x2fwu" path="res://materials/bot_mat/bot_shader.gdshader" id="3_vliq0"]
+[ext_resource type="Texture2D" uid="uid://cas3gr887xevi" path="res://materials/bot_mat/bot_albedo.png" id="4_ibskf"]
+[ext_resource type="Texture2D" uid="uid://ba6mac1k3t38a" path="res://materials/bot_mat/bot_normals.png" id="5_73u5r"]
+[ext_resource type="Texture2D" uid="uid://c53kbdrgxxvfc" path="res://icon.svg" id="6_ibskf"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_53np8"]
+resource_local_to_scene = true
+render_priority = 0
+shader = ExtResource("3_vliq0")
+shader_parameter/albedo_texture = ExtResource("4_ibskf")
+shader_parameter/normal_map = ExtResource("5_73u5r")
+shader_parameter/bot_color = Color(1, 0, 0, 1)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_ibskf"]
+render_priority = -1
+transparency = 2
+alpha_scissor_threshold = 0.5
+alpha_antialiasing_mode = 0
+depth_draw_mode = 1
+albedo_color = Color(1, 1, 1, 0)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_vliq0"]
+next_pass = SubResource("StandardMaterial3D_ibskf")
+transparency = 1
+depth_draw_mode = 1
+albedo_color = Color(0, 0, 0, 0.45882353)
+roughness = 0.5
+
+[sub_resource type="CapsuleShape3D" id="CapsuleShape3D_vqh4x"]
+radius = 0.092285156
+height = 0.36108398
+
+[sub_resource type="AnimationNodeAdd2" id="AnimationNodeAdd2_o2iqh"]
+filters = ["Armature/Skeleton3D:Windup"]
+
+[sub_resource type="AnimationNodeAnimation" id="AnimationNodeAnimation_x5r14"]
+animation = &"Windup"
+
+[sub_resource type="AnimationNodeStateMachine" id="AnimationNodeStateMachine_77hud"]
+graph_offset = Vector2(-368.53, -95.3)
+
+[sub_resource type="AnimationNodeBlendTree" id="AnimationNodeBlendTree_tdccr"]
+graph_offset = Vector2(-383.25702, -138.99298)
+nodes/Add2/node = SubResource("AnimationNodeAdd2_o2iqh")
+nodes/Add2/position = Vector2(0, 80)
+"nodes/Animation 2/node" = SubResource("AnimationNodeAnimation_x5r14")
+"nodes/Animation 2/position" = Vector2(-240, 306.667)
+nodes/DuelStateMachine/node = SubResource("AnimationNodeStateMachine_77hud")
+nodes/DuelStateMachine/position = Vector2(-310, 80)
+nodes/StateMachine/node = ExtResource("3_smtre")
+nodes/StateMachine/position = Vector2(-293.333, -120)
+node_connections = [&"output", 0, &"Add2", &"Add2", 0, &"StateMachine", &"Add2", 1, &"Animation 2"]
+
+[node name="gumbot" unique_id=2126276004 instance=ExtResource("1_vqh4x")]
+script = ExtResource("2_hyqf0")
+surface_mat = SubResource("ShaderMaterial_53np8")
+
+[node name="Armature_Skeleton3D_Head_Socket#Sprite" type="Sprite3D" parent="." index="0" unique_id=1577695489]
+transform = Transform3D(0.0826766, 3.10835e-10, -2.40341e-12, -3.10838e-10, 0.0826767, -5.20774e-05, 2.18137e-12, 5.20774e-05, 0.0826766, 5.16793e-09, 0.0423677, 0.000717234)
+billboard = 1
+double_sided = false
+alpha_cut = 1
+
+[node name="Skeleton3D" parent="Armature" parent_id_path=PackedInt32Array(1487773626) index="0" unique_id=1273399604]
+bones/1/position = Vector3(0, 0.11845954, 0)
+bones/1/rotation = Quaternion(-0.011914503, 0, 0, 0.999929)
+bones/2/rotation = Quaternion(1.4642302e-07, 0.23909603, 0.97099596, -5.8757713e-08)
+bones/3/rotation = Quaternion(-0.28218526, 2.2872962e-07, -1.771653e-07, 0.95935994)
+bones/4/rotation = Quaternion(0.6854557, 4.3293576e-07, 1.19170906e-07, 0.7281143)
+bones/5/rotation = Quaternion(-2.3479214e-07, -0.10364241, 0.9946146, 4.0560383e-08)
+bones/6/rotation = Quaternion(-0.10411385, -2.3712279e-07, 6.536612e-08, 0.99456537)
+bones/7/rotation = Quaternion(0.67555994, -1.7901866e-07, -3.3819046e-07, 0.73730516)
+bones/8/rotation = Quaternion(0.008076834, 1.1920538e-07, -3.320021e-09, 0.99996746)
+bones/10/rotation = Quaternion(-0.23868239, 0.66560555, 0.23868236, 0.66560555)
+bones/11/rotation = Quaternion(0.016804336, 0.0133010615, 0.99619937, 0.08442527)
+bones/12/rotation = Quaternion(0.26933104, -7.0603595e-10, -7.484412e-08, 0.9630477)
+bones/13/rotation = Quaternion(-0.08506241, 0.085137315, 0.033858545, 0.9921541)
+bones/14/rotation = Quaternion(-0.010062446, -0.18769538, 0.98073345, -0.053207137)
+bones/15/rotation = Quaternion(0.23882416, 3.5261336e-09, 1.203765e-07, 0.9710629)
+bones/16/rotation = Quaternion(-0.024407243, -0.039234485, -0.025694612, 0.9986014)
+bones/17/position = Vector3(0.024235448, 0.06866603, 0.037955087)
+bones/17/rotation = Quaternion(-8.42937e-08, 0.7071068, 0.7071068, -8.42937e-08)
+bones/18/position = Vector3(-0.08965324, 0.116853416, 0.024024079)
+bones/18/rotation = Quaternion(0.0027452258, 0.20135309, 0.9794947, -0.006286955)
+bones/18/scale = Vector3(1, 1.0000001, 1.0000001)
+bones/19/position = Vector3(0.088219196, 0.10747635, -0.015580089)
+bones/19/rotation = Quaternion(0.0029275287, 0.031734064, 0.9994328, -0.0108878)
+bones/20/position = Vector3(0.08813016, 0.1552506, -0.056704946)
+bones/20/rotation = Quaternion(1.3767878e-07, 0.7071068, -0.7071068, -1.3767878e-07)
+bones/21/position = Vector3(-0.08081737, 0.17089665, -0.032575175)
+bones/21/rotation = Quaternion(-1.3767878e-07, 0.7071068, -0.7071068, 1.3767878e-07)
+bones/22/position = Vector3(0.024235448, 0.019635044, 0.012239783)
+bones/22/rotation = Quaternion(-2.6956664e-07, 0.6612679, 0.75014997, -2.3519574e-07)
+bones/23/position = Vector3(-0.024235448, 0.068725295, 0.03077333)
+bones/23/rotation = Quaternion(8.42937e-08, 0.7071068, 0.7071068, 8.42937e-08)
+bones/24/position = Vector3(-0.024235446, 0.021510579, -0.02831585)
+bones/24/rotation = Quaternion(3.0111832e-07, 0.5188514, 0.8548645, 1.901608e-07)
+
+[node name="Hand_L_Socket" type="BoneAttachment3D" parent="Armature/Skeleton3D" index="0" unique_id=541900749]
+transform = Transform3D(-0.99847734, 0.045087956, 0.03178565, -0.042910416, -0.99688715, 0.066146955, 0.034669206, 0.0646835, 0.9973049, 0.0901025, 0.101810634, -0.01842833)
+bone_name = "Hand.L"
+bone_idx = 16
+
+[node name="Arm" parent="Armature/Skeleton3D" index="1" unique_id=2109791311]
+surface_material_override/0 = SubResource("ShaderMaterial_53np8")
+
+[node name="Body" parent="Armature/Skeleton3D" index="2" unique_id=1792919158]
+surface_material_override/0 = SubResource("ShaderMaterial_53np8")
+
+[node name="Button" parent="Armature/Skeleton3D" index="3" unique_id=253236596]
+surface_material_override/0 = SubResource("ShaderMaterial_53np8")
+
+[node name="Circle" parent="Armature/Skeleton3D" index="4" unique_id=968230684]
+surface_material_override/0 = SubResource("ShaderMaterial_53np8")
+
+[node name="Hand_L" parent="Armature/Skeleton3D" index="5" unique_id=832288052]
+surface_material_override/0 = SubResource("ShaderMaterial_53np8")
+
+[node name="Hand_R" parent="Armature/Skeleton3D" index="6" unique_id=814871217]
+surface_material_override/0 = SubResource("ShaderMaterial_53np8")
+
+[node name="HeadCapsule" parent="Armature/Skeleton3D" index="7" unique_id=1383308674]
+surface_material_override/0 = SubResource("StandardMaterial3D_vliq0")
+
+[node name="Leg" parent="Armature/Skeleton3D" index="8" unique_id=1753499952]
+surface_material_override/0 = SubResource("ShaderMaterial_53np8")
+
+[node name="Head_Socket" type="BoneAttachment3D" parent="Armature/Skeleton3D" index="9" unique_id=1137685559]
+transform = Transform3D(1, 8.565428e-09, 2.3834939e-07, -1.0394663e-08, 0.9999705, 0.0076756533, -2.3827663e-07, -0.0076756496, 0.99997056, 8.8666946e-10, 0.2495471, -0.0014517482)
+bone_name = "Head"
+bone_idx = 9
+
+[node name="FaceSprite" type="Sprite3D" parent="Armature/Skeleton3D/Head_Socket" index="0" unique_id=679654570]
+unique_name_in_owner = true
+transform = Transform3D(0.0826766, 3.10835e-10, -2.40341e-12, -3.10838e-10, 0.0826767, -5.20774e-05, 2.18137e-12, 5.20774e-05, 0.0826766, 5.16793e-09, 0.0423677, 0.000717234)
+billboard = 1
+double_sided = false
+alpha_cut = 1
+texture = ExtResource("6_ibskf")
+
+[node name="Spine_Socket" type="BoneAttachment3D" parent="Armature/Skeleton3D" index="10" unique_id=365435926]
+transform = Transform3D(1, 8.565428e-09, 2.3834934e-07, -1.0394663e-08, 0.9999705, 0.0076756533, -2.3827658e-07, -0.0076756496, 0.99997056, 0, 0.14603291, -0.0006571862)
+bone_name = "Spine"
+bone_idx = 8
+
+[node name="HeldItemSocket" type="BoneAttachment3D" parent="Armature/Skeleton3D" index="11" unique_id=446607129]
+transform = Transform3D(1, 0, 2.443461e-07, 0, 1, 0, -2.443461e-07, 0, 1, 0, 0.15727879, 0.10831313)
+bone_name = "HeldItemBone"
+bone_idx = 25
+
+[node name="Sphere_001" parent="Armature/Skeleton3D" index="12" unique_id=70416876]
+surface_material_override/0 = SubResource("ShaderMaterial_53np8")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="." index="3" unique_id=701422005]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.1607666, 0)
+shape = SubResource("CapsuleShape3D_vqh4x")
+
+[node name="AnimationTree" type="AnimationTree" parent="." index="4" unique_id=498575357]
+tree_root = SubResource("AnimationNodeBlendTree_tdccr")
+advance_expression_base_node = NodePath("..")
+anim_player = NodePath("../AnimationPlayer")
+parameters/Add2/add_amount = 1.0
+parameters/StateMachine/Locomotion/blend_position = 0.07978141

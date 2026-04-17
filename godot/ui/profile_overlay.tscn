@@ -1,11 +1,11 @@
 [gd_scene format=3 uid="uid://dk46dldcxqfbu"]
 
 [ext_resource type="Script" uid="uid://bjoimq3r2neer" path="res://ui/profile_overlay.gd" id="1_ia4v4"]
-[ext_resource type="PackedScene" uid="uid://cgog6fj0n1sni" path="res://ui/screen_square_element.tscn" id="2_8yg2g"]
-[ext_resource type="Texture2D" uid="uid://cb8up1rfauvb3" path="res://ui/Headgear_icon.svg" id="3_5loy3"]
+[ext_resource type="PackedScene" uid="uid://cgog6fj0n1sni" path="res://ui/screen_square.tscn" id="2_8yg2g"]
+[ext_resource type="Texture2D" uid="uid://cb8up1rfauvb3" path="res://ui/icons/Headgear_icon.svg" id="3_5loy3"]
 [ext_resource type="Texture2D" uid="uid://bkvqqicg2nt5f" path="res://ui/Torso_icon.svg" id="4_3t5dm"]
-[ext_resource type="Texture2D" uid="uid://byuk2bxby5nkf" path="res://ui/Footwear_icon.svg" id="5_3t5dm"]
-[ext_resource type="Texture2D" uid="uid://blojm8exgsdvy" path="res://ui/Hand_icon.svg" id="6_tyu4j"]
+[ext_resource type="Texture2D" uid="uid://byuk2bxby5nkf" path="res://ui/icons/Footwear_icon.svg" id="5_3t5dm"]
+[ext_resource type="Texture2D" uid="uid://blojm8exgsdvy" path="res://ui/icons/Hand_icon.svg" id="6_tyu4j"]
 [ext_resource type="Texture2D" uid="uid://tmalfjow4en0" path="res://ui/Tail_icon.svg" id="7_5pum5"]
 
 [node name="ProfileOverlay" type="CanvasLayer" unique_id=633817562]

@@ -1,4 +1,4 @@
-[gd_scene format=3 uid="uid://c8oq8ny0jnm26"]
+[gd_scene format=3 uid="uid://cgog6fj0n1sni"]
 
 [ext_resource type="Script" uid="uid://dt0jexox7bl45" path="res://ui/screen_square.gd" id="1_3nq7u"]
 [ext_resource type="Texture2D" uid="uid://cdpjlbxa68rfd" path="res://ui/icons/Screen_icon.svg" id="2_8t0eb"]
@@ -66,14 +66,12 @@ script = ExtResource("1_3nq7u")
 show_border = true
 icon_size = 50.0
 icon_texture = SubResource("CompressedTexture2D_3nq7u")
-icon_angle = null
 
 [node name="Container" type="Button" parent="." unique_id=872636966]
 unique_name_in_owner = true
-custom_minimum_size = Vector2(80, 80)
 layout_mode = 0
-offset_right = 80.0
-offset_bottom = 80.0
+offset_right = 8.0
+offset_bottom = 8.0
 pivot_offset = Vector2(40, 40)
 mouse_default_cursor_shape = 2
 theme_override_styles/normal = SubResource("StyleBoxFlat_8t0eb")
@@ -82,6 +80,7 @@ theme_override_styles/hover = SubResource("StyleBoxFlat_8t0eb")
 
 [node name="TextureRect" type="TextureRect" parent="Container" unique_id=660945302]
 unique_name_in_owner = true
+self_modulate = Color(0, 0, 0, 1)
 clip_children = 2
 custom_minimum_size = Vector2(80, 80)
 layout_mode = 0
@@ -93,7 +92,6 @@ expand_mode = 1
 
 [node name="Icon" type="TextureRect" parent="Container/TextureRect" unique_id=1635306138]
 unique_name_in_owner = true
-self_modulate = Color(0, 0, 0, 1)
 custom_minimum_size = Vector2(50, 50)
 layout_mode = 0
 offset_left = 15.0
@@ -108,7 +106,7 @@ expand_mode = 1
 
 [node name="Border" type="TextureRect" parent="Container" unique_id=1376545424]
 unique_name_in_owner = true
-self_modulate = Color(0, 0, 0, 1)
+self_modulate = Color(0.95686275, 0.3882353, 0.25490198, 1)
 custom_minimum_size = Vector2(80, 80)
 layout_mode = 0
 offset_right = 80.0

@@ -1,0 +1,14 @@
+[remap]
+
+importer="glsl"
+type="RDShaderFile"
+uid="uid://bcco38m2m1kl3"
+path="res://.godot/imported/post_process_underwater.glsl-fd74aff98e67c476b0c416f41ed26398.res"
+
+[deps]
+
+source_file="res://post_process/underwater/post_process_underwater.glsl"
+dest_files=["res://.godot/imported/post_process_underwater.glsl-fd74aff98e67c476b0c416f41ed26398.res"]
+
+[params]
+

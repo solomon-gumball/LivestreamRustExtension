@@ -18,7 +18,7 @@ signal on_selected(value: String)
 @export var icon_size: float = 80.0:
   set(v): icon_size = v; _update_layout()
 
-@export var icon_texture: Texture2D = preload("res://ui/Headgear_icon.svg"):
+@export var icon_texture: Texture2D = preload("res://ui/icons/Headgear_icon.svg"):
   set(v): icon_texture = v; _update_layout()
 
 @export var width: float = 80.0:
