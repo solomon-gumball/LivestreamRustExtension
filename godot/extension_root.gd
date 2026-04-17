@@ -22,11 +22,10 @@ func _ready() -> void:
   _navigate_to_page(ExtensionPage.Game)
 
 func _handle_connection_status_changed(connected: bool) -> void:
-  print("Connection status changed. Connected: %s" % str(connected))
   if connected:
     alert_layer.hide_alert()
   else:
-    alert_layer.display_alert("Disconnected from server. Attempting to reconnect...")
+    alert_layer.display_alert("Connection Lost!\nReconnecting...")
 
 func _navigate_to_page(page: int) -> void:
   var new_page: Node

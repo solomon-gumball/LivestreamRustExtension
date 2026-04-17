@@ -26,7 +26,6 @@ script = ExtResource("1_on8yo")
 
 [node name="AlertLayer" parent="." unique_id=1583613566 instance=ExtResource("2_on8yo")]
 unique_name_in_owner = true
-visible = false
 
 [node name="CanvasLayer" type="CanvasLayer" parent="." unique_id=941123695]
 
