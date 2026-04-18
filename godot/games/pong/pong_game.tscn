@@ -33,28 +33,30 @@ albedo_texture = SubResource("GradientTexture1D_433xj")
 emission_enabled = true
 emission_energy_multiplier = 3.0
 emission_texture = SubResource("GradientTexture1D_433xj")
-uv1_scale = Vector3(30, 30, 30)
+uv1_scale = Vector3(40, 40, 40)
 
 [node name="PongGameScene" type="Node3D" unique_id=632967591]
 script = ExtResource("1_0ehfm")
-paddle_start_distance = 2.2
+paddle_start_distance = 3.2
 
 [node name="DirectionalLight3D" type="DirectionalLight3D" parent="." unique_id=408204329]
 transform = Transform3D(1, 0, 0, 0, 0.6140786, 0.7892449, 0, -0.7892449, 0.6140786, 0, 2.1573846, 1.72217)
 
 [node name="PongPaddleL" parent="." unique_id=372987713 instance=ExtResource("2_racd5")]
 unique_name_in_owner = true
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.006736815, -2.2)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.006736815, -3.2)
 
-[node name="PongPaddleR" parent="." unique_id=1745273558 instance=ExtResource("2_racd5")]
+[node name="PongPaddleR" parent="." unique_id=749521308 instance=ExtResource("2_racd5")]
 unique_name_in_owner = true
-transform = Transform3D(-1, 0, -8.742278e-08, 0, 1, 0, 8.742278e-08, 0, -1, 0, 0, 2.2)
+transform = Transform3D(-1, 0, -8.742278e-08, 0, 1, 0, 8.742278e-08, 0, -1, 0, 0, 3.2)
 
 [node name="Camera" type="Camera3D" parent="." unique_id=481627781]
 unique_name_in_owner = true
 transform = Transform3D(-4.371139e-08, 1, 4.371139e-08, 0, -4.371139e-08, 1, 1, 4.371139e-08, 1.9106855e-15, 0, 4.6417165, 0)
+projection = 1
 current = true
 fov = 45.0
+size = 4.56
 
 [node name="PongSpawnLocation" type="Marker3D" parent="." unique_id=1025138863]
 unique_name_in_owner = true
@@ -62,10 +64,10 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.17301774, 0)
 
 [node name="ScoreRegionR" type="Area3D" parent="." unique_id=548170705]
 unique_name_in_owner = true
-transform = Transform3D(-4.371139e-08, 0, 1, 0, 1, 0, -1, 0, -4.371139e-08, 1.623, 0.399, 0)
+transform = Transform3D(-1, 0, -8.742278e-08, 0, 1, 0, 8.742278e-08, 0, -1, 0.15141308, 0.399, 5.30986)
 
 [node name="CollisionShape3D2" type="CollisionShape3D" parent="ScoreRegionR" unique_id=606438610]
-transform = Transform3D(-4.371139e-08, 0, 1, 0, 1, 0, -1, 0, -4.371139e-08, -3.4622478, 0, -1.4715872)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0.87988925)
 shape = SubResource("BoxShape3D_racd5")
 
 [node name="ScoreRegionL" type="Area3D" parent="." unique_id=1300623194]
@@ -73,11 +75,11 @@ unique_name_in_owner = true
 transform = Transform3D(-4.371139e-08, 0, 1, 0, 1, 0, -1, 0, -4.371139e-08, 1.623, 0.399, 0)
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="ScoreRegionL" unique_id=1790969097]
-transform = Transform3D(-4.371139e-08, 0, 1, 0, 1, 0, -1, 0, -4.371139e-08, 3.1932614, 0, -1.4715875)
+transform = Transform3D(-4.371139e-08, 0, 1, 0, 1, 0, -1, 0, -4.371139e-08, 4.2900343, 0, -1.4715875)
 shape = SubResource("BoxShape3D_racd5")
 
 [node name="WallTop" type="StaticBody3D" parent="." unique_id=654060514]
-transform = Transform3D(-4.371139e-08, 0, 1, 0, 1, 0, -1, 0, -4.371139e-08, 1.623, 0.399, 0)
+transform = Transform3D(-4.371139e-08, 0, 1, 0, 1, 0, -1, 0, -4.371139e-08, 2.2440672, 0.399, -2.7147703e-08)
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="WallTop" unique_id=1843961124]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0.5)
@@ -87,7 +89,7 @@ shape = SubResource("BoxShape3D_433xj")
 size = Vector3(10, 1, 1)
 
 [node name="WallBottom" type="StaticBody3D" parent="." unique_id=2009670674]
-transform = Transform3D(-4.371139e-08, 0, -1, 0, 1, 0, 1, 0, -4.371139e-08, -1.623, 0.399, 0)
+transform = Transform3D(-4.371139e-08, 0, -1, 0, 1, 0, 1, 0, -4.371139e-08, -2.22361, 0.399, -2.6253486e-08)
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="WallBottom" unique_id=2073819807]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0.5)
@@ -101,9 +103,10 @@ environment = SubResource("Environment_racd5")
 
 [node name="CSGBox3D" type="CSGBox3D" parent="." unique_id=398952350]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.5, 0)
+visible = false
 size = Vector3(10, 1, 10)
 
 [node name="MeshInstance3D" type="MeshInstance3D" parent="." unique_id=1783122201]
-transform = Transform3D(8.628619, 0, 0, 0, 2.1779676e-09, 1.0000002, 0, 0.049826086, -4.3711395e-08, 0, 0.008476796, -3.7053255e-10)
+transform = Transform3D(8.628619, 0, 0, 0, 1.1936697e-09, 1.0000002, 0, 0.027307978, -4.3711395e-08, 0, 0.008476796, -3.7053255e-10)
 mesh = SubResource("QuadMesh_racd5")
 surface_material_override/0 = SubResource("StandardMaterial3D_r2ito")

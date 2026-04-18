@@ -9,17 +9,19 @@
 [ext_resource type="Texture2D" uid="uid://ba6mac1k3t38a" path="res://materials/bot_mat/bot_normals.png" id="7_x3urd"]
 [ext_resource type="Script" uid="uid://d2ybq2ovami5x" path="res://util/state_machine.gd" id="8_hb8fn"]
 
-[sub_resource type="Environment" id="Environment_racd5"]
+[sub_resource type="Environment" id="Environment_hb8fn"]
 background_mode = 1
 glow_enabled = true
 
-[sub_resource type="ShaderMaterial" id="ShaderMaterial_whhsp"]
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_hb8fn"]
 resource_local_to_scene = true
 render_priority = 0
 shader = ExtResource("5_k3023")
 shader_parameter/albedo_texture = ExtResource("6_cy2wj")
 shader_parameter/normal_map = ExtResource("7_x3urd")
 shader_parameter/bot_color = Color(1, 0, 0, 1)
+
+[sub_resource type="World3D" id="World3D_hb8fn"]
 
 [sub_resource type="LabelSettings" id="LabelSettings_jjmn7"]
 font = ExtResource("2_p5ued")
@@ -33,7 +35,7 @@ default_font_size = 50
 font = ExtResource("3_nspls")
 font_size = 40
 
-[node name="GamePage" type="Control" unique_id=528837551 node_paths=PackedStringArray("gumbot")]
+[node name="GamePage" type="Control" unique_id=528837551]
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
@@ -41,9 +43,9 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("1_jjmn7")
-gumbot = NodePath("SubViewportContainer/SubViewport/GameRootNode/gumbot")
 
-[node name="SubViewportContainer" type="SubViewportContainer" parent="." unique_id=1824508744]
+[node name="OverlaySubviewportContainer" type="SubViewportContainer" parent="." unique_id=1824508744]
+unique_name_in_owner = true
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -52,26 +54,43 @@ grow_horizontal = 2
 grow_vertical = 2
 stretch = true
 
-[node name="SubViewport" type="SubViewport" parent="SubViewportContainer" unique_id=1485304244]
+[node name="OverlaySubViewport" type="SubViewport" parent="OverlaySubviewportContainer" unique_id=1485304244]
 transparent_bg = true
 handle_input_locally = false
 size = Vector2i(1600, 900)
 render_target_update_mode = 4
 
-[node name="GameRootNode" type="Node3D" parent="SubViewportContainer/SubViewport" unique_id=438430134]
-unique_name_in_owner = true
+[node name="WorldEnvironment" type="WorldEnvironment" parent="OverlaySubviewportContainer/OverlaySubViewport" unique_id=766080626]
+environment = SubResource("Environment_hb8fn")
 
-[node name="WorldEnvironment" type="WorldEnvironment" parent="SubViewportContainer/SubViewport/GameRootNode" unique_id=1219707593]
-environment = SubResource("Environment_racd5")
-
-[node name="Camera3D" type="Camera3D" parent="SubViewportContainer/SubViewport/GameRootNode" unique_id=1295238520]
+[node name="Camera3D" type="Camera3D" parent="OverlaySubviewportContainer/OverlaySubViewport" unique_id=1357514990]
 transform = Transform3D(-0.9999256, 0.0012404516, -0.012136259, -8.798377e-09, 0.994817, 0.101681344, 0.0121994885, 0.101673774, -0.994743, 0.005316977, 0.32955688, -0.37962487)
 projection = 1
 current = true
 
-[node name="gumbot" parent="SubViewportContainer/SubViewport/GameRootNode" unique_id=2126276004 instance=ExtResource("4_43xba")]
+[node name="GumBot" parent="OverlaySubviewportContainer/OverlaySubViewport" unique_id=2126276004 instance=ExtResource("4_43xba")]
+unique_name_in_owner = true
 transform = Transform3D(-0.9408098, 0, 0.33893508, 0, 1, 0, -0.33893508, 0, -0.9408098, -0.6849959, -0.30148157, 0.73511076)
-surface_mat = SubResource("ShaderMaterial_whhsp")
+surface_mat = SubResource("ShaderMaterial_hb8fn")
+
+[node name="GameSubviewportContainer" type="SubViewportContainer" parent="." unique_id=1801142719]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+stretch = true
+
+[node name="GameSubviewport" type="SubViewport" parent="GameSubviewportContainer" unique_id=1131613315]
+own_world_3d = true
+world_3d = SubResource("World3D_hb8fn")
+handle_input_locally = false
+size = Vector2i(1600, 900)
+render_target_update_mode = 4
+
+[node name="GameRootNode" type="Node3D" parent="GameSubviewportContainer/GameSubviewport" unique_id=2055202705]
+unique_name_in_owner = true
 
 [node name="DebugRect" type="ColorRect" parent="." unique_id=612512015]
 unique_name_in_owner = true

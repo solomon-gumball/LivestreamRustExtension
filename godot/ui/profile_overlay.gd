@@ -26,7 +26,7 @@ func _update_grid_items() -> void:
 
   var slot_wearables: Array[ShopItem.WearableShopItem] = []
   for asset_name in chatter.assets:
-    var asset = Network.get_item_info(asset_name)
+    var asset = Network.authenticated_state.get_item_info(asset_name)
     if asset is not ShopItem.WearableShopItem:
       continue
     var wearable := asset as ShopItem.WearableShopItem

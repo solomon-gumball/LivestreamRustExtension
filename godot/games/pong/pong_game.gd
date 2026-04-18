@@ -19,7 +19,7 @@ var paddle_by_peer_id: Dictionary[int, PongPaddle] = {}
 @onready var pong_paddle_l: PongPaddle = %PongPaddleL
 @onready var pong_paddle_r: PongPaddle = %PongPaddleR
 @onready var camera: Camera3D = %Camera
-@onready var is_game_host: bool = lobby.host_chatter_id == Network.current_chatter.id
+@onready var is_game_host: bool = lobby.host_chatter_id == Network.my_chatter().id
 @onready var pong_spawn_location: Marker3D = %PongSpawnLocation
 @onready var score_region_l: Area3D = %ScoreRegionL
 @onready var score_region_r: Area3D = %ScoreRegionR
@@ -35,8 +35,9 @@ func _ready() -> void:
   if Engine.is_editor_hint():
     return
 
+  Network.multiplayer_client.current_lobby_updated.connect(_lobby_updated)
   Network.multiplayer_client.packet_received.connect(_handle_peer_packet)
-  Network.chatter_updated.connect(_handle_chatter_updated)
+  Network.authenticated_state.chatter_updated.connect(_handle_chatter_updated)
 
   var sub_channels: Array[String] = []
   for peer in lobby.peers:
@@ -69,7 +70,10 @@ func _ready() -> void:
     _start_round()
 
   # This must be at the end so the paddle by id is ready  
-  _handle_chatter_updated(Network.current_chatter)
+  _handle_chatter_updated(Network.my_chatter())
+
+func _lobby_updated(new_lobby: Lobby) -> void:
+  lobby = new_lobby
 
 func _send_refresh_state(peer_id: int) -> void:
   Network.multiplayer_client.send_packet(

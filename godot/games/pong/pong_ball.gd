@@ -2,6 +2,7 @@ extends CharacterBody3D
 class_name PongBall
 
 var sync_state: PongEntity = PongEntity.new()
+var speed: float = 2.0
 
 func has_authority():
   return sync_state.owner == Network.multiplayer_client.my_peer_id()
@@ -9,7 +10,7 @@ func has_authority():
 func _ready() -> void:
   if has_authority():
     velocity = Vector3(1.0, 0.0, 0.0).rotated(Vector3.UP, randf_range(0, TAU))
-    velocity *= 2.0
+    velocity *= speed
 
 func _physics_process(delta: float) -> void:
   if !has_authority():
@@ -22,8 +23,10 @@ func _physics_process(delta: float) -> void:
       velocity.y = 0
 
   if has_authority():
+    velocity = velocity.normalized() * speed
     Network.multiplayer_client.send_packet({
       "type": PongGame.PongGameMessage.BallMove,
       "position": position,
       "velocity": velocity
     })
+    speed += delta * 0.05

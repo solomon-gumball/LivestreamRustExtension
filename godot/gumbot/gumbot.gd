@@ -78,7 +78,8 @@ var chatter: Chatter = null:
     for slot_name in chatter.equipped:
       var item_name = chatter.equipped[slot_name]
       if item_name == null: continue
-      var item_info: ShopItem = Network.get_item_info(item_name)
+      var item_info: ShopItem = Network.authenticated_state.get_item_info(item_name)
+
       if item_info != null:
         if item_info is ShopItem.WearableShopItem and loaded_mesh_files.has((item_info as ShopItem.WearableShopItem).name.to_lower()):
           var meshes_in_slot_to_hide = item_info.metadata.hide_meshes

@@ -91,15 +91,17 @@ class StoreData:
   var action_queue: Array[QueueAction] = []
   var active_chatters: Array[Chatter] = []
   var drops: DropData = null
+  var market: Dictionary[String, ShopItem] = {}
 
   static func FromData(data: Dictionary) -> StoreData:
     var inst = StoreData.new()
-    var action_data = data["action_queue"]
-
-    inst.action_queue = CreateActionQueue(action_data)
+    inst.action_queue = CreateActionQueue(data["action_queue"])
     for chatter in data["active_chatters"]:
       inst.active_chatters.append(Chatter.FromData(chatter))
     inst.drops = DropData.FromData(data["drops"])
+    var market_data: Dictionary = data.get("market", {})
+    for item_key in market_data:
+      inst.market[item_key] = ShopItem.FromData(market_data[item_key])
     return inst
 
   static func CreateActionQueue(raw_arr: Array) -> Array[QueueAction]:

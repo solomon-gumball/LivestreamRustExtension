@@ -14,18 +14,23 @@ var game_page_template: PackedScene = preload("res://pages/game_page.tscn")
 enum ExtensionPage { Profile, Game }
 
 func _ready() -> void:
-  Network.chatter_updated.connect(_handle_chatter_updated)
-  Network.store_data_received.connect(_store_data_received)
-  Network.socket_connection_status_changed.connect(_handle_connection_status_changed)
-  profile_button.pressed.connect(_navigate_to_page.bind(ExtensionPage.Profile))
+  if DebugScreenLayout.window_index == 0:
+    Network.debug_chatter_id = '22445910' # Gumball
+  else:
+    Network.debug_chatter_id = '1273990990' # GumBOT
+  Network.connection_state.changed.connect(_handle_connection_status_changed)
+  _handle_connection_status_changed(Network.connection_state.current)
+
   game_button.pressed.connect(_navigate_to_page.bind(ExtensionPage.Game))
+  profile_button.pressed.connect(_navigate_to_page.bind(ExtensionPage.Profile))
+
   _navigate_to_page(ExtensionPage.Game)
 
-func _handle_connection_status_changed(connected: bool) -> void:
-  if connected:
-    alert_layer.hide_alert()
+func _handle_connection_status_changed(state: Network.NetworkConnectionState) -> void:
+  if state is Network.DisconnectedState:
+    alert_layer.display_alert("No connection found!\nReconnecting...")
   else:
-    alert_layer.display_alert("Connection Lost!\nReconnecting...")
+    alert_layer.hide_alert()
 
 func _navigate_to_page(page: int) -> void:
   var new_page: Node
@@ -41,16 +46,3 @@ func _navigate_to_page(page: int) -> void:
 
   active_page = new_page
   page_container.add_child(new_page)
-
-func _store_data_received() -> void:
-  if DebugScreenLayout.window_index == 0:
-    # Network.current_chatter_id = '22445910'
-    Network.subscribe(['LOBBIES'], '22445910') # solomongumbal1
-  # elif DebugScreenLayout.window_index == 1:
-  else:
-    # Network.current_chatter_id = '1273990990'
-    Network.subscribe(['LOBBIES'], '1273990990') # solomongumbot
-
-func _handle_chatter_updated(chatter: Chatter) -> void:
-  current_chatter = chatter
-  Network.current_chatter = chatter
