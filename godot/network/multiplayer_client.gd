@@ -13,7 +13,10 @@ signal current_lobby_updated(lobby: Lobby)
 signal packet_received(id: int, packet: Dictionary)
 signal rtc_peer_ready(peer_id: int)
 
-var connection_state: StateMachine = null
+@onready var connection_state: StateMachine
+@onready var looking_for_lobby_state: LookingForLobbyState
+@onready var disconnected_state: DisconnectedState
+
 var current_lobby: Lobby = null
 
 var rtc_mp := WebRTCMultiplayerPeer.new()
@@ -32,6 +35,18 @@ func _ready() -> void:
   ping_timer.one_shot = false
   ping_timer.timeout.connect(_check_ping)
   add_child(ping_timer)
+
+  connection_state = StateMachine.new()
+  looking_for_lobby_state = LookingForLobbyState.new(self)
+  disconnected_state = DisconnectedState.new(self)
+
+  add_child(connection_state)
+  connection_state.add_child(looking_for_lobby_state)
+  connection_state.add_child(disconnected_state)
+
+  connection_state.change_state(disconnected_state)
+
+  looking_for_lobby_state.lobby_joined.connect(connection_state.change_state.bind(join_lobby))
 
 func stop() -> void:
   multiplayer.multiplayer_peer = null
@@ -303,31 +318,20 @@ class LookingForLobbyState extends RTCConnectionState:
         var lobbies: Array[Lobby] = []
         for lobby_data in msg.get("lobbies", []):
           lobbies.append(Lobby.from_data(lobby_data))
-        # all_lobbies = {}
-        # for lobby in lobbies:
-        #   all_lobbies[lobby.name] = lobby
         if lobbies.size() > 0:
           mc.current_lobby = lobbies[0]
           lobby_joined.emit()
 
+class JoiningLobbyState extends RTCConnectionState:
+  func process_message(type: String, msg: Dictionary) -> void:
+    assert(mc.current_lobby != null, "Current lobby should always be valid in this state")
+    # match type:
+    #   "rtc-lobbies-updated":
+        # Should handle updating the lobby and updating a signal for this
 
-# class JoiningLobbyState extends GamePageState:
-#   signal did_leave_lobby
-#   func enter_state(_previous_state: State) -> void:
-#     if previous_state is LookingForLobbyState:
-#       lobby = (previous_state as LookingForLobbyState).lobby
-#       pass
-#     lobby_info_panel.visible = true
-#     Network.multiplayer_client.lobbies_updated.connect(_handle_lobbies_updated)
-  
-#   func _handle_lobbies_updated(lobbies: Array[Lobby]) -> void:
-#     if lobbies.size() == 0:
-#       did_leave_lobby.emit()
-#       return
-#     var new_lobby_data: Lobby = lobbies[0]
+    # This will likely handle a lot of the same events as ConnectedToLobbyState
+    pass
 
-#   func exit_state() -> void: pass
-
-#   func _handle_lobbies_updated(lobbies: Array[Lobby]) -> void:
-#     if lobbies.size() > 0:
-#       Network.multiplayer_client.join_lobby(lobbies[0].name)
+class ConnectedToLobbyState extends RTCConnectionState:
+  func process_message(type: String, msg: Dictionary) -> void:
+    assert(mc.current_lobby != null, "Current lobby should always be valid in this state")
