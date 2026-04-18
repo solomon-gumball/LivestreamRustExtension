@@ -13,10 +13,8 @@ signal current_lobby_updated(lobby: Lobby)
 signal packet_received(id: int, packet: Dictionary)
 signal rtc_peer_ready(peer_id: int)
 
-var all_lobbies: Dictionary[String, Lobby] = {}
-
-func current_lobby() -> Lobby:
-  return all_lobbies.get(current_lobby_id, null)
+var connection_state: StateMachine = null
+var current_lobby: Lobby = null
 
 var rtc_mp := WebRTCMultiplayerPeer.new()
 var sealed: bool = false
@@ -106,46 +104,49 @@ func handle_ws_message(parsed: Variant) -> bool:
   var type: String = msg.get("type", "")
   if type.is_empty():
     return false
+  
+  if connection_state.current:
+    connection_state.current.process_message(type, msg)
 
-  match type:
-    "rtc-peer-id":
-      _connected(int(msg.get("peer_id", 0)), bool(msg.get("mesh_mode", false)))
-    "rtc-lobby-joined":
-      current_lobby_id = str(msg.get("lobby_name", ""))
-      lobby_joined.emit(current_lobby_id)
-    "rtc-lobby-sealed":
-      _lobby_sealed()
-    "rtc-peer-joined":
-      _peer_joined(int(msg.get("peer_id", 0)))
-    "rtc-peer-disconnected":
-      _peer_disconnected(int(msg.get("peer_id", 0)))
-    "rtc-offer":
-      _offer_received(int(msg.get("from_peer_id", 0)), str(msg.get("sdp", "")))
-    "rtc-answer":
-      _answer_received(int(msg.get("from_peer_id", 0)), str(msg.get("sdp", "")))
-    "rtc-candidate":
-      var from_id: int = int(msg.get("from_peer_id", 0))
-      var parts: PackedStringArray = str(msg.get("candidate", "")).split("\n", false)
-      if parts.size() != 3:
-        return false
-      if not parts[1].is_valid_int():
-        return false
-      _candidate_received(from_id, parts[0], parts[1].to_int(), parts[2])
-    "rtc-lobbies-updated":
-      var prev_lobby = current_lobby()
-      var lobbies: Array[Lobby] = []
-      for lobby_data in msg.get("lobbies", []):
-        lobbies.append(Lobby.from_data(lobby_data))
-      all_lobbies = {}
-      for lobby in lobbies:
-        all_lobbies[lobby.name] = lobby
-      lobbies_updated.emit(lobbies)
-      var new_lobby = current_lobby()
-      # TODO: Fix this equivalence check
-      if prev_lobby != new_lobby:
-        current_lobby_updated.emit()
-    _:
-      return false
+  # match type:
+  #   "rtc-peer-id":
+  #     _connected(int(msg.get("peer_id", 0)), bool(msg.get("mesh_mode", false)))
+  #   "rtc-lobby-joined":
+  #     current_lobby_id = str(msg.get("lobby_name", ""))
+  #     lobby_joined.emit(current_lobby_id)
+  #   "rtc-lobby-sealed":
+  #     _lobby_sealed()
+  #   "rtc-peer-joined":
+  #     _peer_joined(int(msg.get("peer_id", 0)))
+  #   "rtc-peer-disconnected":
+  #     _peer_disconnected(int(msg.get("peer_id", 0)))
+  #   "rtc-offer":
+  #     _offer_received(int(msg.get("from_peer_id", 0)), str(msg.get("sdp", "")))
+  #   "rtc-answer":
+  #     _answer_received(int(msg.get("from_peer_id", 0)), str(msg.get("sdp", "")))
+  #   "rtc-candidate":
+  #     var from_id: int = int(msg.get("from_peer_id", 0))
+  #     var parts: PackedStringArray = str(msg.get("candidate", "")).split("\n", false)
+  #     if parts.size() != 3:
+  #       return false
+  #     if not parts[1].is_valid_int():
+  #       return false
+  #     _candidate_received(from_id, parts[0], parts[1].to_int(), parts[2])
+  #   "rtc-lobbies-updated":
+  #     var prev_lobby = current_lobby()
+  #     var lobbies: Array[Lobby] = []
+  #     for lobby_data in msg.get("lobbies", []):
+  #       lobbies.append(Lobby.from_data(lobby_data))
+  #     all_lobbies = {}
+  #     for lobby in lobbies:
+  #       all_lobbies[lobby.name] = lobby
+  #     lobbies_updated.emit(lobbies)
+  #     var new_lobby = current_lobby()
+  #     # TODO: Fix this equivalence check
+  #     if prev_lobby != new_lobby:
+  #       current_lobby_updated.emit()
+  #   _:
+  #     return false
 
   return true  # Parsed.
 
@@ -216,7 +217,7 @@ func send_packet(
   transfer_mode: int = MultiplayerPeer.TRANSFER_MODE_UNRELIABLE_ORDERED
 ) -> void:
 
-  if not current_lobby():
+  if not current_lobby:
     if PRINT_DEBUG: print("Can't send packet, not in lobby")
     return
   if !is_net_connected():
@@ -273,3 +274,60 @@ func _process(_delta):
         ping_check_completed.emit(Time.get_ticks_msec() - message.get("sent_at", 0))
 
     packet_received.emit(sender_id, message)
+
+class RTCConnectionState extends State:
+  var mc: MultiplayerClient
+  func _init(_mc: MultiplayerClient):
+    mc = _mc
+  
+  func process_message(type: String, _msg: Dictionary) -> void:
+    assert(false, "process_message not implemented for type %s in state %s" % [type, self])
+
+class DisconnectedState extends RTCConnectionState:
+  func enter_state(_previous_state: State) -> void:
+    mc.current_lobby = null
+    mc.all_lobbies = {}
+
+class LookingForLobbyState extends RTCConnectionState:
+  var all_lobbies: Dictionary[String, Lobby] = {}
+  signal lobby_joined()
+
+  func enter_state(_previous_state: State) -> void:
+    mc.current_lobby = null
+    mc.all_lobbies = {}
+    Network.send_socket_message({ "type": "rtc-fetch-lobbies" })
+
+  func process_message(type: String, msg: Dictionary) -> void:
+    match type:
+      "rtc-lobbies-updated":
+        var lobbies: Array[Lobby] = []
+        for lobby_data in msg.get("lobbies", []):
+          lobbies.append(Lobby.from_data(lobby_data))
+        # all_lobbies = {}
+        # for lobby in lobbies:
+        #   all_lobbies[lobby.name] = lobby
+        if lobbies.size() > 0:
+          mc.current_lobby = lobbies[0]
+          lobby_joined.emit()
+
+
+# class JoiningLobbyState extends GamePageState:
+#   signal did_leave_lobby
+#   func enter_state(_previous_state: State) -> void:
+#     if previous_state is LookingForLobbyState:
+#       lobby = (previous_state as LookingForLobbyState).lobby
+#       pass
+#     lobby_info_panel.visible = true
+#     Network.multiplayer_client.lobbies_updated.connect(_handle_lobbies_updated)
+  
+#   func _handle_lobbies_updated(lobbies: Array[Lobby]) -> void:
+#     if lobbies.size() == 0:
+#       did_leave_lobby.emit()
+#       return
+#     var new_lobby_data: Lobby = lobbies[0]
+
+#   func exit_state() -> void: pass
+
+#   func _handle_lobbies_updated(lobbies: Array[Lobby]) -> void:
+#     if lobbies.size() > 0:
+#       Network.multiplayer_client.join_lobby(lobbies[0].name)
