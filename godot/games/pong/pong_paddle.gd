@@ -2,7 +2,7 @@ extends Node3D
 class_name PongPaddle
 
 const MAX_SPEED = 2.0
-const MAX_RANGE = 1.5
+const MAX_RANGE = 2.0
 const ACCELERATION = 0.1
 const DECELERATION = 5.0
 

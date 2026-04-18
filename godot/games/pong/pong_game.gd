@@ -149,6 +149,7 @@ func _handle_peer_packet(sender_id: int, packet: Dictionary) -> void:
       paddle_state.score += 1
     PongGameMessage.BallMove:
       if game_state.ball_state:
+        game_state.ball_state.sent_at = packet.get("sent_at", 0)
         game_state.ball_state.position = packet.get("position", Vector3.ZERO)
         game_state.ball_state.velocity = packet.get("velocity", Vector3.ZERO)
     PongGameMessage.StartRound:
