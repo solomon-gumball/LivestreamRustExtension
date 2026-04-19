@@ -130,6 +130,11 @@ func _on_connection_state_changed(state: State) -> void:
     host_game_button.visible = false
     lobby_info_panel.visible = false
 
+func load_minigame(name: String, pck_path: String) -> void:
+  ProjectSettings.load_resource_pack(pck_path)
+  var entry = ResourceLoader.load("res://minigames/%s/main.tscn" % name)
+  add_child(entry.instantiate())
+
 func _on_current_lobby_updated(lobby: Lobby) -> void:
   current_lobby = lobby
 
