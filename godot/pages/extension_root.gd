@@ -14,10 +14,6 @@ var game_page_template: PackedScene = preload("res://pages/game_page.tscn")
 enum ExtensionPage { Profile, Game }
 
 func _ready() -> void:
-  if DebugScreenLayout.window_index == 0:
-    WSClient.debug_chatter_id = '22445910' # Gumball
-  else:
-    WSClient.debug_chatter_id = '1273990990' # GumBOT
   WSClient.state.changed.connect(_handle_connection_status_changed)
   _handle_connection_status_changed(WSClient.state.current)
 

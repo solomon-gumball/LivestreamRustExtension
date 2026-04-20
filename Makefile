@@ -1,6 +1,6 @@
 GODOT ?= godot
 GODOT_PROJECT = godot
-EXPORT_PRESET = LivestreamRustExtension
+EXPORT_PRESET = TwitchExtension
 EXPORT_PATH = ../web/public/index.html
 
 .PHONY: export build-rust

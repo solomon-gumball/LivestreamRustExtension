@@ -1,9 +1,10 @@
+@tool
 extends Node3D
 class_name PongPaddle
 
-const MAX_SPEED = 2.0
+const MAX_SPEED = 4.0
 const MAX_RANGE = 2.0
-const ACCELERATION = 0.1
+const ACCELERATION = 0.2
 const DECELERATION = 5.0
 
 var peer_id: int
@@ -15,8 +16,22 @@ var chatter: Chatter:
 var chatter_id: String
 var velocity: Vector3 = Vector3.ZERO
 
+@onready var paddle_mesh: Node3D = %PaddleMesh
 @onready var gumbot: GumBot = %GumBot
 @onready var collision_body: StaticBody3D = %PaddleCollisionArea
+@export var gumbot_walk_speed = 0.0:
+  set(new_value):
+    gumbot_walk_speed = new_value
+    gumbot.anim_tree.set("parameters/StateMachine/Walking/blend_position", new_value)
+
+enum GumbotAnimState { Taunt, Walking, Pong }
+@export var gumbot_animation_state = GumbotAnimState.Pong:
+  set(new_value):
+    gumbot_animation_state = new_value
+    var sm_playback: AnimationNodeStateMachinePlayback = gumbot.anim_tree.get("parameters/StateMachine/playback")
+    sm_playback.travel(GumbotAnimState.keys()[gumbot_animation_state])
+
+    paddle_mesh.visible = gumbot_animation_state == GumbotAnimState.Pong
 
 func _ready() -> void:
   sync_state = PongEntity.new()
@@ -38,6 +53,9 @@ func _phys_move(delta: float) -> void:
   movement_input = Vector2.ZERO
 
 func _physics_process(delta: float) -> void:
+  if Engine.is_editor_hint(): return
+  if gumbot_animation_state != GumbotAnimState.Pong: return
+
   if has_authority():
     var accel = movement_input.y * ACCELERATION
     velocity.x += accel

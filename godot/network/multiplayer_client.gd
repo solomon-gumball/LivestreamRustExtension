@@ -21,7 +21,7 @@ var current_lobby: Lobby = null:
 
 var rtc_mp := WebRTCMultiplayerPeer.new()
 
-const PRINT_DEBUG: bool = true
+const PRINT_DEBUG: bool = false
 const RELAY_ONLY_CANDIDATES: bool = true
 
 enum GlobalNetCommand {
@@ -279,9 +279,6 @@ class Connected extends MultiplayerClientState:
         }
       ]
     })
-    # print("turn credentials => ", JSON.stringify(WSClient.authenticated_state.turn_credentials))
-    # print('creating new peer for peer_id ', id)
-    print('adding peer to existing peers => ', mc.rtc_mp.get_peers())
     mc.rtc_mp.add_peer(peer, id)
 
     # Ensure offers only go one way
@@ -314,11 +311,9 @@ class Connected extends MultiplayerClientState:
   func _peer_disconnected(id: int) -> void:
     _offer_sent.erase(id)
     if mc.rtc_mp.has_peer(id):
-      print("removing peer -> ", id)
       mc.rtc_mp.remove_peer(id)
 
   func _peer_joined(id: int) -> void:
-    print(mc.rtc_mp.get_unique_id(), " is adding peer -> ", id)
     _create_peer(id)
 
   func _offer_received(id: int, offer: String) -> void:
@@ -372,7 +367,6 @@ class Connected extends MultiplayerClientState:
       "rtc-lobby-sealed":
         _lobby_sealed()
       "rtc-peer-joined":
-        print(mc.rtc_mp.get_unique_id(), " received rtc-peer-joined for peer ", int(msg.get("peer_id", 0)))
         _peer_joined(int(msg.get("peer_id", 0)))
       "rtc-peer-disconnected":
         _peer_disconnected(int(msg.get("peer_id", 0)))

@@ -14,6 +14,7 @@ background_mode = 1
 ambient_light_source = 2
 ambient_light_color = Color(0.84104, 0.84104, 0.84103996, 1)
 ambient_light_energy = 2.0
+ssao_enabled = true
 glow_enabled = true
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_hb8fn"]

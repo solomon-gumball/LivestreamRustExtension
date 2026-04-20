@@ -1,3 +1,4 @@
+@tool
 extends CharacterBody3D
 class_name GumBot
 
@@ -27,8 +28,9 @@ var bot_state: BotState = BotState.Walking
 
 var chatter: Chatter = null:
   set(new_value):
-    if !is_inside_tree():
-      return
+    if !is_inside_tree(): return
+    if Engine.is_editor_hint(): return
+
     var prev_chatter = chatter
     chatter = new_value
     emote = chatter.emote
@@ -154,7 +156,7 @@ var shader_mat_template: ShaderMaterial = preload("res://materials/bot_mat/bot_s
 var screen_mat: StandardMaterial3D = null
 
 func _ready() -> void:
-  anim_tree.tree_root = anim_tree.tree_root.duplicate()
+  # anim_tree.tree_root = anim_tree.tree_root.duplicate()
   anim_tree.advance_expression_base_node = NodePath("../..")
 
 var is_emoting: bool = false:

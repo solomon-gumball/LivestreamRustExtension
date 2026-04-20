@@ -39,7 +39,6 @@ func _handle_collision(collision: KinematicCollision3D) -> void:
     velocity.y = 0.0
 
 func _physics_process(delta: float) -> void:
-  # ProjectSettings.load_resource_pack(
   if !has_authority():
     position = sync_state.position
     velocity = sync_state.velocity

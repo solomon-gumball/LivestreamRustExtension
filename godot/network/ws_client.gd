@@ -26,11 +26,12 @@ func getWsServerUrl() -> String:
 
 var inbox_size = 10
 func _ready() -> void:
-  remote_server_socket = WebSocketPeer.new()
+  if DebugScreenLayout.window_index == 0:
+    WSClient.debug_chatter_id = '22445910' # Gumball
+  else:
+    WSClient.debug_chatter_id = '1273990990' # GumBOT
 
-  if OS.get_name() == "Web":
-    callback = JavaScriptBridge.create_callback(_on_twitch_authorized)
-    JavaScriptBridge.get_interface("window").twitchTokenCallback = callback
+  remote_server_socket = WebSocketPeer.new()
 
   add_child(state)
 
@@ -40,14 +41,6 @@ func _ready() -> void:
 
   connected_state.authenticated_successfully.connect(state.change_state.bind(authenticated_state))
   state.change_state(disconnected_state)
-
-var callback: JavaScriptObject
-var auth_token: String = ""
-
-func _on_twitch_authorized(args: Array) -> void:
-  set("auth_token", str(args[0]))
-  auth_token = str(args[0])
-  print("Twitch auth token received")
 
 func fetchAudienceMembers(count: int, participants: Array[Chatter]) -> Array[Chatter]:
   var request = AwaitableHTTPRequest.new()
@@ -95,6 +88,27 @@ func slots_activated(uuid: String, gumbucksWon: float) -> void:
 
 func subscribe(channels: Array[String]) -> void:
   send_socket_message({ "type": "subscribe", "channels": channels })
+
+func wear_item(item: String) -> Chatter:
+  var request = AwaitableHTTPRequest.new()
+  add_child(request)
+  var headers: PackedStringArray = [
+    "Content-Type: application/json",
+    "Authorization: Bearer " + connected_state.twitch_auth_token,
+  ]
+  var response := await request.async_request(
+    get_database_server_url("wear-item"),
+    headers,
+    HTTPClient.METHOD_PUT,
+    JSON.stringify({ "item": item })
+  )
+
+  if response.success() and response.status_ok():
+    var result: Dictionary = response.body_as_json()
+    if result.get("success"):
+      return Chatter.FromData(result["updated"])
+  return null
+
 
 var debug_force_disconnected := false
 
@@ -169,13 +183,28 @@ class ConnectedState extends WSClientState:
   var current_chatter: Chatter = null
   var turn_credentials: Dictionary = {}
   var store_data: Message.StoreData
+  var twitch_auth_token: String = ""
+  var callback: JavaScriptObject
+
+  func _ready() -> void:
+    if OS.get_name() == "Web":
+      callback = JavaScriptBridge.create_callback(_on_twitch_authorized)
+      JavaScriptBridge.get_interface("window").twitchTokenCallback = callback
 
   func enter_state(_previous_state: State) -> void:
+    _try_authenticate()
+  
+  func _on_twitch_authorized(args: Array) -> void:
+    twitch_auth_token = str(args[0])
+    _try_authenticate()
+  
+  func _try_authenticate() -> void:
     var auth_msg := { "type": "authenticate" }
+
     if not net.debug_chatter_id.is_empty():
       auth_msg["debugAuthId"] = net.debug_chatter_id
-    elif not net.auth_token.is_empty():
-      auth_msg["token"] = net.auth_token
+    elif not twitch_auth_token.is_empty():
+      auth_msg["token"] = twitch_auth_token
     
     var subscribe_method := { "type": "subscribe", "channels": ["LOBBIES"] }
     net.remote_server_socket.send_text(JSON.stringify([auth_msg, subscribe_method]))
@@ -203,6 +232,7 @@ class AuthenticatedState extends WSClientState:
   signal chat_message_received(message: Message.Chat)
   signal file_changed(file_name: String)
   signal chatter_updated(chatter: Chatter)
+  signal my_chatter_updated(chatter: Chatter)
   signal debug_image_received(base64: String)
   signal leaderboard_updated(leaderboard: Array[Chatter])
   signal onscreen_notification_received(message: Message.OnScreenNotification)
@@ -243,6 +273,7 @@ class AuthenticatedState extends WSClientState:
     if _previous_state is ConnectedState:
       var connected_prev: ConnectedState = _previous_state
       current_chatter = connected_prev.current_chatter
+      print(current_chatter.assets)
       turn_credentials = connected_prev.turn_credentials
       item_info = connected_prev.store_data.market
 
@@ -294,6 +325,9 @@ class AuthenticatedState extends WSClientState:
       "update-chatter":
         var new_chatter = Chatter.FromData(message.chatter)
         add_or_update_chatter(new_chatter)
+        if new_chatter.id == current_chatter.id:
+          current_chatter = new_chatter
+          my_chatter_updated.emit(new_chatter)
         chatter_updated.emit(new_chatter)
       "twitch-custom-redeem":
         pass

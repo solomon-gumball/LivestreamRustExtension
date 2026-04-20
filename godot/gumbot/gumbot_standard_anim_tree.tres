@@ -1,0 +1,23 @@
+[gd_resource type="AnimationNodeBlendTree" format=3 uid="uid://mivjk4jvqqht"]
+
+[ext_resource type="AnimationNodeStateMachine" uid="uid://bhmvb2r1oed2v" path="res://gumbot/gumbot_state_tree.tres" id="1_ablli"]
+
+[sub_resource type="AnimationNodeAdd2" id="AnimationNodeAdd2_o2iqh"]
+filters = ["Armature/Skeleton3D:Windup"]
+
+[sub_resource type="AnimationNodeAnimation" id="AnimationNodeAnimation_x5r14"]
+animation = &"Windup"
+
+[sub_resource type="AnimationNodeStateMachine" id="AnimationNodeStateMachine_77hud"]
+graph_offset = Vector2(-368.53, -95.3)
+
+[resource]
+nodes/Add2/node = SubResource("AnimationNodeAdd2_o2iqh")
+nodes/Add2/position = Vector2(0, 80)
+"nodes/Animation 2/node" = SubResource("AnimationNodeAnimation_x5r14")
+"nodes/Animation 2/position" = Vector2(-240, 306.667)
+nodes/DuelStateMachine/node = SubResource("AnimationNodeStateMachine_77hud")
+nodes/DuelStateMachine/position = Vector2(-310, 80)
+nodes/StateMachine/node = ExtResource("1_ablli")
+nodes/StateMachine/position = Vector2(-293.333, -120)
+node_connections = [&"output", 0, &"Add2", &"Add2", 0, &"StateMachine", &"Add2", 1, &"Animation 2"]
