@@ -105,9 +105,12 @@ func trigger_start_outro() -> void:
     pong_paddle_r
   cam_boom.target_player = winning_player
 
+# Authority only function
 func _anim_finished(anim_name: String) -> void:
   if anim_name == "intro":
     _start_round()
+  if anim_name == "outro":
+    MultiplayerClient.leave_lobby()
 
 func _lobby_updated(new_lobby: Lobby) -> void:
   lobby = new_lobby

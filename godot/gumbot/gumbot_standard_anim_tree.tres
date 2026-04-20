@@ -12,6 +12,7 @@ animation = &"Windup"
 graph_offset = Vector2(-368.53, -95.3)
 
 [resource]
+resource_local_to_scene = true
 nodes/Add2/node = SubResource("AnimationNodeAdd2_o2iqh")
 nodes/Add2/position = Vector2(0, 80)
 "nodes/Animation 2/node" = SubResource("AnimationNodeAnimation_x5r14")

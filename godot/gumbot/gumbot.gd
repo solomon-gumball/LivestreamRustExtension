@@ -5,6 +5,7 @@ class_name GumBot
 @onready var anim_tree: AnimationTree = $AnimationTree
 @onready var anim_player: AnimationPlayer = $AnimationPlayer
 @onready var sprite: Sprite3D = %FaceSprite
+@onready var name_label: Label3D = %NameLabel
 
 @export var mail_canvas: MeshInstance3D
 
@@ -156,8 +157,13 @@ var shader_mat_template: ShaderMaterial = preload("res://materials/bot_mat/bot_s
 var screen_mat: StandardMaterial3D = null
 
 func _ready() -> void:
-  # anim_tree.tree_root = anim_tree.tree_root.duplicate()
   anim_tree.advance_expression_base_node = NodePath("../..")
+  show_name_label = show_name_label
+
+var show_name_label: bool = false:
+  set(new_value):
+    show_name_label = new_value
+    name_label.visible = show_name_label
 
 var is_emoting: bool = false:
   set(new_value):

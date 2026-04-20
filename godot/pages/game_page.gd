@@ -74,7 +74,6 @@ func _exit_tree() -> void:
 
   if MultiplayerClient.is_lobby_host():
     MultiplayerClient.leave_lobby()
-  MultiplayerClient.stop()
 
 func _close_lobby() -> void:
   MultiplayerClient.leave_lobby()

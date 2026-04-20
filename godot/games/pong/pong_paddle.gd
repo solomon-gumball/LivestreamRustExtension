@@ -32,6 +32,7 @@ enum GumbotAnimState { Taunt, Walking, Pong }
     sm_playback.travel(GumbotAnimState.keys()[gumbot_animation_state])
 
     paddle_mesh.visible = gumbot_animation_state == GumbotAnimState.Pong
+    gumbot.show_name_label = gumbot_animation_state != GumbotAnimState.Pong
 
 func _ready() -> void:
   sync_state = PongEntity.new()

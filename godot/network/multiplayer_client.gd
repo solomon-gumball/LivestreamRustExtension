@@ -73,6 +73,7 @@ func leave_lobby() -> void:
       "type": "rtc-leave-lobby",
       "lobby_id": current_lobby.name
     })
+    stop()
 
 func _handle_ws_message(parsed: Variant) -> bool:
   if typeof(parsed) != TYPE_DICTIONARY:
