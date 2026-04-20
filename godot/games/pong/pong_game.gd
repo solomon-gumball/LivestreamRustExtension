@@ -8,6 +8,7 @@ enum PongGameMessage {
   PaddleMove,
   StateRefresh,
   StartRound,
+  UpdateAnimation
 }
 
 var lobby: Lobby
@@ -26,6 +27,7 @@ var nodes_by_peer_id: Dictionary[int, Dictionary] = {}
 @onready var anim_player: AnimationPlayer = %AnimationPlayer
 @onready var paddle_l_score: Label3D = %PaddleLScore
 @onready var paddle_r_score: Label3D = %PaddleRScore
+@onready var cam_boom: Node3D = %CamBoom
 
 @export var paddle_start_distance: float = 2.0:
   set(start_distance):
@@ -66,10 +68,6 @@ func _ready() -> void:
     new_game_state.paddle_l_state.position = pong_paddle_l.position
     new_game_state.paddle_r_state.position = pong_paddle_r.position
 
-    new_game_state.animation_state = PongAnimationState.new()
-    new_game_state.animation_state.started_at = Time.get_unix_time_from_system()
-    new_game_state.animation_state.animation_name = "intro"
-
     score_region_l.body_entered.connect(_area_entered.bind(lobby.peers[1].peer_id))
     score_region_r.body_entered.connect(_area_entered.bind(1))
 
@@ -83,11 +81,29 @@ func _ready() -> void:
       "type": PongGameMessage.StateRefresh,
       "state": new_game_state
     })
+    _handle_peer_packet(1, {
+      "type": PongGameMessage.UpdateAnimation,
+      "animation_name": "intro",
+      "started_at": Time.get_unix_time_from_system(),
+      "skipped": false
+    })
     _send_refresh_state(MultiplayerPeer.TARGET_PEER_BROADCAST)
     MultiplayerClient.rtc_peer_ready.connect(_send_refresh_state)
 
   # This must be at the end so the paddle by id is ready  
   _handle_chatter_updated(WSClient.my_chatter())
+
+func trigger_ending_character_anims() -> void:
+  if game_state.paddle_l_state.score > game_state.paddle_r_state.score:
+    pong_paddle_l.gumbot_animation_state = PongPaddle.GumbotAnimState.Taunt
+  else:
+    pong_paddle_r.gumbot_animation_state = PongPaddle.GumbotAnimState.Taunt
+
+func trigger_start_outro() -> void:
+  var winning_player = pong_paddle_l if \
+    game_state.paddle_l_state.score > game_state.paddle_r_state.score else \
+    pong_paddle_r
+  cam_boom.target_player = winning_player
 
 func _anim_finished(anim_name: String) -> void:
   if anim_name == "intro":
@@ -95,6 +111,21 @@ func _anim_finished(anim_name: String) -> void:
 
 func _lobby_updated(new_lobby: Lobby) -> void:
   lobby = new_lobby
+
+func _try_skip_curr_animation() -> void:
+  if local_anim_state and !local_anim_state.skipped:
+    var message := {
+      "type": PongGameMessage.UpdateAnimation,
+      "animation_name": local_anim_state.animation_name,
+      "started_at": local_anim_state.started_at,
+      "skipped": true
+    }
+    _handle_peer_packet(1, message)
+    MultiplayerClient.send_packet(
+      message,
+      MultiplayerPeer.TARGET_PEER_BROADCAST,
+      MultiplayerPeer.TRANSFER_MODE_RELIABLE
+    )
 
 func _send_refresh_state(peer_id: int) -> void:
   MultiplayerClient.send_packet(
@@ -117,8 +148,19 @@ func _area_entered(candidate: Node, winning_peer: int) -> void:
   _handle_peer_packet(1, message)
   MultiplayerClient.send_packet(message)
 
-  await get_tree().create_timer(1.0).timeout
-  _start_round()
+  if game_state.paddle_l_state.score > 0 or\
+    game_state.paddle_r_state.score > 0:
+      var anim_message := {
+        "type": PongGameMessage.UpdateAnimation,
+        "animation_name": "outro",
+        "started_at": Time.get_unix_time_from_system(),
+        "skipped": false
+      }
+      _handle_peer_packet(1, anim_message)
+      MultiplayerClient.send_packet(anim_message)
+  else:
+    await get_tree().create_timer(1.0).timeout
+    _start_round()
 
 func _start_round() -> void:
   var message := { "type": PongGameMessage.StartRound }
@@ -149,6 +191,11 @@ func _physics_process(_delta: float) -> void:
   if Input.is_key_pressed(KEY_S) or Input.is_key_pressed(KEY_DOWN):
       my_player_paddle.add_movement_input(Vector2(0, -1))
 
+func _input(_event: InputEvent) -> void:
+  if MultiplayerClient.is_authority():
+    if Input.is_key_pressed(KEY_ENTER):
+      _try_skip_curr_animation()
+
 func paddle_state_for_peer(peer_id: int) -> PongEntity:
   return game_state.paddle_l_state\
     if game_state.paddle_l_state.owner == peer_id\
@@ -159,6 +206,11 @@ func _handle_peer_packet(sender_id: int, packet: Dictionary) -> void:
     return
 
   match packet.type:
+    PongGameMessage.UpdateAnimation:
+      game_state.animation_state = PongAnimationState.new()
+      game_state.animation_state.started_at = packet.get("started_at", 0)
+      game_state.animation_state.animation_name = packet.get("animation_name", "")
+      game_state.animation_state.skipped = packet.get("skipped", false)
     PongGameMessage.StateRefresh:
       game_state = packet.get("state") as PongGameState
     PongGameMessage.RoundComplete:
@@ -182,27 +234,24 @@ func _handle_peer_packet(sender_id: int, packet: Dictionary) -> void:
       paddle_state.velocity = packet.get("velocity", Vector3.ZERO)
   _apply_game_state()
 
-var current_playing_animation: String = ""
-var input_enabled: bool = false
+var local_anim_state: PongAnimationState
 
 func _sync_animation_state() -> void:
-  current_playing_animation = game_state.animation_state.animation_name
-  var animation_to_play := anim_player.get_animation(current_playing_animation)
-  var anim_elapsed_time := Time.get_unix_time_from_system() - game_state.animation_state.started_at
-  anim_player.play(current_playing_animation)
+  local_anim_state = game_state.animation_state
+  var animation_to_play := anim_player.get_animation(local_anim_state.animation_name)
+  var anim_elapsed_time := animation_to_play.length\
+    if local_anim_state.skipped\
+    else Time.get_unix_time_from_system() - game_state.animation_state.started_at
+  anim_player.play(local_anim_state.animation_name)
   anim_player.seek(anim_elapsed_time, true)
-
-  if anim_elapsed_time > animation_to_play.length:
-    input_enabled = false
-  else:
-    await anim_player.animation_finished
-    input_enabled = true
+  if anim_elapsed_time >= animation_to_play.length:
+    _anim_finished(local_anim_state.animation_name)
 
 func _apply_game_state() -> void:
   if game_state:
     visible = true
   if game_state.animation_state:
-    if game_state.animation_state.animation_name != current_playing_animation:
+    if !game_state.animation_state.equals(local_anim_state):
       _sync_animation_state()
   
   if paddle_l_score.text != str(game_state.paddle_l_state.score):

@@ -3,6 +3,7 @@
 [ext_resource type="Script" uid="uid://cp25ws8vhg2f5" path="res://games/pong/pong_game.gd" id="1_0ehfm"]
 [ext_resource type="PackedScene" uid="uid://b2ne4k7x0p3jp" path="res://games/pong/pong_paddle.tscn" id="2_racd5"]
 [ext_resource type="FontFile" uid="uid://7uibxoligyvb" path="res://fonts/HomeVideo-BLG6G.ttf" id="3_433xj"]
+[ext_resource type="Script" uid="uid://bb5m0cki1i1a1" path="res://games/pong/pong_cam_boom.gd" id="3_r2ito"]
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_racd5"]
 size = Vector3(10, 1, 1)
@@ -158,6 +159,18 @@ tracks/9/keys = {
 "update": 0,
 "values": [Vector3(0, -3.1415925, 0)]
 }
+tracks/10/type = "value"
+tracks/10/imported = false
+tracks/10/enabled = true
+tracks/10/path = NodePath("CamBoom:progress")
+tracks/10/interp = 1
+tracks/10/loop_wrap = true
+tracks/10/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [0.0]
+}
 
 [sub_resource type="Animation" id="Animation_r2ito"]
 resource_name = "intro"
@@ -284,10 +297,69 @@ tracks/9/keys = {
 "values": [Vector3(0, -3.1415925, 0), Vector3(0, -6.2831855, 0), Vector3(0, -6.2831855, 0), Vector3(0, -6.2831855, 0), Vector3(0, -3.1415927, 0)]
 }
 
+[sub_resource type="Animation" id="Animation_oe0u4"]
+resource_name = "outro"
+length = 5.0
+step = 0.1
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("CamBoom:progress")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 2),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [0.0, 1.0]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("CamBoom/Camera:size")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0, 2),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [4.56, 0.844]
+}
+tracks/2/type = "method"
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/path = NodePath(".")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/keys = {
+"times": PackedFloat32Array(0, 2),
+"transitions": PackedFloat32Array(1, 1),
+"values": [{
+"args": [],
+"method": &"trigger_start_outro"
+}, {
+"args": [],
+"method": &"trigger_ending_character_anims"
+}]
+}
+tracks/3/type = "value"
+tracks/3/imported = false
+tracks/3/enabled = true
+tracks/3/path = NodePath("CamBoom:rotation")
+tracks/3/interp = 1
+tracks/3/loop_wrap = true
+tracks/3/keys = {
+"times": PackedFloat32Array(0, 2),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [Vector3(0, 0, 0), Vector3(0, 0, 1.5707964)]
+}
+
 [sub_resource type="AnimationLibrary" id="AnimationLibrary_oe0u4"]
 _data = {
 &"RESET": SubResource("Animation_433xj"),
-&"intro": SubResource("Animation_r2ito")
+&"intro": SubResource("Animation_r2ito"),
+&"outro": SubResource("Animation_oe0u4")
 }
 
 [node name="PongGameScene" type="Node3D" unique_id=632967591]
@@ -305,8 +377,11 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.006736815, -3.2)
 unique_name_in_owner = true
 transform = Transform3D(-1, 0, -1.509958e-07, 0, 1, 0, 1.509958e-07, 0, -1, 0, 0, 3.2)
 
-[node name="CamBoom" type="Node3D" parent="." unique_id=95433371]
+[node name="CamBoom" type="Node3D" parent="." unique_id=95433371 node_paths=PackedStringArray("target_player")]
+unique_name_in_owner = true
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.18, 0)
+script = ExtResource("3_r2ito")
+target_player = NodePath("../PongPaddleR")
 
 [node name="Camera" type="Camera3D" parent="CamBoom" unique_id=481627781]
 unique_name_in_owner = true
@@ -359,6 +434,7 @@ shape = SubResource("BoxShape3D_433xj")
 
 [node name="CSGBox3D" type="CSGBox3D" parent="WallTop/CollisionShape3D" unique_id=1689618756]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0.11808205)
+visible = false
 size = Vector3(10, 1, 1)
 
 [node name="WallBottom" type="StaticBody3D" parent="." unique_id=2009670674]
@@ -370,6 +446,7 @@ shape = SubResource("BoxShape3D_433xj")
 
 [node name="CSGBox3D" type="CSGBox3D" parent="WallBottom/CollisionShape3D" unique_id=304210500]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0.10233879)
+visible = false
 size = Vector3(10, 1, 1)
 
 [node name="WorldEnvironment" type="WorldEnvironment" parent="." unique_id=1164650713]
