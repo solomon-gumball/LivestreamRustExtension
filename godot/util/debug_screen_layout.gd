@@ -19,6 +19,7 @@ func _ready() -> void:
 
   if window_index != -1:
     DisplayServer.window_move_to_foreground()
+    @warning_ignore_start("INTEGER_DIVISION")
     DisplayServer.window_set_size(DisplayServer.screen_get_size() / num_windows)
     DisplayServer.window_set_position(
       Vector2i(
@@ -26,3 +27,4 @@ func _ready() -> void:
         DisplayServer.screen_get_size().y / 4
       )
     )
+    @warning_ignore_restore("INTEGER_DIVISION")

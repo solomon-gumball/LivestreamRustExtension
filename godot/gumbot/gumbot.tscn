@@ -66,7 +66,7 @@ billboard = 1
 double_sided = false
 alpha_cut = 1
 
-[node name="Skeleton3D" parent="Armature" parent_id_path=PackedInt32Array(878125397) index="0" unique_id=2080593678]
+[node name="Skeleton3D" parent="Armature" parent_id_path=PackedInt32Array(1782522573) index="0" unique_id=108656640]
 bones/1/position = Vector3(0, 0.11845954, 0)
 bones/1/rotation = Quaternion(-0.011914503, 0, 0, 0.999929)
 bones/2/rotation = Quaternion(1.4642302e-07, 0.23909603, 0.97099596, -5.8757713e-08)
@@ -106,28 +106,28 @@ transform = Transform3D(-0.99847734, 0.045087956, 0.03178565, -0.042910416, -0.9
 bone_name = "Hand.L"
 bone_idx = 16
 
-[node name="Arm" parent="Armature/Skeleton3D" index="1" unique_id=182243511]
+[node name="Arm" parent="Armature/Skeleton3D" index="1" unique_id=798206398]
 surface_material_override/0 = SubResource("ShaderMaterial_53np8")
 
-[node name="Body" parent="Armature/Skeleton3D" index="2" unique_id=1994754316]
+[node name="Body" parent="Armature/Skeleton3D" index="2" unique_id=2097168791]
 surface_material_override/0 = SubResource("ShaderMaterial_53np8")
 
-[node name="Button" parent="Armature/Skeleton3D" index="3" unique_id=951411904]
+[node name="Button" parent="Armature/Skeleton3D" index="3" unique_id=1671830218]
 surface_material_override/0 = SubResource("ShaderMaterial_53np8")
 
-[node name="Circle" parent="Armature/Skeleton3D" index="4" unique_id=724136089]
+[node name="Circle" parent="Armature/Skeleton3D" index="4" unique_id=905811167]
 surface_material_override/0 = SubResource("ShaderMaterial_53np8")
 
-[node name="Hand_L" parent="Armature/Skeleton3D" index="5" unique_id=1749137126]
+[node name="Hand_L" parent="Armature/Skeleton3D" index="5" unique_id=1920757983]
 surface_material_override/0 = SubResource("ShaderMaterial_53np8")
 
-[node name="Hand_R" parent="Armature/Skeleton3D" index="6" unique_id=1525533348]
+[node name="Hand_R" parent="Armature/Skeleton3D" index="6" unique_id=1101367951]
 surface_material_override/0 = SubResource("ShaderMaterial_53np8")
 
-[node name="HeadCapsule" parent="Armature/Skeleton3D" index="7" unique_id=914941887]
+[node name="HeadCapsule" parent="Armature/Skeleton3D" index="7" unique_id=156678088]
 surface_material_override/0 = SubResource("StandardMaterial3D_vliq0")
 
-[node name="Leg" parent="Armature/Skeleton3D" index="8" unique_id=725448061]
+[node name="Leg" parent="Armature/Skeleton3D" index="8" unique_id=1129365811]
 surface_material_override/0 = SubResource("ShaderMaterial_53np8")
 
 [node name="Head_Socket" type="BoneAttachment3D" parent="Armature/Skeleton3D" index="9" unique_id=1137685559]
@@ -153,7 +153,7 @@ transform = Transform3D(1, 0, 2.443461e-07, 0, 1, 0, -2.443461e-07, 0, 1, 0, 0.1
 bone_name = "HeldItemBone"
 bone_idx = 25
 
-[node name="Sphere_001" parent="Armature/Skeleton3D" index="12" unique_id=1428782002]
+[node name="Sphere_001" parent="Armature/Skeleton3D" index="12" unique_id=1511859742]
 surface_material_override/0 = SubResource("ShaderMaterial_53np8")
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="." index="3" unique_id=701422005]

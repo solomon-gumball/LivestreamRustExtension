@@ -11,6 +11,9 @@
 
 [sub_resource type="Environment" id="Environment_hb8fn"]
 background_mode = 1
+ambient_light_source = 2
+ambient_light_color = Color(0.84104, 0.84104, 0.84103996, 1)
+ambient_light_energy = 2.0
 glow_enabled = true
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_hb8fn"]
@@ -55,6 +58,7 @@ grow_vertical = 2
 stretch = true
 
 [node name="OverlaySubViewport" type="SubViewport" parent="OverlaySubviewportContainer" unique_id=1485304244]
+own_world_3d = true
 transparent_bg = true
 handle_input_locally = false
 size = Vector2i(1600, 900)
@@ -73,7 +77,10 @@ unique_name_in_owner = true
 transform = Transform3D(-0.9408098, 0, 0.33893508, 0, 1, 0, -0.33893508, 0, -0.9408098, -0.6849959, -0.30148157, 0.73511076)
 surface_mat = SubResource("ShaderMaterial_hb8fn")
 
+[node name="DirectionalLight3D" type="DirectionalLight3D" parent="OverlaySubviewportContainer/OverlaySubViewport" unique_id=723242754]
+
 [node name="GameSubviewportContainer" type="SubViewportContainer" parent="." unique_id=1801142719]
+unique_name_in_owner = true
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -91,13 +98,6 @@ render_target_update_mode = 4
 
 [node name="GameRootNode" type="Node3D" parent="GameSubviewportContainer/GameSubviewport" unique_id=2055202705]
 unique_name_in_owner = true
-
-[node name="DebugRect" type="ColorRect" parent="." unique_id=612512015]
-unique_name_in_owner = true
-layout_mode = 1
-offset_right = 154.0
-offset_bottom = 99.0
-color = Color(1, 0.07058824, 0.09411765, 1)
 
 [node name="DebugList" type="VBoxContainer" parent="." unique_id=530462991]
 layout_mode = 1
@@ -159,6 +159,8 @@ offset_right = 325.0
 offset_bottom = 174.0
 grow_horizontal = 2
 grow_vertical = 2
+theme_override_colors/default_color = Color(0.9711519, 0.3176986, 0.090861924, 1)
+theme_override_colors/font_shadow_color = Color(0.35194248, 0.06847161, 0.021902403, 0.77254903)
 theme_override_fonts/normal_font = ExtResource("2_p5ued")
 theme_override_fonts/bold_font = ExtResource("2_p5ued")
 theme_override_fonts/bold_italics_font = ExtResource("2_p5ued")

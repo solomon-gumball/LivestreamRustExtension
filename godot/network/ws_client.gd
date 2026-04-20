@@ -3,24 +3,23 @@ extends Node
 
 var remote_server_socket: WebSocketPeer
 
-var multiplayer_client: MultiplayerClient = MultiplayerClient.new()
 var debug_chatter_id: String
 
-var connection_state: StateMachine = StateMachine.new()
-var disconnected_state: DisconnectedState
-var connected_state: ConnectedState
-var authenticated_state: AuthenticatedState
+var state: StateMachine = StateMachine.new()
+var disconnected_state: DisconnectedState = DisconnectedState.new(self)
+var connected_state: ConnectedState = ConnectedState.new(self)
+var authenticated_state: AuthenticatedState = AuthenticatedState.new(self)
 
 var use_local_server: bool = true
 
-func my_chatter():
+func my_chatter() -> Chatter:
   return authenticated_state.current_chatter
 
 func getServerDomain() -> String:
    return "localhost:1235" if self.use_local_server else "livestream-listener-913887936892.us-central1.run.app"
 
 func get_database_server_url(path: String = "") -> String:
-  return "https://%s" % [getServerDomain()]
+  return "https://%s/%s" % [getServerDomain(), path]
 
 func getWsServerUrl() -> String:
   return "wss://%s" % [getServerDomain()]
@@ -33,19 +32,14 @@ func _ready() -> void:
     callback = JavaScriptBridge.create_callback(_on_twitch_authorized)
     JavaScriptBridge.get_interface("window").twitchTokenCallback = callback
 
-  add_child(multiplayer_client)
-  add_child(connection_state)
+  add_child(state)
 
-  disconnected_state = DisconnectedState.new(self)
-  connected_state = ConnectedState.new(self)
-  authenticated_state = AuthenticatedState.new(self)
+  state.add_child(disconnected_state)
+  state.add_child(connected_state)
+  state.add_child(authenticated_state)
 
-  connection_state.add_child(disconnected_state)
-  connection_state.add_child(connected_state)
-  connection_state.add_child(authenticated_state)
-
-  connected_state.authenticated_successfully.connect(connection_state.change_state.bind(authenticated_state))
-  connection_state.change_state(disconnected_state)
+  connected_state.authenticated_successfully.connect(state.change_state.bind(authenticated_state))
+  state.change_state(disconnected_state)
 
 var callback: JavaScriptObject
 var auth_token: String = ""
@@ -86,7 +80,7 @@ func drops_redeemed(bot: GumBot, coins: int, stacks: int) -> void:
 static var recently_completed_actions: Dictionary = {}
 
 func send_socket_message(payload: Dictionary) -> Error:
-  if not connection_state.current is AuthenticatedState:
+  if not state.current is AuthenticatedState:
     return ERR_UNAVAILABLE
   return remote_server_socket.send_text(JSON.stringify(payload))
 
@@ -107,25 +101,26 @@ var debug_force_disconnected := false
 func _process(_delta: float) -> void:
   remote_server_socket.poll()
 
-  var state = remote_server_socket.get_ready_state()
-  match state:
+  var ready_state = remote_server_socket.get_ready_state()
+  match ready_state:
     WebSocketPeer.STATE_OPEN:
-      if connection_state.current is DisconnectedState:
-        connection_state.change_state(connected_state)
+      if state.current is DisconnectedState:
+        state.change_state(connected_state)
       while remote_server_socket.get_available_packet_count() > 0:
         var parsed = JSON.parse_string(remote_server_socket.get_packet().get_string_from_utf8())
         if parsed is Array:
           for message in parsed:
-            connection_state.current.handle_remote_message(message)
+            state.current.handle_remote_message(message)
         else:
-          connection_state.current.handle_remote_message(parsed)
+          state.current.handle_remote_message(parsed)
+
     WebSocketPeer.STATE_CLOSING:
       pass
     WebSocketPeer.STATE_CLOSED:
-      if not connection_state.current is DisconnectedState:
-        connection_state.change_state(disconnected_state)
+      if not state.current is DisconnectedState:
+        state.change_state(disconnected_state)
 
-class NetworkConnectionState extends State:
+class WSClientState extends State:
   var net: Node
   func _init(_net: Node) -> void:
     net = _net
@@ -133,7 +128,7 @@ class NetworkConnectionState extends State:
     print("UNCAUGHT SOCKET MESSAGE => ", message.type)
     return
 
-class DisconnectedState extends NetworkConnectionState:
+class DisconnectedState extends WSClientState:
   var reconnect_timer: Timer
   var debug_force_disconnected := false
 
@@ -154,9 +149,11 @@ class DisconnectedState extends NetworkConnectionState:
   func _input(_event: InputEvent) -> void:
     if Input.is_action_just_pressed("DebugToggleNetwork"):
       if net.remote_server_socket.get_ready_state() == WebSocketPeer.STATE_OPEN:
+        print("Websocket connection lost!")
         debug_force_disconnected = true
         net.remote_server_socket.close()
       else:
+        print("Websocket reconnecting!")
         debug_force_disconnected = false
   
   func _try_connect_to_remote_server() -> void:
@@ -167,7 +164,7 @@ class DisconnectedState extends NetworkConnectionState:
     if err != OK:
       print("Error connecting to remote server: %d" % err)
 
-class ConnectedState extends NetworkConnectionState:
+class ConnectedState extends WSClientState:
   signal authenticated_successfully
   var current_chatter: Chatter = null
   var turn_credentials: Dictionary = {}
@@ -195,11 +192,11 @@ class ConnectedState extends NetworkConnectionState:
             store_data = Message.StoreData.FromData(message.get("store"))
           authenticated_successfully.emit()
 
-class AuthenticatedState extends NetworkConnectionState:
+class AuthenticatedState extends WSClientState:
   signal store_data_received()
   signal shop_data_received()
   signal emote_triggered(chatter: Chatter, emote: String)
-  signal tts_queue_updated()
+  # signal tts_queue_updated()
   # signal new_subscription(username: String)
 
   signal gifted_subs(username: String, count: int)
@@ -212,7 +209,8 @@ class AuthenticatedState extends NetworkConnectionState:
   signal drops_triggered()
   signal cam_updated(user_name: String)
   signal primary_notification_received(notification: Message.PrimaryNotification)
-  signal inbox_loaded(mail: Array[Message.ShowMailRequest.Mail])
+  # signal inbox_loaded(mail: Array[Message.ShowMailRequest.Mail])
+  signal message_received(message: Variant)
 
   var action_queue: Array[Message.QueueAction] = []
   var active_chatters: Array[Chatter] = []
@@ -264,7 +262,7 @@ class AuthenticatedState extends NetworkConnectionState:
     shop_data_received.emit()
 
   func handle_remote_message(message: Variant) -> void:
-    net.multiplayer_client.handle_ws_message(message)
+    message_received.emit(message)
 
     match message.type:
       "trigger-emote":

@@ -86,6 +86,7 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0.5)
 shape = SubResource("BoxShape3D_433xj")
 
 [node name="CSGBox3D" type="CSGBox3D" parent="WallTop/CollisionShape3D" unique_id=1689618756]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0.11808205)
 size = Vector3(10, 1, 1)
 
 [node name="WallBottom" type="StaticBody3D" parent="." unique_id=2009670674]
@@ -96,6 +97,7 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0.5)
 shape = SubResource("BoxShape3D_433xj")
 
 [node name="CSGBox3D" type="CSGBox3D" parent="WallBottom/CollisionShape3D" unique_id=304210500]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0.10233879)
 size = Vector3(10, 1, 1)
 
 [node name="WorldEnvironment" type="WorldEnvironment" parent="." unique_id=1164650713]

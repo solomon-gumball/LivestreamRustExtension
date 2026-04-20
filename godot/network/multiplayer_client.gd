@@ -1,16 +1,16 @@
 extends Node
-class_name MultiplayerClient
 
 @export var mesh: bool = false
 
 signal current_lobby_updated(lobby: Lobby)
 signal packet_received(id: int, packet: Dictionary)
+@warning_ignore("UNUSED_SIGNAL")
 signal rtc_peer_ready(peer: int)
 
-var connection_state: StateMachine
+var state: StateMachine
 var disconnected_state: Disconnected
 var looking_for_lobby_state: LookingForLobby
-var connected_to_lobby_state: Connected
+var connected_state: Connected
 
 var all_lobbies: Dictionary[String, Lobby] = {}
 
@@ -21,7 +21,7 @@ var current_lobby: Lobby = null:
 
 var rtc_mp := WebRTCMultiplayerPeer.new()
 
-const PRINT_DEBUG: bool = false
+const PRINT_DEBUG: bool = true
 const RELAY_ONLY_CANDIDATES: bool = true
 
 enum GlobalNetCommand {
@@ -31,55 +31,58 @@ enum GlobalNetCommand {
 func _ready() -> void:
   get_tree().multiplayer_poll = false
 
-  connection_state = StateMachine.new()
-  add_child(connection_state)
+  state = StateMachine.new()
+  add_child(state)
 
   disconnected_state = Disconnected.new(self)
   looking_for_lobby_state = LookingForLobby.new(self)
-  connected_to_lobby_state = Connected.new(self)
+  connected_state = Connected.new(self)
 
-  connection_state.add_child(disconnected_state)
-  connection_state.add_child(looking_for_lobby_state)
-  connection_state.add_child(connected_to_lobby_state)
+  state.add_child(disconnected_state)
+  state.add_child(looking_for_lobby_state)
+  state.add_child(connected_state)
 
-  looking_for_lobby_state.entered_lobby.connect(connection_state.change_state.bind(connected_to_lobby_state))
-  connected_to_lobby_state.left_lobby.connect(func() -> void:
-    _close_rtc()
-    connection_state.change_state(looking_for_lobby_state)
+  WSClient.authenticated_state.message_received.connect(_handle_ws_message)
+
+  looking_for_lobby_state.entered_lobby.connect(state.change_state.bind(connected_state))
+  connected_state.left_lobby.connect(func() -> void:
+    state.change_state(looking_for_lobby_state)
   )
-  Network.connection_state.changed.connect(_ws_connection_changed)
-  connection_state.change_state(disconnected_state)
+  WSClient.state.changed.connect(_ws_connection_changed)
+  state.change_state(disconnected_state)
 
-func _ws_connection_changed(status: Network.NetworkConnectionState) -> void:
-  if status is Network.DisconnectedState:
-    _close_rtc()
-    connection_state.change_state(disconnected_state)
+func is_lobby_host() -> bool:
+  if state.current is not Connected:
+    print("ALERT! Called is_lobby_host when no lobby!")
+    return false
+  return current_lobby.host_chatter_id == WSClient.my_chatter().id
+
+func _ws_connection_changed(status: WSClient.WSClientState) -> void:
+  if status is WSClient.DisconnectedState:
+    state.change_state(disconnected_state)
 
 func start() -> void:
-  connection_state.change_state(looking_for_lobby_state)
+  state.change_state(looking_for_lobby_state)
 
-func _close_rtc() -> void:
-  multiplayer.multiplayer_peer = null
-  connected_to_lobby_state.ping_timer.stop()
-  rtc_mp.close()
-  # In Godot, close() on a WebRTCMultiplayerPeer doesn't fully reset
-  # it for reuse — create_client() has an internal guard
-  # (ERR_FAIL_COND_V(network_mode != MODE_NONE, ...)) that silently fails
-  # if the mode wasn't cleanly reset, leaving the peer stuck in its old
-  # MODE_CLIENT state. Then when _peer_joined fires with a non-1 ID
-  # (any peer other than the host), add_peer rejects it.
-  rtc_mp = WebRTCMultiplayerPeer.new()
-  connected_to_lobby_state._offer_sent.clear()
+func stop() -> void:
+  state.change_state(looking_for_lobby_state)
 
-func handle_ws_message(parsed: Variant) -> bool:
+func leave_lobby() -> void:
+  if current_lobby:
+    WSClient.send_socket_message({
+      "type": "rtc-leave-lobby",
+      "lobby_id": current_lobby.name
+    })
+
+func _handle_ws_message(parsed: Variant) -> bool:
   if typeof(parsed) != TYPE_DICTIONARY:
     return false
   var msg: Dictionary = parsed
   var type: String = msg.get("type", "")
   if type.is_empty() or not type.begins_with("rtc-"):
     return false
-  if connection_state.current:
-    connection_state.current.handle_ws_message(type, msg)
+  if state.current:
+    state.current.handle_ws_message(type, msg)
   return true
 
 func join_lobby(lobby_name: String) -> Error:
@@ -87,35 +90,35 @@ func join_lobby(lobby_name: String) -> Error:
     # Prevent LookingForLobby from auto-joining the lobby we just created
     # when the server broadcasts rtc-lobbies-updated
     looking_for_lobby_state.join_request_already_sent = true
-    return Network.send_socket_message({
+    return WSClient.send_socket_message({
       "type": "rtc-create-lobby",
       "mesh_mode": mesh
     })
   else:
-    return Network.send_socket_message({
+    return WSClient.send_socket_message({
       "type": "rtc-join-lobby",
       "lobby_name": lobby_name
     })
 
 func seal_lobby() -> Error:
-  return Network.send_socket_message({ "type": "rtc-seal-lobby" })
+  return WSClient.send_socket_message({ "type": "rtc-seal-lobby" })
 
 func send_candidate(id: int, mid: String, index: int, sdp: String) -> Error:
-  return Network.send_socket_message({
+  return WSClient.send_socket_message({
     "type": "rtc-candidate",
     "dest_peer_id": id,
     "candidate": "%s\n%d\n%s" % [mid, index, sdp]
   })
 
 func send_offer(id: int, offer: String) -> Error:
-  return Network.send_socket_message({
+  return WSClient.send_socket_message({
     "type": "rtc-offer",
     "dest_peer_id": id,
     "sdp": offer
   })
 
 func send_answer(id: int, answer: String) -> Error:
-  return Network.send_socket_message({
+  return WSClient.send_socket_message({
     "type": "rtc-answer",
     "dest_peer_id": id,
     "sdp": answer
@@ -158,11 +161,12 @@ func _process(_delta: float) -> void:
     var sender_id: int = rtc_mp.get_packet_peer()
     var data: PackedByteArray = rtc_mp.get_packet()
     var message: Variant = bytes_to_var_with_objects(data)
-    connection_state.current.handle_rtc_message(message, sender_id)
+    state.current.handle_rtc_message(message, sender_id)
     packet_received.emit(sender_id, message)
 
-class RTCConnectionState extends State:
+class MultiplayerClientState extends State:
   var mc: MultiplayerClient
+
   func _init(_mc: MultiplayerClient) -> void:
     mc = _mc
   func handle_ws_message(_type: String, _msg: Dictionary) -> void:
@@ -170,37 +174,29 @@ class RTCConnectionState extends State:
   func handle_rtc_message(_message: Variant, _sender_id: int) -> void:
     pass
 
-class Disconnected extends RTCConnectionState:
+class Disconnected extends MultiplayerClientState:
   func enter_state(_previous_state: State) -> void:
     mc.current_lobby = null
     mc.all_lobbies = {}
 
-class LookingForLobby extends RTCConnectionState:
-  var join_request_already_sent: bool = false
+class LookingForLobby extends MultiplayerClientState:
   signal entered_lobby
+
+  var join_request_already_sent: bool = false
+  var peer_id: int
+  var mesh_mode: bool
+  var lobby_to_join: Lobby
 
   func enter_state(_previous_state: State) -> void:
     join_request_already_sent = false
     mc.current_lobby = null
     mc.all_lobbies = {}
-    Network.send_socket_message({ "type": "rtc-fetch-lobbies" })
-
-  func _connected(id: int, use_mesh: bool) -> void:
-    var is_server := id == 1
-    if mc.PRINT_DEBUG: print("Connected %d (server=%s), mesh: %s" % [id, is_server, use_mesh])
-    if use_mesh:
-      mc.rtc_mp.create_mesh(id)
-    elif is_server:
-      mc.rtc_mp.create_server()
-    else:
-      mc.rtc_mp.create_client(id)
-    mc.rtc_mp.peer_connected.connect(func(peer_id: int) -> void:
-      mc.rtc_peer_ready.emit(peer_id)
-    )
-    mc.multiplayer.multiplayer_peer = mc.rtc_mp
+    WSClient.send_socket_message({ "type": "rtc-fetch-lobbies" })
 
   func handle_ws_message(type: String, msg: Dictionary) -> void:
     match type:
+      "rtc-peer-joined":
+        assert(false, "Should not receive peer-joined in lookingforlobby state!!")
       "rtc-lobbies-updated":
         if join_request_already_sent:
           return
@@ -214,10 +210,12 @@ class LookingForLobby extends RTCConnectionState:
           join_request_already_sent = true
           mc.join_lobby(lobbies[0].name)
       "rtc-peer-id":
-        _connected(int(msg.get("peer_id", 0)), bool(msg.get("mesh_mode", false)))
+        peer_id = int(msg.get("peer_id", 0))
+        mesh_mode = bool(msg.get("mesh_mode", false))
+        lobby_to_join = Lobby.from_data(msg.get("lobby"))
         entered_lobby.emit()
 
-class Connected extends RTCConnectionState:
+class Connected extends MultiplayerClientState:
   var ping_timer: Timer
   var _offer_sent: Dictionary = {}
 
@@ -231,10 +229,34 @@ class Connected extends RTCConnectionState:
     ping_timer.one_shot = false
     ping_timer.timeout.connect(_check_ping)
     add_child(ping_timer)
+  
+  func _init_client(id: int, use_mesh: bool) -> void:
+    # mc.rtc_mp.peer_connected.
+
+    var is_server := id == 1
+    if mc.PRINT_DEBUG: print("Connected %d (server=%s), mesh: %s" % [id, is_server, use_mesh])
+    if use_mesh:
+      mc.rtc_mp.create_mesh(id)
+    elif is_server:
+      mc.rtc_mp.create_server()
+    else:
+      mc.rtc_mp.create_client(id)
+    mc.rtc_mp.peer_connected.connect(func(peer):
+      mc.rtc_peer_ready.emit(peer)
+    )
+    mc.multiplayer.multiplayer_peer = mc.rtc_mp
 
   func enter_state(_previous_state: State) -> void:
+    if _previous_state is LookingForLobby:
+      _close_rtc()
+      _init_client(_previous_state.peer_id, _previous_state.mesh_mode)
+      mc.current_lobby = _previous_state.lobby_to_join
+
     _check_ping()
     ping_timer.start(5.0)
+  
+  func exit_state() -> void:
+    _close_rtc()
 
   func _check_ping() -> void:
     if not mc.is_authority():
@@ -245,27 +267,34 @@ class Connected extends RTCConnectionState:
 
   func _create_peer(id: int) -> WebRTCPeerConnection:
     var peer: WebRTCPeerConnection = WebRTCPeerConnection.new()
+    peer.session_description_created.connect(_offer_created.bind(id))
+    peer.ice_candidate_created.connect(_new_ice_candidate.bind(id))
     peer.initialize({
       "iceServers": [
         { "urls": ["stun:stun.l.google.com:19302"] },
         {
           "urls": ["turn:34.125.221.69:3478"],
-          "username": Network.authenticated_state.turn_credentials.get("username", ""),
-          "credential": Network.authenticated_state.turn_credentials.get("password", "")
+          "username": WSClient.authenticated_state.turn_credentials.get("username", ""),
+          "credential": WSClient.authenticated_state.turn_credentials.get("password", "")
         }
       ]
     })
-    peer.session_description_created.connect(_offer_created.bind(id))
-    peer.ice_candidate_created.connect(_new_ice_candidate.bind(id))
+    # print("turn credentials => ", JSON.stringify(WSClient.authenticated_state.turn_credentials))
+    # print('creating new peer for peer_id ', id)
+    print('adding peer to existing peers => ', mc.rtc_mp.get_peers())
     mc.rtc_mp.add_peer(peer, id)
+
+    # Ensure offers only go one way
     if id < mc.rtc_mp.get_unique_id():
+      # Create an offer to this peer
       peer.create_offer()
     return peer
 
   func _new_ice_candidate(mid_name: String, index_name: int, sdp_name: String, id: int) -> void:
-    if mc.PRINT_DEBUG: print("new ice candidate: %d: %s %d %s" % [id, mid_name, index_name, sdp_name])
+    if mc.PRINT_DEBUG: print("Created a new ice candidate to send to peer %d: %s %d %s" % [id, mid_name, index_name, sdp_name])
     if mc.RELAY_ONLY_CANDIDATES and "typ relay" not in sdp_name:
       return
+    
     mc.send_candidate(id, mid_name, index_name, sdp_name)
 
   func _offer_created(type: String, data: String, id: int) -> void:
@@ -285,25 +314,43 @@ class Connected extends RTCConnectionState:
   func _peer_disconnected(id: int) -> void:
     _offer_sent.erase(id)
     if mc.rtc_mp.has_peer(id):
+      print("removing peer -> ", id)
       mc.rtc_mp.remove_peer(id)
 
   func _peer_joined(id: int) -> void:
+    print(mc.rtc_mp.get_unique_id(), " is adding peer -> ", id)
     _create_peer(id)
 
   func _offer_received(id: int, offer: String) -> void:
+    if mc.PRINT_DEBUG: print("%d received offer event from: %d" % [mc.rtc_mp.get_unique_id(), id])
     if mc.rtc_mp.has_peer(id):
       mc.rtc_mp.get_peer(id).connection.set_remote_description("offer", offer)
 
   func _answer_received(id: int, answer: String) -> void:
+    if mc.PRINT_DEBUG: print("%d received answer event from: %d" % [mc.rtc_mp.get_unique_id(), id])
     if mc.rtc_mp.has_peer(id):
       mc.rtc_mp.get_peer(id).connection.set_remote_description("answer", answer)
 
   func _candidate_received(id: int, mid: String, index: int, sdp: String) -> void:
+    if mc.PRINT_DEBUG: print("%d received candidate event from: %d" % [mc.rtc_mp.get_unique_id(), id])
     if mc.rtc_mp.has_peer(id):
       mc.rtc_mp.get_peer(id).connection.add_ice_candidate(mid, index, sdp)
 
   func _lobby_sealed() -> void:
     mc.sealed = true
+  
+  func _close_rtc() -> void:
+    mc.multiplayer.multiplayer_peer = null
+    mc.connected_state.ping_timer.stop()
+    mc.rtc_mp.close()
+    # In Godot, close() on a WebRTCMultiplayerPeer doesn't fully reset
+    # it for reuse — create_client() has an internal guard
+    # (ERR_FAIL_COND_V(network_mode != MODE_NONE, ...)) that silently fails
+    # if the mode wasn't cleanly reset, leaving the peer stuck in its old
+    # MODE_CLIENT state. Then when _peer_joined fires with a non-1 ID
+    # (any peer other than the host), add_peer rejects it.
+    mc.rtc_mp = WebRTCMultiplayerPeer.new()
+    mc.connected_state._offer_sent.clear()
 
   func handle_rtc_message(message: Variant, sender_id: int) -> void:
     match message.type:
@@ -318,14 +365,14 @@ class Connected extends RTCConnectionState:
   func handle_ws_message(type: String, msg: Dictionary) -> void:
     match type:
       "rtc-peer-id":
-        # Re-initializes rtc_mp on reconnect before rtc-lobby-joined arrives.
-        mc.looking_for_lobby_state._connected(int(msg.get("peer_id", 0)), bool(msg.get("mesh_mode", false)))
+        assert(false, "Connected state received rtc-peer-id message, this should never happen")
       "rtc-lobby-joined":
         var current_lobby_id = str(msg.get("lobby_name", ""))
         mc.current_lobby = mc.all_lobbies.get(current_lobby_id)
       "rtc-lobby-sealed":
         _lobby_sealed()
       "rtc-peer-joined":
+        print(mc.rtc_mp.get_unique_id(), " received rtc-peer-joined for peer ", int(msg.get("peer_id", 0)))
         _peer_joined(int(msg.get("peer_id", 0)))
       "rtc-peer-disconnected":
         _peer_disconnected(int(msg.get("peer_id", 0)))

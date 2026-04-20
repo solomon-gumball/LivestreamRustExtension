@@ -30,7 +30,7 @@ ambient_light_color = Color(1, 1, 1, 1)
 tonemap_mode = 2
 ssao_enabled = true
 
-[sub_resource type="ShaderMaterial" id="ShaderMaterial_6ob2x"]
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_radgr"]
 resource_local_to_scene = true
 render_priority = 0
 shader = ExtResource("7_a81ce")
@@ -96,7 +96,7 @@ environment = SubResource("Environment_mbe3m")
 [node name="gumbot" parent="SubViewportContainer/SubViewport/World" unique_id=2126276004 instance=ExtResource("6_xf7cx")]
 unique_name_in_owner = true
 transform = Transform3D(0.76339024, 0, 0.64593744, 0, 1, 0, -0.64593744, 0, 0.76339024, -0.2831327, 0.042121172, -0.098897584)
-surface_mat = SubResource("ShaderMaterial_6ob2x")
+surface_mat = SubResource("ShaderMaterial_radgr")
 
 [node name="ProfileOverlay" parent="." unique_id=633817562 instance=ExtResource("3_otial")]
 
@@ -104,6 +104,7 @@ surface_mat = SubResource("ShaderMaterial_6ob2x")
 layer = -1
 
 [node name="ColorRect" type="ColorRect" parent="CanvasLayer" unique_id=1047817338]
+visible = false
 material = ExtResource("4_ccln5")
 anchors_preset = 15
 anchor_right = 1.0

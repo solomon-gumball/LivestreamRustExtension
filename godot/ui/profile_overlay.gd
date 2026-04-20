@@ -19,14 +19,14 @@ var chatter: Chatter:
     _update_grid_items()
 
 func _handle_item_selected(value: String) -> void:
-  Network.wear_item(value)
+  WSClient.wear_item(value)
 
 func _update_grid_items() -> void:
   if !is_node_ready() or chatter == null: return
 
   var slot_wearables: Array[ShopItem.WearableShopItem] = []
   for asset_name in chatter.assets:
-    var asset = Network.authenticated_state.get_item_info(asset_name)
+    var asset = WSClient.authenticated_state.get_item_info(asset_name)
     if asset is not ShopItem.WearableShopItem:
       continue
     var wearable := asset as ShopItem.WearableShopItem

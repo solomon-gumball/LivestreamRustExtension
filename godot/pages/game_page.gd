@@ -5,7 +5,6 @@ extends Control
 @onready var lobby_name_label: Label = %LobbyNameLabel
 @onready var client_id_label: Label = %ClientIdLabel
 @onready var lobby_info_panel: Control = %LobbyInfoPanel
-@onready var debug_rect: Control = %DebugRect
 
 @onready var center_info_label: RichTextLabel = %CenterInfoLabel
 
@@ -14,11 +13,11 @@ extends Control
 @onready var host_game_button: Button = %HostGameButton
 @onready var game_root_node: Node3D = %GameRootNode
 @onready var ping_label: Label = %PingLabel
+@onready var game_subviewport_container: SubViewportContainer = %GameSubviewportContainer
 @onready var bot_initial_pos := gumbot.position
 @onready var overlay_subviewport_container: SubViewportContainer = %OverlaySubviewportContainer
   
 var info_tween: Tween
-var current_lobby: Lobby
 
 const LOOKING_TEXT = "[font_size=50]LOOKING FOR LOBBY...[/font_size]"
 
@@ -26,8 +25,8 @@ func _stat_line(label: String, base_dots: int, value: int) -> String:
   var dots = ".".repeat(base_dots - len(str(value)) + 1)
   return "[font_size=50]%s%s%d[/font_size]" % [label, dots, value]
 
-func _get_joining_text() -> String:
-  var player_count = current_lobby.peers.size() if current_lobby else 0
+func _get_joining_text(lobby: Lobby) -> String:
+  var player_count = lobby.peers.size() if lobby else 0
   return "\n".join([
     "[font_size=50]JOINING[/font_size]",
     "[font_size=120]PONG[/font_size]",
@@ -47,46 +46,48 @@ func _ready() -> void:
   lobby_info_panel.visible = false
   center_info_label.text = ""
 
-  Network.authenticated_state.chatter_updated.connect(_handle_chatter_updated)
-  Network.connection_state.changed.connect(_handle_net_state_changed)
+  WSClient.authenticated_state.chatter_updated.connect(_handle_chatter_updated)
+  WSClient.state.changed.connect(_handle_ws_state_changed)
 
-  Network.multiplayer_client.connection_state.changed.connect(_on_connection_state_changed)
-  Network.multiplayer_client.current_lobby_updated.connect(_on_current_lobby_updated)
-  Network.multiplayer_client.connected_to_lobby_state.ping_check_completed.connect(_update_ping_label)
+  MultiplayerClient.state.changed.connect(
+    func (_connection_state: MultiplayerClient.MultiplayerClientState) -> void: _update()
+  )
+  MultiplayerClient.current_lobby_updated.connect(
+    func (_lobby: Lobby) -> void: _update()
+  )
+  MultiplayerClient.connected_state.ping_check_completed.connect(_update_ping_label)
 
   host_game_button.pressed.connect(_host_game)
   close_lobby_button.pressed.connect(_close_lobby)
   start_game_button.pressed.connect(_start_game)
 
-  _handle_net_state_changed(Network.connection_state.current)
-  _handle_chatter_updated(Network.my_chatter())
+  _handle_ws_state_changed(WSClient.state.current)
+  _handle_chatter_updated(WSClient.my_chatter())
+  _update()
   
 func _update_ping_label(msec_ping: float) -> void:
   ping_label.text = "PING: %sms" % int(msec_ping)
 
 func _exit_tree() -> void:
-  if current_lobby:
-    Network.send_socket_message({
-      "type": "rtc-leave-lobby",
-      "lobby_id": current_lobby.name
-    })
+  if MultiplayerClient.state.current is not MultiplayerClient.Connected:
+    return
+
+  if MultiplayerClient.is_lobby_host():
+    MultiplayerClient.leave_lobby()
+  MultiplayerClient.stop()
 
 func _close_lobby() -> void:
-  if current_lobby:
-    Network.send_socket_message({
-      "type": "rtc-leave-lobby",
-      "lobby_id": current_lobby.name
-    })
+  MultiplayerClient.leave_lobby()
 
 func _start_game() -> void:
-  if current_lobby:
-    Network.send_socket_message({
+  if MultiplayerClient.current_lobby:
+    WSClient.send_socket_message({
       "type": "rtc-start-game",
-      "lobby_id": current_lobby.name
+      "lobby_id": MultiplayerClient.current_lobby.name
     })
 
 func _host_game() -> void:
-  Network.multiplayer_client.join_lobby("")
+  MultiplayerClient.join_lobby("")
 
 func _type_text(text: String, speed: float, repeat: bool) -> void:
   if info_tween:
@@ -104,54 +105,57 @@ func _handle_chatter_updated(chatter: Chatter) -> void:
   if chatter:
     gumbot.chatter = chatter
 
-func _handle_net_state_changed(connection_state: Network.NetworkConnectionState) -> void:
-  if connection_state is Network.AuthenticatedState:
-    Network.multiplayer_client.start()
+func _handle_ws_state_changed(connection_state: WSClient.WSClientState) -> void:
+  if connection_state is WSClient.AuthenticatedState:
+    MultiplayerClient.start()
 
-func _on_connection_state_changed(state: State) -> void:
-  if game_scene:
-    game_scene.queue_free()
-    game_scene = null
+func _update() -> void:
+  game_subviewport_container.visible = false
 
-  if state is MultiplayerClient.LookingForLobby:
+  if MultiplayerClient.state.current is MultiplayerClient.LookingForLobby:
+    _free_game_scene()
     start_game_button.visible = false
     close_lobby_button.visible = false
     host_game_button.visible = true
     center_info_label.visible = true
     lobby_info_panel.visible = false
     _type_text(LOOKING_TEXT, 0.1, true)
-  elif state is MultiplayerClient.Connected:
+  elif MultiplayerClient.state.current is MultiplayerClient.Connected:
+    game_subviewport_container.visible = false
     host_game_button.visible = false
-    if Network.multiplayer_client.current_lobby:
-      _on_current_lobby_updated(Network.multiplayer_client.current_lobby)
-  elif state is MultiplayerClient.Disconnected:
+    if MultiplayerClient.current_lobby:
+      _handle_connected_state()
+  elif MultiplayerClient.state.current is MultiplayerClient.Disconnected:
+    _free_game_scene()
     start_game_button.visible = false
     close_lobby_button.visible = false
     host_game_button.visible = false
     lobby_info_panel.visible = false
+    game_subviewport_container.visible = false
 
-func load_minigame(name: String, pck_path: String) -> void:
-  ProjectSettings.load_resource_pack(pck_path)
-  var entry = ResourceLoader.load("res://minigames/%s/main.tscn" % name)
-  add_child(entry.instantiate())
+func _free_game_scene() -> void:
+  if game_scene:
+    game_scene.queue_free()
+    game_scene = null
 
-func _on_current_lobby_updated(lobby: Lobby) -> void:
-  current_lobby = lobby
+# func load_minigame(name: String, pck_path: String) -> void:
+#   ProjectSettings.load_resource_pack(pck_path)
+#   var entry = ResourceLoader.load("res://minigames/%s/main.tscn" % name)
+#   add_child(entry.instantiate())
 
-  if lobby == null or not Network.connected_state is Network.ConnectedState:
-    return
+func _handle_connected_state() -> void:
+  var is_lobby_host := MultiplayerClient.is_lobby_host()
 
-  var is_lobby_host := lobby.host_chatter_id == Network.authenticated_state.current_chatter.id
-
-  if lobby.started and Network.multiplayer_client.is_rtc_connected:
+  if MultiplayerClient.current_lobby.started:
     start_game_button.visible = false
     close_lobby_button.visible = is_lobby_host
     host_game_button.visible = false
     center_info_label.visible = false
+    game_subviewport_container.visible = true
 
     if not game_scene:
       game_scene = pong_game_template.instantiate()
-      game_scene.lobby = lobby
+      game_scene.lobby = MultiplayerClient.current_lobby
       game_root_node.add_child(game_scene)
       overlay_subviewport_container.visible = false
       var tween := get_tree().create_tween()
@@ -166,7 +170,7 @@ func _on_current_lobby_updated(lobby: Lobby) -> void:
     host_game_button.visible = false
     center_info_label.visible = true
 
-    lobby_name_label.text = "Lobby: %s" % Network.multiplayer_client.current_lobby.name
-    client_id_label.text = "Peer ID: %d" % Network.multiplayer_client.my_peer_id()
+    lobby_name_label.text = "Lobby: %s" % MultiplayerClient.current_lobby.name
+    client_id_label.text = "Peer ID: %d" % MultiplayerClient.my_peer_id()
     lobby_info_panel.visible = true
-    _type_text(_get_joining_text(), 0.1, false)
+    _type_text(_get_joining_text(MultiplayerClient.current_lobby), 0.1, false)

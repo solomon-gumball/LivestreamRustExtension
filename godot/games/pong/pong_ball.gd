@@ -11,7 +11,7 @@ var sync_state: PongEntity = PongEntity.new()
 var speed: float = 2.0
 
 func has_authority() -> bool:
-  return sync_state.owner == Network.multiplayer_client.my_peer_id()
+  return sync_state.owner == MultiplayerClient.my_peer_id()
 
 func _ready() -> void:
   if has_authority():
@@ -50,7 +50,7 @@ func _physics_process(delta: float) -> void:
 
   if has_authority():
     velocity = velocity.normalized() * speed
-    Network.multiplayer_client.send_packet({
+    MultiplayerClient.send_packet({
       "type": PongGame.PongGameMessage.BallMove,
       "position": position,
       "velocity": velocity,

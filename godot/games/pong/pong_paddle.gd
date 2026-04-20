@@ -28,7 +28,7 @@ func add_movement_input(direction: Vector2) -> void:
   movement_input = direction
 
 func has_authority():
-  return sync_state.owner == Network.multiplayer_client.my_peer_id()
+  return sync_state.owner == MultiplayerClient.my_peer_id()
 
 var sync_state: PongEntity
 
@@ -53,7 +53,7 @@ func _physics_process(delta: float) -> void:
   _phys_move(delta)
 
   if has_authority():
-    Network.multiplayer_client.send_packet({
+    MultiplayerClient.send_packet({
       "type": PongGame.PongGameMessage.PaddleMove,
       "position": position,
       "velocity": velocity

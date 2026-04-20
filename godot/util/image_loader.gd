@@ -17,11 +17,11 @@ func _ensure_cache_dir(dir_path: String):
 
 # Generate a cache filename using MD5 hash
 func _generate_cache_filename(url: String, ext: String) -> String:
-    var hash = url.md5_text()
-    return "%s.%s" % [hash, ext]
+    var hash_text = url.md5_text()
+    return "%s.%s" % [hash_text, ext]
 
 func load_asset_thumbnail(asset_name: String) -> ImageTexture:
-  var url := "%s/items/%s.png" % [Network.get_database_server_url(), asset_name.to_lower()]
+  var url := WSClient.get_database_server_url("items/%s.png" % asset_name.to_lower())
   return await load_image(url)
 
 var debug_logging := false
@@ -82,7 +82,7 @@ func _clear_dir(dir_to_clear: String) -> void:
         dir.list_dir_end()
 
 func load_wearable_asset(asset_name: String) -> Node3D:
-  var url = "%s/items/%s.glb" % [Network.get_database_server_url(), asset_name]
+  var url = "%s/items/%s.glb" % [WSClient.get_database_server_url(), asset_name]
   return await load_glb(url, false)
 
 var _glb_cache: Dictionary[String, Node3D] = {}

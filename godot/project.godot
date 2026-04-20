@@ -19,8 +19,9 @@ config/icon="res://icon.svg"
 [autoload]
 
 ImageLoader="*uid://cs4ky8up2cqd3"
-Network="*uid://cgt1vmvhiscn8"
 DebugScreenLayout="*uid://dlkq1m5uudr86"
+MultiplayerClient="*uid://dad0yyehqr15p"
+WSClient="*uid://c6x8llyglpm7e"
 
 [display]
 

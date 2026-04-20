@@ -107,7 +107,7 @@ class StoreData:
   static func CreateActionQueue(raw_arr: Array) -> Array[QueueAction]:
     var queue: Array[QueueAction] = []
     for action in raw_arr:
-      if Network.recently_completed_actions.has(action["uuid"]):
+      if WSClient.recently_completed_actions.has(action["uuid"]):
         continue
       if action["type"] == "twitch-tts":
         queue.append(Message.TTSRequest.FromData(action))
