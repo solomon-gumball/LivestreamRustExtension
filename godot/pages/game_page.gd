@@ -16,7 +16,8 @@ extends Control
 @onready var game_subviewport_container: SubViewportContainer = %GameSubviewportContainer
 @onready var bot_initial_pos := gumbot.position
 @onready var overlay_subviewport_container: SubViewportContainer = %OverlaySubviewportContainer
-  
+@onready var loading: Loading = %Loading
+
 var info_tween: Tween
 
 const LOOKING_TEXT = "[font_size=50]LOOKING FOR LOBBY...[/font_size]"
@@ -151,7 +152,6 @@ func _handle_connected_state() -> void:
     if not game_scene:
       game_scene = pong_game_template.instantiate()
       game_scene.lobby = MultiplayerClient.current_lobby
-      print('current lobby is: ', MultiplayerClient.current_lobby)
       game_root_node.add_child(game_scene)
       overlay_subviewport_container.visible = false
       var tween := get_tree().create_tween()

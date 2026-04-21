@@ -1,7 +1,64 @@
 [gd_scene format=3 uid="uid://dngl47xquv3cd"]
 
+[ext_resource type="Script" uid="uid://bi774t5mlsvnb" path="res://ui/loading/loading.gd" id="1_6oitr"]
+[ext_resource type="Shader" uid="uid://d27ep2cpoix5" path="res://materials/scrolling_background/scrolling_background.gdshader" id="1_dbd3p"]
+[ext_resource type="Texture2D" uid="uid://lai2e4svmeud" path="res://textures/gumbot_scrolling_banner.png" id="2_6oitr"]
+[ext_resource type="Shader" uid="uid://ddsoj1lgtm34y" path="res://materials/transition/hex_transition.gdshader" id="3_jqdbn"]
+
+[sub_resource type="ViewportTexture" id="ViewportTexture_s70xq"]
+viewport_path = NodePath("SubViewport")
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_d0n2t"]
+resource_local_to_scene = true
+shader = ExtResource("3_jqdbn")
+shader_parameter/to_tex = SubResource("ViewportTexture_s70xq")
+shader_parameter/progress = 1.0
+shader_parameter/hex_size = 0.08
+shader_parameter/randomness = 0.05
+shader_parameter/edge_softness = 0.01
+shader_parameter/transition_speed = 0.3
+shader_parameter/reverse = false
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_aeyqy"]
+shader = ExtResource("1_dbd3p")
+shader_parameter/text_texture = ExtResource("2_6oitr")
+shader_parameter/scroll_speed = 0.2000000095
+shader_parameter/row_height = 0.1
+shader_parameter/texture_aspect_ratio = 3.40000015824012
+shader_parameter/rotation = -0.6615900006082001
+shader_parameter/uv_scale = 0.75500003260262
+shader_parameter/background_color = Color(0.6318595, 0.39328665, 1, 1)
+shader_parameter/text_color = Color(0.83137256, 0.44313726, 0.84705883, 0.36078432)
+
 [node name="Loading" type="Control" unique_id=884817838]
 layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+script = ExtResource("1_6oitr")
+transition_material = SubResource("ShaderMaterial_d0n2t")
+progress = 1.0
+
+[node name="SubViewport" type="SubViewport" parent="." unique_id=356141205]
+
+[node name="BackgroundLayer" type="CanvasLayer" parent="SubViewport" unique_id=636720440]
+layer = -1
+
+[node name="ScrollingBackground" type="ColorRect" parent="SubViewport/BackgroundLayer" unique_id=276954748]
+material = SubResource("ShaderMaterial_aeyqy")
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+metadata/_edit_use_anchors_ = true
+
+[node name="ColorRect" type="ColorRect" parent="." unique_id=479470181]
+material = SubResource("ShaderMaterial_d0n2t")
+layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0

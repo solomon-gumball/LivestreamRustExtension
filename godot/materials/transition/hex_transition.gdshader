@@ -8,6 +8,7 @@ uniform float hex_size : hint_range(0.01, 0.5) = 0.08;
 uniform float randomness = 0.05;
 uniform float edge_softness = 0.01;
 uniform float transition_speed = 0.3;
+uniform bool reverse = false;
 
 float hash(vec2 p) {
     return fract(sin(dot(p, vec2(127.1, 311.7))) * 43758.5453123);
@@ -46,7 +47,7 @@ void fragment() {
         vec2 hp = p / hex_size;
         vec2 id = hextile(hp);
 
-        float delay = (uv.x + uv.y) * 0.5;
+        float delay = reverse ? 1.0 - (uv.x + uv.y) * 0.5 : (uv.x + uv.y) * 0.5;
         float hex_progress = clamp(smoothstep(
             delay - transition_speed,
             delay + transition_speed,

@@ -2,7 +2,9 @@
 
 [ext_resource type="Script" uid="uid://dg0yh4qwwvcey" path="res://pages/game_page.gd" id="1_jjmn7"]
 [ext_resource type="FontFile" uid="uid://7uibxoligyvb" path="res://fonts/HomeVideo-BLG6G.ttf" id="2_p5ued"]
+[ext_resource type="PackedScene" uid="uid://dngl47xquv3cd" path="res://ui/loading/loading.tscn" id="2_q0v5o"]
 [ext_resource type="FontFile" uid="uid://dk7ngb77pf70y" path="res://fonts/HomeVideoBold-R90Dv.ttf" id="3_nspls"]
+[ext_resource type="Shader" uid="uid://ddsoj1lgtm34y" path="res://materials/transition/hex_transition.gdshader" id="3_rsatm"]
 [ext_resource type="PackedScene" uid="uid://crkh8hdu5af84" path="res://gumbot/gumbot.tscn" id="4_43xba"]
 [ext_resource type="Shader" uid="uid://cw1km147x2fwu" path="res://materials/bot_mat/bot_shader.gdshader" id="5_k3023"]
 [ext_resource type="Texture2D" uid="uid://cas3gr887xevi" path="res://materials/bot_mat/bot_albedo.png" id="6_cy2wj"]
@@ -38,6 +40,20 @@ default_font_size = 50
 [sub_resource type="LabelSettings" id="LabelSettings_sqe1x"]
 font = ExtResource("3_nspls")
 font_size = 40
+
+[sub_resource type="ViewportTexture" id="ViewportTexture_rsatm"]
+viewport_path = NodePath("SubViewport")
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_bpjvj"]
+resource_local_to_scene = true
+shader = ExtResource("3_rsatm")
+shader_parameter/to_tex = SubResource("ViewportTexture_rsatm")
+shader_parameter/progress = 0.0
+shader_parameter/hex_size = 0.08
+shader_parameter/randomness = 0.05
+shader_parameter/edge_softness = 0.01
+shader_parameter/transition_speed = 0.3
+shader_parameter/reverse = false
 
 [node name="GamePage" type="Control" unique_id=528837551]
 layout_mode = 3
@@ -210,6 +226,12 @@ layout_mode = 2
 text = "CLIENT 329024"
 label_settings = SubResource("LabelSettings_sqe1x")
 horizontal_alignment = 1
+
+[node name="Loading" parent="." unique_id=884817838 instance=ExtResource("2_q0v5o")]
+unique_name_in_owner = true
+layout_mode = 1
+transition_material = SubResource("ShaderMaterial_bpjvj")
+progress = 0.0
 
 [node name="StateMachine" type="Node" parent="." unique_id=1404217897]
 unique_name_in_owner = true
