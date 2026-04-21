@@ -11,17 +11,14 @@ func _ready() -> void:
   var num_windows := 2
 
   # Find window index in cmdline args string. Example "--i=1" Id = 1.
+  print(cmd_args)
   for arg in cmd_args:
     if arg is String and arg.begins_with("--i="):
       var parts := arg.split("=")
       if parts.size() >= 2:
         window_index = int(parts[1])
-        break
-    if arg is String and arg.begins_with("--overlay="):
-      var parts := arg.split("=")
-      if parts.size() >= 2:
-        is_stream_overlay = parts[1].to_lower() == "true"
-        break
+    if str(arg) == "--overlay":
+      is_stream_overlay = true
 
   if window_index != -1:
     DisplayServer.window_move_to_foreground()

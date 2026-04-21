@@ -23,6 +23,7 @@ DebugScreenLayout="*uid://dlkq1m5uudr86"
 MultiplayerClient="*uid://dad0yyehqr15p"
 WSClient="*uid://c6x8llyglpm7e"
 Settings="*uid://s5c1ic0vboy0"
+ObsClient="*uid://c6vhllq4e1cu4"
 
 [display]
 
