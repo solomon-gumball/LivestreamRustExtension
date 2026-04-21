@@ -17,11 +17,11 @@ func _ready():
 
   store_data_received()
   MultiplayerClient.start()
-  WSClient.state.changed.connect(_handle_ws_state_changed)
+  # WSClient.state.changed.connect(_handle_ws_state_changed)
 
-func _handle_ws_state_changed(connection_state: WSClient.WSClientState) -> void:
-  if connection_state is WSClient.AuthenticatedState:
-    MultiplayerClient.start()
+# func _handle_ws_state_changed(connection_state: WSClient.WSClientState) -> void:
+#   if connection_state is WSClient.AuthenticatedState:
+#     MultiplayerClient.start()
 
 func emote_triggered(chatter: Chatter, emote: String):
   var bot := get_or_create_bot_for_user(chatter)

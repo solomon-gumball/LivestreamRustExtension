@@ -17,7 +17,7 @@ ambient_light_energy = 2.0
 ssao_enabled = true
 glow_enabled = true
 
-[sub_resource type="ShaderMaterial" id="ShaderMaterial_hb8fn"]
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_q0v5o"]
 resource_local_to_scene = true
 render_priority = 0
 shader = ExtResource("5_k3023")
@@ -76,7 +76,7 @@ current = true
 [node name="GumBot" parent="OverlaySubviewportContainer/OverlaySubViewport" unique_id=2126276004 instance=ExtResource("4_43xba")]
 unique_name_in_owner = true
 transform = Transform3D(-0.9408098, 0, 0.33893508, 0, 1, 0, -0.33893508, 0, -0.9408098, -0.6849959, -0.30148157, 0.73511076)
-surface_mat = SubResource("ShaderMaterial_hb8fn")
+surface_mat = SubResource("ShaderMaterial_q0v5o")
 
 [node name="DirectionalLight3D" type="DirectionalLight3D" parent="OverlaySubviewportContainer/OverlaySubViewport" unique_id=723242754]
 

@@ -1,19 +1,20 @@
 extends Node
 
-# Hotkeys (hold ` then press):
-# +-----------+--------------------------------------------------+
-# | ` + =     | Fullscreen (1920x1080 at origin)                 |
-# | ` + -     | Mini, snap to bottom-right                       |
-# | ` + h     | Toggle source visibility                         |
-# | ` + ↑     | Mini, snap to top-center                         |
-# | ` + ↓     | Mini, snap to bottom-center                      |
-# | ` + ←     | Mini, snap to middle-left                        |
-# | ` + →     | Mini, snap to middle-right                       |
-# | ` + ↑ + → | Mini, snap to top-right                          |
-# | ` + ↑ + ← | Mini, snap to top-left                           |
-# | ` + ↓ + → | Mini, snap to bottom-right                       |
-# | ` + ↓ + ← | Mini, snap to bottom-left                        |
-# +-----------+--------------------------------------------------+
+# Hotkeys (hold KEY_MODIFIER then press):
+# +---------------+--------------------------------------------------+
+# | \ + 2         | Fullscreen (1920x1080 at origin)                 |
+# | \ + 1         | Mini, snap to bottom-right                       |
+# | \ + 3         | Toggle source visibility                         |
+# | \ + q         | Mini, snap to top-left                           |
+# | \ + w         | Mini, snap to top-center                         |
+# | \ + e         | Mini, snap to top-right                          |
+# | \ + a         | Mini, snap to middle-left                        |
+# | \ + s         | Mini, snap to center                             |
+# | \ + d         | Mini, snap to middle-right                       |
+# | \ + z         | Mini, snap to bottom-left                        |
+# | \ + x         | Mini, snap to bottom-center                      |
+# | \ + c         | Mini, snap to bottom-right                       |
+# +---------------+--------------------------------------------------+
 
 const PRINT_DEBUG: bool = true
 
@@ -22,7 +23,21 @@ const CANVAS_HEIGHT := 1080
 const SOURCE_WIDTH := 480
 const SOURCE_HEIGHT := 270
 
-var source_name := "MiniScreenCapture"
+const KEY_MODIFIER       := KEY_BACKSLASH
+const KEY_FULLSCREEN     := KEY_2
+const KEY_MINIMIZE       := KEY_1
+const KEY_TOGGLE_VIS     := KEY_3
+const KEY_POS_TOP_LEFT   := KEY_Q
+const KEY_POS_TOP        := KEY_W
+const KEY_POS_TOP_RIGHT  := KEY_E
+const KEY_POS_LEFT       := KEY_A
+const KEY_POS_CENTER     := KEY_S
+const KEY_POS_RIGHT      := KEY_D
+const KEY_POS_BOT_LEFT   := KEY_Z
+const KEY_POS_BOT        := KEY_X
+const KEY_POS_BOT_RIGHT  := KEY_C
+
+var source_name := "ScreenShare1"
 var scene_name := "Gumbots"
 var margin := 20.0
 
@@ -108,55 +123,42 @@ func _handle_response(d: Dictionary) -> void:
 func _input(event: InputEvent) -> void:
   if not event is InputEventKey or not event.pressed or event.echo:
     return
-  if not Input.is_key_pressed(KEY_QUOTELEFT):
+  if not Input.is_key_pressed(KEY_MODIFIER):
     return
   var key := (event as InputEventKey).keycode
-  if key == KEY_QUOTELEFT:
+  if key == KEY_MODIFIER:
     return
+
+  var cx := (CANVAS_WIDTH - SOURCE_WIDTH) / 2.0
+  var cy := (CANVAS_HEIGHT - SOURCE_HEIGHT) / 2.0
+  var rx := CANVAS_WIDTH - SOURCE_WIDTH - margin
+  var by := CANVAS_HEIGHT - SOURCE_HEIGHT - margin
 
   match key:
-    KEY_EQUAL:
+    KEY_FULLSCREEN:
       _move_source(Vector2.ZERO, Vector2(CANVAS_WIDTH, CANVAS_HEIGHT))
-      return
-    KEY_MINUS:
-      var bx := CANVAS_WIDTH - SOURCE_WIDTH - margin
-      var by := CANVAS_HEIGHT - SOURCE_HEIGHT - margin
-      _move_source(Vector2(bx, by), Vector2(SOURCE_WIDTH, SOURCE_HEIGHT))
-      return
-    KEY_H:
+    KEY_MINIMIZE:
+      _move_source(Vector2(rx, by), Vector2(SOURCE_WIDTH, SOURCE_HEIGHT))
+    KEY_TOGGLE_VIS:
       _toggle_visibility()
-      return
-
-  if key not in [KEY_UP, KEY_DOWN, KEY_LEFT, KEY_RIGHT]:
-    return
-
-  var up := Input.is_key_pressed(KEY_UP) or key == KEY_UP
-  var down := Input.is_key_pressed(KEY_DOWN) or key == KEY_DOWN
-  var left := Input.is_key_pressed(KEY_LEFT) or key == KEY_LEFT
-  var right := Input.is_key_pressed(KEY_RIGHT) or key == KEY_RIGHT
-
-  if up and down:
-    up = false; down = false
-  if left and right:
-    left = false; right = false
-
-  var x: float
-  if left:
-    x = margin
-  elif right:
-    x = CANVAS_WIDTH - SOURCE_WIDTH - margin
-  else:
-    x = (CANVAS_WIDTH - SOURCE_WIDTH) / 2.0
-
-  var y: float
-  if up:
-    y = margin
-  elif down:
-    y = CANVAS_HEIGHT - SOURCE_HEIGHT - margin
-  else:
-    y = (CANVAS_HEIGHT - SOURCE_HEIGHT) / 2.0
-
-  _move_source(Vector2(x, y), Vector2(SOURCE_WIDTH, SOURCE_HEIGHT))
+    KEY_POS_TOP_LEFT:
+      _move_source(Vector2(margin, margin))
+    KEY_POS_TOP:
+      _move_source(Vector2(cx, margin))
+    KEY_POS_TOP_RIGHT:
+      _move_source(Vector2(rx, margin))
+    KEY_POS_LEFT:
+      _move_source(Vector2(margin, cy))
+    KEY_POS_CENTER:
+      _move_source(Vector2(cx, cy))
+    KEY_POS_RIGHT:
+      _move_source(Vector2(rx, cy))
+    KEY_POS_BOT_LEFT:
+      _move_source(Vector2(margin, by))
+    KEY_POS_BOT:
+      _move_source(Vector2(cx, by))
+    KEY_POS_BOT_RIGHT:
+      _move_source(Vector2(rx, by))
 
 func _toggle_visibility() -> void:
   if not _identified or _scene_item_id < 0:

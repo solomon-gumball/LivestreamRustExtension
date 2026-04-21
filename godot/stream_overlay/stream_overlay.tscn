@@ -3,6 +3,8 @@
 [ext_resource type="Script" uid="uid://fxuvhmkvh6nh" path="res://stream_overlay/stream_overlay.gd" id="1_5bn8s"]
 [ext_resource type="PackedScene" uid="uid://bn7vuka4ytk5c" path="res://games/pong/pong_gumbot.tscn" id="1_mi6u7"]
 [ext_resource type="Shader" uid="uid://cw1km147x2fwu" path="res://materials/bot_mat/bot_shader.gdshader" id="2_5bn8s"]
+[ext_resource type="PackedScene" uid="uid://4fbhgplmr2ub" path="res://pages/game_page.tscn" id="2_n3vit"]
+[ext_resource type="Material" uid="uid://csotmk0m42uj7" path="res://materials/scrolling_background/profile_page_background.tres" id="3_cm7af"]
 [ext_resource type="Texture2D" uid="uid://cas3gr887xevi" path="res://materials/bot_mat/bot_albedo.png" id="3_n3vit"]
 [ext_resource type="Texture2D" uid="uid://ba6mac1k3t38a" path="res://materials/bot_mat/bot_normals.png" id="4_cm7af"]
 
@@ -27,7 +29,7 @@ size = Vector3(0.86120605, 2.4926758, 4.076582)
 [sub_resource type="BoxShape3D" id="BoxShape3D_n3vit"]
 size = Vector3(0.86120605, 2.4926758, 4.076582)
 
-[sub_resource type="ShaderMaterial" id="ShaderMaterial_5bn8s"]
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_nj7or"]
 resource_local_to_scene = true
 render_priority = 0
 shader = ExtResource("2_5bn8s")
@@ -44,6 +46,27 @@ ssao_enabled = true
 
 [node name="StreamOverlay" type="Node3D" unique_id=750317293]
 script = ExtResource("1_5bn8s")
+
+[node name="CanvasLayer" type="CanvasLayer" parent="." unique_id=505985878]
+
+[node name="GamePage" parent="CanvasLayer" unique_id=528837551 instance=ExtResource("2_n3vit")]
+offset_left = 1092.0
+offset_top = 604.0
+offset_right = 1092.0
+offset_bottom = 604.0
+scale = Vector2(0.3, 0.3)
+
+[node name="ScrollingBackground" type="ColorRect" parent="CanvasLayer/GamePage" unique_id=1745974464]
+z_index = -1
+material = ExtResource("3_cm7af")
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+metadata/_edit_use_anchors_ = true
 
 [node name="GameRootNode" type="Node3D" parent="." unique_id=337688640]
 unique_name_in_owner = true
@@ -94,7 +117,7 @@ shape = SubResource("BoxShape3D_n3vit")
 
 [node name="gumbot" parent="BotWalkingScene" unique_id=2126276004 instance=ExtResource("1_mi6u7")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 3.5204692, -3.5352066)
-surface_mat = SubResource("ShaderMaterial_5bn8s")
+surface_mat = SubResource("ShaderMaterial_nj7or")
 
 [node name="DirectionalLight3D" type="DirectionalLight3D" parent="BotWalkingScene" unique_id=213681938]
 transform = Transform3D(0.18701153, 0.62628746, 0.7568294, 0.06279059, -0.77646667, 0.6270222, 0.98034894, -0.069738604, -0.18453318, 1.137617, 0.9017843, -0.071688496)
