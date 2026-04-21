@@ -10,8 +10,6 @@ func get_main_scene() -> PackedScene:
 
 func _ready() -> void:
   ObjectSerializer.register_script(PongGameState)
-  # ObjectSerializer.register_script(PongEntity)
-  # ObjectSerializer.register_script(PongAnimationState)
 
   if DebugScreenLayout.window_index == 0:
     WSClient.debug_chatter_id = '22445910' # Gumball

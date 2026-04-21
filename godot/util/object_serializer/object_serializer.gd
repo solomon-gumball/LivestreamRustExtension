@@ -34,14 +34,34 @@ static var _script_registry: Dictionary[String, _ScriptRegistryEntry]
 
 
 ## Registers a script (an object type) to be serialized/deserialized. All custom types (including nested types) must be registered [b]before[/b] using this library.
-## [param name] can be empty if script uses [code]class_name[/code] (e.g [code]ObjectSerializer.register_script("", Data)[/code]), but it's generally better to set the name.
+## [param name] can be empty if script uses [code]class_name[/code] (e.g [code]ObjectSerializer.register_script(Data)[/code]), but it's generally better to set the name.
+## Nested custom types referenced by typed properties are registered automatically.
 static func register_script(script: Script, name: StringName = "") -> void:
+	var class_map: Dictionary[String, String] = {}
+	for cls in ProjectSettings.get_global_class_list():
+		class_map[cls["class"]] = cls["path"]
+	_register_script_recursive(script, name, class_map)
+
+
+static func _register_script_recursive(script: Script, name: StringName, class_map: Dictionary) -> void:
 	var script_name := _get_script_name(script, name)
 	assert(script_name, "Script must have name\n" + script.source_code)
+	var type_key := object_type_prefix + script_name
+	if _script_registry.has(type_key):
+		return
 	var entry := _ScriptRegistryEntry.new()
 	entry.script_type = script
-	entry.type = object_type_prefix + script_name
-	_script_registry[entry.type] = entry
+	entry.type = type_key
+	_script_registry[type_key] = entry
+	for property in script.get_script_property_list():
+		if property.type == TYPE_OBJECT and not (property.class_name as String).is_empty():
+			var cls_name: String = property.class_name
+			if class_map.has(cls_name):
+				_register_script_recursive(load(class_map[cls_name]), "", class_map)
+	for constant_name in script.get_script_constant_map():
+		var value: Variant = script.get_script_constant_map()[constant_name]
+		if value is Script:
+			_register_script_recursive(value, constant_name, class_map)
 
 
 ## Registers multiple scripts (object types) to be serialized/deserialized from a dictionary.
