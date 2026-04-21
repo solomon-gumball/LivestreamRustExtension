@@ -1,0 +1,105 @@
+[gd_scene format=3 uid="uid://3g113mji7che"]
+
+[ext_resource type="Script" uid="uid://fxuvhmkvh6nh" path="res://stream_overlay/stream_overlay.gd" id="1_5bn8s"]
+[ext_resource type="PackedScene" uid="uid://bn7vuka4ytk5c" path="res://games/pong/pong_gumbot.tscn" id="1_mi6u7"]
+[ext_resource type="Shader" uid="uid://cw1km147x2fwu" path="res://materials/bot_mat/bot_shader.gdshader" id="2_5bn8s"]
+[ext_resource type="Texture2D" uid="uid://cas3gr887xevi" path="res://materials/bot_mat/bot_albedo.png" id="3_n3vit"]
+[ext_resource type="Texture2D" uid="uid://ba6mac1k3t38a" path="res://materials/bot_mat/bot_normals.png" id="4_cm7af"]
+
+[sub_resource type="NavigationMesh" id="NavigationMesh_5bn8s"]
+vertices = PackedVector3Array(-1.9, -1.6212506, -0.9, -1.9, -1.6212506, 0.9, 1.8999999, -1.6212506, 0.9, 1.8999999, -1.6212506, -0.9)
+polygons = [PackedInt32Array(3, 2, 0), PackedInt32Array(0, 2, 1)]
+geometry_source_geometry_mode = 1
+geometry_source_group_name = &"nav"
+cell_size = 0.01
+cell_height = 0.01
+agent_radius = 0.1
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_px3ik"]
+size = Vector3(4, 1, 2)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_mi6u7"]
+size = Vector3(0.86120605, 2.4926758, 4.076582)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_5bn8s"]
+size = Vector3(0.86120605, 2.4926758, 4.076582)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_n3vit"]
+size = Vector3(0.86120605, 2.4926758, 4.076582)
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_5bn8s"]
+resource_local_to_scene = true
+render_priority = 0
+shader = ExtResource("2_5bn8s")
+shader_parameter/albedo_texture = ExtResource("3_n3vit")
+shader_parameter/normal_map = ExtResource("4_cm7af")
+shader_parameter/bot_color = Color(1, 0, 0, 1)
+
+[sub_resource type="Environment" id="Environment_5bn8s"]
+background_mode = 3
+ambient_light_source = 2
+ambient_light_color = Color(1, 1, 1, 1)
+tonemap_mode = 2
+ssao_enabled = true
+
+[node name="StreamOverlay" type="Node3D" unique_id=750317293]
+script = ExtResource("1_5bn8s")
+
+[node name="GameRootNode" type="Node3D" parent="." unique_id=337688640]
+unique_name_in_owner = true
+
+[node name="BotWalkingScene" type="Node3D" parent="." unique_id=1740826021]
+unique_name_in_owner = true
+
+[node name="NavigationRegion3D" type="NavigationRegion3D" parent="BotWalkingScene" unique_id=1214796430]
+transform = Transform3D(-1, 0, 8.742278e-08, 0, 1, 0, -8.742278e-08, 0, -1, 0, 1.6412506, -3.5453691)
+navigation_mesh = SubResource("NavigationMesh_5bn8s")
+
+[node name="Camera" type="Camera3D" parent="BotWalkingScene" unique_id=1843058476]
+unique_name_in_owner = true
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.1585627, 3.6985846)
+fov = 20.0
+size = 2.0
+
+[node name="BotSpawnLocation" type="Marker3D" parent="BotWalkingScene" unique_id=669174111]
+unique_name_in_owner = true
+transform = Transform3D(-1, 0, 8.742278e-08, 0, 1, 0, -8.742278e-08, 0, -1, 0, 0.51779485, -3.5453691)
+
+[node name="Floor" type="StaticBody3D" parent="BotWalkingScene" unique_id=1233563178 groups=["nav"]]
+transform = Transform3D(-1, 0, 8.742278e-08, 0, 1, 0, -8.742278e-08, 0, -1, 0, -0.5, -3.5453691)
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="BotWalkingScene/Floor" unique_id=1694973610]
+shape = SubResource("BoxShape3D_px3ik")
+
+[node name="CSGBox3D" type="CSGBox3D" parent="BotWalkingScene/Floor" unique_id=1429320245]
+size = Vector3(4, 1, 2)
+
+[node name="Walls" type="StaticBody3D" parent="BotWalkingScene" unique_id=1956704234]
+
+[node name="CollisionShape3D2" type="CollisionShape3D" parent="BotWalkingScene/Walls" unique_id=327400771]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.3102417, 1.3542237, -3.5453691)
+shape = SubResource("BoxShape3D_mi6u7")
+
+[node name="CollisionShape3D4" type="CollisionShape3D" parent="BotWalkingScene/Walls" unique_id=653750435]
+transform = Transform3D(-4.371139e-08, 0, -1, 0, 1, 0, 1, 0, -4.371139e-08, 1.00983875e-07, 1.3542237, -4.932513)
+shape = SubResource("BoxShape3D_5bn8s")
+
+[node name="CollisionShape3D6" type="CollisionShape3D" parent="BotWalkingScene/Walls" unique_id=80327883]
+transform = Transform3D(-4.371139e-08, 0, -1, 0, 1, 0, 1, 0, -4.371139e-08, 1.00983875e-07, 1.2354739, -2.150222)
+shape = SubResource("BoxShape3D_5bn8s")
+
+[node name="CollisionShape3D5" type="CollisionShape3D" parent="BotWalkingScene/Walls" unique_id=1241139699]
+transform = Transform3D(-1, 0, 8.742278e-08, 0, 1, 0, -8.742278e-08, 0, -1, 2.2648401, 1.3542237, -3.545369)
+shape = SubResource("BoxShape3D_n3vit")
+
+[node name="gumbot" parent="BotWalkingScene" unique_id=2126276004 instance=ExtResource("1_mi6u7")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 3.5204692, -3.5352066)
+surface_mat = SubResource("ShaderMaterial_5bn8s")
+
+[node name="DirectionalLight3D" type="DirectionalLight3D" parent="BotWalkingScene" unique_id=213681938]
+transform = Transform3D(0.18701153, 0.62628746, 0.7568294, 0.06279059, -0.77646667, 0.6270222, 0.98034894, -0.069738604, -0.18453318, 1.137617, 0.9017843, -0.071688496)
+light_color = Color(0.99646264, 0.82775444, 0.63832206, 1)
+light_energy = 5.0
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="BotWalkingScene" unique_id=928090971]
+environment = SubResource("Environment_5bn8s")

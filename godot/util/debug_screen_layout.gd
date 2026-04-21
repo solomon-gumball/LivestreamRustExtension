@@ -1,6 +1,7 @@
 extends Node
 
 var window_index: int = -1
+var is_stream_overlay: bool = false
 
 func _ready() -> void:
   var cmd_args := OS.get_cmdline_args()
@@ -15,6 +16,11 @@ func _ready() -> void:
       var parts := arg.split("=")
       if parts.size() >= 2:
         window_index = int(parts[1])
+        break
+    if arg is String and arg.begins_with("--overlay="):
+      var parts := arg.split("=")
+      if parts.size() >= 2:
+        is_stream_overlay = parts[1].to_lower() == "true"
         break
 
   if window_index != -1:

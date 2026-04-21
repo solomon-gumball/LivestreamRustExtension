@@ -9,7 +9,7 @@
 [ext_resource type="FontFile" uid="uid://7uibxoligyvb" path="res://fonts/HomeVideo-BLG6G.ttf" id="6_rxy47"]
 [ext_resource type="AnimationNodeBlendTree" uid="uid://mivjk4jvqqht" path="res://gumbot/gumbot_standard_anim_tree.tres" id="7_53np8"]
 
-[sub_resource type="ShaderMaterial" id="ShaderMaterial_53np8"]
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_rxy47"]
 resource_local_to_scene = true
 render_priority = 0
 shader = ExtResource("3_vliq0")
@@ -38,7 +38,7 @@ height = 0.36108398
 
 [node name="gumbot" unique_id=2126276004 instance=ExtResource("1_vqh4x")]
 script = ExtResource("2_hyqf0")
-surface_mat = SubResource("ShaderMaterial_53np8")
+surface_mat = SubResource("ShaderMaterial_rxy47")
 
 [node name="Armature_Skeleton3D_Head_Socket#Sprite" type="Sprite3D" parent="." index="0" unique_id=1577695489]
 transform = Transform3D(0.0826766, 3.10835e-10, -2.40341e-12, -3.10838e-10, 0.0826767, -5.20774e-05, 2.18137e-12, 5.20774e-05, 0.0826766, 5.16793e-09, 0.0423677, 0.000717234)
@@ -49,6 +49,7 @@ alpha_cut = 1
 [node name="NameLabel" type="Label3D" parent="." index="1" unique_id=550378211]
 unique_name_in_owner = true
 transform = Transform3D(0.15, 0, 0, 0, 0.15, 0, 0, 0, 0.15, 0, 0.37451893, 0)
+visible = false
 billboard = 1
 text = "solomongumbal1s"
 font = ExtResource("6_rxy47")
@@ -91,28 +92,28 @@ bone_name = "Hand.L"
 bone_idx = 16
 
 [node name="Arm" parent="Armature/Skeleton3D" index="1" unique_id=117812780]
-surface_material_override/0 = SubResource("ShaderMaterial_53np8")
+surface_material_override/0 = SubResource("ShaderMaterial_rxy47")
 
 [node name="Body" parent="Armature/Skeleton3D" index="2" unique_id=1287329360]
-surface_material_override/0 = SubResource("ShaderMaterial_53np8")
+surface_material_override/0 = SubResource("ShaderMaterial_rxy47")
 
 [node name="Button" parent="Armature/Skeleton3D" index="3" unique_id=2113639975]
-surface_material_override/0 = SubResource("ShaderMaterial_53np8")
+surface_material_override/0 = SubResource("ShaderMaterial_rxy47")
 
 [node name="Circle" parent="Armature/Skeleton3D" index="4" unique_id=1107740376]
-surface_material_override/0 = SubResource("ShaderMaterial_53np8")
+surface_material_override/0 = SubResource("ShaderMaterial_rxy47")
 
 [node name="Hand_L" parent="Armature/Skeleton3D" index="5" unique_id=1600673180]
-surface_material_override/0 = SubResource("ShaderMaterial_53np8")
+surface_material_override/0 = SubResource("ShaderMaterial_rxy47")
 
 [node name="Hand_R" parent="Armature/Skeleton3D" index="6" unique_id=923083982]
-surface_material_override/0 = SubResource("ShaderMaterial_53np8")
+surface_material_override/0 = SubResource("ShaderMaterial_rxy47")
 
 [node name="HeadCapsule" parent="Armature/Skeleton3D" index="7" unique_id=172341358]
 surface_material_override/0 = SubResource("StandardMaterial3D_vliq0")
 
 [node name="Leg" parent="Armature/Skeleton3D" index="8" unique_id=324976678]
-surface_material_override/0 = SubResource("ShaderMaterial_53np8")
+surface_material_override/0 = SubResource("ShaderMaterial_rxy47")
 
 [node name="Head_Socket" type="BoneAttachment3D" parent="Armature/Skeleton3D" index="9" unique_id=1137685559]
 transform = Transform3D(1, 0, 2.3841856e-07, 0, 0.99999994, 0, -2.3841856e-07, 0, 1, 0, 0.22337437, 0)
@@ -138,7 +139,7 @@ bone_name = "HeldItemBone"
 bone_idx = 25
 
 [node name="Sphere_001" parent="Armature/Skeleton3D" index="12" unique_id=1775802343]
-surface_material_override/0 = SubResource("ShaderMaterial_53np8")
+surface_material_override/0 = SubResource("ShaderMaterial_rxy47")
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="." index="4" unique_id=701422005]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.1607666, 0)

@@ -75,6 +75,14 @@ func leave_lobby() -> void:
     })
     stop()
 
+func start_lobby() -> void:
+  if MultiplayerClient.current_lobby:
+    print("Sending start lobby message for lobby: ")
+    WSClient.send_socket_message({
+      "type": "rtc-start-game",
+      "lobby_id": MultiplayerClient.current_lobby.name
+    })
+
 func _handle_ws_message(parsed: Variant) -> bool:
   if typeof(parsed) != TYPE_DICTIONARY:
     return false
@@ -91,6 +99,7 @@ func join_lobby(lobby_name: String) -> Error:
     # Prevent LookingForLobby from auto-joining the lobby we just created
     # when the server broadcasts rtc-lobbies-updated
     looking_for_lobby_state.join_request_already_sent = true
+
     return WSClient.send_socket_message({
       "type": "rtc-create-lobby",
       "mesh_mode": mesh

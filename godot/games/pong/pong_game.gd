@@ -20,7 +20,7 @@ var nodes_by_peer_id: Dictionary[int, Dictionary] = {}
 @onready var pong_paddle_l: PongPaddle = %PongPaddleL
 @onready var pong_paddle_r: PongPaddle = %PongPaddleR
 @onready var camera: Camera3D = %Camera
-@onready var is_game_host: bool = lobby.host_chatter_id == WSClient.my_chatter().id
+var is_game_host: bool = false
 @onready var pong_spawn_location: Marker3D = %PongSpawnLocation
 @onready var score_region_l: Area3D = %ScoreRegionL
 @onready var score_region_r: Area3D = %ScoreRegionR
@@ -39,6 +39,8 @@ var nodes_by_peer_id: Dictionary[int, Dictionary] = {}
 func _ready() -> void:
   if Engine.is_editor_hint():
     return
+
+  is_game_host = lobby.host_chatter_id == WSClient.my_chatter().id
 
   visible = false
   MultiplayerClient.current_lobby_updated.connect(_lobby_updated)

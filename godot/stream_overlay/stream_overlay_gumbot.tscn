@@ -1,0 +1,124 @@
+[gd_scene format=3 uid="uid://cxsnhrfv7gjxe"]
+
+[ext_resource type="PackedScene" uid="uid://crkh8hdu5af84" path="res://gumbot/gumbot.tscn" id="1_i1x1q"]
+[ext_resource type="Shader" uid="uid://cw1km147x2fwu" path="res://materials/bot_mat/bot_shader.gdshader" id="2_bqlnt"]
+[ext_resource type="Script" uid="uid://brqueeh8vgh4d" path="res://stream_overlay/stream_overlay_gumbot.gd" id="2_ufuyu"]
+[ext_resource type="Texture2D" uid="uid://cas3gr887xevi" path="res://materials/bot_mat/bot_albedo.png" id="3_ufuyu"]
+[ext_resource type="Texture2D" uid="uid://ba6mac1k3t38a" path="res://materials/bot_mat/bot_normals.png" id="4_e726t"]
+[ext_resource type="AnimationNodeStateMachine" uid="uid://bhmvb2r1oed2v" path="res://gumbot/gumbot_state_tree.tres" id="5_fyuyu"]
+[ext_resource type="Script" uid="uid://d2ybq2ovami5x" path="res://util/state_machine.gd" id="7_ufuyu"]
+[ext_resource type="Script" uid="uid://bh84v1cv0v1gq" path="res://stream_overlay/gumbot_wandering_state.gd" id="8_e726t"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_3pqe0"]
+resource_local_to_scene = true
+render_priority = 0
+shader = ExtResource("2_bqlnt")
+shader_parameter/albedo_texture = ExtResource("3_ufuyu")
+shader_parameter/normal_map = ExtResource("4_e726t")
+shader_parameter/bot_color = Color(1, 0, 0, 1)
+
+[sub_resource type="AnimationNodeAdd2" id="AnimationNodeAdd2_o2iqh"]
+filters = ["Armature/Skeleton3D:Windup"]
+
+[sub_resource type="AnimationNodeAnimation" id="AnimationNodeAnimation_x5r14"]
+animation = &"Windup"
+
+[sub_resource type="AnimationNodeBlendTree" id="AnimationNodeBlendTree_i1x1q"]
+resource_local_to_scene = true
+graph_offset = Vector2(-431.6551, -98.96413)
+nodes/Add2/node = SubResource("AnimationNodeAdd2_o2iqh")
+nodes/Add2/position = Vector2(0, 80)
+"nodes/Animation 2/node" = SubResource("AnimationNodeAnimation_x5r14")
+"nodes/Animation 2/position" = Vector2(-200, 250)
+nodes/StateMachine/node = ExtResource("5_fyuyu")
+nodes/StateMachine/position = Vector2(-280, 60)
+node_connections = [&"output", 0, &"Add2", &"Add2", 0, &"StateMachine", &"Add2", 1, &"Animation 2"]
+
+[sub_resource type="SphereMesh" id="SphereMesh_e726t"]
+radius = 0.1
+height = 0.2
+
+[node name="gumbot" unique_id=2126276004 instance=ExtResource("1_i1x1q")]
+script = ExtResource("2_ufuyu")
+surface_mat = null
+
+[node name="Skeleton3D" parent="Armature" parent_id_path=PackedInt32Array(1640859719) index="0" unique_id=1320069354]
+bones/1/position = Vector3(0, 0.11674872, 0)
+bones/2/rotation = Quaternion(-2.168021e-08, 0.02218937, 0.99975383, -8.1596285e-09)
+bones/3/rotation = Quaternion(-0.03647189, 2.382599e-07, -2.2898266e-08, 0.9993347)
+bones/4/rotation = Quaternion(0.717138, 1.02810716e-07, 4.1603144e-07, 0.69693124)
+bones/5/rotation = Quaternion(-2.2063334e-08, 0.02218937, 0.99975383, 9.130505e-09)
+bones/6/rotation = Quaternion(-0.03647189, -2.3825989e-07, 2.2898268e-08, 0.9993347)
+bones/7/rotation = Quaternion(0.717138, -1.3418854e-07, -3.855377e-07, 0.69693124)
+bones/10/rotation = Quaternion(0.16079882, 0.688581, -0.16079882, 0.6885811)
+bones/11/rotation = Quaternion(-9.263334e-08, -0.025976177, 0.99966264, -9.70999e-09)
+bones/12/rotation = Quaternion(0.05707023, 1.9267576e-10, -1.6033843e-08, 0.9983702)
+bones/13/rotation = Quaternion(-0.03111716, -1.68274e-07, 1.39750505e-08, 0.99951583)
+bones/14/rotation = Quaternion(-9.2107314e-08, -0.025976177, 0.99966264, 1.0534493e-08)
+bones/15/rotation = Quaternion(0.05707023, 1.9265115e-10, 2.8414176e-08, 0.9983702)
+bones/16/rotation = Quaternion(-0.03111716, 3.0885832e-07, -2.5114023e-08, 0.99951583)
+bones/17/position = Vector3(0.024235448, 0.0703327, 0.037955087)
+bones/18/position = Vector3(-0.0778728, 0.094935864, 0)
+bones/18/rotation = Quaternion(1.9470718e-07, 0, 1, 0)
+bones/18/scale = Vector3(1, 1, 1)
+bones/19/position = Vector3(0.0778728, 0.094935864, 0)
+bones/19/rotation = Quaternion(-1.9470718e-07, 0, 1, 0)
+bones/19/scale = Vector3(1, 1, 1)
+bones/20/position = Vector3(0.0778728, 0.14907852, -0.032575175)
+bones/21/position = Vector3(-0.0778728, 0.14907852, -0.032575175)
+bones/23/position = Vector3(-0.024235448, 0.0703327, 0.037955087)
+
+[node name="Hand_L_Socket" parent="Armature/Skeleton3D" index="0" unique_id=541900749]
+transform = Transform3D(-1, 3.8258285e-13, -5.642599e-07, -3.0198066e-13, -0.99999994, -1.3411045e-07, -5.642611e-07, 5.2154064e-08, 1.0000018, 0.07787281, 0.09493592, -4.0745363e-08)
+
+[node name="Arm" parent="Armature/Skeleton3D" index="1" unique_id=117812780]
+surface_material_override/0 = SubResource("ShaderMaterial_3pqe0")
+
+[node name="Body" parent="Armature/Skeleton3D" index="2" unique_id=1287329360]
+surface_material_override/0 = SubResource("ShaderMaterial_3pqe0")
+
+[node name="Button" parent="Armature/Skeleton3D" index="3" unique_id=2113639975]
+surface_material_override/0 = SubResource("ShaderMaterial_3pqe0")
+
+[node name="Circle" parent="Armature/Skeleton3D" index="4" unique_id=1107740376]
+surface_material_override/0 = SubResource("ShaderMaterial_3pqe0")
+
+[node name="Hand_L" parent="Armature/Skeleton3D" index="5" unique_id=1600673180]
+surface_material_override/0 = SubResource("ShaderMaterial_3pqe0")
+
+[node name="Hand_R" parent="Armature/Skeleton3D" index="6" unique_id=923083982]
+surface_material_override/0 = SubResource("ShaderMaterial_3pqe0")
+
+[node name="Leg" parent="Armature/Skeleton3D" index="8" unique_id=324976678]
+surface_material_override/0 = SubResource("ShaderMaterial_3pqe0")
+
+[node name="Head_Socket" parent="Armature/Skeleton3D" index="9" unique_id=1137685559]
+transform = Transform3D(1, 0, 2.3841856e-07, 0, 0.99999994, 0, -2.3841856e-07, 0, 1, 0, 0.24784717, 0)
+
+[node name="Spine_Socket" parent="Armature/Skeleton3D" index="10" unique_id=365435926]
+transform = Transform3D(1, 0, 2.3841852e-07, 0, 0.99999994, 0, -2.3841852e-07, 0, 1, 0, 0.14432994, 0)
+
+[node name="Sphere_001" parent="Armature/Skeleton3D" index="12" unique_id=1775802343]
+surface_material_override/0 = SubResource("ShaderMaterial_3pqe0")
+
+[node name="AnimationTree" parent="." index="5" unique_id=498575357]
+tree_root = SubResource("AnimationNodeBlendTree_i1x1q")
+
+[node name="StateMachine" type="Node" parent="." index="7" unique_id=624280515]
+unique_name_in_owner = true
+script = ExtResource("7_ufuyu")
+metadata/_custom_type_script = "uid://d2ybq2ovami5x"
+
+[node name="GumbotWanderingState" type="Node" parent="StateMachine" index="0" unique_id=35734602 node_paths=PackedStringArray("bot")]
+unique_name_in_owner = true
+script = ExtResource("8_e726t")
+bot = NodePath("../..")
+
+[node name="NavigationAgent3D" type="NavigationAgent3D" parent="." index="8" unique_id=1912864191]
+unique_name_in_owner = true
+
+[node name="DebugCube" type="MeshInstance3D" parent="." index="9" unique_id=621668487]
+unique_name_in_owner = true
+top_level = true
+visible = false
+mesh = SubResource("SphereMesh_e726t")

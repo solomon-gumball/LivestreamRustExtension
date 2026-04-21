@@ -1,0 +1,163 @@
+[gd_scene load_steps=17 format=3 uid="uid://c5n1uoo7diw0j"]
+
+[ext_resource type="PackedScene" uid="uid://cgwi2k80q6fjm" path="res://assets/gamba-machine.blend" id="1_yrjc3"]
+[ext_resource type="Script" uid="uid://bxv1w76bpxn6w" path="res://src/gamba/GambaMachine.gd" id="2_jrtsm"]
+[ext_resource type="Shader" uid="uid://veghhhej8yq" path="res://src/gamba/gamba_screens.gdshader" id="3_ehhge"]
+[ext_resource type="Texture2D" uid="uid://dx8aebg13weqh" path="res://assets/tts_switch/slot_machine_icons.png" id="4_ehhge"]
+[ext_resource type="Script" uid="uid://3lyop1r8rtif" path="res://src/level_actors/Interactable.gd" id="5_b6ic5"]
+[ext_resource type="Texture2D" uid="uid://b8w2hm6vcm4p6" path="res://src/gamba/SlotIconHighlight.png" id="5_rbyqp"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_rbyqp"]
+render_priority = 0
+shader = ExtResource("3_ehhge")
+shader_parameter/albedo_texture = ExtResource("4_ehhge")
+shader_parameter/hightlight_texture = ExtResource("5_rbyqp")
+shader_parameter/selected_slot = -1
+shader_parameter/num_slots = 16
+shader_parameter/slots_order = Array[int]([1, 5, 10, 3, 0, 4, 15, 14, 13, 2, 12, 8, 7, 9, 11, 6])
+shader_parameter/slot_offset = 0.0
+shader_parameter/highlight_strength = 1.0
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_g6cum"]
+render_priority = 0
+shader = ExtResource("3_ehhge")
+shader_parameter/albedo_texture = ExtResource("4_ehhge")
+shader_parameter/hightlight_texture = ExtResource("5_rbyqp")
+shader_parameter/selected_slot = -1
+shader_parameter/num_slots = 16
+shader_parameter/slots_order = Array[int]([14, 3, 10, 12, 5, 4, 8, 2, 11, 6, 1, 15, 13, 9, 0, 7])
+shader_parameter/slot_offset = 0.0
+shader_parameter/highlight_strength = 1.0
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_gdj0w"]
+render_priority = 0
+shader = ExtResource("3_ehhge")
+shader_parameter/albedo_texture = ExtResource("4_ehhge")
+shader_parameter/hightlight_texture = ExtResource("5_rbyqp")
+shader_parameter/selected_slot = -1
+shader_parameter/num_slots = 16
+shader_parameter/slots_order = Array[int]([0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15])
+shader_parameter/slot_offset = 0.0
+shader_parameter/highlight_strength = 1.0
+
+[sub_resource type="Animation" id="Animation_b6ic5"]
+length = 0.001
+
+[sub_resource type="Animation" id="Animation_ehhge"]
+resource_name = "slot_pull"
+length = 1.2
+step = 0.01
+tracks/0/type = "rotation_3d"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Crank")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = PackedFloat32Array()
+tracks/1/type = "bezier"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("Crank:rotation:x")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"handle_modes": PackedInt32Array(0, 0, 0),
+"points": PackedFloat32Array(1.33382, -0.25, 0, 0.4, 0.00915611, 2.89168, 0, -0.451917, 0.07, -0.400283, 1.33333, -0.26, 0.00827932, 0.25, 0),
+"times": PackedFloat32Array(0, 0.6, 1.2)
+}
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_rbyqp"]
+_data = {
+&"RESET": SubResource("Animation_b6ic5"),
+&"slot_pull": SubResource("Animation_ehhge")
+}
+
+[sub_resource type="Animation" id="Animation_g6cum"]
+length = 0.001
+tracks/0/type = "bezier"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath(".:rotation:x")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"handle_modes": PackedInt32Array(0),
+"points": PackedFloat32Array(1.5708, -0.25, 0, 0.25, 0),
+"times": PackedFloat32Array(0)
+}
+
+[sub_resource type="Animation" id="Animation_rbyqp"]
+resource_name = "spin_cog"
+length = 10.0
+loop_mode = 1
+tracks/0/type = "rotation_3d"
+tracks/0/imported = false
+tracks/0/enabled = false
+tracks/0/path = NodePath(".")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = PackedFloat32Array()
+tracks/1/type = "bezier"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath(".:rotation:x")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"handle_modes": PackedInt32Array(0, 0, 0),
+"points": PackedFloat32Array(1.5708, -0.25, 0, 0.25, 0, 1.0472, -0.25, 0, 0.25, 0, 1.0472, -0.25, 0, 0.25, 0),
+"times": PackedFloat32Array(0, 0.9657, 1.4319)
+}
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_gdj0w"]
+_data = {
+&"RESET": SubResource("Animation_g6cum"),
+&"spin_cog": SubResource("Animation_rbyqp")
+}
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_ehhge"]
+size = Vector3(5.70221, 3.17383, 2.91803)
+
+[node name="gamba-machine" node_paths=PackedStringArray("screen_1", "screen_2", "screen_3") instance=ExtResource("1_yrjc3")]
+script = ExtResource("2_jrtsm")
+screen_1 = NodePath("Armature/Skeleton3D/Screen")
+screen_2 = NodePath("Armature/Skeleton3D/Screen2")
+screen_3 = NodePath("Armature/Skeleton3D/Screen3")
+
+[node name="Cog" parent="." index="0"]
+transform = Transform3D(-2.82883e-09, -0.0100267, 3.62966e-08, 0, -3.62966e-08, -0.0100267, 0.0100267, -2.82883e-09, 1.02403e-14, -2.19233, 3.52545, -1.2733)
+
+[node name="Crank" parent="." index="1"]
+transform = Transform3D(0.00639711, 0, 0, 0, 0.00150182, -0.00621833, 0, 0.00621833, 0.00150182, -2.53316, 0.495623, 0.643017)
+
+[node name="Screen" parent="Armature/Skeleton3D" index="2"]
+surface_material_override/0 = SubResource("ShaderMaterial_rbyqp")
+
+[node name="Screen2" parent="Armature/Skeleton3D" index="3"]
+surface_material_override/0 = SubResource("ShaderMaterial_g6cum")
+
+[node name="Screen3" parent="Armature/Skeleton3D" index="4"]
+surface_material_override/0 = SubResource("ShaderMaterial_gdj0w")
+
+[node name="SlotAnimationPlayer" type="AnimationPlayer" parent="." index="4"]
+libraries = {
+&"": SubResource("AnimationLibrary_rbyqp")
+}
+
+[node name="CogAnimPlayer" type="AnimationPlayer" parent="." index="5"]
+root_node = NodePath("../Cog")
+libraries = {
+&"": SubResource("AnimationLibrary_gdj0w")
+}
+
+[node name="Interactable" type="StaticBody3D" parent="." index="6"]
+collision_layer = 2048
+collision_mask = 2048
+script = ExtResource("5_b6ic5")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Interactable" index="0"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.255891, 1.59668, 0.54892)
+shape = SubResource("BoxShape3D_ehhge")
+
+[node name="WinningSoundPlayer" type="AudioStreamPlayer3D" parent="." index="7"]
+volume_db = -20.0

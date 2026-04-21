@@ -219,6 +219,7 @@ class ConnectedState extends WSClientState:
             current_chatter = Chatter.FromData(message.get("chatter"))
           if message.get("store"):
             store_data = Message.StoreData.FromData(message.get("store"))
+
           authenticated_successfully.emit()
 
 class AuthenticatedState extends WSClientState:
@@ -273,17 +274,18 @@ class AuthenticatedState extends WSClientState:
     if _previous_state is ConnectedState:
       var connected_prev: ConnectedState = _previous_state
       current_chatter = connected_prev.current_chatter
-      print(current_chatter.assets)
       turn_credentials = connected_prev.turn_credentials
-      item_info = connected_prev.store_data.market
 
       _handle_store_data_refreshed(connected_prev.store_data)
       chatter_updated.emit(current_chatter)
   
   func _handle_store_data_refreshed(store_data: Message.StoreData) -> void:
-    active_chatters = store_data.active_chatters.filter(func (chatter: Chatter): return chatter.expires_in_ms() > 0)
+    active_chatters = store_data.active_chatters
+    # active_chatters = store_data.active_chatters.filter(func (chatter: Chatter): return chatter.expires_in_ms() > 0)
     action_queue = store_data.action_queue
     drops = store_data.drops
+    item_info = store_data.market
+    store_data_received.emit()
 
   func _parse_shop_items(item_dict: Dictionary) -> void:
     item_info = {}
@@ -344,4 +346,3 @@ class AuthenticatedState extends WSClientState:
       "store-data":
         var store_data = Message.StoreData.FromData(message)
         _handle_store_data_refreshed(store_data)
-        store_data_received.emit()

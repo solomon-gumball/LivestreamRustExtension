@@ -79,11 +79,7 @@ func _close_lobby() -> void:
   MultiplayerClient.leave_lobby()
 
 func _start_game() -> void:
-  if MultiplayerClient.current_lobby:
-    WSClient.send_socket_message({
-      "type": "rtc-start-game",
-      "lobby_id": MultiplayerClient.current_lobby.name
-    })
+  MultiplayerClient.start_lobby()
 
 func _host_game() -> void:
   MultiplayerClient.join_lobby("")
@@ -155,6 +151,7 @@ func _handle_connected_state() -> void:
     if not game_scene:
       game_scene = pong_game_template.instantiate()
       game_scene.lobby = MultiplayerClient.current_lobby
+      print('current lobby is: ', MultiplayerClient.current_lobby)
       game_root_node.add_child(game_scene)
       overlay_subviewport_container.visible = false
       var tween := get_tree().create_tween()

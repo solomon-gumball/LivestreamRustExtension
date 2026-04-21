@@ -37,7 +37,7 @@ states/Taunt/node = SubResource("AnimationNodeAnimation_7vcgb")
 states/Taunt/position = Vector2(409.6174, 38.897484)
 states/Walking/node = SubResource("AnimationNodeBlendSpace1D_4vk1i")
 states/Walking/position = Vector2(540.6599, 225.3375)
-graph_offset = Vector2(111.659904, -51.825012)
+graph_offset = Vector2(77.65991, -81.82501)
 
 [sub_resource type="AnimationNodeBlendTree" id="AnimationNodeBlendTree_jmqfg"]
 graph_offset = Vector2(-244.80016, 25.919983)

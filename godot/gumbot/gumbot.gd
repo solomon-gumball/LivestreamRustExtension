@@ -27,16 +27,24 @@ var clothing_meshes_added: Array[Node3D] = []
 enum BotState { StandIdle, PresentMail, Speaking, Walking, Grabbed, Gambling, Emote }
 var bot_state: BotState = BotState.Walking
 
+func _ready() -> void:
+  anim_tree.advance_expression_base_node = NodePath("../..")
+  show_name_label = show_name_label
+
 var chatter: Chatter = null:
   set(new_value):
-    if !is_inside_tree(): return
+    if !is_inside_tree():
+      assert(false, "SHOULD NOT BE SETTING CHATTER IF NOT IN TREE") 
+      return
     if Engine.is_editor_hint(): return
 
     var prev_chatter = chatter
     chatter = new_value
-    emote = chatter.emote
-
     if chatter == null: return
+
+    emote = chatter.emote
+    name_label.text = chatter.display_name
+
     # scrolling_screen_label.text = "%s GUM" % new_value.balance
 
     # Get all sockets
@@ -155,10 +163,6 @@ var emote: String = "":
 
 var shader_mat_template: ShaderMaterial = preload("res://materials/bot_mat/bot_shader_mat.tres")
 var screen_mat: StandardMaterial3D = null
-
-func _ready() -> void:
-  anim_tree.advance_expression_base_node = NodePath("../..")
-  show_name_label = show_name_label
 
 var show_name_label: bool = false:
   set(new_value):
