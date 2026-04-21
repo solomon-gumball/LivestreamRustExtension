@@ -9,6 +9,10 @@ func get_main_scene() -> PackedScene:
   return stream_overlay_scene if DebugScreenLayout.is_stream_overlay else extension_scene
 
 func _ready() -> void:
+  ObjectSerializer.register_script(PongGameState)
+  # ObjectSerializer.register_script(PongEntity)
+  # ObjectSerializer.register_script(PongAnimationState)
+
   if DebugScreenLayout.window_index == 0:
     WSClient.debug_chatter_id = '22445910' # Gumball
   else:

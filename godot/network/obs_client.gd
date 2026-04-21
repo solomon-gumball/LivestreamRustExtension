@@ -16,7 +16,7 @@ extends Node
 # | \ + c         | Mini, snap to bottom-right                       |
 # +---------------+--------------------------------------------------+
 
-const PRINT_DEBUG: bool = true
+const PRINT_DEBUG: bool = false
 
 const CANVAS_WIDTH := 1920
 const CANVAS_HEIGHT := 1080

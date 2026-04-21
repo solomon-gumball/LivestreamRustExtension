@@ -145,7 +145,11 @@ func send_packet(
   if not is_net_connected():
     if PRINT_DEBUG: print("Attempting to send packet while not connected")
     return
-  var packet_data: PackedByteArray = var_to_bytes_with_objects(packet)
+
+  var serialized: Variant = BinarySerializer.serialize_var(packet)
+  var packet_data := var_to_bytes(serialized)
+
+  # var packet_data: PackedByteArray = var_to_bytes_with_objects(packet)
   rtc_mp.set_target_peer(target_peer)
   rtc_mp.set_transfer_mode(transfer_mode)
   rtc_mp.put_packet(packet_data)
@@ -170,7 +174,10 @@ func _process(_delta: float) -> void:
   while rtc_mp.get_available_packet_count() > 0:
     var sender_id: int = rtc_mp.get_packet_peer()
     var data: PackedByteArray = rtc_mp.get_packet()
-    var message: Variant = bytes_to_var_with_objects(data)
+
+    var message_var: Variant = bytes_to_var(data)
+    var message: Variant = BinarySerializer.deserialize_var(message_var)
+
     state.current.handle_rtc_message(message, sender_id)
     packet_received.emit(sender_id, message)
 
