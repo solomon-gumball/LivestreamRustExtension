@@ -10,8 +10,6 @@
 [ext_resource type="Texture2D" uid="uid://cas3gr887xevi" path="res://materials/bot_mat/bot_albedo.png" id="6_cy2wj"]
 [ext_resource type="Texture2D" uid="uid://ba6mac1k3t38a" path="res://materials/bot_mat/bot_normals.png" id="7_x3urd"]
 [ext_resource type="Script" uid="uid://d2ybq2ovami5x" path="res://util/state_machine.gd" id="8_hb8fn"]
-[ext_resource type="Script" uid="uid://djdqk3bkipj00" path="res://ui/custom_button.gd" id="11_rsatm"]
-[ext_resource type="PackedScene" uid="uid://xru7gd0p7hh4" path="res://pages/game_detail_panel.tscn" id="12_bpjvj"]
 
 [sub_resource type="Environment" id="Environment_hb8fn"]
 background_mode = 1
@@ -21,7 +19,7 @@ ambient_light_energy = 2.0
 ssao_enabled = true
 glow_enabled = true
 
-[sub_resource type="ShaderMaterial" id="ShaderMaterial_bpjvj"]
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_rsatm"]
 resource_local_to_scene = true
 render_priority = 0
 shader = ExtResource("5_k3023")
@@ -43,52 +41,19 @@ default_font_size = 50
 font = ExtResource("3_nspls")
 font_size = 40
 
-[sub_resource type="ViewportTexture" id="ViewportTexture_uh2rv"]
+[sub_resource type="ViewportTexture" id="ViewportTexture_bpjvj"]
 viewport_path = NodePath("SubViewport")
 
-[sub_resource type="ShaderMaterial" id="ShaderMaterial_m74q6"]
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_uh2rv"]
 resource_local_to_scene = true
 shader = ExtResource("3_rsatm")
-shader_parameter/to_tex = SubResource("ViewportTexture_uh2rv")
+shader_parameter/to_tex = SubResource("ViewportTexture_bpjvj")
 shader_parameter/progress = 0.0
 shader_parameter/hex_size = 0.08
 shader_parameter/randomness = 0.05
 shader_parameter/edge_softness = 0.01
 shader_parameter/transition_speed = 0.3
 shader_parameter/reverse = false
-
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_bpjvj"]
-bg_color = Color(0.8901961, 0.42352942, 0.29803923, 1)
-corner_radius_top_left = 14
-corner_radius_top_right = 14
-corner_radius_bottom_right = 14
-corner_radius_bottom_left = 14
-expand_margin_left = 10.0
-expand_margin_top = 10.0
-expand_margin_right = 10.0
-expand_margin_bottom = 10.0
-
-[sub_resource type="Theme" id="Theme_uh2rv"]
-Button/font_sizes/font_size = 60
-Button/fonts/font = ExtResource("2_p5ued")
-Button/styles/normal = SubResource("StyleBoxFlat_bpjvj")
-
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_rsatm"]
-bg_color = Color(0.89, 0.42289832, 0.29369998, 0)
-corner_radius_top_left = 14
-corner_radius_top_right = 14
-corner_radius_bottom_right = 14
-corner_radius_bottom_left = 14
-expand_margin_left = 10.0
-expand_margin_top = 10.0
-expand_margin_right = 10.0
-expand_margin_bottom = 10.0
-
-[sub_resource type="Theme" id="Theme_bpjvj"]
-Button/colors/font_color = Color(0.8901961, 0.42352942, 0.29803923, 1)
-Button/font_sizes/font_size = 60
-Button/fonts/font = ExtResource("2_p5ued")
-Button/styles/normal = SubResource("StyleBoxFlat_rsatm")
 
 [node name="GamePage" type="Control" unique_id=528837551]
 layout_mode = 3
@@ -128,7 +93,7 @@ current = true
 [node name="GumBot" parent="OverlaySubviewportContainer/OverlaySubViewport" unique_id=2126276004 instance=ExtResource("4_43xba")]
 unique_name_in_owner = true
 transform = Transform3D(-0.9408098, 0, 0.33893508, 0, 1, 0, -0.33893508, 0, -0.9408098, -0.6849959, -0.30148157, 0.73511076)
-surface_mat = SubResource("ShaderMaterial_bpjvj")
+surface_mat = SubResource("ShaderMaterial_rsatm")
 
 [node name="DirectionalLight3D" type="DirectionalLight3D" parent="OverlaySubviewportContainer/OverlaySubViewport" unique_id=723242754]
 
@@ -228,7 +193,7 @@ unique_name_in_owner = true
 visible = false
 z_index = 10
 layout_mode = 1
-transition_material = SubResource("ShaderMaterial_m74q6")
+transition_material = SubResource("ShaderMaterial_uh2rv")
 progress = 0.0
 
 [node name="DebugSquare" type="ColorRect" parent="." unique_id=1002237490]
@@ -243,74 +208,23 @@ offset_right = 120.0
 grow_vertical = 0
 color = Color(0.9946849, 0.14594379, 0.33794135, 1)
 
-[node name="MainVBox" type="VBoxContainer" parent="." unique_id=1868689580]
-layout_mode = 1
-anchors_preset = 10
-anchor_right = 1.0
+[node name="JoinLobbyTab" type="MarginContainer" parent="." unique_id=1385815590]
+unique_name_in_owner = true
+layout_mode = 0
 offset_top = 82.0
-offset_bottom = 105.0
-grow_horizontal = 2
-
-[node name="TabSelector" type="HBoxContainer" parent="MainVBox" unique_id=445587376]
-layout_mode = 2
-alignment = 1
-
-[node name="JoinButton" type="Button" parent="MainVBox/TabSelector" unique_id=705083629]
-custom_minimum_size = Vector2(200, 0)
-layout_mode = 2
-theme = SubResource("Theme_uh2rv")
-theme_override_fonts/font = ExtResource("2_p5ued")
-text = "JOIN"
-script = ExtResource("11_rsatm")
-default_color = Color(1, 1, 1, 1)
-selected_theme = SubResource("Theme_bpjvj")
-default_theme = SubResource("Theme_uh2rv")
-
-[node name="HostButton" type="Button" parent="MainVBox/TabSelector" unique_id=1904394782]
-custom_minimum_size = Vector2(200, 0)
-layout_mode = 2
-theme = SubResource("Theme_bpjvj")
-theme_override_fonts/font = ExtResource("2_p5ued")
-text = "HOST"
-script = ExtResource("11_rsatm")
-selected = true
-default_color = Color(1, 1, 1, 1)
-selected_theme = SubResource("Theme_bpjvj")
-default_theme = SubResource("Theme_uh2rv")
-
-[node name="HostGamesTab" type="MarginContainer" parent="MainVBox" unique_id=1537125724]
-unique_name_in_owner = true
-visible = false
-layout_mode = 2
-theme_override_constants/margin_left = 40
-theme_override_constants/margin_top = 40
-theme_override_constants/margin_right = 40
-theme_override_constants/margin_bottom = 40
-
-[node name="GameGrid" type="GridContainer" parent="MainVBox/HostGamesTab" unique_id=1678133922]
-unique_name_in_owner = true
-layout_mode = 2
-theme_override_constants/h_separation = 40
-theme_override_constants/v_separation = 40
-columns = 2
-
-[node name="PanelContainer" parent="MainVBox/HostGamesTab/GameGrid" unique_id=662236335 instance=ExtResource("12_bpjvj")]
-layout_mode = 2
-
-[node name="JoinLobbyTab" type="MarginContainer" parent="MainVBox" unique_id=1385815590]
-unique_name_in_owner = true
-layout_mode = 2
+offset_right = 1600.0
+offset_bottom = 547.0
 theme_override_constants/margin_left = 30
 theme_override_constants/margin_top = 30
 theme_override_constants/margin_right = 30
 theme_override_constants/margin_bottom = 30
 
-[node name="CurrentLobbyDetail" type="VBoxContainer" parent="MainVBox/JoinLobbyTab" unique_id=2094804115]
+[node name="CurrentLobbyDetail" type="VBoxContainer" parent="JoinLobbyTab" unique_id=2094804115]
 custom_minimum_size = Vector2(800, 0)
 layout_mode = 2
 alignment = 1
 
-[node name="CenterInfoLabel" type="RichTextLabel" parent="MainVBox/JoinLobbyTab/CurrentLobbyDetail" unique_id=395124137]
+[node name="CenterInfoLabel" type="RichTextLabel" parent="JoinLobbyTab/CurrentLobbyDetail" unique_id=395124137]
 unique_name_in_owner = true
 layout_mode = 2
 theme_override_colors/default_color = Color(0.9711519, 0.3176986, 0.090861924, 1)
@@ -332,24 +246,24 @@ STAKES....[color=green]100 gum[/color][/font_size]
 fit_content = true
 horizontal_alignment = 1
 
-[node name="LobbyDetailButtonRow" type="HBoxContainer" parent="MainVBox/JoinLobbyTab/CurrentLobbyDetail" unique_id=871262480]
+[node name="LobbyDetailButtonRow" type="HBoxContainer" parent="JoinLobbyTab/CurrentLobbyDetail" unique_id=871262480]
 layout_mode = 2
 alignment = 1
 
-[node name="CloseLobbyButton" type="Button" parent="MainVBox/JoinLobbyTab/CurrentLobbyDetail/LobbyDetailButtonRow" unique_id=412995301]
+[node name="CloseLobbyButton" type="Button" parent="JoinLobbyTab/CurrentLobbyDetail/LobbyDetailButtonRow" unique_id=412995301]
 unique_name_in_owner = true
 layout_mode = 2
 theme = SubResource("Theme_fxi6q")
 text = "CLOSE LOBBY"
 
-[node name="JoinLobbyButton" type="Button" parent="MainVBox/JoinLobbyTab/CurrentLobbyDetail/LobbyDetailButtonRow" unique_id=161993846]
+[node name="JoinLobbyButton" type="Button" parent="JoinLobbyTab/CurrentLobbyDetail/LobbyDetailButtonRow" unique_id=161993846]
 unique_name_in_owner = true
 custom_minimum_size = Vector2(200, 0)
 layout_mode = 2
 theme = SubResource("Theme_fxi6q")
 text = "JOIN"
 
-[node name="StartGameButton" type="Button" parent="MainVBox/JoinLobbyTab/CurrentLobbyDetail/LobbyDetailButtonRow" unique_id=1589335327]
+[node name="StartGameButton" type="Button" parent="JoinLobbyTab/CurrentLobbyDetail/LobbyDetailButtonRow" unique_id=1589335327]
 unique_name_in_owner = true
 layout_mode = 2
 theme = SubResource("Theme_fxi6q")

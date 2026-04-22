@@ -1,0 +1,75 @@
+[gd_scene format=3 uid="uid://dntv5p5s0j74n"]
+
+[ext_resource type="FontFile" uid="uid://7uibxoligyvb" path="res://fonts/HomeVideo-BLG6G.ttf" id="1_3yg40"]
+[ext_resource type="Script" uid="uid://d2ybq2ovami5x" path="res://util/state_machine.gd" id="2_n1nma"]
+
+[sub_resource type="Theme" id="Theme_fxi6q"]
+default_font = ExtResource("1_3yg40")
+default_font_size = 50
+
+[node name="JoinLobbyTab" type="MarginContainer" unique_id=1016242573]
+theme_override_constants/margin_left = 30
+theme_override_constants/margin_top = 30
+theme_override_constants/margin_right = 30
+theme_override_constants/margin_bottom = 30
+
+[node name="CurrentLobbyDetail" type="VBoxContainer" parent="." unique_id=1394066734]
+custom_minimum_size = Vector2(800, 0)
+layout_mode = 2
+alignment = 1
+
+[node name="CenterInfoLabel" type="RichTextLabel" parent="CurrentLobbyDetail" unique_id=360502973]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_colors/default_color = Color(0.9711519, 0.3176986, 0.090861924, 1)
+theme_override_colors/font_shadow_color = Color(0.35194248, 0.06847161, 0.021902403, 0.77254903)
+theme_override_fonts/normal_font = ExtResource("1_3yg40")
+theme_override_fonts/bold_font = ExtResource("1_3yg40")
+theme_override_fonts/bold_italics_font = ExtResource("1_3yg40")
+theme_override_fonts/italics_font = ExtResource("1_3yg40")
+theme_override_fonts/mono_font = ExtResource("1_3yg40")
+bbcode_enabled = true
+text = "[font_size=50]JOINING[/font_size]
+[font_size=120]PONG[/font_size]
+[font_size=50]
+STAKES....[color=green]100 gum[/color][/font_size]
+[font_size=50]PLAYERS.........2[/font_size]
+[font_size=50]SPECTATORS......4[/font_size]
+
+"
+fit_content = true
+horizontal_alignment = 1
+
+[node name="LobbyDetailButtonRow" type="HBoxContainer" parent="CurrentLobbyDetail" unique_id=1528152735]
+layout_mode = 2
+alignment = 1
+
+[node name="CloseLobbyButton" type="Button" parent="CurrentLobbyDetail/LobbyDetailButtonRow" unique_id=1900029387]
+unique_name_in_owner = true
+layout_mode = 2
+theme = SubResource("Theme_fxi6q")
+text = "CLOSE LOBBY"
+
+[node name="JoinLobbyButton" type="Button" parent="CurrentLobbyDetail/LobbyDetailButtonRow" unique_id=1569203728]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(200, 0)
+layout_mode = 2
+theme = SubResource("Theme_fxi6q")
+text = "JOIN"
+
+[node name="StartGameButton" type="Button" parent="CurrentLobbyDetail/LobbyDetailButtonRow" unique_id=648262272]
+unique_name_in_owner = true
+layout_mode = 2
+theme = SubResource("Theme_fxi6q")
+text = "START GAME"
+
+[node name="StateMachine" type="Node" parent="." unique_id=2106689261]
+unique_name_in_owner = true
+script = ExtResource("2_n1nma")
+metadata/_custom_type_script = "uid://d2ybq2ovami5x"
+
+[node name="DebugSquare" type="ColorRect" parent="." unique_id=315777059]
+unique_name_in_owner = true
+visible = false
+layout_mode = 2
+color = Color(0.9946849, 0.14594379, 0.33794135, 1)

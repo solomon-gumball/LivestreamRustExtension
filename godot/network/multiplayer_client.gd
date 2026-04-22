@@ -65,11 +65,6 @@ func search_for_lobbies() -> void:
   state.change_state(looking_for_lobby_state)
 
 func stop() -> void:
-  if current_lobby:
-    WSClient.send_socket_message({
-      "type": "rtc-leave-lobby",
-      "lobby_id": current_lobby.name
-    })
   state.change_state(disconnected_state)
 
 func leave_lobby() -> void:

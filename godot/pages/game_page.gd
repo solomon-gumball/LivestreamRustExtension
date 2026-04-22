@@ -15,9 +15,7 @@ extends Control
 @onready var game_subviewport_container: SubViewportContainer = %GameSubviewportContainer
 @onready var overlay_subviewport_container: SubViewportContainer = %OverlaySubviewportContainer
 @onready var loading: Loading = %Loading
-@onready var game_grid: GridContainer = %GameGrid
 @onready var debug_square: ColorRect = %DebugSquare
-@onready var host_games_tab: Control = %HostGamesTab
 @onready var join_lobby_tab: Control = %JoinLobbyTab
 
 var info_tween: Tween
@@ -171,27 +169,9 @@ class LookingForLobbyState extends GamePageState:
     page.lobby_info_panel.visible = false
     page.game_subviewport_container.visible = false
     page._type_text(GamePage.LOOKING_TEXT, 0.1, true)
-    load_games()
 
     if page.loading.progress > 0:
       page.loading.transition_out()
-
-  var game_detail_template: PackedScene = preload("res://pages/game_detail_panel.tscn")
-  func load_games() -> void:
-    for child in page.game_grid.get_children():
-      child.queue_free()
-
-    var request = AwaitableHTTPRequest.new()
-    add_child(request)
-    var response := await request.async_request(WSClient.get_database_server_url("games"))
-    request.queue_free()
-
-    if response.success() and response.status_ok():
-      var games := response.body_as_json() as Array
-      for game in games:
-        page.game_grid.add_child(game_detail_template.instantiate())
-    else:
-      print(response._error)
 
 class ConnectedIdleState extends GamePageState:
   func enter_state(_prev: State) -> void:
@@ -205,6 +185,7 @@ class ViewingLobbyState extends GamePageState:
   var viewed_lobby: Lobby = null
 
   func enter_state(_prev: State) -> void:
+    print(viewed_lobby.peers.map(func (p): return p.connected))
     page.start_game_button.visible = false
     page.close_lobby_button.visible = false
     page.host_game_button.visible = false
@@ -216,6 +197,7 @@ class ViewingLobbyState extends GamePageState:
     page.lobby_info_panel.visible = false
     page._type_text(page._get_joining_text(viewed_lobby), 0.1, false)
     page.join_game_button.pressed.connect(_handle_join_game.bind(viewed_lobby))
+    print("Viewing lobby: %s" % viewed_lobby.name)
 
   func _is_already_in_lobby(lobby: Lobby) -> bool:
     for peer in lobby.peers:

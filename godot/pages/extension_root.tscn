@@ -60,6 +60,7 @@ theme_override_constants/separation = 30
 
 [node name="ProfileButton" type="Button" parent="CanvasLayer/VBoxContainer" unique_id=276699054]
 unique_name_in_owner = true
+self_modulate = Color(1, 1, 1, 0.6)
 custom_minimum_size = Vector2(85, 85)
 layout_mode = 2
 size_flags_horizontal = 0
@@ -69,8 +70,20 @@ icon = ExtResource("3_ktout")
 expand_icon = true
 script = ExtResource("4_d7ng8")
 
-[node name="GameButton" type="Button" parent="CanvasLayer/VBoxContainer" unique_id=1508339849]
+[node name="PlayGameButton" type="Button" parent="CanvasLayer/VBoxContainer" unique_id=1508339849]
 unique_name_in_owner = true
+self_modulate = Color(1, 1, 1, 0.6)
+custom_minimum_size = Vector2(85, 85)
+layout_mode = 2
+mouse_default_cursor_shape = 2
+theme = SubResource("Theme_on8yo")
+icon = ExtResource("4_mk2so")
+expand_icon = true
+script = ExtResource("4_d7ng8")
+
+[node name="HostGameButton" type="Button" parent="CanvasLayer/VBoxContainer" unique_id=574531757]
+unique_name_in_owner = true
+self_modulate = Color(1, 1, 1, 0.6)
 custom_minimum_size = Vector2(85, 85)
 layout_mode = 2
 mouse_default_cursor_shape = 2

@@ -1,6 +1,7 @@
 [gd_scene format=3 uid="uid://xru7gd0p7hh4"]
 
-[ext_resource type="FontFile" uid="uid://7uibxoligyvb" path="res://fonts/HomeVideo-BLG6G.ttf" id="1_n7bxr"]
+[ext_resource type="Script" uid="uid://bxcch55khpli8" path="res://pages/host_game_detail_panel.gd" id="1_rn6fw"]
+[ext_resource type="FontFile" uid="uid://7uibxoligyvb" path="res://fonts/HomeVideo-BLG6G.ttf" id="2_bwslq"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_uh2rv"]
 content_margin_left = 0.0
@@ -14,15 +15,23 @@ corner_radius_bottom_right = 14
 corner_radius_bottom_left = 14
 corner_detail = 5
 
-[node name="PanelContainer" type="PanelContainer" unique_id=662236335]
+[node name="HostGameDetailPanel" type="PanelContainer" unique_id=662236335]
 custom_minimum_size = Vector2(0, 340)
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
 mouse_default_cursor_shape = 2
 theme_override_styles/panel = SubResource("StyleBoxFlat_uh2rv")
+script = ExtResource("1_rn6fw")
 
 [node name="MarginContainer" type="MarginContainer" parent="." unique_id=1328738659]
 layout_mode = 2
+mouse_filter = 2
+mouse_behavior_recursive = 2
 theme_override_constants/margin_left = 20
 theme_override_constants/margin_top = 20
 theme_override_constants/margin_right = 20
@@ -30,31 +39,38 @@ theme_override_constants/margin_bottom = 20
 
 [node name="VBoxContainer" type="VBoxContainer" parent="MarginContainer" unique_id=416954029]
 layout_mode = 2
+mouse_filter = 2
 
 [node name="GameName" type="RichTextLabel" parent="MarginContainer/VBoxContainer" unique_id=1161226604]
+unique_name_in_owner = true
 layout_mode = 2
+mouse_filter = 2
 theme_override_colors/default_color = Color(1, 1, 1, 1)
-theme_override_fonts/normal_font = ExtResource("1_n7bxr")
+theme_override_fonts/normal_font = ExtResource("2_bwslq")
 theme_override_font_sizes/normal_font_size = 70
 bbcode_enabled = true
-text = "PONG"
+text = "TESTGAME"
 fit_content = true
 
 [node name="GamePlayerCount" type="RichTextLabel" parent="MarginContainer/VBoxContainer" unique_id=234130262]
+unique_name_in_owner = true
 layout_mode = 2
+mouse_filter = 2
 theme_override_colors/default_color = Color(1, 1, 1, 1)
 theme_override_constants/line_separation = -20
-theme_override_fonts/normal_font = ExtResource("1_n7bxr")
+theme_override_fonts/normal_font = ExtResource("2_bwslq")
 theme_override_font_sizes/normal_font_size = 40
 bbcode_enabled = true
 text = "2 Players"
 fit_content = true
 
-[node name="GamePlayerCount2" type="RichTextLabel" parent="MarginContainer/VBoxContainer" unique_id=1493881256]
+[node name="GameCostGumbucks" type="RichTextLabel" parent="MarginContainer/VBoxContainer" unique_id=1493881256]
+unique_name_in_owner = true
 layout_mode = 2
+mouse_filter = 2
 theme_override_colors/default_color = Color(1, 1, 1, 1)
 theme_override_constants/line_separation = -20
-theme_override_fonts/normal_font = ExtResource("1_n7bxr")
+theme_override_fonts/normal_font = ExtResource("2_bwslq")
 theme_override_font_sizes/normal_font_size = 40
 bbcode_enabled = true
 text = "100 GUM"

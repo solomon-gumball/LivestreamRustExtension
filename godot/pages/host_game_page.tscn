@@ -1,0 +1,55 @@
+[gd_scene format=3 uid="uid://dkbvhsu7a7875"]
+
+[ext_resource type="Script" uid="uid://2fi2rsbidc" path="res://pages/host_game_page.gd" id="1_ww4gm"]
+[ext_resource type="PackedScene" uid="uid://xru7gd0p7hh4" path="res://pages/host_game_detail_panel.tscn" id="2_adlld"]
+[ext_resource type="FontFile" uid="uid://7uibxoligyvb" path="res://fonts/HomeVideo-BLG6G.ttf" id="2_pi7sc"]
+
+[node name="HostGamePage" type="Control" unique_id=409105810]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_ww4gm")
+
+[node name="MarginContainer" type="MarginContainer" parent="." unique_id=951443780]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/margin_left = 20
+theme_override_constants/margin_top = 20
+theme_override_constants/margin_right = 20
+theme_override_constants/margin_bottom = 20
+
+[node name="VBoxContainer" type="VBoxContainer" parent="MarginContainer" unique_id=403350410]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="MarginContainer/VBoxContainer" unique_id=160238505]
+layout_mode = 2
+theme_override_fonts/font = ExtResource("2_pi7sc")
+theme_override_font_sizes/font_size = 80
+text = "HOST A LOBBY"
+horizontal_alignment = 1
+
+[node name="HostGamesTab" type="MarginContainer" parent="MarginContainer/VBoxContainer" unique_id=505765106]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_constants/margin_left = 40
+theme_override_constants/margin_top = 40
+theme_override_constants/margin_right = 40
+theme_override_constants/margin_bottom = 40
+
+[node name="GameGrid" type="GridContainer" parent="MarginContainer/VBoxContainer/HostGamesTab" unique_id=1768809666]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_constants/h_separation = 40
+theme_override_constants/v_separation = 40
+columns = 2
+
+[node name="PanelContainer" parent="MarginContainer/VBoxContainer/HostGamesTab/GameGrid" unique_id=662236335 instance=ExtResource("2_adlld")]
+visible = false
+layout_mode = 2
