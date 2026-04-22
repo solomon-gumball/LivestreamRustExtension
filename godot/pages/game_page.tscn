@@ -186,67 +186,6 @@ layout_mode = 2
 theme = SubResource("Theme_fxi6q")
 text = "HOST GAME"
 
-[node name="CurrentLobbyDetail" type="VBoxContainer" parent="." unique_id=2094804115]
-custom_minimum_size = Vector2(800, 0)
-layout_mode = 1
-anchors_preset = 8
-anchor_left = 0.5
-anchor_top = 0.5
-anchor_right = 0.5
-anchor_bottom = 0.5
-offset_left = -400.0
-offset_top = -174.0
-offset_right = 400.0
-offset_bottom = 174.0
-grow_horizontal = 2
-grow_vertical = 2
-alignment = 1
-
-[node name="CenterInfoLabel" type="RichTextLabel" parent="CurrentLobbyDetail" unique_id=395124137]
-unique_name_in_owner = true
-layout_mode = 2
-theme_override_colors/default_color = Color(0.9711519, 0.3176986, 0.090861924, 1)
-theme_override_colors/font_shadow_color = Color(0.35194248, 0.06847161, 0.021902403, 0.77254903)
-theme_override_fonts/normal_font = ExtResource("2_p5ued")
-theme_override_fonts/bold_font = ExtResource("2_p5ued")
-theme_override_fonts/bold_italics_font = ExtResource("2_p5ued")
-theme_override_fonts/italics_font = ExtResource("2_p5ued")
-theme_override_fonts/mono_font = ExtResource("2_p5ued")
-bbcode_enabled = true
-text = "[font_size=50]JOINING[/font_size]
-[font_size=120]PONG[/font_size]
-[font_size=50]
-STAKES....[color=green]100 gum[/color][/font_size]
-[font_size=50]PLAYERS.........2[/font_size]
-[font_size=50]SPECTATORS......4[/font_size]
-
-"
-fit_content = true
-horizontal_alignment = 1
-
-[node name="LobbyDetailButtonRow" type="HBoxContainer" parent="CurrentLobbyDetail" unique_id=871262480]
-layout_mode = 2
-alignment = 1
-
-[node name="CloseLobbyButton" type="Button" parent="CurrentLobbyDetail/LobbyDetailButtonRow" unique_id=412995301]
-unique_name_in_owner = true
-layout_mode = 2
-theme = SubResource("Theme_fxi6q")
-text = "CLOSE LOBBY"
-
-[node name="JoinLobbyButton" type="Button" parent="CurrentLobbyDetail/LobbyDetailButtonRow" unique_id=161993846]
-unique_name_in_owner = true
-custom_minimum_size = Vector2(200, 0)
-layout_mode = 2
-theme = SubResource("Theme_fxi6q")
-text = "JOIN"
-
-[node name="StartGameButton" type="Button" parent="CurrentLobbyDetail/LobbyDetailButtonRow" unique_id=1589335327]
-unique_name_in_owner = true
-layout_mode = 2
-theme = SubResource("Theme_fxi6q")
-text = "START GAME"
-
 [node name="Label" type="Label" parent="." unique_id=48250606]
 layout_mode = 0
 offset_left = 661.0
@@ -304,7 +243,7 @@ offset_right = 120.0
 grow_vertical = 0
 color = Color(0.9946849, 0.14594379, 0.33794135, 1)
 
-[node name="VBoxContainer" type="VBoxContainer" parent="." unique_id=1868689580]
+[node name="MainVBox" type="VBoxContainer" parent="." unique_id=1868689580]
 layout_mode = 1
 anchors_preset = 10
 anchor_right = 1.0
@@ -312,12 +251,11 @@ offset_top = 82.0
 offset_bottom = 105.0
 grow_horizontal = 2
 
-[node name="TabSelector" type="HBoxContainer" parent="VBoxContainer" unique_id=445587376]
-visible = false
+[node name="TabSelector" type="HBoxContainer" parent="MainVBox" unique_id=445587376]
 layout_mode = 2
 alignment = 1
 
-[node name="JoinButton" type="Button" parent="VBoxContainer/TabSelector" unique_id=705083629]
+[node name="JoinButton" type="Button" parent="MainVBox/TabSelector" unique_id=705083629]
 custom_minimum_size = Vector2(200, 0)
 layout_mode = 2
 theme = SubResource("Theme_uh2rv")
@@ -328,7 +266,7 @@ default_color = Color(1, 1, 1, 1)
 selected_theme = SubResource("Theme_bpjvj")
 default_theme = SubResource("Theme_uh2rv")
 
-[node name="HostButton" type="Button" parent="VBoxContainer/TabSelector" unique_id=1904394782]
+[node name="HostButton" type="Button" parent="MainVBox/TabSelector" unique_id=1904394782]
 custom_minimum_size = Vector2(200, 0)
 layout_mode = 2
 theme = SubResource("Theme_bpjvj")
@@ -340,7 +278,8 @@ default_color = Color(1, 1, 1, 1)
 selected_theme = SubResource("Theme_bpjvj")
 default_theme = SubResource("Theme_uh2rv")
 
-[node name="MarginContainer" type="MarginContainer" parent="VBoxContainer" unique_id=1537125724]
+[node name="HostGamesTab" type="MarginContainer" parent="MainVBox" unique_id=1537125724]
+unique_name_in_owner = true
 visible = false
 layout_mode = 2
 theme_override_constants/margin_left = 40
@@ -348,15 +287,70 @@ theme_override_constants/margin_top = 40
 theme_override_constants/margin_right = 40
 theme_override_constants/margin_bottom = 40
 
-[node name="GameGrid" type="GridContainer" parent="VBoxContainer/MarginContainer" unique_id=1678133922]
+[node name="GameGrid" type="GridContainer" parent="MainVBox/HostGamesTab" unique_id=1678133922]
 unique_name_in_owner = true
 layout_mode = 2
 theme_override_constants/h_separation = 40
 theme_override_constants/v_separation = 40
 columns = 2
 
-[node name="PanelContainer" parent="VBoxContainer/MarginContainer/GameGrid" unique_id=662236335 instance=ExtResource("12_bpjvj")]
+[node name="PanelContainer" parent="MainVBox/HostGamesTab/GameGrid" unique_id=662236335 instance=ExtResource("12_bpjvj")]
 layout_mode = 2
 
-[node name="Control" type="Control" parent="VBoxContainer" unique_id=448016242]
+[node name="JoinLobbyTab" type="MarginContainer" parent="MainVBox" unique_id=1385815590]
+unique_name_in_owner = true
 layout_mode = 2
+theme_override_constants/margin_left = 30
+theme_override_constants/margin_top = 30
+theme_override_constants/margin_right = 30
+theme_override_constants/margin_bottom = 30
+
+[node name="CurrentLobbyDetail" type="VBoxContainer" parent="MainVBox/JoinLobbyTab" unique_id=2094804115]
+custom_minimum_size = Vector2(800, 0)
+layout_mode = 2
+alignment = 1
+
+[node name="CenterInfoLabel" type="RichTextLabel" parent="MainVBox/JoinLobbyTab/CurrentLobbyDetail" unique_id=395124137]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_colors/default_color = Color(0.9711519, 0.3176986, 0.090861924, 1)
+theme_override_colors/font_shadow_color = Color(0.35194248, 0.06847161, 0.021902403, 0.77254903)
+theme_override_fonts/normal_font = ExtResource("2_p5ued")
+theme_override_fonts/bold_font = ExtResource("2_p5ued")
+theme_override_fonts/bold_italics_font = ExtResource("2_p5ued")
+theme_override_fonts/italics_font = ExtResource("2_p5ued")
+theme_override_fonts/mono_font = ExtResource("2_p5ued")
+bbcode_enabled = true
+text = "[font_size=50]JOINING[/font_size]
+[font_size=120]PONG[/font_size]
+[font_size=50]
+STAKES....[color=green]100 gum[/color][/font_size]
+[font_size=50]PLAYERS.........2[/font_size]
+[font_size=50]SPECTATORS......4[/font_size]
+
+"
+fit_content = true
+horizontal_alignment = 1
+
+[node name="LobbyDetailButtonRow" type="HBoxContainer" parent="MainVBox/JoinLobbyTab/CurrentLobbyDetail" unique_id=871262480]
+layout_mode = 2
+alignment = 1
+
+[node name="CloseLobbyButton" type="Button" parent="MainVBox/JoinLobbyTab/CurrentLobbyDetail/LobbyDetailButtonRow" unique_id=412995301]
+unique_name_in_owner = true
+layout_mode = 2
+theme = SubResource("Theme_fxi6q")
+text = "CLOSE LOBBY"
+
+[node name="JoinLobbyButton" type="Button" parent="MainVBox/JoinLobbyTab/CurrentLobbyDetail/LobbyDetailButtonRow" unique_id=161993846]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(200, 0)
+layout_mode = 2
+theme = SubResource("Theme_fxi6q")
+text = "JOIN"
+
+[node name="StartGameButton" type="Button" parent="MainVBox/JoinLobbyTab/CurrentLobbyDetail/LobbyDetailButtonRow" unique_id=1589335327]
+unique_name_in_owner = true
+layout_mode = 2
+theme = SubResource("Theme_fxi6q")
+text = "START GAME"

@@ -7,6 +7,7 @@ extends Control
 @onready var lobby_info_panel: Control = %LobbyInfoPanel
 @onready var center_info_label: RichTextLabel = %CenterInfoLabel
 @onready var start_game_button: Button = %StartGameButton
+@onready var join_game_button: Button = %JoinLobbyButton
 @onready var close_lobby_button: Button = %CloseLobbyButton
 @onready var host_game_button: Button = %HostGameButton
 @onready var game_root_node: Node3D = %GameRootNode
@@ -16,6 +17,8 @@ extends Control
 @onready var loading: Loading = %Loading
 @onready var game_grid: GridContainer = %GameGrid
 @onready var debug_square: ColorRect = %DebugSquare
+@onready var host_games_tab: Control = %HostGamesTab
+@onready var join_lobby_tab: Control = %JoinLobbyTab
 
 var info_tween: Tween
 const LOOKING_TEXT = "[font_size=50]LOOKING FOR LOBBY...[/font_size]"
@@ -156,6 +159,7 @@ class DisconnectedState extends GamePageState:
     page.game_subviewport_container.visible = false
     page.center_info_label.visible = true
     page.center_info_label.text = ""
+    page.join_game_button.visible = false
 
 class LookingForLobbyState extends GamePageState:
   func enter_state(_prev: State) -> void:
@@ -163,6 +167,7 @@ class LookingForLobbyState extends GamePageState:
     page.close_lobby_button.visible = false
     page.host_game_button.visible = true
     page.center_info_label.visible = true
+    page.join_game_button.visible = false
     page.lobby_info_panel.visible = false
     page.game_subviewport_container.visible = false
     page._type_text(GamePage.LOOKING_TEXT, 0.1, true)
@@ -193,6 +198,7 @@ class ConnectedIdleState extends GamePageState:
     page.start_game_button.visible = false
     page.close_lobby_button.visible = false
     page.host_game_button.visible = false
+    page.join_game_button.visible = false
     page.game_subviewport_container.visible = false
 
 class ViewingLobbyState extends GamePageState:
@@ -202,9 +208,26 @@ class ViewingLobbyState extends GamePageState:
     page.start_game_button.visible = false
     page.close_lobby_button.visible = false
     page.host_game_button.visible = false
+    page.join_game_button.visible = true
+    page.join_game_button.text = "JOIN" if not _is_already_in_lobby(viewed_lobby) else "REJOIN"
     page.center_info_label.visible = true
-    page.lobby_info_panel.visible = true
-    page.game_subviewport_container.visible = false
+    page.lobby_name_label.text = "Lobby: %s" % viewed_lobby.name
+    page.client_id_label.text = "Peer ID: %d" % MultiplayerClient.my_peer_id()
+    page.lobby_info_panel.visible = false
+    page._type_text(page._get_joining_text(viewed_lobby), 0.1, false)
+    page.join_game_button.pressed.connect(_handle_join_game.bind(viewed_lobby))
+
+  func _is_already_in_lobby(lobby: Lobby) -> bool:
+    for peer in lobby.peers:
+      if peer.chatter_id == WSClient.my_chatter().id:
+        return true
+    return false
+
+  func _handle_join_game(lobby: Lobby) -> void:
+    MultiplayerClient.join_lobby(lobby.name)
+
+  func exit_state() -> void:
+    page.join_game_button.pressed.disconnect(_handle_join_game)
 
 class InLobbyState extends GamePageState:
   func enter_state(_prev: State) -> void:
@@ -213,6 +236,7 @@ class InLobbyState extends GamePageState:
     page.close_lobby_button.visible = is_host
     page.host_game_button.visible = false
     page.center_info_label.visible = true
+    page.join_game_button.visible = false
     page.lobby_name_label.text = "Lobby: %s" % MultiplayerClient.current_lobby.name
     page.client_id_label.text = "Peer ID: %d" % MultiplayerClient.my_peer_id()
     page.lobby_info_panel.visible = true
@@ -227,6 +251,7 @@ class LoadingState extends GamePageState:
     page.host_game_button.visible = false
     page.center_info_label.visible = false
     page.lobby_info_panel.visible = false
+    page.join_game_button.visible = false
     _transition()
 
   func _transition() -> void:
@@ -241,10 +266,11 @@ class GameActiveState extends GamePageState:
   func enter_state(_prev: State) -> void:
     page.overlay_subviewport_container.visible = false
     page.start_game_button.visible = false
-    page.close_lobby_button.visible = MultiplayerClient.is_lobby_host()
+    page.close_lobby_button.visible = false
     page.host_game_button.visible = false
     page.center_info_label.visible = false
     page.game_subviewport_container.visible = true
+    page.join_game_button.visible = false
 
     game_scene = page.pong_game_template.instantiate()
     game_scene.lobby = MultiplayerClient.current_lobby
