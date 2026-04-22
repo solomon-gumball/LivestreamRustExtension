@@ -1,0 +1,61 @@
+[gd_scene format=3 uid="uid://xru7gd0p7hh4"]
+
+[ext_resource type="FontFile" uid="uid://7uibxoligyvb" path="res://fonts/HomeVideo-BLG6G.ttf" id="1_n7bxr"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_uh2rv"]
+content_margin_left = 0.0
+content_margin_top = 0.0
+content_margin_right = 0.0
+content_margin_bottom = 0.0
+bg_color = Color(0.9, 0.40080002, 0.324, 1)
+corner_radius_top_left = 14
+corner_radius_top_right = 14
+corner_radius_bottom_right = 14
+corner_radius_bottom_left = 14
+corner_detail = 5
+
+[node name="PanelContainer" type="PanelContainer" unique_id=662236335]
+custom_minimum_size = Vector2(0, 340)
+size_flags_horizontal = 3
+size_flags_vertical = 3
+mouse_default_cursor_shape = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_uh2rv")
+
+[node name="MarginContainer" type="MarginContainer" parent="." unique_id=1328738659]
+layout_mode = 2
+theme_override_constants/margin_left = 20
+theme_override_constants/margin_top = 20
+theme_override_constants/margin_right = 20
+theme_override_constants/margin_bottom = 20
+
+[node name="VBoxContainer" type="VBoxContainer" parent="MarginContainer" unique_id=416954029]
+layout_mode = 2
+
+[node name="GameName" type="RichTextLabel" parent="MarginContainer/VBoxContainer" unique_id=1161226604]
+layout_mode = 2
+theme_override_colors/default_color = Color(1, 1, 1, 1)
+theme_override_fonts/normal_font = ExtResource("1_n7bxr")
+theme_override_font_sizes/normal_font_size = 70
+bbcode_enabled = true
+text = "PONG"
+fit_content = true
+
+[node name="GamePlayerCount" type="RichTextLabel" parent="MarginContainer/VBoxContainer" unique_id=234130262]
+layout_mode = 2
+theme_override_colors/default_color = Color(1, 1, 1, 1)
+theme_override_constants/line_separation = -20
+theme_override_fonts/normal_font = ExtResource("1_n7bxr")
+theme_override_font_sizes/normal_font_size = 40
+bbcode_enabled = true
+text = "2 Players"
+fit_content = true
+
+[node name="GamePlayerCount2" type="RichTextLabel" parent="MarginContainer/VBoxContainer" unique_id=1493881256]
+layout_mode = 2
+theme_override_colors/default_color = Color(1, 1, 1, 1)
+theme_override_constants/line_separation = -20
+theme_override_fonts/normal_font = ExtResource("1_n7bxr")
+theme_override_font_sizes/normal_font_size = 40
+bbcode_enabled = true
+text = "100 GUM"
+fit_content = true

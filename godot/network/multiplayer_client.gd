@@ -207,6 +207,7 @@ class Disconnected extends MultiplayerClientState:
 
 class LookingForLobby extends MultiplayerClientState:
   signal entered_lobby
+  signal lobby_list_updated(lobbies: Array[Lobby])
 
   var join_request_already_sent: bool = false
   var peer_id: int
@@ -234,7 +235,7 @@ class LookingForLobby extends MultiplayerClientState:
           mc.all_lobbies[lobby.name] = lobby
         if lobbies.size() > 0:
           join_request_already_sent = true
-          mc.join_lobby(lobbies[0].name)
+          lobby_list_updated.emit(lobbies)
       "rtc-peer-id":
         peer_id = int(msg.get("peer_id", 0))
         mesh_mode = bool(msg.get("mesh_mode", false))

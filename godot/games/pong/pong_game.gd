@@ -218,10 +218,6 @@ func _physics_process(_delta: float) -> void:
 
   var my_player_paddle: PongPaddle = nodes_by_peer_id.get(MultiplayerClient.rtc_mp.get_unique_id(), {}).get("paddle")
   if my_player_paddle == null: return
-  #   my_player_paddle.should_broadcast = false
-  #   return
-  # else:
-  #   my_player_paddle.should_broadcast = true
 
   if Input.is_key_pressed(KEY_W) or Input.is_key_pressed(KEY_UP):
       my_player_paddle.add_movement_input(Vector2(0, 1))

@@ -14,6 +14,7 @@ extends Control
 @onready var game_subviewport_container: SubViewportContainer = %GameSubviewportContainer
 @onready var overlay_subviewport_container: SubViewportContainer = %OverlaySubviewportContainer
 @onready var loading: Loading = %Loading
+@onready var game_grid: GridContainer = %GameGrid
 
 var info_tween: Tween
 const LOOKING_TEXT = "[font_size=50]LOOKING FOR LOBBY...[/font_size]"
@@ -149,9 +150,27 @@ class LookingForLobbyState extends GamePageState:
     page.lobby_info_panel.visible = false
     page.game_subviewport_container.visible = false
     page._type_text(GamePage.LOOKING_TEXT, 0.1, true)
+    load_games()
+
     if page.loading.progress > 0:
       page.loading.transition_out()
 
+  var game_detail_template: PackedScene = preload("res://pages/game_detail_panel.tscn")
+  func load_games() -> void:
+    for child in page.game_grid.get_children():
+      child.queue_free()
+
+    var request = AwaitableHTTPRequest.new()
+    add_child(request)
+    var response := await request.async_request(WSClient.get_database_server_url("games"))
+    request.queue_free()
+
+    if response.success() and response.status_ok():
+      var games := response.body_as_json() as Array
+      for game in games:
+        page.game_grid.add_child(game_detail_template.instantiate())
+    else:
+      print(response._error)
 
 class ConnectedIdleState extends GamePageState:
   func enter_state(_prev: State) -> void:
@@ -159,7 +178,6 @@ class ConnectedIdleState extends GamePageState:
     page.close_lobby_button.visible = false
     page.host_game_button.visible = false
     page.game_subviewport_container.visible = false
-
 
 class InLobbyState extends GamePageState:
   func enter_state(_prev: State) -> void:
