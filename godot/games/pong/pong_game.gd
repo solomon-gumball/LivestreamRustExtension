@@ -32,17 +32,40 @@ var is_game_host: bool = false
 @onready var paddle_r_score: Label3D = %PaddleRScore
 @onready var cam_boom: Node3D = %CamBoom
 
-@export var paddle_start_distance: float = 2.0:
+var saved_pong_l_position: Vector3 = Vector3.ZERO
+var saved_pong_r_position: Vector3 = Vector3.ZERO
+func save_paddle_positions() -> void:
+  saved_pong_l_position = pong_paddle_l.position
+  saved_pong_r_position = pong_paddle_r.position
+
+@export_range(0.0, 1.0) var players_distance_from_center: float = 0.0:
+  set(new_value):
+    players_distance_from_center = new_value
+    if game_state:
+      pong_paddle_l.position = lerp(game_state.paddle_l_state.position, Vector3(0, 0, -0.3), 1.0 - new_value)
+      pong_paddle_r.position = lerp(game_state.paddle_r_state.position, Vector3(0, 0, 0.3), 1.0 - new_value)
+    elif Engine.is_editor_hint():
+      pong_paddle_l.position = lerp(Vector3(0, 0, -paddle_start_distance), Vector3(0, 0, -0.3), 1.0 - new_value)
+      pong_paddle_r.position = lerp(Vector3(0, 0, paddle_start_distance), Vector3(0, 0, 0.3), 1.0 - new_value)
+
+@export var paddle_start_distance: float = 3.2:
   set(start_distance):
     paddle_start_distance = start_distance
     if Engine.is_editor_hint():
       pong_paddle_l.position.z = -paddle_start_distance
       pong_paddle_r.position.z = paddle_start_distance
 
+@export var dotted_line_mat: StandardMaterial3D
+@export var dotted_line_alpha := 1.0:
+  set(new_value):
+    dotted_line_alpha = new_value
+    dotted_line_mat.albedo_color.a = new_value
+
 func _ready() -> void:
   if Engine.is_editor_hint():
     return
 
+  dotted_line_alpha = dotted_line_alpha
   is_game_host = lobby.host_chatter_id == WSClient.my_chatter().id
 
   visible = false
@@ -70,8 +93,8 @@ func _ready() -> void:
     new_game_state.paddle_l_state.owner = 1
     new_game_state.paddle_r_state.owner = lobby.peers[1].peer_id
 
-    new_game_state.paddle_l_state.position = pong_paddle_l.position
-    new_game_state.paddle_r_state.position = pong_paddle_r.position
+    new_game_state.paddle_l_state.position = Vector3(0, 0, -paddle_start_distance)
+    new_game_state.paddle_r_state.position = Vector3(0, 0, paddle_start_distance)
 
     score_region_l.body_entered.connect(_area_entered.bind(lobby.peers[1].peer_id))
     score_region_r.body_entered.connect(_area_entered.bind(1))
@@ -94,7 +117,6 @@ func _ready() -> void:
     })
     _send_refresh_state(MultiplayerPeer.TARGET_PEER_BROADCAST)
     MultiplayerClient.rtc_peer_ready.connect(func (peer):
-      print("PEER IS READY: %d" % peer)
       _send_refresh_state(peer)
     )
   else:
@@ -115,36 +137,27 @@ func trigger_ending_character_anims() -> void:
   else:
     pong_paddle_r.gumbot_animation_state = PongPaddle.GumbotAnimState.Taunt
 
-func trigger_start_outro() -> void:
-  var winning_player = pong_paddle_l if \
-    game_state.paddle_l_state.score > game_state.paddle_r_state.score else \
-    pong_paddle_r
-  cam_boom.target_player = winning_player
-
 # Authority only function
 func _anim_finished(anim_name: String) -> void:
   if anim_name == "intro":
     _start_round()
   if anim_name == "outro":
     game_finished.emit()
-    MultiplayerClient.leave_lobby()
 
 func _lobby_updated(new_lobby: Lobby) -> void:
   lobby = new_lobby
 
 func _try_skip_curr_animation() -> void:
   if local_anim_state and !local_anim_state.skipped:
-    var message := {
-      "type": PongGameMessage.UpdateAnimation,
-      "animation_name": local_anim_state.animation_name,
-      "started_at": local_anim_state.started_at,
-      "skipped": true
-    }
-    _handle_peer_packet(1, message)
-    MultiplayerClient.send_packet(
-      message,
+      MultiplayerClient.send_packet({
+        "type": PongGameMessage.UpdateAnimation,
+        "animation_name": local_anim_state.animation_name,
+        "started_at": local_anim_state.started_at,
+        "skipped": true
+      },
       MultiplayerPeer.TARGET_PEER_BROADCAST,
-      MultiplayerPeer.TRANSFER_MODE_RELIABLE
+      MultiplayerPeer.TRANSFER_MODE_RELIABLE,
+      true
     )
 
 func _send_refresh_state(peer_id: int) -> void:
@@ -170,26 +183,27 @@ func _area_entered(candidate: Node, winning_peer: int) -> void:
 
   if game_state.paddle_l_state.score > 0 or\
     game_state.paddle_r_state.score > 0:
-      var anim_message := {
-        "type": PongGameMessage.UpdateAnimation,
-        "animation_name": "outro",
-        "started_at": Time.get_unix_time_from_system(),
-        "skipped": false
-      }
-      _handle_peer_packet(1, anim_message)
-      MultiplayerClient.send_packet(anim_message)
+      MultiplayerClient.send_packet({
+          "type": PongGameMessage.UpdateAnimation,
+          "animation_name": "outro",
+          "started_at": Time.get_unix_time_from_system(),
+          "skipped": false
+        },
+        MultiplayerPeer.TARGET_PEER_BROADCAST,
+        MultiplayerPeer.TRANSFER_MODE_RELIABLE,
+        true
+      )
   else:
     await get_tree().create_timer(1.0).timeout
     _start_round()
 
 func _start_round() -> void:
-  var message := { "type": PongGameMessage.StartRound }
   MultiplayerClient.send_packet(
-    message,
+    { "type": PongGameMessage.StartRound },
     MultiplayerPeer.TARGET_PEER_BROADCAST,
-    MultiplayerPeer.TRANSFER_MODE_RELIABLE
+    MultiplayerPeer.TRANSFER_MODE_RELIABLE,
+    true
   )
-  _handle_peer_packet(1, message)
 
 func _handle_chatter_updated(chatter: Chatter) -> void:
   var peer_id := lobby.peer_from_chatter[chatter.id]
@@ -198,13 +212,16 @@ func _handle_chatter_updated(chatter: Chatter) -> void:
     paddle.chatter = chatter
   
 func _physics_process(_delta: float) -> void:
-  if Engine.is_editor_hint():
-    return
-  if !MultiplayerClient.is_net_connected():
-    return
+  if Engine.is_editor_hint(): return
+  if !MultiplayerClient.is_net_connected(): return
+  if anim_player.is_playing(): return
 
   var my_player_paddle: PongPaddle = nodes_by_peer_id.get(MultiplayerClient.rtc_mp.get_unique_id(), {}).get("paddle")
   if my_player_paddle == null: return
+  #   my_player_paddle.should_broadcast = false
+  #   return
+  # else:
+  #   my_player_paddle.should_broadcast = true
 
   if Input.is_key_pressed(KEY_W) or Input.is_key_pressed(KEY_UP):
       my_player_paddle.add_movement_input(Vector2(0, 1))

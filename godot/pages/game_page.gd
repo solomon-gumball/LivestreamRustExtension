@@ -47,7 +47,10 @@ func _ready() -> void:
   start_game_button.pressed.connect(_start_game)
 
   loading_state.loading_complete.connect(state.change_state.bind(game_active_state))
-  game_active_state.game_ended.connect(state.change_state.bind(looking_for_lobby_state))
+  game_active_state.game_ended.connect(func ():
+    MultiplayerClient.leave_lobby()
+    state.change_state.bind(looking_for_lobby_state)
+  )
 
   _handle_ws_state_changed(WSClient.state.current)
   _handle_chatter_updated(WSClient.my_chatter())

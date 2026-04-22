@@ -82,9 +82,9 @@ func leave_lobby() -> void:
 
 func start_lobby() -> void:
   if MultiplayerClient.current_lobby:
-    print("Sending search_for_lobbies lobby message for lobby: ")
+    print("Sending start lobby message for lobby: ")
     WSClient.send_socket_message({
-      "type": "rtc-search_for_lobbies-game",
+      "type": "rtc-start-game",
       "lobby_id": MultiplayerClient.current_lobby.name
     })
 
@@ -142,7 +142,8 @@ func send_answer(id: int, answer: String) -> Error:
 func send_packet(
   packet: Dictionary,
   target_peer: int = MultiplayerPeer.TARGET_PEER_BROADCAST,
-  transfer_mode: int = MultiplayerPeer.TRANSFER_MODE_UNRELIABLE_ORDERED
+  transfer_mode: int = MultiplayerPeer.TRANSFER_MODE_UNRELIABLE_ORDERED,
+  call_self: bool = false
 ) -> void:
   if not current_lobby:
     if PRINT_DEBUG: print("Can't send packet, not in lobby")
@@ -150,7 +151,7 @@ func send_packet(
   if not is_net_connected():
     if PRINT_DEBUG: print("Attempting to send packet while not connected")
     return
-
+  
   var serialized: Variant = BinarySerializer.serialize_var(packet)
   var packet_data := var_to_bytes(serialized)
 
@@ -158,6 +159,9 @@ func send_packet(
   rtc_mp.set_target_peer(target_peer)
   rtc_mp.set_transfer_mode(transfer_mode)
   rtc_mp.put_packet(packet_data)
+
+  if call_self:
+    packet_received.emit(rtc_mp.get_unique_id(), packet)
 
 func is_net_connected() -> bool:
   return rtc_mp.get_connection_status() == MultiplayerPeer.CONNECTION_CONNECTED
@@ -345,16 +349,22 @@ class Connected extends MultiplayerClientState:
     if mc.PRINT_DEBUG: print("%d received offer event from: %d" % [mc.rtc_mp.get_unique_id(), id])
     if mc.rtc_mp.has_peer(id):
       mc.rtc_mp.get_peer(id).connection.set_remote_description("offer", offer)
+    else:
+      print(mc.rtc_mp.get_unique_id(), " MISSED AN OFFER FROM ", id)
 
   func _answer_received(id: int, answer: String) -> void:
     if mc.PRINT_DEBUG: print("%d received answer event from: %d" % [mc.rtc_mp.get_unique_id(), id])
     if mc.rtc_mp.has_peer(id):
       mc.rtc_mp.get_peer(id).connection.set_remote_description("answer", answer)
+    else:
+      print(mc.rtc_mp.get_unique_id(), " MISSED AN ANSWER FROM ", id)
 
   func _candidate_received(id: int, mid: String, index: int, sdp: String) -> void:
     if mc.PRINT_DEBUG: print("%d received candidate event from: %d" % [mc.rtc_mp.get_unique_id(), id])
     if mc.rtc_mp.has_peer(id):
       mc.rtc_mp.get_peer(id).connection.add_ice_candidate(mid, index, sdp)
+    else:
+      print(mc.rtc_mp.get_unique_id(), " MISSED A CANDIDATE FROM ", id)
 
   func _lobby_sealed() -> void:
     mc.sealed = true

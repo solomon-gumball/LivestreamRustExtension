@@ -76,4 +76,8 @@ func _physics_process(delta: float) -> void:
       "type": PongGame.PongGameMessage.PaddleMove,
       "position": position,
       "velocity": velocity
-    })
+    },
+    MultiplayerPeer.TARGET_PEER_BROADCAST,
+    MultiplayerPeer.TRANSFER_MODE_UNRELIABLE,
+    true
+  )

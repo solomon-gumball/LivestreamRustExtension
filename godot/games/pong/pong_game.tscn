@@ -5,6 +5,22 @@
 [ext_resource type="FontFile" uid="uid://7uibxoligyvb" path="res://fonts/HomeVideo-BLG6G.ttf" id="3_433xj"]
 [ext_resource type="Script" uid="uid://bb5m0cki1i1a1" path="res://games/pong/pong_cam_boom.gd" id="3_r2ito"]
 
+[sub_resource type="Gradient" id="Gradient_racd5"]
+interpolation_mode = 1
+offsets = PackedFloat32Array(0, 0.5387097)
+colors = PackedColorArray(0, 0, 0, 0, 18.892157, 18.892157, 18.892157, 1)
+
+[sub_resource type="GradientTexture1D" id="GradientTexture1D_433xj"]
+gradient = SubResource("Gradient_racd5")
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_r2ito"]
+transparency = 1
+albedo_texture = SubResource("GradientTexture1D_433xj")
+emission_enabled = true
+emission_energy_multiplier = 3.0
+emission_texture = SubResource("GradientTexture1D_433xj")
+uv1_scale = Vector3(40, 40, 40)
+
 [sub_resource type="BoxShape3D" id="BoxShape3D_racd5"]
 size = Vector3(10, 1, 1)
 
@@ -19,24 +35,6 @@ glow_enabled = true
 glow_intensity = 0.5
 
 [sub_resource type="QuadMesh" id="QuadMesh_racd5"]
-
-[sub_resource type="Gradient" id="Gradient_racd5"]
-interpolation_mode = 1
-offsets = PackedFloat32Array(0, 0.5387097)
-colors = PackedColorArray(0, 0, 0, 0, 18.892157, 18.892157, 18.892157, 1)
-
-[sub_resource type="GradientTexture1D" id="GradientTexture1D_433xj"]
-gradient = SubResource("Gradient_racd5")
-
-[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_r2ito"]
-transparency = 2
-alpha_scissor_threshold = 0.5
-alpha_antialiasing_mode = 0
-albedo_texture = SubResource("GradientTexture1D_433xj")
-emission_enabled = true
-emission_energy_multiplier = 3.0
-emission_texture = SubResource("GradientTexture1D_433xj")
-uv1_scale = Vector3(40, 40, 40)
 
 [sub_resource type="Animation" id="Animation_433xj"]
 length = 0.001
@@ -55,122 +53,122 @@ tracks/0/keys = {
 tracks/1/type = "value"
 tracks/1/imported = false
 tracks/1/enabled = true
-tracks/1/path = NodePath("PongPaddleL:position")
+tracks/1/path = NodePath("CamBoom:rotation")
 tracks/1/interp = 1
 tracks/1/loop_wrap = true
 tracks/1/keys = {
 "times": PackedFloat32Array(0),
 "transitions": PackedFloat32Array(1),
 "update": 0,
-"values": [Vector3(0, 0.006736815, -3.2)]
+"values": [Vector3(0, 0, 0)]
 }
 tracks/2/type = "value"
 tracks/2/imported = false
 tracks/2/enabled = true
-tracks/2/path = NodePath("PongPaddleR:position")
+tracks/2/path = NodePath("PongPaddleL:gumbot_animation_state")
 tracks/2/interp = 1
 tracks/2/loop_wrap = true
 tracks/2/keys = {
 "times": PackedFloat32Array(0),
 "transitions": PackedFloat32Array(1),
-"update": 0,
-"values": [Vector3(0, 0, 3.2)]
+"update": 1,
+"values": [2]
 }
 tracks/3/type = "value"
 tracks/3/imported = false
 tracks/3/enabled = true
-tracks/3/path = NodePath("CamBoom:rotation")
+tracks/3/path = NodePath("PongPaddleR:gumbot_animation_state")
 tracks/3/interp = 1
 tracks/3/loop_wrap = true
 tracks/3/keys = {
 "times": PackedFloat32Array(0),
 "transitions": PackedFloat32Array(1),
-"update": 0,
-"values": [Vector3(0, 0, 0)]
+"update": 1,
+"values": [2]
 }
 tracks/4/type = "value"
 tracks/4/imported = false
 tracks/4/enabled = true
-tracks/4/path = NodePath("PongPaddleL:gumbot_animation_state")
+tracks/4/path = NodePath("PongPaddleL:gumbot_walk_speed")
 tracks/4/interp = 1
 tracks/4/loop_wrap = true
 tracks/4/keys = {
 "times": PackedFloat32Array(0),
 "transitions": PackedFloat32Array(1),
-"update": 1,
-"values": [2]
+"update": 0,
+"values": [0.0]
 }
 tracks/5/type = "value"
 tracks/5/imported = false
 tracks/5/enabled = true
-tracks/5/path = NodePath("PongPaddleR:gumbot_animation_state")
+tracks/5/path = NodePath("PongPaddleR:gumbot_walk_speed")
 tracks/5/interp = 1
 tracks/5/loop_wrap = true
 tracks/5/keys = {
 "times": PackedFloat32Array(0),
 "transitions": PackedFloat32Array(1),
-"update": 1,
-"values": [2]
+"update": 0,
+"values": [0.0]
 }
 tracks/6/type = "value"
 tracks/6/imported = false
-tracks/6/enabled = true
-tracks/6/path = NodePath("PongPaddleL:gumbot_walk_speed")
+tracks/6/enabled = false
+tracks/6/path = NodePath("PongPaddleL:rotation")
 tracks/6/interp = 1
 tracks/6/loop_wrap = true
 tracks/6/keys = {
 "times": PackedFloat32Array(0),
 "transitions": PackedFloat32Array(1),
 "update": 0,
-"values": [0.0]
+"values": [Vector3(0, 0, 0)]
 }
 tracks/7/type = "value"
 tracks/7/imported = false
-tracks/7/enabled = true
-tracks/7/path = NodePath("PongPaddleR:gumbot_walk_speed")
+tracks/7/enabled = false
+tracks/7/path = NodePath("PongPaddleR:rotation")
 tracks/7/interp = 1
 tracks/7/loop_wrap = true
 tracks/7/keys = {
 "times": PackedFloat32Array(0),
 "transitions": PackedFloat32Array(1),
 "update": 0,
-"values": [0.0]
+"values": [Vector3(0, -3.1415925, 0)]
 }
 tracks/8/type = "value"
 tracks/8/imported = false
 tracks/8/enabled = true
-tracks/8/path = NodePath("PongPaddleL:rotation")
+tracks/8/path = NodePath(".:dotted_line_alpha")
 tracks/8/interp = 1
 tracks/8/loop_wrap = true
 tracks/8/keys = {
 "times": PackedFloat32Array(0),
 "transitions": PackedFloat32Array(1),
 "update": 0,
-"values": [Vector3(0, 0, 0)]
+"values": [1.0]
 }
 tracks/9/type = "value"
 tracks/9/imported = false
 tracks/9/enabled = true
-tracks/9/path = NodePath("PongPaddleR:rotation")
+tracks/9/path = NodePath("CamBoom/Camera:position")
 tracks/9/interp = 1
 tracks/9/loop_wrap = true
 tracks/9/keys = {
 "times": PackedFloat32Array(0),
 "transitions": PackedFloat32Array(1),
 "update": 0,
-"values": [Vector3(0, -3.1415925, 0)]
+"values": [Vector3(-1.559345e-07, 1.0743508, -6.8161135e-15)]
 }
 tracks/10/type = "value"
 tracks/10/imported = false
 tracks/10/enabled = true
-tracks/10/path = NodePath("CamBoom:progress")
+tracks/10/path = NodePath("CanvasLayer/WinnerText:visible")
 tracks/10/interp = 1
 tracks/10/loop_wrap = true
 tracks/10/keys = {
 "times": PackedFloat32Array(0),
 "transitions": PackedFloat32Array(1),
-"update": 0,
-"values": [0.0]
+"update": 1,
+"values": [false]
 }
 
 [sub_resource type="Animation" id="Animation_r2ito"]
@@ -192,86 +190,218 @@ tracks/0/keys = {
 tracks/1/type = "value"
 tracks/1/imported = false
 tracks/1/enabled = true
-tracks/1/path = NodePath("PongPaddleL:position")
+tracks/1/path = NodePath("CamBoom:rotation")
 tracks/1/interp = 1
 tracks/1/loop_wrap = true
 tracks/1/keys = {
-"times": PackedFloat32Array(0, 2, 5.5, 6.7000003, 10.5, 10.900001),
-"transitions": PackedFloat32Array(1, 1, 1, 1, 1, 1),
-"update": 0,
-"values": [Vector3(0, 0, -0.8), Vector3(0, 0, -0.15), Vector3(0, 0, -0.15), Vector3(0, 0, -0.15), Vector3(0, 0, -3.2), Vector3(0, 0, -3.2)]
-}
-tracks/2/type = "value"
-tracks/2/imported = false
-tracks/2/enabled = true
-tracks/2/path = NodePath("PongPaddleR:position")
-tracks/2/interp = 1
-tracks/2/loop_wrap = true
-tracks/2/keys = {
-"times": PackedFloat32Array(0, 2, 5.5, 6.7000003, 10.500002, 10.9000025),
-"transitions": PackedFloat32Array(1, 1, 1, 1, 1, 1),
-"update": 0,
-"values": [Vector3(0, 0, 0.8), Vector3(0, 0, 0.15), Vector3(0, 0, 0.15), Vector3(0, 0, 0.15), Vector3(0, 0, 3.2), Vector3(0, 0, 3.2)]
-}
-tracks/3/type = "value"
-tracks/3/imported = false
-tracks/3/enabled = true
-tracks/3/path = NodePath("CamBoom:rotation")
-tracks/3/interp = 1
-tracks/3/loop_wrap = true
-tracks/3/keys = {
 "times": PackedFloat32Array(4.2, 5.5, 6.7000003),
 "transitions": PackedFloat32Array(1, 1, 1),
 "update": 0,
 "values": [Vector3(0, 0, 1.5707964), Vector3(0, 0, 0), Vector3(0, 0, 0)]
 }
-tracks/4/type = "value"
-tracks/4/imported = false
-tracks/4/enabled = true
-tracks/4/path = NodePath("PongPaddleL:gumbot_animation_state")
-tracks/4/interp = 1
-tracks/4/loop_wrap = true
-tracks/4/keys = {
+tracks/2/type = "value"
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/path = NodePath("PongPaddleL:gumbot_animation_state")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/keys = {
 "times": PackedFloat32Array(0, 3, 6.4, 11.4),
 "transitions": PackedFloat32Array(1, 1, 1, 1),
 "update": 1,
 "values": [1, 0, 1, 2]
+}
+tracks/3/type = "value"
+tracks/3/imported = false
+tracks/3/enabled = true
+tracks/3/path = NodePath("PongPaddleR:gumbot_animation_state")
+tracks/3/interp = 1
+tracks/3/loop_wrap = true
+tracks/3/keys = {
+"times": PackedFloat32Array(0, 3, 6.4, 11.4),
+"transitions": PackedFloat32Array(1, 1, 1, 1),
+"update": 1,
+"values": [1, 0, 1, 2]
+}
+tracks/4/type = "value"
+tracks/4/imported = false
+tracks/4/enabled = true
+tracks/4/path = NodePath("PongPaddleL:gumbot_walk_speed")
+tracks/4/interp = 1
+tracks/4/loop_wrap = true
+tracks/4/keys = {
+"times": PackedFloat32Array(0, 1.6999999, 1.8, 6.4, 6.7000003, 10.2, 10.5, 10.900001, 11.2, 11.400001),
+"transitions": PackedFloat32Array(1, 1, 1, 1, 1, 1, 1, 1, 1, 1),
+"update": 0,
+"values": [1.0, 1.0, 0.0, 0.0, 1.0, 1.0, 0.0, 0.0, 1.0, 0.0]
 }
 tracks/5/type = "value"
 tracks/5/imported = false
 tracks/5/enabled = true
-tracks/5/path = NodePath("PongPaddleR:gumbot_animation_state")
+tracks/5/path = NodePath("PongPaddleR:gumbot_walk_speed")
 tracks/5/interp = 1
 tracks/5/loop_wrap = true
 tracks/5/keys = {
-"times": PackedFloat32Array(0, 3, 6.4, 11.4),
-"transitions": PackedFloat32Array(1, 1, 1, 1),
-"update": 1,
-"values": [1, 0, 1, 2]
+"times": PackedFloat32Array(0, 1.6999999, 1.8, 6.4, 6.7000003, 10.2, 10.5, 10.900001, 11.2, 11.400001),
+"transitions": PackedFloat32Array(1, 1, 1, 1, 1, 1, 1, 1, 1, 1),
+"update": 0,
+"values": [1.0, 1.0, 0.0, 0.0, 1.0, 1.0, 0.0, 0.0, 1.0, 0.0]
 }
 tracks/6/type = "value"
 tracks/6/imported = false
 tracks/6/enabled = true
-tracks/6/path = NodePath("PongPaddleL:gumbot_walk_speed")
+tracks/6/path = NodePath("PongPaddleL:rotation")
 tracks/6/interp = 1
 tracks/6/loop_wrap = true
 tracks/6/keys = {
-"times": PackedFloat32Array(0, 1.9, 2, 6.4, 6.7000003, 10.2, 10.5, 10.900001, 11.2, 11.400001),
-"transitions": PackedFloat32Array(1, 1, 1, 1, 1, 1, 1, 1, 1, 1),
+"times": PackedFloat32Array(6.4000006, 6.7000003, 10.5, 10.900001, 11.400001),
+"transitions": PackedFloat32Array(1, 1, 1, 1, 1),
 "update": 0,
-"values": [1.0, 1.0, 0.0, 0.0, 1.0, 1.0, 0.0, 0.0, 1.0, 0.0]
+"values": [Vector3(0, 0, 0), Vector3(0, 3.1415927, 0), Vector3(0, 3.1415927, 0), Vector3(0, 3.1415927, 0), Vector3(0, 0, 0)]
 }
 tracks/7/type = "value"
 tracks/7/imported = false
 tracks/7/enabled = true
-tracks/7/path = NodePath("PongPaddleR:gumbot_walk_speed")
+tracks/7/path = NodePath("PongPaddleR:rotation")
 tracks/7/interp = 1
 tracks/7/loop_wrap = true
 tracks/7/keys = {
-"times": PackedFloat32Array(0, 1.9, 2, 6.4, 6.7000003, 10.2, 10.5, 10.900001, 11.2, 11.400001),
-"transitions": PackedFloat32Array(1, 1, 1, 1, 1, 1, 1, 1, 1, 1),
+"times": PackedFloat32Array(6.4000006, 6.7000003, 10.5, 10.900001, 11.400001),
+"transitions": PackedFloat32Array(1, 1, 1, 1, 1),
 "update": 0,
-"values": [1.0, 1.0, 0.0, 0.0, 1.0, 1.0, 0.0, 0.0, 1.0, 0.0]
+"values": [Vector3(0, -3.1415925, 0), Vector3(0, -6.2831855, 0), Vector3(0, -6.2831855, 0), Vector3(0, -6.2831855, 0), Vector3(0, -3.1415927, 0)]
+}
+tracks/8/type = "value"
+tracks/8/imported = false
+tracks/8/enabled = true
+tracks/8/path = NodePath(".:players_distance_from_center")
+tracks/8/interp = 1
+tracks/8/loop_wrap = true
+tracks/8/keys = {
+"times": PackedFloat32Array(0.2, 1.8, 6.7000003, 10.5),
+"transitions": PackedFloat32Array(1, 1, 1, 1),
+"update": 0,
+"values": [0.122, 0.0, 0.0, 1.0]
+}
+tracks/9/type = "method"
+tracks/9/imported = false
+tracks/9/enabled = true
+tracks/9/path = NodePath(".")
+tracks/9/interp = 1
+tracks/9/loop_wrap = true
+tracks/9/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"values": [{
+"args": [],
+"method": &"save_paddle_positions"
+}]
+}
+
+[sub_resource type="Animation" id="Animation_oe0u4"]
+resource_name = "outro"
+length = 14.0
+step = 0.1
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("CamBoom/Camera:size")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(1, 5.8),
+"transitions": PackedFloat32Array(0.4999997, 1),
+"update": 0,
+"values": [4.56, 1.0]
+}
+tracks/1/type = "method"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath(".")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0.3, 7),
+"transitions": PackedFloat32Array(1, 1),
+"values": [{
+"args": [],
+"method": &"save_paddle_positions"
+}, {
+"args": [],
+"method": &"trigger_ending_character_anims"
+}]
+}
+tracks/2/type = "value"
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/path = NodePath("CamBoom:rotation")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/keys = {
+"times": PackedFloat32Array(1.1, 5.8),
+"transitions": PackedFloat32Array(0.5743491, 1),
+"update": 0,
+"values": [Vector3(0, 0, 0), Vector3(0, 0, 0.8220501)]
+}
+tracks/3/type = "value"
+tracks/3/imported = false
+tracks/3/enabled = true
+tracks/3/path = NodePath("PongPaddleL:gumbot_animation_state")
+tracks/3/interp = 1
+tracks/3/loop_wrap = true
+tracks/3/keys = {
+"times": PackedFloat32Array(0, 0.5),
+"transitions": PackedFloat32Array(1, 1),
+"update": 1,
+"values": [2, 1]
+}
+tracks/4/type = "value"
+tracks/4/imported = false
+tracks/4/enabled = true
+tracks/4/path = NodePath("PongPaddleR:gumbot_animation_state")
+tracks/4/interp = 1
+tracks/4/loop_wrap = true
+tracks/4/keys = {
+"times": PackedFloat32Array(0, 0.5),
+"transitions": PackedFloat32Array(1, 1),
+"update": 1,
+"values": [2, 1]
+}
+tracks/5/type = "value"
+tracks/5/imported = false
+tracks/5/enabled = true
+tracks/5/path = NodePath("PongPaddleL:gumbot_walk_speed")
+tracks/5/interp = 1
+tracks/5/loop_wrap = true
+tracks/5/keys = {
+"times": PackedFloat32Array(0.5, 0.7, 4.5, 4.7000003, 4.9, 5.1),
+"transitions": PackedFloat32Array(1, 1, 1, 1, 1, 1),
+"update": 0,
+"values": [0.0, 1.0, 1.0, 0.0, 1.0, 0.0]
+}
+tracks/6/type = "value"
+tracks/6/imported = false
+tracks/6/enabled = true
+tracks/6/path = NodePath("PongPaddleR:gumbot_walk_speed")
+tracks/6/interp = 1
+tracks/6/loop_wrap = true
+tracks/6/keys = {
+"times": PackedFloat32Array(0.5, 0.7, 4.5, 4.7000003, 4.9, 5.1),
+"transitions": PackedFloat32Array(1, 1, 1, 1, 1, 1),
+"update": 0,
+"values": [0.0, 1.0, 1.0, 0.0, 1.0, 0.0]
+}
+tracks/7/type = "value"
+tracks/7/imported = false
+tracks/7/enabled = true
+tracks/7/path = NodePath("PongPaddleR:rotation")
+tracks/7/interp = 1
+tracks/7/loop_wrap = true
+tracks/7/keys = {
+"times": PackedFloat32Array(4.7, 5.1),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [Vector3(0, -3.1415925, 0), Vector3(0, -1.5707964, 0)]
 }
 tracks/8/type = "value"
 tracks/8/imported = false
@@ -280,80 +410,58 @@ tracks/8/path = NodePath("PongPaddleL:rotation")
 tracks/8/interp = 1
 tracks/8/loop_wrap = true
 tracks/8/keys = {
-"times": PackedFloat32Array(6.4000006, 6.7000003, 10.5, 10.900001, 11.400001),
-"transitions": PackedFloat32Array(1, 1, 1, 1, 1),
+"times": PackedFloat32Array(4.7, 5.1),
+"transitions": PackedFloat32Array(1, 1),
 "update": 0,
-"values": [Vector3(0, 0, 0), Vector3(0, 3.1415927, 0), Vector3(0, 3.1415927, 0), Vector3(0, 3.1415927, 0), Vector3(0, 0, 0)]
+"values": [Vector3(0, 0, 0), Vector3(0, -1.5707964, 0)]
 }
 tracks/9/type = "value"
 tracks/9/imported = false
 tracks/9/enabled = true
-tracks/9/path = NodePath("PongPaddleR:rotation")
+tracks/9/path = NodePath(".:dotted_line_alpha")
 tracks/9/interp = 1
 tracks/9/loop_wrap = true
 tracks/9/keys = {
-"times": PackedFloat32Array(6.4000006, 6.7000003, 10.5, 10.900001, 11.400001),
-"transitions": PackedFloat32Array(1, 1, 1, 1, 1),
-"update": 0,
-"values": [Vector3(0, -3.1415925, 0), Vector3(0, -6.2831855, 0), Vector3(0, -6.2831855, 0), Vector3(0, -6.2831855, 0), Vector3(0, -3.1415927, 0)]
-}
-
-[sub_resource type="Animation" id="Animation_oe0u4"]
-resource_name = "outro"
-length = 5.0
-step = 0.1
-tracks/0/type = "value"
-tracks/0/imported = false
-tracks/0/enabled = true
-tracks/0/path = NodePath("CamBoom:progress")
-tracks/0/interp = 1
-tracks/0/loop_wrap = true
-tracks/0/keys = {
-"times": PackedFloat32Array(0, 2),
+"times": PackedFloat32Array(3.6, 5),
 "transitions": PackedFloat32Array(1, 1),
 "update": 0,
-"values": [0.0, 1.0]
+"values": [1.0, 0.0]
 }
-tracks/1/type = "value"
-tracks/1/imported = false
-tracks/1/enabled = true
-tracks/1/path = NodePath("CamBoom/Camera:size")
-tracks/1/interp = 1
-tracks/1/loop_wrap = true
-tracks/1/keys = {
-"times": PackedFloat32Array(0, 2),
+tracks/10/type = "value"
+tracks/10/imported = false
+tracks/10/enabled = true
+tracks/10/path = NodePath("CamBoom/Camera:position")
+tracks/10/interp = 1
+tracks/10/loop_wrap = true
+tracks/10/keys = {
+"times": PackedFloat32Array(1, 5.8),
 "transitions": PackedFloat32Array(1, 1),
 "update": 0,
-"values": [4.56, 0.844]
+"values": [Vector3(-1.559345e-07, 1.0743508, -6.8161135e-15), Vector3(0.09, 1.074, 0)]
 }
-tracks/2/type = "method"
-tracks/2/imported = false
-tracks/2/enabled = true
-tracks/2/path = NodePath(".")
-tracks/2/interp = 1
-tracks/2/loop_wrap = true
-tracks/2/keys = {
-"times": PackedFloat32Array(0, 2),
+tracks/11/type = "value"
+tracks/11/imported = false
+tracks/11/enabled = true
+tracks/11/path = NodePath("CanvasLayer/WinnerText:visible")
+tracks/11/interp = 1
+tracks/11/loop_wrap = true
+tracks/11/keys = {
+"times": PackedFloat32Array(0.2, 7),
 "transitions": PackedFloat32Array(1, 1),
-"values": [{
-"args": [],
-"method": &"trigger_start_outro"
-}, {
-"args": [],
-"method": &"trigger_ending_character_anims"
-}]
+"update": 1,
+"values": [false, true]
 }
-tracks/3/type = "value"
-tracks/3/imported = false
-tracks/3/enabled = true
-tracks/3/path = NodePath("CamBoom:rotation")
-tracks/3/interp = 1
-tracks/3/loop_wrap = true
-tracks/3/keys = {
-"times": PackedFloat32Array(0, 2),
+tracks/12/type = "value"
+tracks/12/imported = false
+tracks/12/enabled = true
+tracks/12/path = NodePath(".:players_distance_from_center")
+tracks/12/interp = 1
+tracks/12/loop_wrap = true
+tracks/12/keys = {
+"times": PackedFloat32Array(0.5, 4.7000003),
 "transitions": PackedFloat32Array(1, 1),
 "update": 0,
-"values": [Vector3(0, 0, 0), Vector3(0, 0, 1.5707964)]
+"values": [1.0, 0.0]
 }
 
 [sub_resource type="AnimationLibrary" id="AnimationLibrary_oe0u4"]
@@ -365,18 +473,36 @@ _data = {
 
 [node name="PongGameScene" type="Node3D" unique_id=632967591]
 script = ExtResource("1_0ehfm")
-paddle_start_distance = 3.2
+players_distance_from_center = 0.122
+dotted_line_mat = SubResource("StandardMaterial3D_r2ito")
+
+[node name="CanvasLayer" type="CanvasLayer" parent="." unique_id=1368699316]
+
+[node name="WinnerText" type="RichTextLabel" parent="CanvasLayer" unique_id=2093150618]
+visible = false
+anchors_preset = 10
+anchor_right = 1.0
+offset_top = 40.0
+offset_bottom = 310.0
+grow_horizontal = 2
+theme_override_fonts/normal_font = ExtResource("3_433xj")
+theme_override_font_sizes/normal_font_size = 120
+bbcode_enabled = true
+text = "[wave][color=pink]solomongumbot[/color][/wave]
+[wave][color=green]wins![/color]"
+fit_content = true
+horizontal_alignment = 1
 
 [node name="DirectionalLight3D" type="DirectionalLight3D" parent="." unique_id=408204329]
 transform = Transform3D(1, 0, 0, 0, 0.6140786, 0.7892449, 0, -0.7892449, 0.6140786, 0, 2.1573846, 1.72217)
 
 [node name="PongPaddleL" parent="." unique_id=372987713 instance=ExtResource("2_racd5")]
 unique_name_in_owner = true
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.006736815, -3.2)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -0.6538)
 
 [node name="PongPaddleR" parent="." unique_id=749521308 instance=ExtResource("2_racd5")]
 unique_name_in_owner = true
-transform = Transform3D(-1, 0, -1.509958e-07, 0, 1, 0, 1.509958e-07, 0, -1, 0, 0, 3.2)
+transform = Transform3D(-1, 0, -1.509958e-07, 0, 1, 0, 1.509958e-07, 0, -1, 0, 0, 0.6538)
 
 [node name="CamBoom" type="Node3D" parent="." unique_id=95433371 node_paths=PackedStringArray("target_player")]
 unique_name_in_owner = true
