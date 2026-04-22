@@ -4,11 +4,13 @@ class_name Lobby
 class PeerData:
   var peer_id: int
   var chatter_id: String
+  var connected: bool
 
   static func from_data(d: Dictionary) -> PeerData:
     var peer := PeerData.new()
     peer.peer_id = d.get("peerId", 0)
     peer.chatter_id = d.get("chatterId", "")
+    peer.connected = d.get("connected", false)
     return peer
 
 var name: String
@@ -21,6 +23,8 @@ var started: bool
 
 var peer_from_chatter: Dictionary[String, int] = {}
 var chatter_from_peer: Dictionary[int, String] = {}
+func connected_peers() -> Array[PeerData]:
+  return peers.filter(func (peer): return peer.connected)
 
 static func from_data(d: Dictionary) -> Lobby:
   var lobby := Lobby.new()

@@ -41,14 +41,13 @@ func _ready() -> void:
   MultiplayerClient.state.changed.connect(_handle_multiplayer_state_changed)
   MultiplayerClient.current_lobby_updated.connect(_handle_lobby_updated)
   MultiplayerClient.connected_state.ping_check_completed.connect(_update_ping_label)
-  MultiplayerClient.host_left.connect(_handle_host_left)
 
   host_game_button.pressed.connect(_host_game)
   close_lobby_button.pressed.connect(_close_lobby)
   start_game_button.pressed.connect(_start_game)
 
-  loading_state.loading_complete.connect(func(): state.change_state(game_active_state))
-  game_active_state.game_ended.connect(func(): state.change_state(looking_for_lobby_state))
+  loading_state.loading_complete.connect(state.change_state.bind(game_active_state))
+  game_active_state.game_ended.connect(state.change_state.bind(looking_for_lobby_state))
 
   _handle_ws_state_changed(WSClient.state.current)
   _handle_chatter_updated(WSClient.my_chatter())
@@ -56,18 +55,11 @@ func _ready() -> void:
   if MultiplayerClient.current_lobby:
     _handle_lobby_updated(MultiplayerClient.current_lobby)
 
-# func 
-
 func _update_ping_label(msec_ping: float) -> void:
   ping_label.text = "PING: %sms" % int(msec_ping)
 
 func _exit_tree() -> void:
-  if MultiplayerClient.state.current is not MultiplayerClient.Connected:
-    return
-  if MultiplayerClient.is_lobby_host():
-    MultiplayerClient.leave_lobby()
-  else:
-    MultiplayerClient.stop()
+  MultiplayerClient.stop()
 
 func _close_lobby() -> void:
   MultiplayerClient.leave_lobby()
@@ -90,8 +82,7 @@ func _handle_multiplayer_state_changed(mp_state: MultiplayerClient.MultiplayerCl
   if mp_state is MultiplayerClient.Disconnected:
     state.change_state(disconnected_state)
   elif mp_state is MultiplayerClient.LookingForLobby:
-    if not (state.current is LoadingState or state.current is GameActiveState):
-      state.change_state(looking_for_lobby_state)
+    state.change_state(looking_for_lobby_state)
   elif mp_state is MultiplayerClient.Connected:
     if not (state.current is LoadingState or state.current is GameActiveState or state.current is InLobbyState):
       state.change_state(connected_idle_state)
@@ -131,12 +122,10 @@ func _get_joining_text(lobby: Lobby) -> String:
     _stat_line("SPECTATORS", 6, 4),
   ])
 
-
 class GamePageState extends State:
   var page: GamePage
   func _init(_page: GamePage) -> void:
     self.page = _page
-
 
 class DisconnectedState extends GamePageState:
   func enter_state(_prev: State) -> void:
@@ -147,7 +136,6 @@ class DisconnectedState extends GamePageState:
     page.game_subviewport_container.visible = false
     page.center_info_label.visible = true
     page.center_info_label.text = ""
-
 
 class LookingForLobbyState extends GamePageState:
   func enter_state(_prev: State) -> void:
@@ -181,7 +169,6 @@ class InLobbyState extends GamePageState:
     page.client_id_label.text = "Peer ID: %d" % MultiplayerClient.my_peer_id()
     page.lobby_info_panel.visible = true
     page._type_text(page._get_joining_text(MultiplayerClient.current_lobby), 0.1, false)
-
 
 class LoadingState extends GamePageState:
   signal loading_complete

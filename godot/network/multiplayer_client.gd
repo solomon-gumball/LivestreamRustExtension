@@ -66,7 +66,7 @@ func start() -> void:
   state.change_state(looking_for_lobby_state)
 
 func stop() -> void:
-  state.change_state(looking_for_lobby_state)
+  state.change_state(disconnected_state)
 
 func leave_lobby() -> void:
   if current_lobby:
@@ -74,7 +74,7 @@ func leave_lobby() -> void:
       "type": "rtc-leave-lobby",
       "lobby_id": current_lobby.name
     })
-    stop()
+    start()
 
 func start_lobby() -> void:
   if MultiplayerClient.current_lobby:
@@ -332,8 +332,10 @@ class Connected extends MultiplayerClientState:
     if mc.rtc_mp.has_peer(id):
       mc.rtc_mp.remove_peer(id)
     
+    # If host leaves, disconnect
     if id == 1:
-      mc.host_left.emit()
+      print(mc.my_peer_id(), ' noticed host DID LEAVE!!')
+      left_lobby.emit()
 
   func _peer_joined(id: int) -> void:
     _create_peer(id)
