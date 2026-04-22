@@ -6,7 +6,6 @@ signal current_lobby_updated(lobby: Lobby)
 signal packet_received(id: int, packet: Dictionary)
 @warning_ignore("UNUSED_SIGNAL")
 signal rtc_peer_ready(peer: int)
-signal host_left
 
 var state: StateMachine
 var disconnected_state: Disconnected
@@ -62,10 +61,15 @@ func _ws_connection_changed(status: WSClient.WSClientState) -> void:
   if status is WSClient.DisconnectedState:
     state.change_state(disconnected_state)
 
-func start() -> void:
+func search_for_lobbies() -> void:
   state.change_state(looking_for_lobby_state)
 
 func stop() -> void:
+  if current_lobby:
+    WSClient.send_socket_message({
+      "type": "rtc-leave-lobby",
+      "lobby_id": current_lobby.name
+    })
   state.change_state(disconnected_state)
 
 func leave_lobby() -> void:
@@ -74,13 +78,13 @@ func leave_lobby() -> void:
       "type": "rtc-leave-lobby",
       "lobby_id": current_lobby.name
     })
-    start()
+    search_for_lobbies()
 
 func start_lobby() -> void:
   if MultiplayerClient.current_lobby:
-    print("Sending start lobby message for lobby: ")
+    print("Sending search_for_lobbies lobby message for lobby: ")
     WSClient.send_socket_message({
-      "type": "rtc-start-game",
+      "type": "rtc-search_for_lobbies-game",
       "lobby_id": MultiplayerClient.current_lobby.name
     })
 
@@ -261,7 +265,7 @@ class Connected extends MultiplayerClientState:
       mc.rtc_peer_ready.emit(peer)
     )
     mc.rtc_mp.peer_disconnected.connect(func(peer):
-      _peer_disconnected(peer)
+      _remove_peer(peer)
     )
     mc.multiplayer.multiplayer_peer = mc.rtc_mp
 
@@ -327,7 +331,7 @@ class Connected extends MultiplayerClientState:
     else:
       mc.send_answer(id, data)
 
-  func _peer_disconnected(id: int) -> void:
+  func _remove_peer(id: int) -> void:
     _offer_sent.erase(id)
     if mc.rtc_mp.has_peer(id):
       mc.rtc_mp.remove_peer(id)
@@ -336,9 +340,6 @@ class Connected extends MultiplayerClientState:
     if id == 1:
       print(mc.my_peer_id(), ' noticed host DID LEAVE!!')
       left_lobby.emit()
-
-  func _peer_joined(id: int) -> void:
-    _create_peer(id)
 
   func _offer_received(id: int, offer: String) -> void:
     if mc.PRINT_DEBUG: print("%d received offer event from: %d" % [mc.rtc_mp.get_unique_id(), id])
@@ -370,6 +371,25 @@ class Connected extends MultiplayerClientState:
     # (any peer other than the host), add_peer rejects it.
     mc.rtc_mp = WebRTCMultiplayerPeer.new()
     mc.connected_state._offer_sent.clear()
+  
+  func _update_peers_for_lobby(lobby: Lobby) -> void:
+    var lobby_connected_peer_ids: Array[int] = []
+    var my_peer_id = mc.my_peer_id()
+    for peer in lobby.connected_peers():
+      lobby_connected_peer_ids.append(peer.peer_id)
+
+    var existing_peers := mc.rtc_mp.get_peers()
+    for existing_peer: int in existing_peers.keys():
+      if existing_peer == my_peer_id: continue
+      if !lobby_connected_peer_ids.has(existing_peer):
+        print(mc.my_peer_id(), " IS REMOVING PEER ", existing_peer)
+        _remove_peer(existing_peer)
+
+    for peer in lobby_connected_peer_ids:
+      if peer == my_peer_id: continue
+      if !mc.rtc_mp.has_peer(peer):
+        print(mc.my_peer_id(), " IS ADDING PEER ", peer)
+        _create_peer(peer)
 
   func handle_rtc_message(message: Variant, sender_id: int) -> void:
     match message.type:
@@ -388,12 +408,9 @@ class Connected extends MultiplayerClientState:
       "rtc-lobby-joined":
         var current_lobby_id = str(msg.get("lobby_name", ""))
         mc.current_lobby = mc.all_lobbies.get(current_lobby_id)
+        _update_peers_for_lobby(mc.current_lobby)
       "rtc-lobby-sealed":
         _lobby_sealed()
-      "rtc-peer-joined":
-        _peer_joined(int(msg.get("peer_id", 0)))
-      # "rtc-peer-disconnected":
-      #   _peer_disconnected(int(msg.get("peer_id", 0)))
       "rtc-offer":
         _offer_received(int(msg.get("from_peer_id", 0)), str(msg.get("sdp", "")))
       "rtc-answer":
@@ -411,10 +428,14 @@ class Connected extends MultiplayerClientState:
         mc.all_lobbies = {}
         for lobby in lobbies:
           mc.all_lobbies[lobby.name] = lobby
-        
+
+        var updated: Lobby = null
         if mc.current_lobby != null:
-          var updated: Lobby = mc.all_lobbies.get(mc.current_lobby.name)
+          updated = mc.all_lobbies.get(mc.current_lobby.name)
           mc.current_lobby = updated
           lobby_updated.emit()
           if updated == null:
             left_lobby.emit()
+        
+        if mc.current_lobby:
+          _update_peers_for_lobby(mc.current_lobby)

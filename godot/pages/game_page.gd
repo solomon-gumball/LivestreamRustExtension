@@ -76,7 +76,7 @@ func _handle_chatter_updated(chatter: Chatter) -> void:
 
 func _handle_ws_state_changed(connection_state: WSClient.WSClientState) -> void:
   if connection_state is WSClient.AuthenticatedState:
-    MultiplayerClient.start()
+    MultiplayerClient.search_for_lobbies()
 
 func _handle_multiplayer_state_changed(mp_state: MultiplayerClient.MultiplayerClientState) -> void:
   if mp_state is MultiplayerClient.Disconnected:

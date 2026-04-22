@@ -8,7 +8,7 @@ var game_state = GameState.new(self)
 func _ready():
   MultiplayerClient.current_lobby_updated.connect(_handle_lobby_updated)
 
-  MultiplayerClient.start()
+  MultiplayerClient.search_for_lobbies()
   WSClient.state.changed.connect(_handle_ws_state_changed)
 
   add_child(state)
@@ -18,7 +18,7 @@ func _ready():
 
 func _handle_ws_state_changed(connection_state: WSClient.WSClientState) -> void:
   if connection_state is WSClient.AuthenticatedState:
-    MultiplayerClient.start()
+    MultiplayerClient.search_for_lobbies()
 
 func _input(_event):
   if Input.is_action_just_pressed("StartLobby"):
