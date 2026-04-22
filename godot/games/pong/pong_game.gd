@@ -2,11 +2,14 @@
 extends Node3D
 class_name PongGame
 
+signal game_finished
+
 enum PongGameMessage {
   BallMove,
   RoundComplete,
   PaddleMove,
   StateRefresh,
+  ClientReady,
   StartRound,
   UpdateAnimation
 }
@@ -16,11 +19,11 @@ var game_state: PongGameState = null
 var ball: PongBall = null
 var ball_template: PackedScene = preload("res://games/pong/pong_ball.tscn")
 var nodes_by_peer_id: Dictionary[int, Dictionary] = {}
+var is_game_host: bool = false
 
 @onready var pong_paddle_l: PongPaddle = %PongPaddleL
 @onready var pong_paddle_r: PongPaddle = %PongPaddleR
 @onready var camera: Camera3D = %Camera
-var is_game_host: bool = false
 @onready var pong_spawn_location: Marker3D = %PongSpawnLocation
 @onready var score_region_l: Area3D = %ScoreRegionL
 @onready var score_region_r: Area3D = %ScoreRegionR
@@ -90,7 +93,18 @@ func _ready() -> void:
       "skipped": false
     })
     _send_refresh_state(MultiplayerPeer.TARGET_PEER_BROADCAST)
-    MultiplayerClient.rtc_peer_ready.connect(_send_refresh_state)
+    MultiplayerClient.rtc_peer_ready.connect(func (peer):
+      print("PEER IS READY: %d" % peer)
+      _send_refresh_state(peer)
+    )
+  else:
+    MultiplayerClient.send_packet(
+      {
+        "type": PongGameMessage.ClientReady,
+      },
+      MultiplayerPeer.TARGET_PEER_SERVER,
+      MultiplayerPeer.TRANSFER_MODE_RELIABLE
+    )
 
   # This must be at the end so the paddle by id is ready  
   _handle_chatter_updated(WSClient.my_chatter())
@@ -112,6 +126,7 @@ func _anim_finished(anim_name: String) -> void:
   if anim_name == "intro":
     _start_round()
   if anim_name == "outro":
+    game_finished.emit()
     MultiplayerClient.leave_lobby()
 
 func _lobby_updated(new_lobby: Lobby) -> void:
@@ -211,6 +226,8 @@ func _handle_peer_packet(sender_id: int, packet: Dictionary) -> void:
     return
 
   match packet.type:
+    PongGameMessage.ClientReady:
+      _send_refresh_state(sender_id)
     PongGameMessage.UpdateAnimation:
       game_state.animation_state = PongAnimationState.new()
       game_state.animation_state.started_at = packet.get("started_at", 0)

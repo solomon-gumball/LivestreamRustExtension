@@ -6,6 +6,7 @@ signal current_lobby_updated(lobby: Lobby)
 signal packet_received(id: int, packet: Dictionary)
 @warning_ignore("UNUSED_SIGNAL")
 signal rtc_peer_ready(peer: int)
+signal host_left
 
 var state: StateMachine
 var disconnected_state: Disconnected
@@ -248,8 +249,6 @@ class Connected extends MultiplayerClientState:
     add_child(ping_timer)
   
   func _init_client(id: int, use_mesh: bool) -> void:
-    # mc.rtc_mp.peer_connected.
-
     var is_server := id == 1
     if mc.PRINT_DEBUG: print("Connected %d (server=%s), mesh: %s" % [id, is_server, use_mesh])
     if use_mesh:
@@ -260,6 +259,9 @@ class Connected extends MultiplayerClientState:
       mc.rtc_mp.create_client(id)
     mc.rtc_mp.peer_connected.connect(func(peer):
       mc.rtc_peer_ready.emit(peer)
+    )
+    mc.rtc_mp.peer_disconnected.connect(func(peer):
+      _peer_disconnected(peer)
     )
     mc.multiplayer.multiplayer_peer = mc.rtc_mp
 
@@ -329,6 +331,9 @@ class Connected extends MultiplayerClientState:
     _offer_sent.erase(id)
     if mc.rtc_mp.has_peer(id):
       mc.rtc_mp.remove_peer(id)
+    
+    if id == 1:
+      mc.host_left.emit()
 
   func _peer_joined(id: int) -> void:
     _create_peer(id)
@@ -385,8 +390,8 @@ class Connected extends MultiplayerClientState:
         _lobby_sealed()
       "rtc-peer-joined":
         _peer_joined(int(msg.get("peer_id", 0)))
-      "rtc-peer-disconnected":
-        _peer_disconnected(int(msg.get("peer_id", 0)))
+      # "rtc-peer-disconnected":
+      #   _peer_disconnected(int(msg.get("peer_id", 0)))
       "rtc-offer":
         _offer_received(int(msg.get("from_peer_id", 0)), str(msg.get("sdp", "")))
       "rtc-answer":

@@ -4,6 +4,7 @@
 [ext_resource type="Shader" uid="uid://d27ep2cpoix5" path="res://materials/scrolling_background/scrolling_background.gdshader" id="1_dbd3p"]
 [ext_resource type="Texture2D" uid="uid://lai2e4svmeud" path="res://textures/gumbot_scrolling_banner.png" id="2_6oitr"]
 [ext_resource type="Shader" uid="uid://ddsoj1lgtm34y" path="res://materials/transition/hex_transition.gdshader" id="3_jqdbn"]
+[ext_resource type="FontFile" uid="uid://7uibxoligyvb" path="res://fonts/HomeVideo-BLG6G.ttf" id="5_jqdbn"]
 
 [sub_resource type="ViewportTexture" id="ViewportTexture_s70xq"]
 viewport_path = NodePath("SubViewport")
@@ -27,8 +28,8 @@ shader_parameter/row_height = 0.1
 shader_parameter/texture_aspect_ratio = 3.40000015824012
 shader_parameter/rotation = -0.6615900006082001
 shader_parameter/uv_scale = 0.75500003260262
-shader_parameter/background_color = Color(0.6318595, 0.39328665, 1, 1)
-shader_parameter/text_color = Color(0.83137256, 0.44313726, 0.84705883, 0.36078432)
+shader_parameter/background_color = Color(0.9137255, 0.36862746, 0.24313726, 1)
+shader_parameter/text_color = Color(0.8970197, 0.35323894, 0.2279847, 1)
 
 [node name="Loading" type="Control" unique_id=884817838]
 layout_mode = 3
@@ -55,6 +56,22 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 metadata/_edit_use_anchors_ = true
+
+[node name="RichTextLabel" type="RichTextLabel" parent="SubViewport/BackgroundLayer" unique_id=61831869]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_colors/font_shadow_color = Color(0.5372549, 0.08627451, 0.101960786, 0.9411765)
+theme_override_fonts/normal_font = ExtResource("5_jqdbn")
+theme_override_font_sizes/normal_font_size = 30
+bbcode_enabled = true
+text = "[pulse freq=1.0 color=#ffffff40 ease=-2.0][wave amp=50.0 freq=5.0 connected=0]Loading...
+[/wave]"
+fit_content = true
+horizontal_alignment = 1
+vertical_alignment = 1
 
 [node name="ColorRect" type="ColorRect" parent="." unique_id=479470181]
 material = SubResource("ShaderMaterial_d0n2t")

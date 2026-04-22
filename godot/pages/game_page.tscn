@@ -227,13 +227,15 @@ text = "CLIENT 329024"
 label_settings = SubResource("LabelSettings_sqe1x")
 horizontal_alignment = 1
 
-[node name="Loading" parent="." unique_id=884817838 instance=ExtResource("2_q0v5o")]
-unique_name_in_owner = true
-layout_mode = 1
-transition_material = SubResource("ShaderMaterial_bpjvj")
-progress = 0.0
-
 [node name="StateMachine" type="Node" parent="." unique_id=1404217897]
 unique_name_in_owner = true
 script = ExtResource("8_hb8fn")
 metadata/_custom_type_script = "uid://d2ybq2ovami5x"
+
+[node name="Loading" parent="." unique_id=884817838 instance=ExtResource("2_q0v5o")]
+unique_name_in_owner = true
+visible = false
+z_index = 10
+layout_mode = 1
+transition_material = SubResource("ShaderMaterial_bpjvj")
+progress = 0.0
