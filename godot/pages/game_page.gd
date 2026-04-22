@@ -15,6 +15,7 @@ extends Control
 @onready var overlay_subviewport_container: SubViewportContainer = %OverlaySubviewportContainer
 @onready var loading: Loading = %Loading
 @onready var game_grid: GridContainer = %GameGrid
+@onready var debug_square: ColorRect = %DebugSquare
 
 var info_tween: Tween
 const LOOKING_TEXT = "[font_size=50]LOOKING FOR LOBBY...[/font_size]"
@@ -27,6 +28,7 @@ var connected_idle_state := ConnectedIdleState.new(self)
 var in_lobby_state := InLobbyState.new(self)
 var loading_state := LoadingState.new(self)
 var game_active_state := GameActiveState.new(self)
+var viewing_lobby_state := ViewingLobbyState.new(self)
 
 func _ready() -> void:
   add_child(state)
@@ -36,9 +38,11 @@ func _ready() -> void:
   state.add_child(in_lobby_state)
   state.add_child(loading_state)
   state.add_child(game_active_state)
+  state.add_child(viewing_lobby_state)
 
   WSClient.authenticated_state.chatter_updated.connect(_handle_chatter_updated)
   WSClient.state.changed.connect(_handle_ws_state_changed)
+  MultiplayerClient.looking_for_lobby_state.lobby_list_updated.connect(_handle_lobby_list_updated)
   MultiplayerClient.state.changed.connect(_handle_multiplayer_state_changed)
   MultiplayerClient.current_lobby_updated.connect(_handle_lobby_updated)
   MultiplayerClient.connected_state.ping_check_completed.connect(_update_ping_label)
@@ -58,6 +62,14 @@ func _ready() -> void:
   _handle_multiplayer_state_changed(MultiplayerClient.state.current)
   if MultiplayerClient.current_lobby:
     _handle_lobby_updated(MultiplayerClient.current_lobby)
+
+# func _try_update_state() -> void:
+#   _handle_multiplayer_state_changed(MultiplayerClient.state.current)
+
+func _handle_lobby_list_updated(_lobbies: Array[Lobby]) -> void:
+  print(MultiplayerClient.my_peer_id(), " Lobby list updated: %d lobbies found" % _lobbies.size(), ' ', MultiplayerClient.state.current is MultiplayerClient.LookingForLobby)
+  debug_square.visible = true
+  _handle_multiplayer_state_changed(MultiplayerClient.state.current)
 
 func _update_ping_label(msec_ping: float) -> void:
   ping_label.text = "PING: %sms" % int(msec_ping)
@@ -86,7 +98,11 @@ func _handle_multiplayer_state_changed(mp_state: MultiplayerClient.MultiplayerCl
   if mp_state is MultiplayerClient.Disconnected:
     state.change_state(disconnected_state)
   elif mp_state is MultiplayerClient.LookingForLobby:
-    state.change_state(looking_for_lobby_state)
+    if MultiplayerClient.all_lobbies.keys().is_empty():
+      state.change_state(looking_for_lobby_state)
+    else:
+      viewing_lobby_state.viewed_lobby = MultiplayerClient.all_lobbies.values()[0]
+      state.change_state(viewing_lobby_state)
   elif mp_state is MultiplayerClient.Connected:
     if not (state.current is LoadingState or state.current is GameActiveState or state.current is InLobbyState):
       state.change_state(connected_idle_state)
@@ -177,6 +193,17 @@ class ConnectedIdleState extends GamePageState:
     page.start_game_button.visible = false
     page.close_lobby_button.visible = false
     page.host_game_button.visible = false
+    page.game_subviewport_container.visible = false
+
+class ViewingLobbyState extends GamePageState:
+  var viewed_lobby: Lobby = null
+
+  func enter_state(_prev: State) -> void:
+    page.start_game_button.visible = false
+    page.close_lobby_button.visible = false
+    page.host_game_button.visible = false
+    page.center_info_label.visible = true
+    page.lobby_info_panel.visible = true
     page.game_subviewport_container.visible = false
 
 class InLobbyState extends GamePageState:

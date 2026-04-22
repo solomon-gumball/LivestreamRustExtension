@@ -170,6 +170,8 @@ var is_rtc_connected: bool:
   get: return rtc_mp.get_connection_status() == MultiplayerPeer.CONNECTION_CONNECTED
 
 func my_peer_id() -> int:
+  if rtc_mp.get_connection_status() == MultiplayerPeer.CONNECTION_DISCONNECTED:
+    return -1
   return rtc_mp.get_unique_id()
 
 func is_authority() -> bool:
@@ -233,9 +235,11 @@ class LookingForLobby extends MultiplayerClientState:
         mc.all_lobbies = {}
         for lobby in lobbies:
           mc.all_lobbies[lobby.name] = lobby
+
         if lobbies.size() > 0:
           join_request_already_sent = true
           lobby_list_updated.emit(lobbies)
+          # mc.join_lobby(lobbies[0].name)
       "rtc-peer-id":
         peer_id = int(msg.get("peer_id", 0))
         mesh_mode = bool(msg.get("mesh_mode", false))

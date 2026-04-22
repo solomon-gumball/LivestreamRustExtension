@@ -21,7 +21,7 @@ ambient_light_energy = 2.0
 ssao_enabled = true
 glow_enabled = true
 
-[sub_resource type="ShaderMaterial" id="ShaderMaterial_rsatm"]
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_bpjvj"]
 resource_local_to_scene = true
 render_priority = 0
 shader = ExtResource("5_k3023")
@@ -43,13 +43,13 @@ default_font_size = 50
 font = ExtResource("3_nspls")
 font_size = 40
 
-[sub_resource type="ViewportTexture" id="ViewportTexture_bpjvj"]
+[sub_resource type="ViewportTexture" id="ViewportTexture_uh2rv"]
 viewport_path = NodePath("SubViewport")
 
-[sub_resource type="ShaderMaterial" id="ShaderMaterial_uh2rv"]
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_m74q6"]
 resource_local_to_scene = true
 shader = ExtResource("3_rsatm")
-shader_parameter/to_tex = SubResource("ViewportTexture_bpjvj")
+shader_parameter/to_tex = SubResource("ViewportTexture_uh2rv")
 shader_parameter/progress = 0.0
 shader_parameter/hex_size = 0.08
 shader_parameter/randomness = 0.05
@@ -128,7 +128,7 @@ current = true
 [node name="GumBot" parent="OverlaySubviewportContainer/OverlaySubViewport" unique_id=2126276004 instance=ExtResource("4_43xba")]
 unique_name_in_owner = true
 transform = Transform3D(-0.9408098, 0, 0.33893508, 0, 1, 0, -0.33893508, 0, -0.9408098, -0.6849959, -0.30148157, 0.73511076)
-surface_mat = SubResource("ShaderMaterial_rsatm")
+surface_mat = SubResource("ShaderMaterial_bpjvj")
 
 [node name="DirectionalLight3D" type="DirectionalLight3D" parent="OverlaySubviewportContainer/OverlaySubViewport" unique_id=723242754]
 
@@ -180,38 +180,31 @@ grow_vertical = 0
 theme_override_constants/separation = 10
 alignment = 2
 
-[node name="CloseLobbyButton" type="Button" parent="HBoxContainer" unique_id=412995301]
-unique_name_in_owner = true
-layout_mode = 2
-theme = SubResource("Theme_fxi6q")
-text = "CLOSE LOBBY"
-
-[node name="StartGameButton" type="Button" parent="HBoxContainer" unique_id=1589335327]
-unique_name_in_owner = true
-layout_mode = 2
-theme = SubResource("Theme_fxi6q")
-text = "START GAME"
-
 [node name="HostGameButton" type="Button" parent="HBoxContainer" unique_id=836802073]
 unique_name_in_owner = true
 layout_mode = 2
 theme = SubResource("Theme_fxi6q")
 text = "HOST GAME"
 
-[node name="CenterInfoLabel" type="RichTextLabel" parent="." unique_id=395124137]
-unique_name_in_owner = true
+[node name="CurrentLobbyDetail" type="VBoxContainer" parent="." unique_id=2094804115]
+custom_minimum_size = Vector2(800, 0)
 layout_mode = 1
 anchors_preset = 8
 anchor_left = 0.5
 anchor_top = 0.5
 anchor_right = 0.5
 anchor_bottom = 0.5
-offset_left = -325.0
+offset_left = -400.0
 offset_top = -174.0
-offset_right = 325.0
+offset_right = 400.0
 offset_bottom = 174.0
 grow_horizontal = 2
 grow_vertical = 2
+alignment = 1
+
+[node name="CenterInfoLabel" type="RichTextLabel" parent="CurrentLobbyDetail" unique_id=395124137]
+unique_name_in_owner = true
+layout_mode = 2
 theme_override_colors/default_color = Color(0.9711519, 0.3176986, 0.090861924, 1)
 theme_override_colors/font_shadow_color = Color(0.35194248, 0.06847161, 0.021902403, 0.77254903)
 theme_override_fonts/normal_font = ExtResource("2_p5ued")
@@ -230,6 +223,29 @@ STAKES....[color=green]100 gum[/color][/font_size]
 "
 fit_content = true
 horizontal_alignment = 1
+
+[node name="LobbyDetailButtonRow" type="HBoxContainer" parent="CurrentLobbyDetail" unique_id=871262480]
+layout_mode = 2
+alignment = 1
+
+[node name="CloseLobbyButton" type="Button" parent="CurrentLobbyDetail/LobbyDetailButtonRow" unique_id=412995301]
+unique_name_in_owner = true
+layout_mode = 2
+theme = SubResource("Theme_fxi6q")
+text = "CLOSE LOBBY"
+
+[node name="JoinLobbyButton" type="Button" parent="CurrentLobbyDetail/LobbyDetailButtonRow" unique_id=161993846]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(200, 0)
+layout_mode = 2
+theme = SubResource("Theme_fxi6q")
+text = "JOIN"
+
+[node name="StartGameButton" type="Button" parent="CurrentLobbyDetail/LobbyDetailButtonRow" unique_id=1589335327]
+unique_name_in_owner = true
+layout_mode = 2
+theme = SubResource("Theme_fxi6q")
+text = "START GAME"
 
 [node name="Label" type="Label" parent="." unique_id=48250606]
 layout_mode = 0
@@ -273,8 +289,20 @@ unique_name_in_owner = true
 visible = false
 z_index = 10
 layout_mode = 1
-transition_material = SubResource("ShaderMaterial_uh2rv")
+transition_material = SubResource("ShaderMaterial_m74q6")
 progress = 0.0
+
+[node name="DebugSquare" type="ColorRect" parent="." unique_id=1002237490]
+unique_name_in_owner = true
+visible = false
+layout_mode = 1
+anchors_preset = 2
+anchor_top = 1.0
+anchor_bottom = 1.0
+offset_top = -90.0
+offset_right = 120.0
+grow_vertical = 0
+color = Color(0.9946849, 0.14594379, 0.33794135, 1)
 
 [node name="VBoxContainer" type="VBoxContainer" parent="." unique_id=1868689580]
 layout_mode = 1
@@ -313,6 +341,7 @@ selected_theme = SubResource("Theme_bpjvj")
 default_theme = SubResource("Theme_uh2rv")
 
 [node name="MarginContainer" type="MarginContainer" parent="VBoxContainer" unique_id=1537125724]
+visible = false
 layout_mode = 2
 theme_override_constants/margin_left = 40
 theme_override_constants/margin_top = 40
