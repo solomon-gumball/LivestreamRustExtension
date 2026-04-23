@@ -87,11 +87,21 @@ func join_lobby(lobby: Lobby) -> Error:
     "lobby_name": lobby.name
   })
 
-func create_lobby() -> Error:
-  return WSClient.send_socket_message({
-    "type": "rtc-create-lobby",
-    "mesh_mode": mesh
-  })
+func create_lobby() -> String:
+  var request = AwaitableHTTPRequest.new()
+  add_child(request)
+  var response := await request.async_request(
+    WSClient.get_database_server_url("game-lobby"),
+    PackedStringArray(["Content-Type: application/json"]),
+    HTTPClient.METHOD_POST,
+    JSON.stringify({ "chatterId": WSClient.my_chatter().id })
+  )
+  request.queue_free()
+  if not response.success() or not response.status_ok():
+    return "Request failed"
+  var body: Dictionary = response.body_as_json()
+  var err = body.get("error", "")
+  return "" if err == null else err
 
 func seal_lobby() -> Error:
   return WSClient.send_socket_message({ "type": "rtc-seal-lobby" })

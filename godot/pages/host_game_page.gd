@@ -10,8 +10,11 @@ func _ready() -> void:
   _load_games()
 
 func _on_game_selected(_metadata: GameMetadata) -> void:
-  MultiplayerClient.create_lobby()
-  on_lobby_created.emit()
+  var error := await MultiplayerClient.create_lobby()
+  if error.is_empty():
+    on_lobby_created.emit()
+  else:
+    print("Failed to create lobby: ", error)
 
 func _load_games() -> void:
   for child in game_grid.get_children():
