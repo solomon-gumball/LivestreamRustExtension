@@ -9,7 +9,7 @@ func _ready() -> void:
   _load_games()
 
 func _on_game_selected(_metadata: GameMetadata) -> void:
-  MultiplayerClient.join_lobby("")
+  MultiplayerClient.create_lobby()
 
 func _load_games() -> void:
   for child in game_grid.get_children():

@@ -43,7 +43,7 @@ func _ready() -> void:
 
   WSClient.authenticated_state.chatter_updated.connect(_handle_chatter_updated)
   WSClient.state.changed.connect(_handle_ws_state_changed)
-  MultiplayerClient.looking_for_lobby_state.lobby_list_updated.connect(_handle_lobby_list_updated)
+  WSClient.authenticated_state.message_received.connect(_handle_ws_message)
   MultiplayerClient.state.changed.connect(_handle_multiplayer_state_changed)
   MultiplayerClient.current_lobby_updated.connect(_handle_lobby_updated)
   MultiplayerClient.connected_state.ping_check_completed.connect(_update_ping_label)
@@ -55,7 +55,6 @@ func _ready() -> void:
   loading_state.loading_complete.connect(state.change_state.bind(game_active_state))
   game_active_state.game_ended.connect(func ():
     MultiplayerClient.leave_lobby()
-    state.change_state.bind(looking_for_lobby_state)
   )
 
   _handle_ws_state_changed(WSClient.state.current)
@@ -67,10 +66,37 @@ func _ready() -> void:
 # func _try_update_state() -> void:
 #   _handle_multiplayer_state_changed(MultiplayerClient.state.current)
 
-func _handle_lobby_list_updated(_lobbies: Array[Lobby]) -> void:
-  print(MultiplayerClient.my_peer_id(), " Lobby list updated: %d lobbies found" % _lobbies.size(), ' ', MultiplayerClient.state.current is MultiplayerClient.LookingForLobby)
-  debug_square.visible = true
-  _handle_multiplayer_state_changed(MultiplayerClient.state.current)
+func _handle_ws_message(parsed: Variant) -> void:
+  if typeof(parsed) != TYPE_DICTIONARY:
+    return
+  var msg: Dictionary = parsed
+  if msg.get("type", "") == "rtc-lobbies-updated":
+    _handle_lobbies_updated(msg.get("lobbies", []))
+
+func _handle_lobbies_updated(lobby_data_list: Array) -> void:
+  if state.current is ConnectedIdleState or\
+   state.current is InLobbyState or \
+   state.current is LoadingState or \
+   state.current is GameActiveState:
+    return
+  var lobbies: Array[Lobby] = []
+  for lobby_data in lobby_data_list:
+    lobbies.append(Lobby.from_data(lobby_data))
+  if lobbies.is_empty():
+    state.change_state(looking_for_lobby_state)
+  else:
+    var target_lobby: Lobby = lobbies[0]
+    if target_lobby.peers.any(func (p: Lobby.PeerData):
+      return p.chatter_id == WSClient.my_chatter().id
+    ):
+      print("Already in lobby: %s" % target_lobby.name)
+      # Already in the lobby, auto-rejoin it
+      MultiplayerClient.join_lobby(target_lobby)
+      # in_lobby_state.lobby = target_lobby
+      # state.change_state(in_lobby_state)
+    # else:
+    viewing_lobby_state.viewed_lobby = lobbies[0]
+    state.change_state(viewing_lobby_state)
 
 func _update_ping_label(msec_ping: float) -> void:
   ping_label.text = "PING: %sms" % int(msec_ping)
@@ -85,7 +111,7 @@ func _start_game() -> void:
   MultiplayerClient.start_lobby()
 
 func _host_game() -> void:
-  MultiplayerClient.join_lobby("")
+  MultiplayerClient.create_lobby()
 
 func _handle_chatter_updated(chatter: Chatter) -> void:
   if chatter:
@@ -93,17 +119,18 @@ func _handle_chatter_updated(chatter: Chatter) -> void:
 
 func _handle_ws_state_changed(connection_state: WSClient.WSClientState) -> void:
   if connection_state is WSClient.AuthenticatedState:
-    MultiplayerClient.search_for_lobbies()
+    WSClient.send_socket_message({ "type": "rtc-fetch-lobbies" })
+    state.change_state(looking_for_lobby_state)
+  elif connection_state is WSClient.DisconnectedState:
+    state.change_state(disconnected_state)
 
 func _handle_multiplayer_state_changed(mp_state: MultiplayerClient.MultiplayerClientState) -> void:
   if mp_state is MultiplayerClient.Disconnected:
-    state.change_state(disconnected_state)
-  elif mp_state is MultiplayerClient.LookingForLobby:
-    if MultiplayerClient.all_lobbies.keys().is_empty():
-      state.change_state(looking_for_lobby_state)
-    else:
-      viewing_lobby_state.viewed_lobby = MultiplayerClient.all_lobbies.values()[0]
-      state.change_state(viewing_lobby_state)
+    if WSClient.state.current is WSClient.AuthenticatedState:
+      var was_connected := state.current is ConnectedIdleState or state.current is InLobbyState or state.current is LoadingState or state.current is GameActiveState
+      if was_connected:
+        WSClient.send_socket_message({ "type": "rtc-fetch-lobbies" })
+        state.change_state(looking_for_lobby_state)
   elif mp_state is MultiplayerClient.Connected:
     if not (state.current is LoadingState or state.current is GameActiveState or state.current is InLobbyState):
       state.change_state(connected_idle_state)
@@ -206,7 +233,7 @@ class ViewingLobbyState extends GamePageState:
     return false
 
   func _handle_join_game(lobby: Lobby) -> void:
-    MultiplayerClient.join_lobby(lobby.name)
+    MultiplayerClient.join_lobby(lobby)
 
   func exit_state() -> void:
     page.join_game_button.pressed.disconnect(_handle_join_game)

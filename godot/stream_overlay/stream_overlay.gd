@@ -26,7 +26,8 @@ func _input(_event):
     if MultiplayerClient.state.current is MultiplayerClient.Connected:
       MultiplayerClient.start_lobby()
     else:
-      MultiplayerClient.join_lobby("")
+      pass
+      # MultiplayerClient.join_lobby("")
     pass
 
 var pong_game_template: PackedScene = preload("res://games/pong/pong_game.tscn")
