@@ -8,7 +8,6 @@ var current_chatter: Chatter
 @onready var play_game_button: CustomButton = %PlayGameButton
 @onready var host_game_button: CustomButton = %HostGameButton
 @onready var page_container: Control = %PageContainer
-@onready var alert_layer: AlertLayer = %AlertLayer
 
 var profile_page_template: PackedScene = preload("res://pages/profile_page.tscn")
 var game_page_template: PackedScene = preload("res://pages/game_page.tscn")
@@ -28,9 +27,9 @@ func _ready() -> void:
 
 func _handle_connection_status_changed(state: WSClient.WSClientState) -> void:
   if state is WSClient.DisconnectedState:
-    alert_layer.display_alert("No connection found!\nReconnecting...")
+    AlertLayer.display_alert("No connection found!\nReconnecting...")
   else:
-    alert_layer.hide_alert()
+    AlertLayer.hide_alert()
 
 func _navigate_to_page(page: int) -> void:
   if active_page:

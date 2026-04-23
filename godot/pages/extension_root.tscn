@@ -1,7 +1,6 @@
 [gd_scene format=3 uid="uid://bpcipix6qbuo2"]
 
 [ext_resource type="Script" uid="uid://tbmxic5233qe" path="res://pages/extension_root.gd" id="1_ls64a"]
-[ext_resource type="PackedScene" uid="uid://cpfdkqp87e1rj" path="res://ui/alert_layer.tscn" id="2_egl0l"]
 [ext_resource type="Material" uid="uid://csotmk0m42uj7" path="res://materials/scrolling_background/profile_page_background.tres" id="3_3qqfa"]
 [ext_resource type="Texture2D" uid="uid://cdjd74jbkf8x2" path="res://ui/icons/Outfit_icon.svg" id="3_ktout"]
 [ext_resource type="Script" uid="uid://djdqk3bkipj00" path="res://ui/custom_button.gd" id="4_d7ng8"]
@@ -27,9 +26,6 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("1_ls64a")
-
-[node name="AlertLayer" parent="." unique_id=1583613566 instance=ExtResource("2_egl0l")]
-unique_name_in_owner = true
 
 [node name="CanvasLayer" type="CanvasLayer" parent="." unique_id=941123695]
 

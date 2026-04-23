@@ -8,6 +8,7 @@
 [ext_resource type="PackedScene" uid="uid://crkh8hdu5af84" path="res://gumbot/gumbot.tscn" id="4_43xba"]
 [ext_resource type="Shader" uid="uid://cw1km147x2fwu" path="res://materials/bot_mat/bot_shader.gdshader" id="5_k3023"]
 [ext_resource type="Texture2D" uid="uid://cas3gr887xevi" path="res://materials/bot_mat/bot_albedo.png" id="6_cy2wj"]
+[ext_resource type="Theme" uid="uid://bc7am0i2wif6u" path="res://ui/themes/default_button.tres" id="7_rsatm"]
 [ext_resource type="Texture2D" uid="uid://ba6mac1k3t38a" path="res://materials/bot_mat/bot_normals.png" id="7_x3urd"]
 [ext_resource type="Script" uid="uid://d2ybq2ovami5x" path="res://util/state_machine.gd" id="8_hb8fn"]
 
@@ -19,7 +20,7 @@ ambient_light_energy = 2.0
 ssao_enabled = true
 glow_enabled = true
 
-[sub_resource type="ShaderMaterial" id="ShaderMaterial_q0v5o"]
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_bpjvj"]
 resource_local_to_scene = true
 render_priority = 0
 shader = ExtResource("5_k3023")
@@ -33,21 +34,17 @@ shader_parameter/bot_color = Color(1, 0, 0, 1)
 font = ExtResource("2_p5ued")
 font_size = 40
 
-[sub_resource type="Theme" id="Theme_fxi6q"]
-default_font = ExtResource("2_p5ued")
-default_font_size = 50
-
 [sub_resource type="LabelSettings" id="LabelSettings_sqe1x"]
 font = ExtResource("3_nspls")
 font_size = 40
 
-[sub_resource type="ViewportTexture" id="ViewportTexture_rsatm"]
+[sub_resource type="ViewportTexture" id="ViewportTexture_uh2rv"]
 viewport_path = NodePath("SubViewport")
 
-[sub_resource type="ShaderMaterial" id="ShaderMaterial_bpjvj"]
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_m74q6"]
 resource_local_to_scene = true
 shader = ExtResource("3_rsatm")
-shader_parameter/to_tex = SubResource("ViewportTexture_rsatm")
+shader_parameter/to_tex = SubResource("ViewportTexture_uh2rv")
 shader_parameter/progress = 0.0
 shader_parameter/hex_size = 0.08
 shader_parameter/randomness = 0.05
@@ -93,7 +90,7 @@ current = true
 [node name="GumBot" parent="OverlaySubviewportContainer/OverlaySubViewport" unique_id=2126276004 instance=ExtResource("4_43xba")]
 unique_name_in_owner = true
 transform = Transform3D(-0.9408098, 0, 0.33893508, 0, 1, 0, -0.33893508, 0, -0.9408098, -0.6849959, -0.30148157, 0.73511076)
-surface_mat = SubResource("ShaderMaterial_q0v5o")
+surface_mat = SubResource("ShaderMaterial_bpjvj")
 
 [node name="DirectionalLight3D" type="DirectionalLight3D" parent="OverlaySubviewportContainer/OverlaySubViewport" unique_id=723242754]
 
@@ -148,7 +145,7 @@ alignment = 2
 [node name="HostGameButton" type="Button" parent="HBoxContainer" unique_id=836802073]
 unique_name_in_owner = true
 layout_mode = 2
-theme = SubResource("Theme_fxi6q")
+theme = ExtResource("7_rsatm")
 text = "HOST GAME"
 
 [node name="Label" type="Label" parent="." unique_id=48250606]
@@ -193,7 +190,7 @@ unique_name_in_owner = true
 visible = false
 z_index = 10
 layout_mode = 1
-transition_material = SubResource("ShaderMaterial_bpjvj")
+transition_material = SubResource("ShaderMaterial_m74q6")
 progress = 0.0
 
 [node name="DebugSquare" type="ColorRect" parent="." unique_id=1002237490]
@@ -253,18 +250,18 @@ alignment = 1
 [node name="CloseLobbyButton" type="Button" parent="JoinLobbyTab/CurrentLobbyDetail/LobbyDetailButtonRow" unique_id=412995301]
 unique_name_in_owner = true
 layout_mode = 2
-theme = SubResource("Theme_fxi6q")
+theme = ExtResource("7_rsatm")
 text = "CLOSE LOBBY"
 
 [node name="JoinLobbyButton" type="Button" parent="JoinLobbyTab/CurrentLobbyDetail/LobbyDetailButtonRow" unique_id=161993846]
 unique_name_in_owner = true
 custom_minimum_size = Vector2(200, 0)
 layout_mode = 2
-theme = SubResource("Theme_fxi6q")
+theme = ExtResource("7_rsatm")
 text = "JOIN"
 
 [node name="StartGameButton" type="Button" parent="JoinLobbyTab/CurrentLobbyDetail/LobbyDetailButtonRow" unique_id=1589335327]
 unique_name_in_owner = true
 layout_mode = 2
-theme = SubResource("Theme_fxi6q")
+theme = ExtResource("7_rsatm")
 text = "START GAME"

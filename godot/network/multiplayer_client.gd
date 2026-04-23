@@ -87,14 +87,14 @@ func join_lobby(lobby: Lobby) -> Error:
     "lobby_name": lobby.name
   })
 
-func create_lobby() -> String:
+func create_lobby(game_title: String) -> String:
   var request = AwaitableHTTPRequest.new()
   add_child(request)
   var response := await request.async_request(
     WSClient.get_database_server_url("game-lobby"),
     PackedStringArray(["Content-Type: application/json"]),
     HTTPClient.METHOD_POST,
-    JSON.stringify({ "chatterId": WSClient.my_chatter().id })
+    JSON.stringify({ "chatterId": WSClient.my_chatter().id, "game": game_title })
   )
   request.queue_free()
   if not response.success() or not response.status_ok():

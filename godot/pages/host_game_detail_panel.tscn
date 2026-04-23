@@ -1,6 +1,7 @@
 [gd_scene format=3 uid="uid://xru7gd0p7hh4"]
 
 [ext_resource type="Script" uid="uid://bxcch55khpli8" path="res://pages/host_game_detail_panel.gd" id="1_rn6fw"]
+[ext_resource type="Texture2D" uid="uid://c53kbdrgxxvfc" path="res://icon.svg" id="2_bm285"]
 [ext_resource type="FontFile" uid="uid://7uibxoligyvb" path="res://fonts/HomeVideo-BLG6G.ttf" id="2_bwslq"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_uh2rv"]
@@ -20,6 +21,8 @@ custom_minimum_size = Vector2(0, 340)
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
+offset_right = -829.0
+offset_bottom = -521.0
 grow_horizontal = 2
 grow_vertical = 2
 size_flags_horizontal = 3
@@ -27,6 +30,16 @@ size_flags_vertical = 3
 mouse_default_cursor_shape = 2
 theme_override_styles/panel = SubResource("StyleBoxFlat_uh2rv")
 script = ExtResource("1_rn6fw")
+
+[node name="HTTPRequest" type="HTTPRequest" parent="." unique_id=1631767386]
+unique_name_in_owner = true
+
+[node name="GameThumbnail" type="TextureRect" parent="." unique_id=2068759757]
+unique_name_in_owner = true
+layout_mode = 2
+texture = ExtResource("2_bm285")
+expand_mode = 3
+stretch_mode = 6
 
 [node name="MarginContainer" type="MarginContainer" parent="." unique_id=1328738659]
 layout_mode = 2

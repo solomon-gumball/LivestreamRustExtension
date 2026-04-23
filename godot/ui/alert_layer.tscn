@@ -2,6 +2,16 @@
 
 [ext_resource type="FontFile" uid="uid://7uibxoligyvb" path="res://fonts/HomeVideo-BLG6G.ttf" id="1_35r2s"]
 [ext_resource type="Script" uid="uid://cfvkcj0drs555" path="res://ui/alert_layer.gd" id="1_656r4"]
+[ext_resource type="Theme" uid="uid://bc7am0i2wif6u" path="res://ui/themes/default_button.tres" id="3_1i3b8"]
+
+[sub_resource type="Theme" id="Theme_1i3b8"]
+
+[sub_resource type="Gradient" id="Gradient_p5pdg"]
+offsets = PackedFloat32Array(0, 0.5375335, 1)
+colors = PackedColorArray(0, 0, 0, 0, 0.099985994, 0.099985994, 0.099985994, 1, 0, 0, 0, 0)
+
+[sub_resource type="GradientTexture1D" id="GradientTexture1D_xp1vb"]
+gradient = SubResource("Gradient_p5pdg")
 
 [node name="AlertLayer" type="CanvasLayer" unique_id=1583613566]
 layer = 2
@@ -9,7 +19,6 @@ script = ExtResource("1_656r4")
 
 [node name="Overlay" type="ColorRect" parent="." unique_id=1907039240]
 unique_name_in_owner = true
-visible = false
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
@@ -17,17 +26,47 @@ grow_horizontal = 2
 grow_vertical = 2
 color = Color(0, 0, 0, 0.47843137)
 
-[node name="AlertLabel" type="RichTextLabel" parent="Overlay" unique_id=545361181]
-unique_name_in_owner = true
+[node name="Panel" type="Control" parent="Overlay" unique_id=2008302669]
 layout_mode = 1
 anchors_preset = 14
 anchor_top = 0.5
 anchor_right = 1.0
 anchor_bottom = 0.5
-offset_top = -45.0
-offset_bottom = 45.0
+offset_top = -131.5
+offset_bottom = 131.5
 grow_horizontal = 2
 grow_vertical = 2
+
+[node name="Background" type="TextureRect" parent="Overlay/Panel" unique_id=1113935989]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme = SubResource("Theme_1i3b8")
+texture = SubResource("GradientTexture1D_xp1vb")
+
+[node name="MarginContainer" type="MarginContainer" parent="Overlay/Panel" unique_id=1027877222]
+layout_mode = 0
+offset_right = 1600.0
+offset_bottom = 263.0
+theme_override_constants/margin_left = 0
+theme_override_constants/margin_top = 40
+theme_override_constants/margin_right = 0
+theme_override_constants/margin_bottom = 40
+
+[node name="VBoxContainer" type="VBoxContainer" parent="Overlay/Panel/MarginContainer" unique_id=142763945]
+custom_minimum_size = Vector2(800, 0)
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 4
+theme_override_constants/separation = 40
+alignment = 1
+
+[node name="AlertLabel" type="RichTextLabel" parent="Overlay/Panel/MarginContainer/VBoxContainer" unique_id=545361181]
+unique_name_in_owner = true
+layout_mode = 2
 theme_override_fonts/normal_font = ExtResource("1_35r2s")
 theme_override_fonts/bold_font = ExtResource("1_35r2s")
 theme_override_fonts/bold_italics_font = ExtResource("1_35r2s")
@@ -39,3 +78,9 @@ text = "[font_size=50]Lost connection to server.[/font_size]
 [font_size=50]Reconnecting...[/font_size]"
 fit_content = true
 horizontal_alignment = 1
+
+[node name="DismissButton" type="Button" parent="Overlay/Panel/MarginContainer/VBoxContainer" unique_id=2031769832]
+unique_name_in_owner = true
+layout_mode = 2
+theme = ExtResource("3_1i3b8")
+text = "OK"
