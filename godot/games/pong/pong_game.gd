@@ -116,9 +116,7 @@ func _ready() -> void:
       "skipped": false
     })
     _send_refresh_state(MultiplayerPeer.TARGET_PEER_BROADCAST)
-    MultiplayerClient.rtc_peer_ready.connect(func (peer):
-      _send_refresh_state(peer)
-    )
+    MultiplayerClient.rtc_peer_ready.connect(_send_refresh_state)
   else:
     MultiplayerClient.send_packet(
       {
@@ -130,6 +128,13 @@ func _ready() -> void:
 
   # This must be at the end so the paddle by id is ready  
   _handle_chatter_updated(WSClient.my_chatter())
+
+func _exit_tree() -> void:
+  MultiplayerClient.connected_state.left_lobby.disconnect(_left_lobby)
+  MultiplayerClient.packet_received.disconnect(_handle_peer_packet)
+  WSClient.authenticated_state.chatter_updated.disconnect(_handle_chatter_updated)
+  if MultiplayerClient.is_authority():
+    MultiplayerClient.rtc_peer_ready.disconnect(_send_refresh_state)
 
 func trigger_ending_character_anims() -> void:
   if game_state.paddle_l_state.score > game_state.paddle_r_state.score:

@@ -37,18 +37,15 @@ func _ready() -> void:
   state.add_child(game_active_state)
 
   WSClient.authenticated_state.chatter_updated.connect(_handle_chatter_updated)
-  WSClient.state.changed.connect(func(_s): _handle_updates())
+  WSClient.state.changed.connect(_handle_ws_state_changed)
   WSClient.authenticated_state.message_received.connect(_handle_ws_message)
-  MultiplayerClient.state.changed.connect(func(_s): _handle_updates())
+  MultiplayerClient.state.changed.connect(_handle_mp_state_changed)
   MultiplayerClient.connected_state.ping_check_completed.connect(_update_ping_label)
 
   close_lobby_button.pressed.connect(_close_lobby)
   start_game_button.pressed.connect(_start_game)
 
-  game_active_state.game_ended.connect(func():
-    MultiplayerClient.leave_lobby()
-    _handle_updates()
-  )
+  game_active_state.game_ended.connect(_handle_game_ended)
 
   _handle_chatter_updated(WSClient.my_chatter())
 
@@ -96,9 +93,23 @@ func _handle_updates() -> void:
 func _update_ping_label(msec_ping: float) -> void:
   ping_label.text = "PING: %sms" % int(msec_ping)
 
+func _handle_ws_state_changed(_s) -> void:
+  _handle_updates()
+
+func _handle_mp_state_changed(_s) -> void:
+  _handle_updates()
+
+func _handle_game_ended() -> void:
+  MultiplayerClient.leave_lobby()
+  _handle_updates()
+
 func _exit_tree() -> void:
-  # MultiplayerClient.stop()
-  pass
+  WSClient.authenticated_state.chatter_updated.disconnect(_handle_chatter_updated)
+  WSClient.state.changed.disconnect(_handle_ws_state_changed)
+  WSClient.authenticated_state.message_received.disconnect(_handle_ws_message)
+  MultiplayerClient.state.changed.disconnect(_handle_mp_state_changed)
+  MultiplayerClient.connected_state.ping_check_completed.disconnect(_update_ping_label)
+  WSClient.state.changed.disconnect(_handle_websocket_connection_changed)
 
 func _close_lobby() -> void:
   MultiplayerClient.leave_lobby()
