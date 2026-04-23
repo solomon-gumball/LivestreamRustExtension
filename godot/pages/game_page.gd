@@ -54,10 +54,14 @@ func _ready() -> void:
 
   _handle_chatter_updated(WSClient.my_chatter())
 
-  if WSClient.state.current is WSClient.AuthenticatedState:
-    WSClient.send_socket_message({ "type": "rtc-fetch-lobbies" })
+  _handle_websocket_connection_changed(WSClient.state.current)
+  WSClient.state.changed.connect(_handle_websocket_connection_changed)
 
   _handle_updates()
+
+func _handle_websocket_connection_changed(connection_state: WSClient.WSClientState) -> void:
+  if connection_state is WSClient.AuthenticatedState:
+    WSClient.send_socket_message({ "type": "rtc-fetch-lobbies" })
 
 func _handle_ws_message(parsed: Variant) -> void:
   if typeof(parsed) != TYPE_DICTIONARY:
@@ -79,8 +83,11 @@ func _handle_updates() -> void:
     return
 
   if MultiplayerClient.state.current is MultiplayerClient.Connected:
-    lobby_detail_state.lobby = MultiplayerClient.current_lobby
-    state.change_state(lobby_detail_state)
+    if MultiplayerClient.current_lobby.started:
+      state.change_state(game_active_state)
+    else:
+      lobby_detail_state.lobby = MultiplayerClient.current_lobby
+      state.change_state(lobby_detail_state)
     return
 
   if lobby_list.is_empty():
@@ -93,7 +100,8 @@ func _update_ping_label(msec_ping: float) -> void:
   ping_label.text = "PING: %sms" % int(msec_ping)
 
 func _exit_tree() -> void:
-  MultiplayerClient.stop()
+  # MultiplayerClient.stop()
+  pass
 
 func _close_lobby() -> void:
   MultiplayerClient.leave_lobby()
@@ -191,6 +199,7 @@ class LobbyDetailState extends GamePageState:
     page.lobby_name_label.text = "Lobby: %s" % lobby.name
     page.client_id_label.text = "Peer ID: %d" % MultiplayerClient.my_peer_id()
 
+    print("my_peer peer_id->", my_peer.peer_id, ' connected->', my_peer.connected)
     if my_peer != null:
       if not my_peer.connected:
         page.join_game_button.text = "REJOIN"
@@ -221,10 +230,10 @@ class LobbyDetailState extends GamePageState:
         my_peer = peer
         break
 
+    # TODO: What is this?? lol
     if my_peer != null and my_peer.connected:
       MultiplayerClient.leave_lobby()
     else:
-      print("JOINING LOBBY!!")
       MultiplayerClient.join_lobby(lobby)
 
 class LoadingState extends GamePageState:

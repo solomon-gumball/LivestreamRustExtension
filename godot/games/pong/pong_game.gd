@@ -69,7 +69,7 @@ func _ready() -> void:
   is_game_host = lobby.host_chatter_id == WSClient.my_chatter().id
 
   visible = false
-  MultiplayerClient.current_lobby_updated.connect(_lobby_updated)
+  # MultiplayerClient.lobbies_updated.connect(_lobbies_updated)
   MultiplayerClient.packet_received.connect(_handle_peer_packet)
   WSClient.authenticated_state.chatter_updated.connect(_handle_chatter_updated)
 
@@ -144,8 +144,8 @@ func _anim_finished(anim_name: String) -> void:
   if anim_name == "outro":
     game_finished.emit()
 
-func _lobby_updated(new_lobby: Lobby) -> void:
-  lobby = new_lobby
+func _lobbies_updated(_lobbies: Array[Lobby]) -> void:
+  lobby = MultiplayerClient.current_lobby
 
 func _try_skip_curr_animation() -> void:
   if local_anim_state and !local_anim_state.skipped:
