@@ -19,7 +19,7 @@ ambient_light_energy = 2.0
 ssao_enabled = true
 glow_enabled = true
 
-[sub_resource type="ShaderMaterial" id="ShaderMaterial_rsatm"]
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_q0v5o"]
 resource_local_to_scene = true
 render_priority = 0
 shader = ExtResource("5_k3023")
@@ -41,13 +41,13 @@ default_font_size = 50
 font = ExtResource("3_nspls")
 font_size = 40
 
-[sub_resource type="ViewportTexture" id="ViewportTexture_bpjvj"]
+[sub_resource type="ViewportTexture" id="ViewportTexture_rsatm"]
 viewport_path = NodePath("SubViewport")
 
-[sub_resource type="ShaderMaterial" id="ShaderMaterial_uh2rv"]
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_bpjvj"]
 resource_local_to_scene = true
 shader = ExtResource("3_rsatm")
-shader_parameter/to_tex = SubResource("ViewportTexture_bpjvj")
+shader_parameter/to_tex = SubResource("ViewportTexture_rsatm")
 shader_parameter/progress = 0.0
 shader_parameter/hex_size = 0.08
 shader_parameter/randomness = 0.05
@@ -93,7 +93,7 @@ current = true
 [node name="GumBot" parent="OverlaySubviewportContainer/OverlaySubViewport" unique_id=2126276004 instance=ExtResource("4_43xba")]
 unique_name_in_owner = true
 transform = Transform3D(-0.9408098, 0, 0.33893508, 0, 1, 0, -0.33893508, 0, -0.9408098, -0.6849959, -0.30148157, 0.73511076)
-surface_mat = SubResource("ShaderMaterial_rsatm")
+surface_mat = SubResource("ShaderMaterial_q0v5o")
 
 [node name="DirectionalLight3D" type="DirectionalLight3D" parent="OverlaySubviewportContainer/OverlaySubViewport" unique_id=723242754]
 
@@ -193,7 +193,7 @@ unique_name_in_owner = true
 visible = false
 z_index = 10
 layout_mode = 1
-transition_material = SubResource("ShaderMaterial_uh2rv")
+transition_material = SubResource("ShaderMaterial_bpjvj")
 progress = 0.0
 
 [node name="DebugSquare" type="ColorRect" parent="." unique_id=1002237490]

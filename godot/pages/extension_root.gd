@@ -33,27 +33,25 @@ func _handle_connection_status_changed(state: WSClient.WSClientState) -> void:
     alert_layer.hide_alert()
 
 func _navigate_to_page(page: int) -> void:
-  var new_page: Node
+  if active_page:
+    active_page.queue_free()
   match page:
     ExtensionPage.Profile:
       profile_button.selected = true
       play_game_button.selected = false
       host_game_button.selected = false
-      new_page = profile_page_template.instantiate()
+      active_page = profile_page_template.instantiate()
     ExtensionPage.PlayGame:
       profile_button.selected = false
       play_game_button.selected = true
       host_game_button.selected = false
-      new_page = game_page_template.instantiate()
+      active_page = game_page_template.instantiate()
     ExtensionPage.HostGame:
       profile_button.selected = false
       play_game_button.selected = false
       host_game_button.selected = true
-      new_page = host_game_page_template.instantiate()
-    
-  if active_page:
-    page_container.remove_child(active_page)
-    active_page.queue_free()
+      var host_game_scene: HostGamePage = host_game_page_template.instantiate()
+      active_page = host_game_scene
+      active_page.on_lobby_created.connect(_navigate_to_page.bind(ExtensionPage.PlayGame))
 
-  active_page = new_page
-  page_container.add_child(new_page)
+  page_container.add_child(active_page)

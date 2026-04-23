@@ -2,7 +2,6 @@ extends Node
 
 @export var mesh: bool = false
 
-signal current_lobby_updated(lobby: Lobby)
 signal packet_received(id: int, packet: Dictionary)
 @warning_ignore("UNUSED_SIGNAL")
 signal rtc_peer_ready(peer: int)
@@ -11,11 +10,7 @@ var state: StateMachine
 var disconnected_state: Disconnected
 var connected_state: Connected
 
-var current_lobby: Lobby = null:
-  set(val):
-    current_lobby = val
-    current_lobby_updated.emit(val)
-
+var current_lobby: Lobby = null
 var rtc_mp := WebRTCMultiplayerPeer.new()
 
 const PRINT_DEBUG: bool = false

@@ -7,6 +7,9 @@ var current : State = null
 signal changed(new_state: State)
 
 func change_state(next_state : State) -> void:
+  if current == next_state:
+    return
+
   if is_instance_valid(current):
     current.exit_state()
 

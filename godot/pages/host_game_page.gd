@@ -2,6 +2,7 @@ extends Control
 class_name HostGamePage
 
 @onready var game_grid: GridContainer = %GameGrid 
+signal on_lobby_created
 
 var game_detail_template: PackedScene = preload("res://pages/host_game_detail_panel.tscn")
 
@@ -10,6 +11,7 @@ func _ready() -> void:
 
 func _on_game_selected(_metadata: GameMetadata) -> void:
   MultiplayerClient.create_lobby()
+  on_lobby_created.emit()
 
 func _load_games() -> void:
   for child in game_grid.get_children():
