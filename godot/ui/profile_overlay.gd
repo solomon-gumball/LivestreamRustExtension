@@ -37,7 +37,11 @@ func _update_grid_items() -> void:
   for grid_item in grid_items:
     if slot_wearables.size() > asset_index:
       var wearable_item = slot_wearables[asset_index]
-      grid_item.icon_texture = await ImageLoader.load_asset_thumbnail(wearable_item.name)
+      var captured_grid_item = grid_item
+      var cached = ImageLoader.load_asset_thumbnail(wearable_item.name, func(tex, _url):
+        captured_grid_item.icon_texture = tex)
+      if cached != null:
+        grid_item.icon_texture = cached
       asset_index += 1
       grid_item.value = wearable_item.name
     else:

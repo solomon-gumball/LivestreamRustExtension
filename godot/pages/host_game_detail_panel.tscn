@@ -10,13 +10,14 @@ content_margin_top = 0.0
 content_margin_right = 0.0
 content_margin_bottom = 0.0
 bg_color = Color(0.9, 0.40080002, 0.324, 1)
-corner_radius_top_left = 14
-corner_radius_top_right = 14
-corner_radius_bottom_right = 14
-corner_radius_bottom_left = 14
+corner_radius_top_left = 20
+corner_radius_top_right = 20
+corner_radius_bottom_right = 20
+corner_radius_bottom_left = 20
 corner_detail = 5
 
 [node name="HostGameDetailPanel" type="PanelContainer" unique_id=662236335]
+clip_children = 2
 custom_minimum_size = Vector2(0, 340)
 anchors_preset = 15
 anchor_right = 1.0
@@ -30,9 +31,6 @@ size_flags_vertical = 3
 mouse_default_cursor_shape = 2
 theme_override_styles/panel = SubResource("StyleBoxFlat_uh2rv")
 script = ExtResource("1_rn6fw")
-
-[node name="HTTPRequest" type="HTTPRequest" parent="." unique_id=1631767386]
-unique_name_in_owner = true
 
 [node name="GameThumbnail" type="TextureRect" parent="." unique_id=2068759757]
 unique_name_in_owner = true

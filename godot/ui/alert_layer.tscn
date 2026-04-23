@@ -8,7 +8,7 @@
 
 [sub_resource type="Gradient" id="Gradient_p5pdg"]
 offsets = PackedFloat32Array(0, 0.5375335, 1)
-colors = PackedColorArray(0, 0, 0, 0, 0.099985994, 0.099985994, 0.099985994, 1, 0, 0, 0, 0)
+colors = PackedColorArray(0.97, 0.307975, 0.08729998, 0, 0.972549, 0.31764707, 0.09019608, 1, 0.97, 0.307975, 0.08729998, 0)
 
 [sub_resource type="GradientTexture1D" id="GradientTexture1D_xp1vb"]
 gradient = SubResource("Gradient_p5pdg")
