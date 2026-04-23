@@ -60,7 +60,7 @@ func leave_lobby() -> void:
       "type": "rtc-leave-lobby",
       "lobby_id": current_lobby.name
     })
-    state.change_state(disconnected_state)
+  state.change_state(disconnected_state)
 
 func start_lobby() -> void:
   if MultiplayerClient.current_lobby:
@@ -153,6 +153,8 @@ func my_peer_id() -> int:
   return rtc_mp.get_unique_id()
 
 func is_authority() -> bool:
+  if rtc_mp.get_connection_status() == MultiplayerPeer.CONNECTION_DISCONNECTED:
+    return false
   return rtc_mp.get_unique_id() == 1
 
 func is_initialized() -> bool:

@@ -27,7 +27,6 @@ var state := StateMachine.new()
 var disconnected_state := DisconnectedState.new(self)
 var looking_for_lobby_state := LookingForLobbyState.new(self)
 var lobby_detail_state := LobbyDetailState.new(self)
-var loading_state := LoadingState.new(self)
 var game_active_state := GameActiveState.new(self)
 
 func _ready() -> void:
@@ -35,7 +34,6 @@ func _ready() -> void:
   state.add_child(disconnected_state)
   state.add_child(looking_for_lobby_state)
   state.add_child(lobby_detail_state)
-  state.add_child(loading_state)
   state.add_child(game_active_state)
 
   WSClient.authenticated_state.chatter_updated.connect(_handle_chatter_updated)
@@ -47,9 +45,9 @@ func _ready() -> void:
   close_lobby_button.pressed.connect(_close_lobby)
   start_game_button.pressed.connect(_start_game)
 
-  loading_state.loading_complete.connect(state.change_state.bind(game_active_state))
   game_active_state.game_ended.connect(func():
     MultiplayerClient.leave_lobby()
+    _handle_updates()
   )
 
   _handle_chatter_updated(WSClient.my_chatter())
@@ -75,14 +73,13 @@ func _handle_ws_message(parsed: Variant) -> void:
     _handle_updates()
 
 func _handle_updates() -> void:
-  if state.current is LoadingState or state.current is GameActiveState:
-    return
 
   if WSClient.state.current is WSClient.DisconnectedState:
     state.change_state(disconnected_state)
     return
 
   if MultiplayerClient.state.current is MultiplayerClient.Connected:
+    print('we are still connected???')
     if MultiplayerClient.current_lobby.started:
       state.change_state(game_active_state)
     else:
@@ -199,8 +196,9 @@ class LobbyDetailState extends GamePageState:
     page.lobby_name_label.text = "Lobby: %s" % lobby.name
     page.client_id_label.text = "Peer ID: %d" % MultiplayerClient.my_peer_id()
 
-    print("my_peer peer_id->", my_peer.peer_id, ' connected->', my_peer.connected)
     if my_peer != null:
+      print("my_peer peer_id->", my_peer.peer_id, ' connected->', my_peer.connected)
+
       if not my_peer.connected:
         page.join_game_button.text = "REJOIN"
         page.join_game_button.visible = true
@@ -236,27 +234,14 @@ class LobbyDetailState extends GamePageState:
     else:
       MultiplayerClient.join_lobby(lobby)
 
-class LoadingState extends GamePageState:
-  signal loading_complete
-
-  func enter_state(_prev: State) -> void:
-    page.start_game_button.visible = false
-    page.close_lobby_button.visible = false
-    page.center_info_label.visible = false
-    page.lobby_info_panel.visible = false
-    page.join_game_button.visible = false
-    _transition()
-
-  func _transition() -> void:
-    await page.loading.transition_in()
-    await page.get_tree().create_timer(1.0).timeout
-    loading_complete.emit()
-
 class GameActiveState extends GamePageState:
   signal game_ended
   var game_scene: PongGame = null
 
   func enter_state(_prev: State) -> void:
+    if _prev is LobbyDetailState:
+      await page.loading.transition_in()
+
     page.overlay_subviewport_container.visible = false
     page.start_game_button.visible = false
     page.close_lobby_button.visible = false
@@ -269,7 +254,8 @@ class GameActiveState extends GamePageState:
     page.game_root_node.add_child(game_scene)
     game_scene.game_finished.connect(_on_game_finished)
 
-    page.loading.transition_out()
+    if _prev is LobbyDetailState:
+      await page.loading.transition_out()
 
   func _on_game_finished() -> void:
     await page.loading.transition_in()
