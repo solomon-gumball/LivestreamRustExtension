@@ -279,29 +279,65 @@ class GameActiveState extends GamePageState:
   signal game_ended
   var game_scene: GameBase = null
 
-  func load_game_from_pck() -> bool:
-    var lobby := MultiplayerClient.current_lobby
-    var pck_url := WSClient.get_database_server_url(lobby.game.bundle_url)
+  const PCK_CACHE_PATH := "user://games/pck_cache.json"
+  var pck_cache: Dictionary = {}
 
-    var request := AwaitableHTTPRequest.new()
-    add_child(request)
-    var result := await request.async_request(pck_url)
-    request.queue_free()
+  func _ready() -> void:
+    _load_pck_cache()
 
-    if not result.success() or not result.status_ok():
-      push_error("GameActiveState: failed to download PCK from %s (status %d)" % [pck_url, result.status])
-      return false
-
-    var tmp_path := "user://minigame_bundle.pck"
-    var file := FileAccess.open(tmp_path, FileAccess.WRITE)
+  func _load_pck_cache() -> void:
+    var file := FileAccess.open(PCK_CACHE_PATH, FileAccess.READ)
     if file == null:
-      push_error("GameActiveState: could not open %s for writing" % tmp_path)
-      return false
-    file.store_buffer(result.bytes)
+      return
+    var parsed: Variant = JSON.parse_string(file.get_as_text())
+    file.close()
+    if parsed is Dictionary:
+      pck_cache = parsed
+
+  func _save_pck_cache() -> void:
+    DirAccess.make_dir_recursive_absolute("user://games")
+    var file := FileAccess.open(PCK_CACHE_PATH, FileAccess.WRITE)
+    if file == null:
+      push_error("GameActiveState: could not write pck_cache to %s" % PCK_CACHE_PATH)
+      return
+    file.store_string(JSON.stringify(pck_cache))
     file.close()
 
-    if not ProjectSettings.load_resource_pack(tmp_path):
-      push_error("GameActiveState: load_resource_pack failed for %s" % tmp_path)
+  func load_game_from_pck() -> bool:
+    var game := MultiplayerClient.current_lobby.game
+    var title := game.title
+    var pck_path := "user://games/%s.pck" % title
+
+    var cached_hash := str(pck_cache.get(title, ""))
+    var needs_download := cached_hash != game.pck_hash or not FileAccess.file_exists(pck_path)
+
+    if needs_download:
+      print("PCK needs download!")
+      var pck_url := WSClient.get_database_server_url(game.bundle_url)
+      var request := AwaitableHTTPRequest.new()
+      add_child(request)
+      var result := await request.async_request(pck_url)
+      request.queue_free()
+
+      if not result.success() or not result.status_ok():
+        push_error("GameActiveState: failed to download PCK from %s (status %d)" % [pck_url, result.status])
+        return false
+
+      DirAccess.make_dir_recursive_absolute("user://games")
+      var file := FileAccess.open(pck_path, FileAccess.WRITE)
+      if file == null:
+        push_error("GameActiveState: could not open %s for writing" % pck_path)
+        return false
+      file.store_buffer(result.bytes)
+      file.close()
+
+      pck_cache[title] = game.pck_hash
+      _save_pck_cache()
+    else:
+      print("PCK was cached and not fetched!")
+
+    if not ProjectSettings.load_resource_pack(pck_path):
+      push_error("GameActiveState: load_resource_pack failed for %s" % pck_path)
       return false
 
     return true

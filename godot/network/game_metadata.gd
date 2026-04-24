@@ -8,6 +8,7 @@ var entry: String
 var cost: int
 var min_players: int
 var max_players: int
+var pck_hash: String
 
 static func FromData(data: Dictionary) -> GameMetadata:
   var metadata := GameMetadata.new()
@@ -19,4 +20,5 @@ static func FromData(data: Dictionary) -> GameMetadata:
   metadata.cost = data.get("cost", 0)
   metadata.min_players = data.get("min_players", 0)
   metadata.max_players = data.get("max_players", 0)
+  metadata.pck_hash = data.get("pck_hash", "")
   return metadata

@@ -91,7 +91,7 @@ for game_dir in "$GAMES_SOURCE_DIR"/*/; do
 import json, sys
 with open(sys.argv[1]) as f:
     data = json.load(f)
-data['hash'] = sys.argv[2]
+data['pck_hash'] = sys.argv[2]
 print(json.dumps(data, indent=2))
 " "$game_dir/manifest.json" "$bundle_hash" > "$output_dir/manifest.json"
 
