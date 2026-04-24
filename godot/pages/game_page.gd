@@ -7,7 +7,12 @@ extends Control
 @onready var lobby_info_panel: Control = %LobbyInfoPanel
 @onready var center_info_label: RichTextLabel = %CenterInfoLabel
 @onready var start_game_button: Button = %StartGameButton
-@onready var join_game_button: Button = %JoinLobbyButton
+@onready var rejoin_lobby_button: Button = %RejoinLobbyButton
+
+@onready var join_as_spectator_button: Button = %JoinAsSpectatorButton
+@onready var join_as_player_button: Button = %JoinAsPlayerButton
+@onready var change_role_button: Button = %ChangeRoleButton
+
 @onready var close_lobby_button: Button = %CloseLobbyButton
 @onready var game_root_node: Node3D = %GameRootNode
 @onready var ping_label: Label = %PingLabel
@@ -138,13 +143,14 @@ func _stat_line(label: String, base_dots: int, value: int) -> String:
   return "[font_size=50]%s%s%d[/font_size]" % [label, dots, value]
 
 func _get_joining_text(lobby: Lobby) -> String:
-  var player_count = lobby.peers.size() if lobby else 0
+  var player_count = lobby.players.size() if lobby else 0
+  var spectator_count = lobby.spectators.size() if lobby else 0
   return "\n".join([
     "[font_size=50]JOINING[/font_size]",
     "[font_size=120]PONG[/font_size]",
     "[font_size=50]\nSTAKES....[color=green]100 gum[/color][/font_size]",
     _stat_line("PLAYERS", 9, player_count),
-    _stat_line("SPECTATORS", 6, 4),
+    _stat_line("SPECTATORS", 6, spectator_count),
   ])
 
 class GamePageState extends State:
@@ -160,15 +166,21 @@ class DisconnectedState extends GamePageState:
     page.game_subviewport_container.visible = false
     page.center_info_label.visible = true
     page.center_info_label.text = ""
-    page.join_game_button.visible = false
+    page.rejoin_lobby_button.visible = false
+    page.join_as_player_button.visible = false
+    page.join_as_spectator_button.visible = false
+    page.change_role_button.visible = false
 
 class LookingForLobbyState extends GamePageState:
   func enter_state(_prev: State) -> void:
     page.start_game_button.visible = false
     page.close_lobby_button.visible = false
     page.center_info_label.visible = true
-    page.join_game_button.visible = false
+    page.rejoin_lobby_button.visible = false
     page.lobby_info_panel.visible = false
+    page.join_as_player_button.visible = false
+    page.join_as_spectator_button.visible = false
+    page.change_role_button.visible = false
     page.game_subviewport_container.visible = false
     page._type_text(GamePage.LOOKING_TEXT, 0.1, true)
 
@@ -187,63 +199,77 @@ class LobbyDetailState extends GamePageState:
     page.center_info_label.visible = true
     page.lobby_info_panel.visible = true
     page._type_text(page._get_joining_text(lobby), 0.1, false)
-    page.join_game_button.pressed.connect(_handle_join_pressed)
+    page.join_as_player_button.pressed.connect(_handle_join_as_player_pressed)
+    page.join_as_spectator_button.pressed.connect(_handle_join_as_spectator_pressed)
+    page.rejoin_lobby_button.pressed.connect(_handle_rejoin_pressed)
+    page.change_role_button.pressed.connect(_handle_change_role_pressed)
     _refresh_buttons()
 
   func exit_state() -> void:
-    page.join_game_button.pressed.disconnect(_handle_join_pressed)
+    page.join_as_player_button.pressed.disconnect(_handle_join_as_player_pressed)
+    page.join_as_spectator_button.pressed.disconnect(_handle_join_as_spectator_pressed)
+    page.rejoin_lobby_button.pressed.disconnect(_handle_rejoin_pressed)
+    page.change_role_button.pressed.disconnect(_handle_change_role_pressed)
+
+  func _find_my_peer() -> Lobby.PeerData:
+    var my_chatter_id := WSClient.my_chatter().id
+    for peer in lobby.peers:
+      if peer.chatter_id == my_chatter_id:
+        return peer
+    return null
 
   func _refresh_buttons() -> void:
     if not lobby:
       return
-    var my_chatter_id := WSClient.my_chatter().id
-    var my_peer: Lobby.PeerData = null
-    for peer in lobby.peers:
-      if peer.chatter_id == my_chatter_id:
-        my_peer = peer
-        break
-    
+
     page.center_info_label.text = page._get_joining_text(lobby)
     page.lobby_name_label.text = "Lobby: %s" % lobby.name
     page.client_id_label.text = "Peer ID: %d" % MultiplayerClient.my_peer_id()
 
-    if my_peer != null:
-      print("my_peer peer_id->", my_peer.peer_id, ' connected->', my_peer.connected)
-
-      if not my_peer.connected:
-        page.join_game_button.text = "REJOIN"
-        page.join_game_button.visible = true
-        page.start_game_button.visible = false
-        page.close_lobby_button.visible = false
-      else:
-        var is_host := lobby.host_chatter_id == my_chatter_id
-        page.join_game_button.visible = false
-        page.start_game_button.visible = is_host
-        page.close_lobby_button.visible = is_host
-        if not is_host:
-          page.close_lobby_button.visible = false
-          page.start_game_button.visible = false
-          page.join_game_button.text = "LEAVE"
-          page.join_game_button.visible = true
-    else:
-      page.join_game_button.text = "JOIN"
-      page.join_game_button.visible = true
-      page.start_game_button.visible = false
-      page.close_lobby_button.visible = false
-
-  func _handle_join_pressed() -> void:
+    var my_peer := _find_my_peer()
     var my_chatter_id := WSClient.my_chatter().id
-    var my_peer: Lobby.PeerData = null
-    for peer in lobby.peers:
-      if peer.chatter_id == my_chatter_id:
-        my_peer = peer
-        break
+    var is_host := lobby.host_chatter_id == my_chatter_id
 
-    # TODO: What is this?? lol
-    if my_peer != null and my_peer.connected:
-      MultiplayerClient.leave_lobby()
+    # Default all managed buttons to hidden; selectively show below.
+    page.join_as_player_button.visible = false
+    page.join_as_spectator_button.visible = false
+    page.rejoin_lobby_button.visible = false
+    page.change_role_button.visible = false
+    page.start_game_button.visible = false
+    page.close_lobby_button.visible = false
+
+    if my_peer == null:
+      # Not in the lobby yet — offer both join options.
+      page.join_as_player_button.visible = true
+      page.join_as_spectator_button.visible = true
+    elif not my_peer.connected:
+      # In the lobby but WS dropped — single rejoin button, role is preserved server-side.
+      # page.rejoin_lobby_button.text = "REJOIN"
+      page.rejoin_lobby_button.visible = true
     else:
-      MultiplayerClient.join_lobby(lobby)
+      # Connected and in the lobby.
+      page.close_lobby_button.visible = is_host
+      page.start_game_button.visible = is_host
+      # Role toggle: label reflects what the switch would do.
+      page.change_role_button.text = "BECOME SPECTATOR" if my_peer.is_player else "BECOME PLAYER"
+      page.change_role_button.visible = true
+      if not is_host:
+        page.rejoin_lobby_button.text = "LEAVE"
+        page.rejoin_lobby_button.visible = true
+
+  func _handle_join_as_player_pressed() -> void:
+    WSClient.send_socket_message({ "type": "rtc-join-lobby", "lobby_name": lobby.name, "is_player": true })
+
+  func _handle_join_as_spectator_pressed() -> void:
+    WSClient.send_socket_message({ "type": "rtc-join-lobby", "lobby_name": lobby.name, "is_player": false })
+
+  func _handle_rejoin_pressed() -> void:
+    WSClient.send_socket_message({ "type": "rtc-join-lobby", "lobby_name": lobby.name })
+
+  func _handle_change_role_pressed() -> void:
+    var my_peer := _find_my_peer()
+    if my_peer:
+      MultiplayerClient.set_role(not my_peer.is_player)
 
 class GameActiveState extends GamePageState:
   signal game_ended
@@ -258,7 +284,7 @@ class GameActiveState extends GamePageState:
     page.close_lobby_button.visible = false
     page.center_info_label.visible = false
     page.game_subviewport_container.visible = true
-    page.join_game_button.visible = false
+    page.rejoin_lobby_button.visible = false
 
     game_scene = page.pong_game_template.instantiate()
     game_scene.lobby = MultiplayerClient.current_lobby

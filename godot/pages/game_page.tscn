@@ -217,8 +217,10 @@ theme_override_constants/margin_right = 30
 theme_override_constants/margin_bottom = 30
 
 [node name="CurrentLobbyDetail" type="VBoxContainer" parent="JoinLobbyTab" unique_id=2094804115]
-custom_minimum_size = Vector2(800, 0)
+custom_minimum_size = Vector2(600, 0)
 layout_mode = 2
+size_flags_horizontal = 4
+theme_override_constants/separation = 40
 alignment = 1
 
 [node name="CenterInfoLabel" type="RichTextLabel" parent="JoinLobbyTab/CurrentLobbyDetail" unique_id=395124137]
@@ -243,22 +245,36 @@ STAKES....[color=green]100 gum[/color][/font_size]
 fit_content = true
 horizontal_alignment = 1
 
-[node name="LobbyDetailButtonRow" type="HBoxContainer" parent="JoinLobbyTab/CurrentLobbyDetail" unique_id=871262480]
+[node name="LobbyDetailButtonRow" type="VBoxContainer" parent="JoinLobbyTab/CurrentLobbyDetail" unique_id=647144216]
 layout_mode = 2
 alignment = 1
 
-[node name="CloseLobbyButton" type="Button" parent="JoinLobbyTab/CurrentLobbyDetail/LobbyDetailButtonRow" unique_id=412995301]
+[node name="StartGameButton" type="Button" parent="JoinLobbyTab/CurrentLobbyDetail/LobbyDetailButtonRow" unique_id=1589335327]
 unique_name_in_owner = true
 layout_mode = 2
 theme = ExtResource("7_rsatm")
-text = "CLOSE LOBBY"
+text = "START GAME"
 
-[node name="JoinLobbyButton" type="Button" parent="JoinLobbyTab/CurrentLobbyDetail/LobbyDetailButtonRow" unique_id=161993846]
+[node name="RejoinLobbyButton" type="Button" parent="JoinLobbyTab/CurrentLobbyDetail/LobbyDetailButtonRow" unique_id=161993846]
 unique_name_in_owner = true
 custom_minimum_size = Vector2(200, 0)
 layout_mode = 2
 theme = ExtResource("7_rsatm")
-text = "JOIN"
+text = "RECONNECT"
+
+[node name="JoinAsPlayerButton" type="Button" parent="JoinLobbyTab/CurrentLobbyDetail/LobbyDetailButtonRow" unique_id=114676584]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(200, 0)
+layout_mode = 2
+theme = ExtResource("7_rsatm")
+text = "JOIN AS PLAYER"
+
+[node name="JoinAsSpectatorButton" type="Button" parent="JoinLobbyTab/CurrentLobbyDetail/LobbyDetailButtonRow" unique_id=1544117046]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(200, 0)
+layout_mode = 2
+theme = ExtResource("7_rsatm")
+text = "Join as spectator"
 
 [node name="ChangeRoleButton" type="Button" parent="JoinLobbyTab/CurrentLobbyDetail/LobbyDetailButtonRow" unique_id=22799875]
 unique_name_in_owner = true
@@ -267,8 +283,8 @@ layout_mode = 2
 theme = ExtResource("7_rsatm")
 text = "CHANGE TO SPECTATOR"
 
-[node name="StartGameButton" type="Button" parent="JoinLobbyTab/CurrentLobbyDetail/LobbyDetailButtonRow" unique_id=1589335327]
+[node name="CloseLobbyButton" type="Button" parent="JoinLobbyTab/CurrentLobbyDetail/LobbyDetailButtonRow" unique_id=412995301]
 unique_name_in_owner = true
 layout_mode = 2
 theme = ExtResource("7_rsatm")
-text = "START GAME"
+text = "CLOSE LOBBY"

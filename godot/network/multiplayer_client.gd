@@ -54,6 +54,13 @@ func _ws_connection_changed(status: WSClient.WSClientState) -> void:
 func stop() -> void:
   state.change_state(disconnected_state)
 
+func update_role(is_player: bool) -> void:
+  if current_lobby:
+    WSClient.send_socket_message({
+      "type": "rtc-set-role",
+      "is_player": is_player
+    })
+
 func leave_lobby() -> void:
   if current_lobby:
     WSClient.send_socket_message({
@@ -81,11 +88,14 @@ func _handle_ws_message(parsed: Variant) -> bool:
     state.current.handle_ws_message(type, msg)
   return true
 
-func join_lobby(lobby: Lobby) -> Error:
-  return WSClient.send_socket_message({
-    "type": "rtc-join-lobby",
-    "lobby_name": lobby.name
-  })
+func join_lobby(lobby: Lobby, is_player: Variant = null) -> Error:
+  var msg := { "type": "rtc-join-lobby", "lobby_name": lobby.name }
+  if is_player != null:
+    msg["is_player"] = is_player
+  return WSClient.send_socket_message(msg)
+
+func set_role(is_player: bool) -> Error:
+  return WSClient.send_socket_message({ "type": "rtc-set-role", "is_player": is_player })
 
 func create_lobby(game_title: String) -> String:
   var request = AwaitableHTTPRequest.new()
