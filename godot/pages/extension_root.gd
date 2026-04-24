@@ -34,6 +34,7 @@ func _handle_connection_status_changed(state: WSClient.WSClientState) -> void:
 func _navigate_to_page(page: int) -> void:
   if active_page:
     active_page.queue_free()
+
   match page:
     ExtensionPage.Profile:
       profile_button.selected = true

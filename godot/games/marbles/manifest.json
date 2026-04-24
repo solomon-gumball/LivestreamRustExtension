@@ -1,0 +1,21 @@
+{
+  "title": "Marbles",
+  "description": "It's marbles",
+  "entry": "res://games/marbles/Marbles.tscn",
+  "cost": 100,
+  "min_players": 1,
+  "max_players": 100,
+  "options": {
+    "level": {
+      "required": false,
+      "type": "string",
+      "options": ["level1", "level2"]
+    },
+    "rounds": {
+      "required": true,
+      "type": "number",
+      "min": 1,
+      "max": 10
+    }
+  }
+}

@@ -1,0 +1,60 @@
+[gd_scene format=3 uid="uid://b4y1nifskfobg"]
+
+[ext_resource type="Script" uid="uid://c4ivyfbuwvsti" path="res://games/marbles/MarbleBot.gd" id="1_34rat"]
+[ext_resource type="Texture2D" uid="uid://c53kbdrgxxvfc" path="res://icon.svg" id="3_lmqmq"]
+[ext_resource type="FontFile" uid="uid://7uibxoligyvb" path="res://fonts/HomeVideo-BLG6G.ttf" id="3_qhe1h"]
+[ext_resource type="ArrayMesh" uid="uid://bgcod2p568c06" path="res://games/marbles/MarblesBubble.res" id="5_lmqmq"]
+
+[sub_resource type="PhysicsMaterial" id="PhysicsMaterial_6k1q8"]
+bounce = 0.5
+
+[sub_resource type="SphereShape3D" id="SphereShape3D_50ojx"]
+radius = 0.177366
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_27tm4"]
+albedo_texture = ExtResource("3_lmqmq")
+uv1_scale = Vector3(2, 2, 2)
+
+[node name="MarbleBot" type="RigidBody3D" unique_id=1385227533]
+physics_material_override = SubResource("PhysicsMaterial_6k1q8")
+script = ExtResource("1_34rat")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="." unique_id=218662968]
+shape = SubResource("SphereShape3D_50ojx")
+
+[node name="Sprite3D" type="Sprite3D" parent="." unique_id=751622386]
+transform = Transform3D(0.254697, 0, 0, 0, 0.254697, 0, 0, 0, 0.254697, 0, -0.00876214, 0)
+billboard = 1
+texture = ExtResource("3_lmqmq")
+
+[node name="Sphere" type="CSGSphere3D" parent="." unique_id=1333116935]
+transform = Transform3D(0.587438, 0, 0, 0, 0.587438, 0, 0, 0, 0.587438, 0, 0.185747, 0)
+visible = false
+radius = 0.306052
+radial_segments = 20
+rings = 20
+material = SubResource("StandardMaterial3D_27tm4")
+
+[node name="MarblesBubble" type="MeshInstance3D" parent="." unique_id=1036514611]
+transform = Transform3D(0.177536, 0, 0, 0, 0.177536, 0, 0, 0, 0.177536, 0, 0, 0)
+mesh = ExtResource("5_lmqmq")
+
+[node name="LabelNode" type="Node3D" parent="." unique_id=701709542]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.308638, 0)
+top_level = true
+
+[node name="Label3D" type="Label3D" parent="LabelNode" unique_id=1826141472]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.126886, 0)
+pixel_size = 0.0008
+billboard = 1
+no_depth_test = true
+fixed_size = true
+render_priority = 1
+text = "SolomonGumballTV"
+font = ExtResource("3_qhe1h")
+font_size = 20
+outline_size = 20
+
+[node name="cam" type="Camera3D" parent="." unique_id=671135294]
+transform = Transform3D(1, 0, 0, 0, 0.9238662, 0.38271567, 0, -0.38271567, 0.9238662, 0, 1.6727548, 3.9917212)
+top_level = true

@@ -1,0 +1,21 @@
+[gd_scene load_steps=3 format=3 uid="uid://dhxkdd3lw5n20"]
+
+[ext_resource type="Script" uid="uid://bxeev786ka0t5" path="res://games/marbles/MarblesOverlay.gd" id="1_umhwi"]
+[ext_resource type="PackedScene" uid="uid://f6ong2f8cpcr" path="res://games/marbles/MarblesLeaderboardRow.tscn" id="2_j0uvo"]
+
+[node name="CanvasLayer" type="CanvasLayer"]
+script = ExtResource("1_umhwi")
+
+[node name="LeaderboardList" type="VBoxContainer" parent="."]
+anchors_preset = 1
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = -40.0
+offset_bottom = 40.0
+grow_horizontal = 0
+
+[node name="MarblesLeaderBoardRow2" parent="LeaderboardList" instance=ExtResource("2_j0uvo")]
+layout_mode = 2
+
+[node name="MarblesLeaderBoardRow" parent="LeaderboardList" instance=ExtResource("2_j0uvo")]
+layout_mode = 2

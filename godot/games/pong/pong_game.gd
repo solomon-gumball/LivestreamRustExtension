@@ -12,7 +12,6 @@ enum PongGameMessage {
   UpdateAnimation
 }
 
-var lobby: Lobby
 var game_state: PongGameState = null
 var ball: PongBall = null
 var ball_template: PackedScene = preload("res://games/pong/pong_ball.tscn")
