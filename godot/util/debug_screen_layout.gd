@@ -8,7 +8,7 @@ func _ready() -> void:
 
   # LimboConsole.register_command(restart)
 
-  var num_windows := 2
+  var num_windows := 3
 
   # Find window index in cmdline args string. Example "--i=1" Id = 1.
   print(cmd_args)

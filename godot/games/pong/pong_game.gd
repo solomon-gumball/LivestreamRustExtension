@@ -79,25 +79,25 @@ func _ready() -> void:
 
   WSClient.subscribe(sub_channels)
 
-  nodes_by_peer_id[lobby.peers[0].peer_id] = {
+  nodes_by_peer_id[lobby.players[0].peer_id] = {
     "paddle": pong_paddle_l,
     "score": paddle_l_score
   }
-  nodes_by_peer_id[lobby.peers[1].peer_id] = {
+  nodes_by_peer_id[lobby.players[1].peer_id] = {
     "paddle": pong_paddle_r,
     "score": paddle_r_score
   }
 
   if MultiplayerClient.is_authority():
     var new_game_state = PongGameState.new()
-    new_game_state.paddle_l_state.owner = 1
-    new_game_state.paddle_r_state.owner = lobby.peers[1].peer_id
+    new_game_state.paddle_l_state.owner = lobby.players[0].peer_id
+    new_game_state.paddle_r_state.owner = lobby.players[1].peer_id
 
     new_game_state.paddle_l_state.position = Vector3(0, 0, -paddle_start_distance)
     new_game_state.paddle_r_state.position = Vector3(0, 0, paddle_start_distance)
 
-    score_region_l.body_entered.connect(_area_entered.bind(lobby.peers[1].peer_id))
-    score_region_r.body_entered.connect(_area_entered.bind(1))
+    score_region_l.body_entered.connect(_area_entered.bind(lobby.players[1].peer_id))
+    score_region_r.body_entered.connect(_area_entered.bind(lobby.players[0].peer_id))
 
     anim_player.animation_finished.connect(_anim_finished)
 
