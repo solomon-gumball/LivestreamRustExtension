@@ -1,6 +1,5 @@
 extends Node
 
-@export var mesh: bool = false
 
 signal packet_received(id: int, packet: Dictionary)
 @warning_ignore("UNUSED_SIGNAL")
@@ -15,6 +14,11 @@ var rtc_mp := WebRTCMultiplayerPeer.new()
 
 const PRINT_DEBUG: bool = false
 const RELAY_ONLY_CANDIDATES: bool = true
+
+# Magic prefix written before every outgoing packet so we can identify packets
+# we encoded with var_to_bytes and skip any internal WebRTCMultiplayerPeer
+# protocol packets that surface in the queue when 3+ peers are connected.
+const PACKET_MAGIC: int = 0x474D4254 # "GMBT"
 
 enum GlobalNetCommand {
   Ping = 1000, Pong
@@ -151,9 +155,13 @@ func send_packet(
     return
   
   var serialized: Variant = BinarySerializer.serialize_var(packet)
-  var packet_data := var_to_bytes(serialized)
+  var payload := var_to_bytes(serialized)
 
-  # var packet_data: PackedByteArray = var_to_bytes_with_objects(packet)
+  var magic := PackedByteArray([0, 0, 0, 0])
+  magic.encode_u32(0, PACKET_MAGIC)
+  var packet_data := magic + payload
+  # var packet_data := payload
+
   rtc_mp.set_target_peer(target_peer)
   rtc_mp.set_transfer_mode(transfer_mode)
   rtc_mp.put_packet(packet_data)
@@ -182,12 +190,36 @@ func is_initialized() -> bool:
 
 func _process(_delta: float) -> void:
   rtc_mp.poll()
+  # Only read packets once the connection is fully established. During WebRTC
+  # negotiation (CONNECTION_CONNECTING), the data channel can surface non-application
+  # bytes that were not encoded with var_to_bytes — causing bytes_to_var to print
+  # ERR_INVALID_DATA at the engine level before our null check can intercept it.
+  # poll() above must still run unconditionally so the handshake can progress.
+  if rtc_mp.get_connection_status() != MultiplayerPeer.CONNECTION_CONNECTED:
+    return
   while rtc_mp.get_available_packet_count() > 0:
     var sender_id: int = rtc_mp.get_packet_peer()
     var data: PackedByteArray = rtc_mp.get_packet()
 
-    var message_var: Variant = bytes_to_var(data)
+    # Validate magic prefix to distinguish our var_to_bytes packets from any
+    # internal WebRTCMultiplayerPeer protocol packets (which appear in the queue
+    # when 3+ peers are connected and the host relays between clients).
+    if data.size() < 4 or data.decode_u32(0) != PACKET_MAGIC:
+      push_warning("Dropping non-application RTC packet from peer %d — size=%d header=0x%x" % [
+        sender_id, data.size(), data.decode_u32(0) if data.size() >= 4 else 0
+      ])
+      continue
+    var payload := data.slice(4)
+    # var payload := data
+
+    var message_var: Variant = bytes_to_var(payload)
+    if message_var == null:
+      push_warning("Dropping malformed RTC packet from peer %d" % sender_id)
+      continue
     var message: Variant = BinarySerializer.deserialize_var(message_var)
+    if message == null:
+      push_warning("Dropping undeserializable RTC packet from peer %d" % sender_id)
+      continue
 
     state.current.handle_rtc_message(message, sender_id)
     packet_received.emit(sender_id, message)
@@ -249,7 +281,12 @@ class Connected extends MultiplayerClientState:
     mc.rtc_mp.peer_disconnected.connect(func(peer):
       _remove_peer(peer)
     )
-    mc.multiplayer.multiplayer_peer = mc.rtc_mp
+    # Do not assign rtc_mp to SceneMultiplayer — all packet handling is manual.
+    # Assigning it causes SceneMultiplayer to inject its own protocol headers
+    # (RPC, replication) into the packet queue, which corrupts our var_to_bytes stream.
+    #
+    # TLDR: DON'T DO THIS -> 
+    # mc.multiplayer.multiplayer_peer = mc.rtc_mp
 
   func enter_state(_previous_state: State) -> void:
     if _previous_state is Disconnected:
@@ -264,7 +301,7 @@ class Connected extends MultiplayerClientState:
     _close_rtc()
 
   func _check_ping() -> void:
-    if not mc.is_authority():
+    if not mc.is_authority() and mc.rtc_mp.has_peer(1):
       mc.send_packet({
         "type": MultiplayerClient.GlobalNetCommand.Ping,
         "sent_at": Time.get_ticks_msec()
@@ -348,7 +385,6 @@ class Connected extends MultiplayerClientState:
     mc.sealed = true
   
   func _close_rtc() -> void:
-    mc.multiplayer.multiplayer_peer = null
     mc.connected_state.ping_timer.stop()
     mc.rtc_mp.close()
     # In Godot, close() on a WebRTCMultiplayerPeer doesn't fully reset
@@ -375,6 +411,9 @@ class Connected extends MultiplayerClientState:
 
     for peer in lobby_connected_peer_ids:
       if peer == my_peer_id: continue
+      # In client mode (non-mesh), clients only connect directly to the host.
+      # Client-to-client traffic is relayed through the host, so skip non-host peers.
+      if not lobby.mesh and not mc.is_authority() and peer != 1: continue
       if !mc.rtc_mp.has_peer(peer):
         print(mc.my_peer_id(), " IS ADDING PEER ", peer)
         _create_peer(peer)

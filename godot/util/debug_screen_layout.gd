@@ -8,7 +8,8 @@ func _ready() -> void:
 
   # LimboConsole.register_command(restart)
 
-  var num_windows := 3
+  var num_col := 2
+  var num_row := 2
 
   # Find window index in cmdline args string. Example "--i=1" Id = 1.
   print(cmd_args)
@@ -21,13 +22,12 @@ func _ready() -> void:
       is_stream_overlay = true
 
   if window_index != -1:
-    DisplayServer.window_move_to_foreground()
+    var usable := DisplayServer.screen_get_usable_rect()
+    var col := window_index % num_col
     @warning_ignore_start("INTEGER_DIVISION")
-    DisplayServer.window_set_size(DisplayServer.screen_get_size() / num_windows)
-    DisplayServer.window_set_position(
-      Vector2i(
-        (DisplayServer.screen_get_size().x / num_windows) * window_index,
-        DisplayServer.screen_get_size().y / 4
-      )
-    )
+    var row := window_index / num_col
+    var cell_size := Vector2i(usable.size.x / num_col, usable.size.y / num_row)
+    DisplayServer.window_move_to_foreground()
+    DisplayServer.window_set_size(cell_size)
+    DisplayServer.window_set_position(Vector2i(usable.position.x + cell_size.x * col, usable.position.y + cell_size.y * row))
     @warning_ignore_restore("INTEGER_DIVISION")

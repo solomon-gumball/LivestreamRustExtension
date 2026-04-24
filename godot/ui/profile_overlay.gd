@@ -5,13 +5,6 @@ class_name ProfileOverlay
 @onready var items_grid: GridContainer = %ItemsGrid
 
 var grid_items: Array[ScreenSquare] = []
-# var clothing_categories: Array[ApparelCategory] = [
-#   ApparelCategory.from_data("headgear", preload("res://ui/Headgear_icon.svg")),
-#   ApparelCategory.from_data("right_hand_item", preload("res://ui/hand_icon.svg")),
-#   ApparelCategory.from_data("tail", preload("res://ui/Tail_icon.svg")),
-#   ApparelCategory.from_data("torso", preload("res://ui/Torso_icon.svg")),
-#   ApparelCategory.from_data("legs", preload("res://ui/Footwear_icon.svg"))
-# ]
 
 var chatter: Chatter:
   set(v):
@@ -39,7 +32,8 @@ func _update_grid_items() -> void:
       var wearable_item = slot_wearables[asset_index]
       var captured_grid_item = grid_item
       var cached = ImageLoader.load_asset_thumbnail(wearable_item.name, func(tex, _url):
-        captured_grid_item.icon_texture = tex)
+        if is_instance_valid(captured_grid_item):
+          captured_grid_item.icon_texture = tex)
       if cached != null:
         grid_item.icon_texture = cached
       asset_index += 1

@@ -235,11 +235,13 @@ func _input(_event: InputEvent) -> void:
       _try_skip_curr_animation()
 
 func paddle_state_for_peer(peer_id: int) -> PongEntity:
+  # print("lookup peer=%d l_owner=%d r_owner=%d" % [peer_id, game_state.paddle_l_state.owner, game_state.paddle_r_state.owner])
   return game_state.paddle_l_state\
     if game_state.paddle_l_state.owner == peer_id\
     else game_state.paddle_r_state
 
 func _handle_peer_packet(sender_id: int, packet: Dictionary) -> void:
+  # print("Received packet type=%s from=%d on peer=%d" % [packet.type, sender_id, MultiplayerClient.my_peer_id()])
   if game_state == null and packet.type != PongGameMessage.StateRefresh:
     return
 

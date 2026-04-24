@@ -76,7 +76,8 @@ func _fetch_image(url: String, filename: String, save_to_disk: bool) -> void:
 	var callbacks: Array = _pending_image_callbacks.get(filename, [])
 	_pending_image_callbacks.erase(filename)
 	for cb in callbacks:
-		cb.call(result, url)
+		if cb.is_valid():
+			cb.call(result, url)
 
 # Load a GLB model. Returns cached Node3D immediately if available, otherwise null.
 # callback(node: Node3D, url: String) is called once when the load completes.
@@ -134,7 +135,8 @@ func _fetch_glb(url: String, filename: String) -> void:
 	var callbacks: Array = _pending_glb_callbacks.get(filename, [])
 	_pending_glb_callbacks.erase(filename)
 	for cb in callbacks:
-		cb.call(result, url)
+		if cb.is_valid():
+			cb.call(result, url)
 
 func _parse_glb(glb_data: PackedByteArray) -> Node3D:
 	var gltf = GLTFDocument.new()

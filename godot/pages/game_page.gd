@@ -290,6 +290,7 @@ class GameActiveState extends GamePageState:
     page.center_info_label.visible = false
     page.game_subviewport_container.visible = true
     page.rejoin_lobby_button.visible = false
+    page.change_role_button.visible = false
 
     game_scene = page.pong_game_template.instantiate()
     game_scene.lobby = MultiplayerClient.current_lobby

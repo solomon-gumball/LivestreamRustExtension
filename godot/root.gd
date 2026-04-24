@@ -10,12 +10,17 @@ func get_main_scene() -> PackedScene:
 
 func _ready() -> void:
   ObjectSerializer.register_script(PongGameState)
+  ObjectSerializer.register_script(PongEntity)
+  ObjectSerializer.register_script(PongAnimationState)
 
-  if DebugScreenLayout.window_index == 0:
-    WSClient.debug_chatter_id = '22445910' # Gumball
-  else:
-    WSClient.debug_chatter_id = '1273990990' # GumBOT
+  var debug_ids: Dictionary[int, String] = {
+    0: '22445910', # Gumball
+    1: '1273990990', # GumBOT
+    2: '892082742', # Slowed,
+    3: '126430714', # Joony
+  }
+  
+  WSClient.debug_chatter_id = debug_ids.get(DebugScreenLayout.window_index, "")
 
-  print('hi ', (DebugScreenLayout.is_stream_overlay))
   child_scene = get_main_scene().instantiate()
   add_child(child_scene)
