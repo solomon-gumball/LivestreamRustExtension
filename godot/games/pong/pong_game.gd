@@ -1,8 +1,6 @@
 @tool
-extends Node3D
+extends GameBase
 class_name PongGame
-
-signal game_finished
 
 enum PongGameMessage {
   BallMove,

@@ -142,12 +142,6 @@ grow_vertical = 0
 theme_override_constants/separation = 10
 alignment = 2
 
-[node name="HostGameButton" type="Button" parent="HBoxContainer" unique_id=836802073]
-unique_name_in_owner = true
-layout_mode = 2
-theme = ExtResource("7_rsatm")
-text = "HOST GAME"
-
 [node name="Label" type="Label" parent="." unique_id=48250606]
 layout_mode = 0
 offset_left = 661.0

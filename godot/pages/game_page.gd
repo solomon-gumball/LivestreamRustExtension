@@ -24,7 +24,6 @@ extends Control
 
 var info_tween: Tween
 const LOOKING_TEXT = "[font_size=50]LOOKING FOR LOBBY...[/font_size]"
-var pong_game_template: PackedScene = preload("res://games/pong/pong_game.tscn")
 
 var lobby_list: Array[Lobby] = []
 
@@ -278,7 +277,34 @@ class LobbyDetailState extends GamePageState:
 
 class GameActiveState extends GamePageState:
   signal game_ended
-  var game_scene: PongGame = null
+  var game_scene: GameBase = null
+
+  func load_game_from_pck() -> bool:
+    var lobby := MultiplayerClient.current_lobby
+    var pck_url := WSClient.get_database_server_url(lobby.game.bundle_url)
+
+    var request := AwaitableHTTPRequest.new()
+    add_child(request)
+    var result := await request.async_request(pck_url)
+    request.queue_free()
+
+    if not result.success() or not result.status_ok():
+      push_error("GameActiveState: failed to download PCK from %s (status %d)" % [pck_url, result.status])
+      return false
+
+    var tmp_path := "user://minigame_bundle.pck"
+    var file := FileAccess.open(tmp_path, FileAccess.WRITE)
+    if file == null:
+      push_error("GameActiveState: could not open %s for writing" % tmp_path)
+      return false
+    file.store_buffer(result.bytes)
+    file.close()
+
+    if not ProjectSettings.load_resource_pack(tmp_path):
+      push_error("GameActiveState: load_resource_pack failed for %s" % tmp_path)
+      return false
+
+    return true
 
   func enter_state(_prev: State) -> void:
     if _prev is LobbyDetailState:
@@ -292,10 +318,17 @@ class GameActiveState extends GamePageState:
     page.rejoin_lobby_button.visible = false
     page.change_role_button.visible = false
 
-    game_scene = page.pong_game_template.instantiate()
-    game_scene.lobby = MultiplayerClient.current_lobby
-    page.game_root_node.add_child(game_scene)
-    game_scene.game_finished.connect(_on_game_finished)
+    var loaded := await load_game_from_pck()
+    if loaded:
+      var entry := MultiplayerClient.current_lobby.game.entry
+      var packed_scene := ResourceLoader.load(entry) as PackedScene
+      if packed_scene == null:
+        push_error("GameActiveState: could not load scene at entry path '%s'" % entry)
+      else:
+        game_scene = packed_scene.instantiate() as GameBase
+        game_scene.lobby = MultiplayerClient.current_lobby
+        page.game_root_node.add_child(game_scene)
+        game_scene.game_finished.connect(_on_game_finished)
 
     if _prev is LobbyDetailState:
       await page.loading.transition_out()

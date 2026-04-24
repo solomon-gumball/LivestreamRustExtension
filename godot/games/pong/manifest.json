@@ -1,3 +1,21 @@
 {
-  "entry": "res://games/pong/pong_game.tscn"
+  "title": "Pong",
+  "description": "It's pong",
+  "entry": "res://games/pong/pong_game.tscn",
+  "cost": 100,
+  "min_players": 2,
+  "max_players": 2,
+  "options": {
+    "level": {
+      "required": false,
+      "type": "string",
+      "options": ["level1", "level2"]
+    },
+    "rounds": {
+      "required": true,
+      "type": "number",
+      "min": 1,
+      "max": 10
+    }
+  }
 }
