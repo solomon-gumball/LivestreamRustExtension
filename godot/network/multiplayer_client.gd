@@ -92,7 +92,7 @@ func _handle_ws_message(parsed: Variant) -> bool:
     state.current.handle_ws_message(type, msg)
   return true
 
-func join_lobby(lobby: Lobby, is_player: Variant = null) -> Error:
+func join_lobby(lobby: Lobby, is_player: bool = false) -> Error:
   var msg := { "type": "rtc-join-lobby", "lobby_name": lobby.name }
   if is_player != null:
     msg["is_player"] = is_player

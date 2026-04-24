@@ -4,21 +4,29 @@ class_name OverlayScene
 var state = StateMachine.new()
 var roaming_state = RoamingState.new(self)
 var game_state = GameState.new(self)
+var lobby_list: Array[Lobby] = []
+
+@onready var debug_label: Label = %DebugLabel
 
 func _ready():
-  MultiplayerClient.current_lobby_updated.connect(_handle_lobby_updated)
-
-  MultiplayerClient.search_for_lobbies()
-  WSClient.state.changed.connect(_handle_ws_state_changed)
+  WSClient.authenticated_state.message_received.connect(_handle_ws_message)
 
   add_child(state)
   state.add_child(roaming_state)
   state.add_child(game_state)
   state.change_state(roaming_state)
 
-func _handle_ws_state_changed(connection_state: WSClient.WSClientState) -> void:
+  _handle_websocket_connection_changed(WSClient.state.current)
+  MultiplayerClient.state.changed.connect(_handle_multiplayer_connection_changed)
+  WSClient.state.changed.connect(_handle_websocket_connection_changed)
+
+func _handle_multiplayer_connection_changed(_connection_state: MultiplayerClient.MultiplayerClientState) -> void:
+  print("Multiplayer connection state changed: %s" % MultiplayerClient.state.current)
+  _handle_updates()
+
+func _handle_websocket_connection_changed(connection_state: WSClient.WSClientState) -> void:
   if connection_state is WSClient.AuthenticatedState:
-    MultiplayerClient.search_for_lobbies()
+    WSClient.send_socket_message({ "type": "rtc-fetch-lobbies" })
 
 func _input(_event):
   if Input.is_action_just_pressed("StartLobby"):
@@ -26,15 +34,39 @@ func _input(_event):
     if MultiplayerClient.state.current is MultiplayerClient.Connected:
       MultiplayerClient.start_lobby()
     else:
-      pass
       # MultiplayerClient.join_lobby("")
+      pass
     pass
 
-var pong_game_template: PackedScene = preload("res://games/pong/pong_game.tscn")
-func _handle_lobby_updated(lobby: Lobby) -> void:
-  if lobby and lobby.started:
-    game_state.lobby = lobby
-    state.change_state(game_state)
+var is_joining := false
+func _handle_updates() -> void:
+  var lobby = MultiplayerClient.current_lobby
+
+  if lobby:
+    is_joining = false
+    if lobby.started:
+      game_state.lobby = lobby
+      state.change_state(game_state)
+    return
+  
+  state.change_state(roaming_state)
+  if lobby_list.size() > 0 and not is_joining:
+    var available_lobby = lobby_list[0]
+    print("Joining lobby: %s" % available_lobby.name)
+    is_joining = true
+    MultiplayerClient.join_lobby(available_lobby)
+
+func _handle_ws_message(parsed: Variant) -> void:
+  if typeof(parsed) != TYPE_DICTIONARY:
+    return
+  var msg: Dictionary = parsed
+  if msg.get("type", "") == "rtc-lobbies-updated":
+    var lobbies: Array[Lobby] = []
+    for lobby_data in msg.get("lobbies", []):
+      lobbies.append(Lobby.from_data(lobby_data))
+    lobby_list = lobbies
+    print("Multiplayer connection state changed: %s" % MultiplayerClient.state.current)
+    _handle_updates()
 
 class StreamOverlayState extends State:
   var overlay: OverlayScene

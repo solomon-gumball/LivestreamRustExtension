@@ -4,3 +4,11 @@
 
 [node name="StreamOverlay" type="Node3D" unique_id=750317293]
 script = ExtResource("1_5bn8s")
+
+[node name="CanvasLayer" type="CanvasLayer" parent="." unique_id=924569731]
+
+[node name="DebugLabel" type="Label" parent="CanvasLayer" unique_id=1386033444]
+unique_name_in_owner = true
+offset_right = 40.0
+offset_bottom = 23.0
+text = "LOBBY: 39023902"
