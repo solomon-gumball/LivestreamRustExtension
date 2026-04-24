@@ -232,30 +232,35 @@ class LobbyDetailState extends GamePageState:
 
     # Default all managed buttons to hidden; selectively show below.
     page.join_as_player_button.visible = false
+    page.join_as_player_button.disabled = false
     page.join_as_spectator_button.visible = false
+    page.start_game_button.disabled = false
     page.rejoin_lobby_button.visible = false
     page.change_role_button.visible = false
     page.start_game_button.visible = false
     page.close_lobby_button.visible = false
 
+    var players_full: bool = lobby.players.size() >= lobby.game.max_players
+
     if my_peer == null:
-      # Not in the lobby yet — offer both join options.
+      # Not in the lobby yet — disable join as player if slots are full.
       page.join_as_player_button.visible = true
+      page.join_as_player_button.disabled = players_full
       page.join_as_spectator_button.visible = true
     elif not my_peer.connected:
       # In the lobby but WS dropped — single rejoin button, role is preserved server-side.
-      # page.rejoin_lobby_button.text = "REJOIN"
       page.rejoin_lobby_button.visible = true
     else:
       # Connected and in the lobby.
-      page.close_lobby_button.visible = is_host
+      page.close_lobby_button.text = "CLOSE LOBBY" if is_host else "LEAVE LOBBY"
+      page.close_lobby_button.visible = true
       page.start_game_button.visible = is_host
+      page.start_game_button.disabled = lobby.players.size() < lobby.game.min_players
       # Role toggle: label reflects what the switch would do.
+      # Hide the "become player" direction if the lobby is already full.
+      var can_become_player: bool = my_peer.is_player or not players_full
       page.change_role_button.text = "BECOME SPECTATOR" if my_peer.is_player else "BECOME PLAYER"
-      page.change_role_button.visible = true
-      if not is_host:
-        page.rejoin_lobby_button.text = "LEAVE"
-        page.rejoin_lobby_button.visible = true
+      page.change_role_button.visible = can_become_player
 
   func _handle_join_as_player_pressed() -> void:
     WSClient.send_socket_message({ "type": "rtc-join-lobby", "lobby_name": lobby.name, "is_player": true })

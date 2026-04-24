@@ -22,6 +22,7 @@ var mesh: bool
 var sealed: bool
 var peers: Array[PeerData]
 var started: bool
+var game: GameMetadata
 
 var peer_from_chatter: Dictionary[String, int] = {}
 var chatter_from_peer: Dictionary[int, String] = {}
@@ -37,6 +38,7 @@ static func from_data(d: Dictionary) -> Lobby:
   lobby.host_chatter_id = d.get("hostChatterId", "")
   lobby.mesh = d.get("mesh", false)
   lobby.sealed = d.get("sealed", false)
+  lobby.game = GameMetadata.FromData(d.get("game", {}))
   lobby.peers = []
   for peer_data in d.get("peers", []):
     var peer := PeerData.from_data(peer_data)

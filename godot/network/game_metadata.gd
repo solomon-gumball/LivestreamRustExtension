@@ -11,12 +11,12 @@ var max_players: int
 
 static func FromData(data: Dictionary) -> GameMetadata:
   var metadata := GameMetadata.new()
-  metadata.thumbnail_url = data["thumbnail_url"]
-  metadata.bundle_url = data["bundle_url"]
-  metadata.title = data["title"]
-  metadata.description = data["description"]
-  metadata.entry = data["entry"]
-  metadata.cost = data["cost"]
-  metadata.min_players = data["min_players"]
-  metadata.max_players = data["max_players"]
+  metadata.thumbnail_url = data.get("thumbnail_url", "")
+  metadata.bundle_url = data.get("bundle_url", "")
+  metadata.title = data.get("title", "")
+  metadata.description = data.get("description", "")
+  metadata.entry = data.get("entry", "")
+  metadata.cost = data.get("cost", 0)
+  metadata.min_players = data.get("min_players", 0)
+  metadata.max_players = data.get("max_players", 0)
   return metadata
