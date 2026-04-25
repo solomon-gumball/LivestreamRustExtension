@@ -21,7 +21,7 @@ const RELAY_ONLY_CANDIDATES: bool = true
 const PACKET_MAGIC: int = 0x474D4254 # "GMBT"
 
 enum GlobalNetCommand {
-  Ping = 1000, Pong
+  Ping = 9998, Pong
 }
 
 func _ready() -> void:

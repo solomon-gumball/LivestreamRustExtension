@@ -27,12 +27,12 @@ func _ready() -> void:
   for peer in lobby.peers:
     user_sub_channels.append(peer.chatter_id)
 
+  print("READY CALLED FOR PEER ", WSClient.my_chatter().id)
   if !is_game_host:
     MultiplayerClient.send_packet(
       { "type": GlobalGameMessage.ClientReady },
       MultiplayerPeer.TARGET_PEER_SERVER,
-      MultiplayerPeer.TRANSFER_MODE_RELIABLE,
-      true
+      MultiplayerPeer.TRANSFER_MODE_RELIABLE
     )
 
   WSClient.subscribe(user_sub_channels)
