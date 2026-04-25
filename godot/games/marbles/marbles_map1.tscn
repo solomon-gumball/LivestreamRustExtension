@@ -2,9 +2,9 @@
 
 [ext_resource type="PackedScene" uid="uid://bab2ubhg8o2jw" path="res://games/marbles/gumball-map1.blend" id="1_28nk5"]
 [ext_resource type="Script" uid="uid://bnxtlwmptxrq1" path="res://games/marbles/MarblesMap.gd" id="2_tjf41"]
+[ext_resource type="PackedScene" uid="uid://diyvoye7vs7ks" path="res://games/debug_camera.tscn" id="3_4cld7"]
 [ext_resource type="PackedScene" uid="uid://dgll8fvuxvlum" path="res://games/marbles/MarblesSpinner.tscn" id="3_4nog8"]
 [ext_resource type="PackedScene" uid="uid://eki78xsf4ibe" path="res://games/marbles/marbles_bumper.tscn" id="4_sevp3"]
-[ext_resource type="Script" uid="uid://cmky0hly3jauy" path="res://games/debug_camera.gd" id="5_4cld7"]
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_ao6dl"]
 size = Vector3(21.9851, 1, 2.65137)
@@ -28,7 +28,10 @@ finish_area = NodePath("FinishArea2")
 out_of_bounds_area = NodePath("OutOfBoundsArea")
 spawn_path = NodePath("Path3D")
 
-[node name="StaticBody3D2" type="StaticBody3D" parent="." index="0" unique_id=589620629]
+[node name="DebugCamera" parent="." index="0" unique_id=1098239593 instance=ExtResource("3_4cld7")]
+transform = Transform3D(0.056996282, 0.4584169, -0.88690776, -0.029399082, 0.88873726, 0.45747322, 0.99794143, 0, 0.06413176, 110.93758, 94.113, 0)
+
+[node name="StaticBody3D2" type="StaticBody3D" parent="." index="1" unique_id=589620629]
 transform = Transform3D(0, 1, 0, -1, 0, 0, 0, 0, 1, 26.1318, 27.8351, -5.28797)
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="StaticBody3D2" index="0" unique_id=2024379589]
@@ -39,65 +42,61 @@ shape = SubResource("BoxShape3D_ao6dl")
 transform = Transform3D(1.00291, 0, 0, 0, -4.38387e-08, -1.00291, 0, 1.00291, -4.38387e-08, -5.99255, -1.62842, -6.83066)
 shape = SubResource("BoxShape3D_ao6dl")
 
-[node name="MarblesSpinner2" parent="." index="1" unique_id=1084532358 instance=ExtResource("3_4nog8")]
+[node name="MarblesSpinner2" parent="." index="2" unique_id=1084532358 instance=ExtResource("3_4nog8")]
 transform = Transform3D(0.791536, -0.350981, 2.72184e-17, 0.350981, 0.791536, -2.88075e-16, 2.58047e-08, -3.49087e-16, 0.865861, 39.019, 50.5578, 0.33112)
 
-[node name="MarblesSpinner3" parent="." index="2" unique_id=788279968 instance=ExtResource("3_4nog8")]
+[node name="MarblesSpinner3" parent="." index="3" unique_id=788279968 instance=ExtResource("3_4nog8")]
 transform = Transform3D(0.791536, -0.350981, 2.72184e-17, 0.350981, 0.791536, -2.88075e-16, 2.58047e-08, -3.49087e-16, 0.865861, 65.066, 68.2264, 2.93249)
 
-[node name="DirectionalLight3D" type="DirectionalLight3D" parent="." index="3" unique_id=1635784220]
+[node name="DirectionalLight3D" type="DirectionalLight3D" parent="." index="4" unique_id=1635784220]
 transform = Transform3D(-0.388362, -0.443438, -0.807798, -0.509024, -0.627499, 0.589185, -0.768159, 0.640006, 0.0179762, -10.4232, 5.8329, 0)
 shadow_enabled = true
 shadow_opacity = 0.57
 
-[node name="Sphere" parent="." index="4" unique_id=557143821]
+[node name="Sphere" parent="." index="5" unique_id=557143821]
 visible = false
 
-[node name="Sphere_001-noimport" parent="." index="5" unique_id=32024794]
+[node name="Sphere_001-noimport" parent="." index="6" unique_id=32024794]
 visible = false
 
-[node name="Funnel" parent="." index="7" unique_id=2120067871]
+[node name="Funnel" parent="." index="8" unique_id=2120067871]
 visible = false
 
-[node name="MarblesSpinner" parent="." index="17" unique_id=74638650]
+[node name="MarblesSpinner" parent="." index="18" unique_id=74638650]
 visible = false
 
-[node name="Circle_001" parent="." index="20" unique_id=1910683561]
+[node name="Circle_001" parent="." index="21" unique_id=1910683561]
 visible = false
 
-[node name="Circle_002" parent="." index="21" unique_id=194317378]
+[node name="Circle_002" parent="." index="22" unique_id=194317378]
 visible = false
 
-[node name="marbles-bumper3" parent="." index="23" unique_id=791012546 instance=ExtResource("4_sevp3")]
+[node name="marbles-bumper3" parent="." index="24" unique_id=791012546 instance=ExtResource("4_sevp3")]
 transform = Transform3D(0.990595, 0, 0, 0, 0.349778, -0.926787, 0, 0.926787, 0.349778, 24.5844, 23.1001, -11.4756)
 
-[node name="marbles-bumper8" parent="." index="24" unique_id=2067567897 instance=ExtResource("4_sevp3")]
+[node name="marbles-bumper8" parent="." index="25" unique_id=2067567897 instance=ExtResource("4_sevp3")]
 transform = Transform3D(-0.990595, -8.10223e-08, -3.05786e-08, 0, 0.349778, -0.926787, 8.66006e-08, -0.926787, -0.349778, 24.5844, 23.4033, 0.83876)
 
-[node name="marbles-bumper2" parent="." index="25" unique_id=704608456 instance=ExtResource("4_sevp3")]
+[node name="marbles-bumper2" parent="." index="26" unique_id=704608456 instance=ExtResource("4_sevp3")]
 transform = Transform3D(0.990595, 0, 0, 0, 0.915989, -0.377151, 0, 0.377151, 0.915989, 24.5844, 17.5791, -8.61866)
 
-[node name="marbles-bumper5" parent="." index="26" unique_id=1076541218 instance=ExtResource("4_sevp3")]
+[node name="marbles-bumper5" parent="." index="27" unique_id=1076541218 instance=ExtResource("4_sevp3")]
 transform = Transform3D(0.990595, 0, 0, 0, 0.914853, 0.379899, 0, -0.379899, 0.914853, 24.5844, 17.7193, -2.0492)
 
-[node name="FinishArea2" type="Area3D" parent="." index="30" unique_id=749977209]
+[node name="FinishArea2" type="Area3D" parent="." index="31" unique_id=749977209]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -6.65094, -6.33502)
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="FinishArea2" index="0" unique_id=611692593]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.580431, -1.09445, 0.181747)
 shape = SubResource("BoxShape3D_tjf41")
 
-[node name="OutOfBoundsArea" type="Area3D" parent="." index="31" unique_id=1964003097]
+[node name="OutOfBoundsArea" type="Area3D" parent="." index="32" unique_id=1964003097]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -13.6046, -5.97411)
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="OutOfBoundsArea" index="0" unique_id=2094111715]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 21.2718, -14.5033, 8.89998)
 shape = SubResource("BoxShape3D_87yb8")
 
-[node name="Path3D" type="Path3D" parent="." index="32" unique_id=454938272]
+[node name="Path3D" type="Path3D" parent="." index="33" unique_id=454938272]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 121.146, 91.8646, 0)
 curve = SubResource("Curve3D_tjf41")
-
-[node name="Camera3D" type="Camera3D" parent="." index="33" unique_id=416929447]
-transform = Transform3D(-0.17978095, 0, -0.98370665, 0, 1, 0, 0.98370665, 0, -0.17978095, 107.63897, 89.81319, -0.67011905)
-script = ExtResource("5_4cld7")

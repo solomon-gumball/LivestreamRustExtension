@@ -146,7 +146,7 @@ func _get_joining_text(lobby: Lobby) -> String:
   var spectator_count = lobby.spectators.size() if lobby else 0
   return "\n".join([
     "[font_size=50]JOINING[/font_size]",
-    "[font_size=120]PONG[/font_size]",
+    "[font_size=120]%s[/font_size]" % lobby.game.title if lobby else "LOBBY",
     "[font_size=50]\nSTAKES....[color=green]100 gum[/color][/font_size]",
     _stat_line("PLAYERS", 9, player_count),
     _stat_line("SPECTATORS", 6, spectator_count),

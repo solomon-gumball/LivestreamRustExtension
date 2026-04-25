@@ -66,20 +66,23 @@ func _fetch_and_cache_pck(game: GameMetadata) -> bool:
     return false
 
   return true
+ 
+const DISABLE_LOAD_FROM_PCK := true
 
 func load_game_from_lobby(lobby: Lobby) -> void:
   var game := lobby.game
 
-  var loaded := await _fetch_and_cache_pck(game)
-  if not loaded:
-    return
+  if !DISABLE_LOAD_FROM_PCK:
+    var loaded := await _fetch_and_cache_pck(game)
+    if not loaded:
+      return
 
   var packed_scene := ResourceLoader.load(game.entry) as PackedScene
   if packed_scene == null:
     push_error("GameContainer: could not load scene at entry path '%s'" % game.entry)
     return
-
   _game_scene = packed_scene.instantiate() as GameBase
+
   _game_scene.lobby = lobby
   add_child(_game_scene)
   _game_scene.game_finished.connect(game_finished.emit)

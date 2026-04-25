@@ -16,7 +16,6 @@ var game_state: PongGameState = null
 var ball: PongBall = null
 var ball_template: PackedScene = preload("res://games/pong/pong_ball.tscn")
 var nodes_by_peer_id: Dictionary[int, Dictionary] = {}
-var is_game_host: bool = false
 
 @onready var pong_paddle_l: PongPaddle = %PongPaddleL
 @onready var pong_paddle_r: PongPaddle = %PongPaddleR

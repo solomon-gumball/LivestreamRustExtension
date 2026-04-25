@@ -27,6 +27,7 @@ func _ready() -> void:
   current_map = map_scene.instantiate()
   add_child(current_map)
 
+func chatters_loaded() -> void:
   marbles_overlay.spawned_bots = spawned_bots
 
   # Network.chat_message_received.connect(chat_message_received)
