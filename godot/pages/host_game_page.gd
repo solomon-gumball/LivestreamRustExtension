@@ -27,7 +27,6 @@ func _load_games() -> void:
 
   if response.success() and response.status_ok():
     var games := response.body_as_json() as Array
-    print("found games: ", games)
     for game in games:
       var metadata := GameMetadata.FromData(game)
       var game_detail_panel := game_detail_template.instantiate() as HostGameDetailPanel

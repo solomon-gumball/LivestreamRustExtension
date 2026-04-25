@@ -35,11 +35,11 @@ func _ready() -> void:
       true
     )
 
-
   WSClient.subscribe(user_sub_channels)
   WSClient.authenticated_state.chatter_updated.connect(_handle_chatter_updated)
   MultiplayerClient.packet_received.connect(_base_handle_peer_packet)
 
+  await get_tree().physics_frame
   _check_game_ready()
 
 func _check_game_ready() -> void:
@@ -61,6 +61,7 @@ func _handle_chatter_updated(chatter: Chatter) -> void:
 func _base_handle_peer_packet(sender_id: int, packet: Dictionary) -> void:
   match packet.type:
     GlobalGameMessage.ClientReady:
+      print("PEER READY RECEIVED %d is ready" % sender_id)
       ready_peers[sender_id] = true
       peer_is_ready.emit(sender_id)
       if is_game_host:

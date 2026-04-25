@@ -2,7 +2,7 @@
 extends GameBase
 class_name Marbles
 
-var spawned_bots: Dictionary[String, MarbleBot] = {}
+var bots_by_peer_id: Dictionary[int, MarbleBot] = {}
 var placements: Array[Chatter] = []
 var marble_bot_template: PackedScene = ResourceLoader.load("res://games/marbles/marbles_bot/marbles_bot.tscn")
 
@@ -26,6 +26,7 @@ const SYNC_RATE: float = 1.0 / 20.0
 
 func _ready() -> void:
   super._ready()
+
   assert(lobby != null, "Lobby should never be null in a GameBase instance")
 
   var map_scene = map[0]
@@ -36,12 +37,12 @@ func _ready() -> void:
   MultiplayerClient.packet_received.connect(_handle_peer_packet)
 
   if MultiplayerClient.is_authority():
-    all_peers_loaded_in.connect(start_game)
+    print("Setting up authority connections")
+    all_peers_loaded_in.connect(server_only_start_game)
     chatter_loaded.connect(_on_loaded_chatter_data)
     var new_state := MarblesGameState.new()
     _handle_peer_packet(1, { "type": MarblesMessage.StateRefresh, "state": new_state })
     _send_refresh_state(MultiplayerPeer.TARGET_PEER_BROADCAST)
-    # MultiplayerClient.rtc_peer_ready.connect(_send_refresh_state)
 
 func _exit_tree() -> void:
   MultiplayerClient.connected_state.left_lobby.disconnect(_left_lobby)
@@ -59,21 +60,31 @@ func _send_refresh_state(peer_id: int) -> void:
     MultiplayerPeer.TRANSFER_MODE_RELIABLE
   )
 
-func start_game() -> void:
-  marbles_overlay.spawned_bots = spawned_bots
-
+func server_only_start_game() -> void:
+  # marbles_overlay.spawned_bots = spawned_bots
   current_map.finish_area.body_entered.connect(on_finish_area_entered)
-
+  print("All peers loaded in, starting game")
   var join_index: int = 0
   for peer in lobby.peers:
-    var chatter: Chatter = chatters.get(peer.chatter_id)
+    var marble_state := MarblesGameState.MarbleState.new()
     var spawn_path_length = current_map.spawn_path.curve.get_baked_length()
     var spawn_path_offset = spawn_path_length / lobby.peers.size() * join_index
     var spawn_transform = current_map.spawn_path.global_transform * current_map.spawn_path.curve.sample_baked_with_rotation(spawn_path_offset)
-    var bot := get_or_create_bot_for_peer(peer.peer_id, chatter, spawn_transform)
-    bot.position += Vector3(randf_range(-.2, .2), 0.0, randf_range(-.2, .2))
-    bot.frozen = true
+    var random_position_offset := Vector3(randf_range(-.2, .2), 0.0, randf_range(-.2, .2))
+    marble_state.position = spawn_transform.origin + random_position_offset
+    marble_state.rotation = spawn_transform.basis.get_euler()
+
+    game_state.marbles_by_peer_id.set(peer.peer_id, marble_state)
+    print(game_state.marbles_by_peer_id)
+    var marble := get_or_create_bot_for_peer(peer.peer_id)
+    marble.global_position = marble_state.position
+    marble.global_rotation = marble_state.rotation
+    print(marble.global_position)
+
     join_index += 1
+
+  _send_refresh_state(MultiplayerPeer.TARGET_PEER_BROADCAST)
+  _apply_game_state()
 
   if MultiplayerClient.is_authority():
     await get_tree().create_timer(3.0).timeout
@@ -86,18 +97,29 @@ func start_game() -> void:
     )
 
 func _on_loaded_chatter_data(chatter: Chatter) -> void:
-  if spawned_bots.has(chatter.id):
-    var bot := spawned_bots[chatter.id]
+  var peer_id: int = lobby.peer_from_chatter.get(chatter.id, -1)
+  if peer_id == -1:
+    print("Warning: Received loaded chatter data for chatter %d with no associated peer_id" % chatter.id)
+    return
+  var marble := get_or_create_bot_for_peer(peer_id)
+  marble.chatter = chatter
+
+func get_or_create_bot_for_peer(peer_id: int) -> MarbleBot:
+  # Return cached bot if it exists
+  if bots_by_peer_id.has(peer_id):
+    return bots_by_peer_id[peer_id]
+
+  print("Creating new bot for peer_id %d" % peer_id)
+  var bot: MarbleBot = marble_bot_template.instantiate()
+  add_child(bot)
+
+  bots_by_peer_id.set(peer_id, bot)
+
+  var chatter_id: String = lobby.chatter_from_peer.get(peer_id, -1)
+  var chatter: Chatter = chatters.get(chatter_id)
+  if chatter != null:
     bot.chatter = chatter
 
-func get_or_create_bot_for_peer(_peer_id: int, chatter: Chatter, spawn_transform: Transform3D = Transform3D.IDENTITY) -> MarbleBot:
-  if spawned_bots.has(chatter.id):
-    return spawned_bots[chatter.id]
-  var bot: MarbleBot = marble_bot_template.instantiate()
-  spawned_bots[chatter.id] = bot
-  add_child(bot)
-  bot.global_transform = spawn_transform
-  bot.chatter = chatter
   if not MultiplayerClient.is_authority():
     bot.freeze = true
   return bot
@@ -121,7 +143,7 @@ func _handle_peer_packet(sender_id: int, packet: Dictionary) -> void:
     MarblesMessage.GameStart:
       if game_state:
         game_state.game_state = MarblesGameState.GameState.Playing
-      for bot in spawned_bots.values():
+      for bot in bots_by_peer_id.values():
         bot.frozen = false
     MarblesMessage.MarblesUpdate:
       var updates: Dictionary = packet.get("marbles", {})
@@ -140,13 +162,9 @@ func _apply_game_state() -> void:
   if game_state == null:
     return
   for peer_id in game_state.marbles_by_peer_id:
-    var bot: MarbleBot = spawned_bots[chatter_id]
-    var peer_id: int = lobby.peer_from_chatter.get(chatter_id, -1)
-    if peer_id == -1:
-      continue
-    var marble_state: MarblesGameState.MarbleState = game_state.marbles_by_peer_id.get(peer_id)
-    if marble_state != null:
-      bot.sync_state = marble_state
+    var marble: MarbleBot = get_or_create_bot_for_peer(peer_id)
+    var marble_state: MarblesGameState.MarbleState = game_state.marbles_by_peer_id[peer_id]
+    marble.sync_state = marble_state
 
 func _physics_process(delta: float) -> void:
   if Engine.is_editor_hint(): return
@@ -160,22 +178,20 @@ func _physics_process(delta: float) -> void:
 
 func _broadcast_marble_states() -> void:
   var marbles: Dictionary = {}
-  for chatter_id in spawned_bots:
-    var bot: MarbleBot = spawned_bots[chatter_id]
-    var peer_id: int = lobby.peer_from_chatter.get(chatter_id, -1)
-    if peer_id == -1:
-      continue
+  for peer_id in bots_by_peer_id:
+    var bot: MarbleBot = bots_by_peer_id[peer_id]
     marbles[peer_id] = {
       "position": bot.global_position,
       "rotation": bot.rotation,
       "linear_velocity": bot.linear_velocity,
     }
-    if not game_state.marbles_by_peer_id.has(peer_id):
-      game_state.marbles_by_peer_id[peer_id] = MarblesGameState.MarbleState.new()
-    var s := game_state.marbles_by_peer_id[peer_id]
-    s.position = bot.global_position
-    s.rotation = bot.rotation
-    s.linear_velocity = bot.linear_velocity
+    if game_state.marbles_by_peer_id.has(peer_id):
+      var s := game_state.marbles_by_peer_id[peer_id]
+      s.position = bot.global_position
+      s.rotation = bot.rotation
+      s.linear_velocity = bot.linear_velocity
+    else:
+      print("Warning: No marble state found for peer_id %d when broadcasting updates" % peer_id)
 
   MultiplayerClient.send_packet(
     { "type": MarblesMessage.MarblesUpdate, "marbles": marbles },

@@ -19,10 +19,7 @@ enum BotState { Speaking, Walking, Grabbed, Gambling }
 var state: = BotState.Gambling
 var frozen: bool = true:
   set(new_value):
-    if new_value:
-      freeze = true
-    else:
-      freeze = false
+    freeze = new_value
 
 func update_message(message: String) -> void:
   return
