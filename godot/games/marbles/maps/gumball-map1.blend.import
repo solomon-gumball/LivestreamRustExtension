@@ -3,13 +3,13 @@
 importer="scene"
 importer_version=1
 type="PackedScene"
-uid="uid://ddvmtykbpw14x"
-path="res://.godot/imported/planet.blend-29e7c02e4dd610448f74bee3d6a3ebad.scn"
+uid="uid://bab2ubhg8o2jw"
+path="res://.godot/imported/gumball-map1.blend-5deb23776aa07072426a1914e573219a.scn"
 
 [deps]
 
-source_file="res://games/marbles/planet.blend"
-dest_files=["res://.godot/imported/planet.blend-29e7c02e4dd610448f74bee3d6a3ebad.scn"]
+source_file="res://games/marbles/maps/gumball-map1.blend"
+dest_files=["res://.godot/imported/gumball-map1.blend-5deb23776aa07072426a1914e573219a.scn"]
 
 [params]
 

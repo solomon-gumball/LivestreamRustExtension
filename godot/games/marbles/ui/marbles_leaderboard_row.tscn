@@ -1,6 +1,6 @@
-[gd_scene load_steps=2 format=3 uid="uid://f6ong2f8cpcr"]
+[gd_scene format=3 uid="uid://f6ong2f8cpcr"]
 
-[ext_resource type="Script" uid="uid://ctjwoar8vnuu8" path="res://games/marbles/MarblesLeaderboardRow.gd" id="1_xjs6s"]
+[ext_resource type="Script" uid="uid://ctjwoar8vnuu8" path="res://games/marbles/ui/marbles_leaderboard_row.gd" id="1_xjs6s"]
 
 [node name="PanelContainer" type="PanelContainer"]
 script = ExtResource("1_xjs6s")

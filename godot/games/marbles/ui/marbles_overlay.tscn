@@ -1,7 +1,7 @@
-[gd_scene load_steps=3 format=3 uid="uid://dhxkdd3lw5n20"]
+[gd_scene format=3 uid="uid://dhxkdd3lw5n20"]
 
-[ext_resource type="Script" uid="uid://bxeev786ka0t5" path="res://games/marbles/MarblesOverlay.gd" id="1_umhwi"]
-[ext_resource type="PackedScene" uid="uid://f6ong2f8cpcr" path="res://games/marbles/MarblesLeaderboardRow.tscn" id="2_j0uvo"]
+[ext_resource type="Script" uid="uid://bxeev786ka0t5" path="res://games/marbles/ui/marbles_overlay.gd" id="1_umhwi"]
+[ext_resource type="PackedScene" uid="uid://f6ong2f8cpcr" path="res://games/marbles/ui/marbles_leaderboard_row.tscn" id="2_j0uvo"]
 
 [node name="CanvasLayer" type="CanvasLayer"]
 script = ExtResource("1_umhwi")

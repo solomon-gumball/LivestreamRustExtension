@@ -10,12 +10,12 @@ var _yaw: float = 0.0
 var _pitch: float = 0.0
 
 func _ready() -> void:
+  _yaw = global_rotation.y
+  _pitch = global_rotation.x
   _init_input_actions()
 
 func _input(event: InputEvent) -> void:
-  print("Input event: ", event)
-  if event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_RIGHT:
-    print("Right mouse button pressed: ", event.pressed)
+  if event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_LEFT:
     if event.pressed:
       Input.mouse_mode = Input.MOUSE_MODE_CAPTURED
     else:

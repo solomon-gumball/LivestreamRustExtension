@@ -13,13 +13,12 @@ func _ready() -> void:
   update_timer.timeout.connect(refresh_leaderboard)
 
 var num_of_entries_to_show = 10
-var row_template = load("res://games/marbles/MarblesLeaderboardRow.tscn")
+var row_template = load("res://games/marbles/ui/marbles_leaderboard_row.tscn")
 func refresh_leaderboard() -> void:
   var children = leaderboard_list.get_children()
   for child in children:
     if child is MarblesLeaderboardRow:
       child.queue_free()
-  # print("Refreshing lea")
 
   var bots: Array[MarbleBot] = []
   bots.assign(spawned_bots.values())

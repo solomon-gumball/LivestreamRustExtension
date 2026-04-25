@@ -2,8 +2,8 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://bmxa0wl16de6m"
-path.s3tc="res://.godot/imported/texture_10.png-3589ff9dcd3a02245754e7f16d7ccc08.s3tc.ctex"
+uid="uid://dk4jr0i8vf2ek"
+path.s3tc="res://.godot/imported/StarMask.png-f96f485ee12aa937e44a765c50518116.s3tc.ctex"
 metadata={
 "imported_formats": ["s3tc_bptc"],
 "vram_texture": true
@@ -11,8 +11,8 @@ metadata={
 
 [deps]
 
-source_file="res://games/marbles/textures/texture_10.png"
-dest_files=["res://.godot/imported/texture_10.png-3589ff9dcd3a02245754e7f16d7ccc08.s3tc.ctex"]
+source_file="res://games/marbles/textures/StarMask.png"
+dest_files=["res://.godot/imported/StarMask.png-f96f485ee12aa937e44a765c50518116.s3tc.ctex"]
 
 [params]
 

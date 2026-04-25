@@ -3,13 +3,13 @@
 importer="scene"
 importer_version=1
 type="PackedScene"
-uid="uid://dssq133g7mof7"
-path="res://.godot/imported/moon.blend-19573f5d18f45f074884c3ffd6ec5c75.scn"
+uid="uid://ddvmtykbpw14x"
+path="res://.godot/imported/planet.blend-23a833c21c087b91258f5f45633b38db.scn"
 
 [deps]
 
-source_file="res://games/marbles/moon.blend"
-dest_files=["res://.godot/imported/moon.blend-19573f5d18f45f074884c3ffd6ec5c75.scn"]
+source_file="res://games/marbles/props/planet.blend"
+dest_files=["res://.godot/imported/planet.blend-23a833c21c087b91258f5f45633b38db.scn"]
 
 [params]
 

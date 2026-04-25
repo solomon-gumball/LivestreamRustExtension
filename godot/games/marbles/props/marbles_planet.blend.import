@@ -3,13 +3,13 @@
 importer="scene"
 importer_version=1
 type="PackedScene"
-uid="uid://c6pukql8gdx76"
-path="res://.godot/imported/marbles-bumper.blend-000eb0f9e906579e7ac62e090f9c1c97.scn"
+uid="uid://dssq133g7mof7"
+path="res://.godot/imported/marbles_planet.blend-74aafd0e0113f390776aeb2da333c970.scn"
 
 [deps]
 
-source_file="res://games/marbles/marbles-bumper.blend"
-dest_files=["res://.godot/imported/marbles-bumper.blend-000eb0f9e906579e7ac62e090f9c1c97.scn"]
+source_file="res://games/marbles/props/marbles_planet.blend"
+dest_files=["res://.godot/imported/marbles_planet.blend-74aafd0e0113f390776aeb2da333c970.scn"]
 
 [params]
 

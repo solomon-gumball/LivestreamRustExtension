@@ -3,13 +3,13 @@
 importer="scene"
 importer_version=1
 type="PackedScene"
-uid="uid://3f5ca0oj5clk"
-path="res://.godot/imported/marbles-bubble.blend-7bda2d8d4b16fbdee73b8e9e6c81e74b.scn"
+uid="uid://c6pukql8gdx76"
+path="res://.godot/imported/marbles-bumper.blend-ea7b2f7f209585eb4cf1620544ab712b.scn"
 
 [deps]
 
-source_file="res://games/marbles/marbles-bubble.blend"
-dest_files=["res://.godot/imported/marbles-bubble.blend-7bda2d8d4b16fbdee73b8e9e6c81e74b.scn"]
+source_file="res://games/marbles/props/marbles-bumper.blend"
+dest_files=["res://.godot/imported/marbles-bumper.blend-ea7b2f7f209585eb4cf1620544ab712b.scn"]
 
 [params]
 
@@ -37,19 +37,7 @@ import_script/path=""
 materials/extract=0
 materials/extract_format=0
 materials/extract_path=""
-_subresources={
-"meshes": {
-"marbles-bubble_Sphere": {
-"generate/lightmap_uv": 0,
-"generate/lods": 0,
-"generate/shadow_meshes": 0,
-"lods/normal_merge_angle": 60.0,
-"save_to_file/enabled": true,
-"save_to_file/fallback_path": "res://games/marbles/MarblesBubble.res",
-"save_to_file/path": "uid://bgcod2p568c06"
-}
-}
-}
+_subresources={}
 blender/nodes/visible=0
 blender/nodes/active_collection_only=false
 blender/nodes/punctual_lights=true

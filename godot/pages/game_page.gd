@@ -80,7 +80,6 @@ func _handle_updates() -> void:
     return
 
   if MultiplayerClient.state.current is MultiplayerClient.Connected:
-    print('we are still connected???')
     if MultiplayerClient.current_lobby.started:
       state.change_state(game_active_state)
     else:
@@ -242,9 +241,9 @@ class LobbyDetailState extends GamePageState:
     var players_full: bool = lobby.players.size() >= lobby.game.max_players
 
     if my_peer == null:
-      # Not in the lobby yet — disable join as player if slots are full.
+      # Disable join as player if slots are full or the game has already started.
       page.join_as_player_button.visible = true
-      page.join_as_player_button.disabled = players_full
+      page.join_as_player_button.disabled = players_full or lobby.started
       page.join_as_spectator_button.visible = true
     elif not my_peer.connected:
       # In the lobby but WS dropped — single rejoin button, role is preserved server-side.
@@ -283,6 +282,7 @@ class GameActiveState extends GamePageState:
     if _prev is LobbyDetailState:
       await page.loading.transition_in()
 
+    page.join_lobby_tab.visible = false
     page.overlay_subviewport_container.visible = false
     page.start_game_button.visible = false
     page.close_lobby_button.visible = false
@@ -304,6 +304,7 @@ class GameActiveState extends GamePageState:
     game_ended.emit()
 
   func exit_state() -> void:
+    page.join_lobby_tab.visible = true
     page.overlay_subviewport_container.visible = true
     page.game_subviewport_container.visible = false
     if game_container:

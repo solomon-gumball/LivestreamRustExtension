@@ -3,13 +3,13 @@
 importer="scene"
 importer_version=1
 type="PackedScene"
-uid="uid://bab2ubhg8o2jw"
-path="res://.godot/imported/gumball-map1.blend-1fc42c94d9a87b82881e26cc48e11741.scn"
+uid="uid://3f5ca0oj5clk"
+path="res://.godot/imported/marbles_bubble.blend-46ad295bd147c4cdc5bc2ba4d5e7c45c.scn"
 
 [deps]
 
-source_file="res://games/marbles/gumball-map1.blend"
-dest_files=["res://.godot/imported/gumball-map1.blend-1fc42c94d9a87b82881e26cc48e11741.scn"]
+source_file="res://games/marbles/marbles_bot/marbles_bubble.blend"
+dest_files=["res://.godot/imported/marbles_bubble.blend-46ad295bd147c4cdc5bc2ba4d5e7c45c.scn"]
 
 [params]
 
@@ -37,7 +37,19 @@ import_script/path=""
 materials/extract=0
 materials/extract_format=0
 materials/extract_path=""
-_subresources={}
+_subresources={
+"meshes": {
+"marbles-bubble_Sphere": {
+"generate/lightmap_uv": 0,
+"generate/lods": 0,
+"generate/shadow_meshes": 0,
+"lods/normal_merge_angle": 60.0,
+"save_to_file/enabled": true,
+"save_to_file/fallback_path": "res://games/marbles/marbles_bot/marbles_bubble.res",
+"save_to_file/path": "uid://bgcod2p568c06"
+}
+}
+}
 blender/nodes/visible=0
 blender/nodes/active_collection_only=false
 blender/nodes/punctual_lights=true

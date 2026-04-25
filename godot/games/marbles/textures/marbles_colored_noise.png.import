@@ -2,8 +2,8 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://ofvawp17cyry"
-path.s3tc="res://.godot/imported/checker.png-06bd61d266b2fe4f273e418059bf1c3d.s3tc.ctex"
+uid="uid://taflulrdc44m"
+path.s3tc="res://.godot/imported/marbles_colored_noise.png-b3311261d0a8f91f66dc16e9ed86aa52.s3tc.ctex"
 metadata={
 "imported_formats": ["s3tc_bptc"],
 "vram_texture": true
@@ -11,8 +11,8 @@ metadata={
 
 [deps]
 
-source_file="res://games/marbles/checker.png"
-dest_files=["res://.godot/imported/checker.png-06bd61d266b2fe4f273e418059bf1c3d.s3tc.ctex"]
+source_file="res://games/marbles/textures/marbles_colored_noise.png"
+dest_files=["res://.godot/imported/marbles_colored_noise.png-b3311261d0a8f91f66dc16e9ed86aa52.s3tc.ctex"]
 
 [params]
 

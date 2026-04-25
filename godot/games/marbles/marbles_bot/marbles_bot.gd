@@ -50,16 +50,28 @@ func set_emote(emote_in: String) -> void:
     # var sphere_mat = (sphere.material as StandardMaterial3D).duplicate()
     # sphere_mat.albedo_texture = image_tex
     # sphere.material = sphere_mat
-    print("Setting emote texture")
     $Sprite3D.texture = image_tex
+
+var sync_state: MarblesGameState.MarbleState = null
+
+func has_authority() -> bool:
+  return MultiplayerClient.my_peer_id() == 1
 
 var acc_xz_velocity: Vector3 = Vector3.FORWARD
 func _physics_process(_delta: float) -> void:
-  var xz_velocity = Vector3(linear_velocity.x, 0, linear_velocity.z)
-  if xz_velocity.length() > 0.001:
-    acc_xz_velocity = acc_xz_velocity.lerp(xz_velocity.normalized(), _delta * 1.0).normalized()
-    follow_cam.global_position = global_position + acc_xz_velocity * -5.0
-    follow_cam.global_position.y += 4.0
-    follow_cam.look_at(global_position, Vector3.UP)
+  if not has_authority() and sync_state != null:
+    global_position = global_position.lerp(sync_state.position, _delta * 10.0)
+    rotation = Vector3(
+      lerp_angle(rotation.x, sync_state.rotation.x, _delta * 10.0),
+      lerp_angle(rotation.y, sync_state.rotation.y, _delta * 10.0),
+      lerp_angle(rotation.z, sync_state.rotation.z, _delta * 10.0)
+    )
 
-    label_node.global_position = global_position + Vector3(0, 0.35, 0)
+  # var xz_velocity = Vector3(linear_velocity.x, 0, linear_velocity.z)
+  # if xz_velocity.length() > 0.001:
+  #   acc_xz_velocity = acc_xz_velocity.lerp(xz_velocity.normalized(), _delta * 1.0).normalized()
+  #   follow_cam.global_position = global_position + acc_xz_velocity * -5.0
+  #   follow_cam.global_position.y += 4.0
+  #   follow_cam.look_at(global_position, Vector3.UP)
+
+  #   label_node.global_position = global_position + Vector3(0, 0.35, 0)

@@ -6,6 +6,10 @@ var lobby: Lobby
 
 @warning_ignore("UNUSED_SIGNAL")
 signal game_finished
+signal chatter_loaded(chatter: Chatter)
+signal all_chatters_loaded_locally()
+signal peer_is_ready(peer_id: int)
+signal all_peers_loaded_in()
 
 enum GlobalGameMessage {
   ClientReady = 1000,
@@ -31,34 +35,33 @@ func _ready() -> void:
       true
     )
 
+
   WSClient.subscribe(user_sub_channels)
   WSClient.authenticated_state.chatter_updated.connect(_handle_chatter_updated)
   MultiplayerClient.packet_received.connect(_base_handle_peer_packet)
 
-func game_ready() -> void:
-  print("Game is ready to start!")
-  pass
-
-func chatters_loaded() -> void:
-  print("All chatters loaded!")
-  pass
+  _check_game_ready()
 
 func _check_game_ready() -> void:
   for peer in lobby.peers:
+    if peer.peer_id == MultiplayerClient.my_peer_id(): continue
     if not ready_peers.has(peer.peer_id):
       return
-  game_ready()
+  all_peers_loaded_in.emit()
 
 func _handle_chatter_updated(chatter: Chatter) -> void:
   chatters[chatter.id] = chatter
+  chatter_loaded.emit(chatter)
+
   for peer in lobby.peers:
     if not chatters.has(peer.chatter_id):
       return
-  _check_game_ready()
+  all_chatters_loaded_locally.emit()
 
 func _base_handle_peer_packet(sender_id: int, packet: Dictionary) -> void:
   match packet.type:
     GlobalGameMessage.ClientReady:
       ready_peers[sender_id] = true
+      peer_is_ready.emit(sender_id)
       if is_game_host:
         _check_game_ready()

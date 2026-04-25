@@ -1,9 +1,9 @@
 [gd_scene format=3 uid="uid://b4y1nifskfobg"]
 
-[ext_resource type="Script" uid="uid://c4ivyfbuwvsti" path="res://games/marbles/MarbleBot.gd" id="1_34rat"]
+[ext_resource type="Script" uid="uid://c4ivyfbuwvsti" path="res://games/marbles/marbles_bot/marbles_bot.gd" id="1_34rat"]
 [ext_resource type="Texture2D" uid="uid://c53kbdrgxxvfc" path="res://icon.svg" id="3_lmqmq"]
 [ext_resource type="FontFile" uid="uid://7uibxoligyvb" path="res://fonts/HomeVideo-BLG6G.ttf" id="3_qhe1h"]
-[ext_resource type="ArrayMesh" uid="uid://bgcod2p568c06" path="res://games/marbles/MarblesBubble.res" id="5_lmqmq"]
+[ext_resource type="ArrayMesh" uid="uid://bgcod2p568c06" path="res://games/marbles/marbles_bot/marbles_bubble.res" id="5_lmqmq"]
 
 [sub_resource type="PhysicsMaterial" id="PhysicsMaterial_6k1q8"]
 bounce = 0.5

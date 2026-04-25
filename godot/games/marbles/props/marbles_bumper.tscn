@@ -1,7 +1,7 @@
-[gd_scene load_steps=7 format=3 uid="uid://eki78xsf4ibe"]
+[gd_scene format=3 uid="uid://eki78xsf4ibe"]
 
-[ext_resource type="PackedScene" uid="uid://c6pukql8gdx76" path="res://games/marbles/marbles-bumper.blend" id="1_as2fw"]
-[ext_resource type="Script" uid="uid://bac0ae5n0s2t7" path="res://games/marbles/MarblesBumper.gd" id="2_2cm3g"]
+[ext_resource type="PackedScene" uid="uid://c6pukql8gdx76" path="res://games/marbles/props/marbles-bumper.blend" id="1_as2fw"]
+[ext_resource type="Script" uid="uid://bac0ae5n0s2t7" path="res://games/marbles/props/marbles_bumper.gd" id="2_2cm3g"]
 
 [sub_resource type="Animation" id="Animation_5d614"]
 length = 0.001
