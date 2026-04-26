@@ -123,6 +123,7 @@ class FreeState extends DebugCameraState:
 
 class FollowState extends DebugCameraState:
   const TRANSITION_DURATION: float = 0.5
+  var invert_pitch: bool = true
 
   var target: Node3D = null:
     set(value):
@@ -132,11 +133,11 @@ class FollowState extends DebugCameraState:
       target = value
       if not is_instance_valid(target):
         return
-      orbit_distance = cam.global_position.distance_to(target.global_position)
+      # orbit_distance = cam.global_position.distance_to(target.global_position)
       if not had_target:
-        var offset := cam.global_position - target.global_position
-        cam._yaw = atan2(offset.x, offset.z)
-        cam._pitch = -asin(clamp(offset.normalized().y, -1.0, 1.0))
+        var forward := cam.global_transform.basis * Vector3.FORWARD
+        cam._yaw = atan2(-forward.x, -forward.z)
+        cam._pitch = asin(clamp(-forward.y, -1.0, 1.0))
         cam._pitch = clamp(cam._pitch, deg_to_rad(-89.0), deg_to_rad(89.0))
 
   var orbit_distance: float = 5.0
@@ -161,9 +162,13 @@ class FollowState extends DebugCameraState:
       elif event.button_index == MOUSE_BUTTON_WHEEL_DOWN:
         orbit_distance += 0.5
 
+    if event is InputEventPanGesture:
+      orbit_distance = max(0.5, orbit_distance + event.delta.y * 0.1)
+
     if event is InputEventMouseMotion and Input.mouse_mode == Input.MOUSE_MODE_CAPTURED:
+      var pitch_sign := 1.0 if invert_pitch else -1.0
       cam._yaw -= event.relative.x * cam.mouse_sensitivity
-      cam._pitch -= event.relative.y * cam.mouse_sensitivity
+      cam._pitch += event.relative.y * cam.mouse_sensitivity * pitch_sign
       cam._pitch = clamp(cam._pitch, deg_to_rad(-89.0), deg_to_rad(89.0))
 
   func physics_update(delta: float) -> void:

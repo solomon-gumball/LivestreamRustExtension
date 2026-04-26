@@ -80,7 +80,6 @@ func server_only_start_game() -> void:
 
   marbles_overlay.bots_by_peer_id = bots_by_peer_id
   current_map.finish_area.body_entered.connect(on_finish_area_entered)
-  print("All peers loaded in, starting game")
 
   var join_index: int = 0
   for peer in lobby.peers:
@@ -96,7 +95,6 @@ func server_only_start_game() -> void:
     var marble := get_or_create_bot_for_peer(peer.peer_id)
     marble.global_position = marble_state.position
     marble.global_rotation = marble_state.rotation
-    print(marble.global_position)
 
     join_index += 1
 
@@ -125,7 +123,6 @@ func get_or_create_bot_for_peer(peer_id: int) -> MarbleBot:
   if bots_by_peer_id.has(peer_id):
     return bots_by_peer_id[peer_id]
 
-  print("Creating new bot for peer_id %d" % peer_id)
   var bot: MarbleBot = marble_bot_template.instantiate()
   add_child(bot)
 

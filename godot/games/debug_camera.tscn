@@ -4,7 +4,11 @@
 
 [sub_resource type="SphereShape3D" id="SphereShape3D_k0n4g"]
 
+[sub_resource type="SphereShape3D" id="SphereShape3D_p13lh"]
+
 [node name="DebugCamera" type="CharacterBody3D" unique_id=1098239593]
+collision_layer = 0
+collision_mask = 0
 motion_mode = 1
 script = ExtResource("1_k0n4g")
 
@@ -13,3 +17,7 @@ current = true
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="." unique_id=1543281243]
 shape = SubResource("SphereShape3D_k0n4g")
+
+[node name="ShapeCast" type="ShapeCast3D" parent="." unique_id=2104177827]
+unique_name_in_owner = true
+shape = SubResource("SphereShape3D_p13lh")
