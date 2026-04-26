@@ -5,6 +5,9 @@
 [ext_resource type="PackedScene" uid="uid://diyvoye7vs7ks" path="res://games/debug_camera.tscn" id="3_4cld7"]
 [ext_resource type="PackedScene" uid="uid://dgll8fvuxvlum" path="res://games/marbles/props/marbles_spinner.tscn" id="3_4nog8"]
 [ext_resource type="PackedScene" uid="uid://eki78xsf4ibe" path="res://games/marbles/props/marbles_bumper.tscn" id="4_sevp3"]
+[ext_resource type="Shader" uid="uid://5hci2mcg6lv0" path="res://shaders/galaxy_sky.gdshader" id="6_fxgnb"]
+[ext_resource type="Texture2D" uid="uid://ddovor3jdfvj4" path="res://textures/noise1.jpg" id="7_1um5w"]
+[ext_resource type="Texture2D" uid="uid://6om2hiwmkli" path="res://textures/panorama6.jpg" id="8_kvqxd"]
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_ao6dl"]
 size = Vector3(21.9851, 1, 2.65137)
@@ -22,7 +25,22 @@ _data = {
 }
 point_count = 5
 
-[node name="gumball-map1" unique_id=1016766879 node_paths=PackedStringArray("finish_area", "out_of_bounds_area", "spawn_path") instance=ExtResource("1_28nk5")]
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_rcfe2"]
+shader = ExtResource("6_fxgnb")
+shader_parameter/source_panorama = ExtResource("8_kvqxd")
+shader_parameter/noise_panorama = ExtResource("7_1um5w")
+shader_parameter/exposure = 1.0
+
+[sub_resource type="Sky" id="Sky_gp6tp"]
+sky_material = SubResource("ShaderMaterial_rcfe2")
+
+[sub_resource type="Environment" id="Environment_8bl5g"]
+background_mode = 2
+sky = SubResource("Sky_gp6tp")
+ambient_light_color = Color(0.5102944, 0.26274186, 0.71350974, 1)
+ambient_light_sky_contribution = 0.0
+
+[node name="gumball-map1" unique_id=1781735014 node_paths=PackedStringArray("finish_area", "out_of_bounds_area", "spawn_path") instance=ExtResource("1_28nk5")]
 script = ExtResource("2_tjf41")
 finish_area = NodePath("FinishArea2")
 out_of_bounds_area = NodePath("OutOfBoundsArea")
@@ -30,6 +48,10 @@ spawn_path = NodePath("Path3D")
 
 [node name="DebugCamera" parent="." index="0" unique_id=1098239593 instance=ExtResource("3_4cld7")]
 transform = Transform3D(0.056996282, 0.4584169, -0.88690776, -0.029399082, 0.88873726, 0.45747322, 0.99794143, 0, 0.06413176, 110.93758, 94.113, 0)
+
+[node name="DirectionalLight3D" type="DirectionalLight3D" parent="DebugCamera" index="2" unique_id=860263462]
+transform = Transform3D(0.31186885, 0.41675103, -0.8538481, -0.45274132, 0.855267, 0.25207937, 0.8353224, 0.30795652, 0.4554115, 0, 0, 0)
+light_energy = 0.147
 
 [node name="StaticBody3D2" type="StaticBody3D" parent="." index="1" unique_id=589620629]
 transform = Transform3D(0, 1, 0, -1, 0, 0, 0, 0, 1, 26.1318, 27.8351, -5.28797)
@@ -53,22 +75,22 @@ transform = Transform3D(-0.388362, -0.443438, -0.807798, -0.509024, -0.627499, 0
 shadow_enabled = true
 shadow_opacity = 0.57
 
-[node name="Sphere" parent="." index="5" unique_id=1236355157]
+[node name="Sphere" parent="." index="5" unique_id=1539904097]
 visible = false
 
-[node name="Sphere_001-noimport" parent="." index="6" unique_id=586904100]
+[node name="Sphere_001-noimport" parent="." index="6" unique_id=1163959254]
 visible = false
 
-[node name="Funnel" parent="." index="8" unique_id=1477801800]
+[node name="Funnel" parent="." index="8" unique_id=874887893]
 visible = false
 
-[node name="MarblesSpinner" parent="." index="18" unique_id=281183759]
+[node name="MarblesSpinner" parent="." index="18" unique_id=292895971]
 visible = false
 
-[node name="Circle_001" parent="." index="21" unique_id=1848638353]
+[node name="Circle_001" parent="." index="21" unique_id=992626112]
 visible = false
 
-[node name="Circle_002" parent="." index="22" unique_id=1408468679]
+[node name="Circle_002" parent="." index="22" unique_id=1514819569]
 visible = false
 
 [node name="marbles-bumper3" parent="." index="24" unique_id=462884197 instance=ExtResource("4_sevp3")]
@@ -100,3 +122,6 @@ shape = SubResource("BoxShape3D_87yb8")
 [node name="Path3D" type="Path3D" parent="." index="33" unique_id=454938272]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 121.146, 91.8646, 0)
 curve = SubResource("Curve3D_tjf41")
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="." index="35" unique_id=1610954951]
+environment = SubResource("Environment_8bl5g")

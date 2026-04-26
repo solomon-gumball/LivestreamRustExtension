@@ -9,11 +9,8 @@ class_name MarbleBot
 # @onready var chat_bubble: ChatBubble = $LabelNode/Chatbubble
 @onready var bubble: MeshInstance3D = $MarblesBubble
 @onready var follow_cam: Camera3D = $cam
-
-var bubble_mat: StandardMaterial3D = null
-func _ready() -> void:
-  bubble_mat = bubble.get_active_material(1) as StandardMaterial3D
-  bubble.set_surface_override_material(1, bubble_mat)
+@onready var emote_billboard: EmoteBillboard = %EmoteBillboard
+@export var bubble_mat: StandardMaterial3D
 
 enum BotState { Speaking, Walking, Grabbed, Gambling }
 var state: = BotState.Gambling
@@ -30,10 +27,9 @@ var chatter: Chatter = null:
     if is_inside_tree() && new_value != null:
       set_emote(new_value.emote)
       username_label.text = new_value.display_name
-      bubble_mat.detail_enabled = false
-      bubble_mat.albedo_color = Color.from_string(new_value.color, Color.RED)
-      bubble_mat.albedo_color.a = .5
-      # bubble.set_surface_override_material(1, bubble_mat)
+      var mat = bubble_mat.duplicate() as StandardMaterial3D
+      mat.albedo_color = Color.from_string(new_value.color, Color.RED)
+      bubble.set_surface_override_material(1, mat)
       # var sphere_mat = (sphere.material as StandardMaterial3D).duplicate()
       # # sphere_mat.albedo_color = Color.from_string(new_value.color, Color.RED)
       # sphere_mat.albedo_color.a = .5

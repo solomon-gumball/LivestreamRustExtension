@@ -26,28 +26,37 @@ const SYNC_RATE: float = 1.0 / 20.0
 
 func _ready() -> void:
   super._ready()
-
-  assert(lobby != null, "Lobby should never be null in a GameBase instance")
+  if Engine.is_editor_hint():
+    return
 
   var map_scene = map[0]
   current_map = map_scene.instantiate()
   add_child(current_map)
 
+  marbles_overlay.map = current_map
   MultiplayerClient.connected_state.left_lobby.connect(_left_lobby)
   MultiplayerClient.packet_received.connect(_handle_peer_packet)
 
-  if MultiplayerClient.is_authority():
-    print("Setting up authority connections")
+  if is_game_host:
+    peer_is_ready.connect(_peer_is_ready)
     all_peers_loaded_in.connect(server_only_start_game)
     chatter_loaded.connect(_on_loaded_chatter_data)
     var new_state := MarblesGameState.new()
+    MultiplayerClient.rtc_peer_ready.connect(_peer_is_ready)
     _handle_peer_packet(1, { "type": MarblesMessage.StateRefresh, "state": new_state })
     _send_refresh_state(MultiplayerPeer.TARGET_PEER_BROADCAST)
 
+func _peer_is_ready(peer_id: int) -> void:
+  print("PEER IS READY")
+  _send_refresh_state(peer_id)
+
 func _exit_tree() -> void:
-  MultiplayerClient.connected_state.left_lobby.disconnect(_left_lobby)
+  if Engine.is_editor_hint():
+    return
+  if MultiplayerClient.connected_state:
+    MultiplayerClient.connected_state.left_lobby.disconnect(_left_lobby)
   MultiplayerClient.packet_received.disconnect(_handle_peer_packet)
-  if MultiplayerClient.is_authority():
+  if is_game_host:
     MultiplayerClient.rtc_peer_ready.disconnect(_send_refresh_state)
 
 func _left_lobby() -> void:
@@ -60,10 +69,15 @@ func _send_refresh_state(peer_id: int) -> void:
     MultiplayerPeer.TRANSFER_MODE_RELIABLE
   )
 
+var started := false
 func server_only_start_game() -> void:
-  # marbles_overlay.spawned_bots = spawned_bots
+  if started: return # TODO: Allow late joins?
+  started = true
+
+  marbles_overlay.bots_by_peer_id = bots_by_peer_id
   current_map.finish_area.body_entered.connect(on_finish_area_entered)
   print("All peers loaded in, starting game")
+
   var join_index: int = 0
   for peer in lobby.peers:
     var marble_state := MarblesGameState.MarbleState.new()
@@ -75,7 +89,6 @@ func server_only_start_game() -> void:
     marble_state.rotation = spawn_transform.basis.get_euler()
 
     game_state.marbles_by_peer_id.set(peer.peer_id, marble_state)
-    print(game_state.marbles_by_peer_id)
     var marble := get_or_create_bot_for_peer(peer.peer_id)
     marble.global_position = marble_state.position
     marble.global_rotation = marble_state.rotation
@@ -86,14 +99,13 @@ func server_only_start_game() -> void:
   _send_refresh_state(MultiplayerPeer.TARGET_PEER_BROADCAST)
   _apply_game_state()
 
-  if MultiplayerClient.is_authority():
+  if is_game_host:
     await get_tree().create_timer(3.0).timeout
-    var start_msg := { "type": MarblesMessage.GameStart }
-    _handle_peer_packet(1, start_msg)
     MultiplayerClient.send_packet(
-      start_msg,
+      { "type": MarblesMessage.GameStart },
       MultiplayerPeer.TARGET_PEER_BROADCAST,
-      MultiplayerPeer.TRANSFER_MODE_RELIABLE
+      MultiplayerPeer.TRANSFER_MODE_RELIABLE,
+      true
     )
 
 func _on_loaded_chatter_data(chatter: Chatter) -> void:
@@ -120,7 +132,7 @@ func get_or_create_bot_for_peer(peer_id: int) -> MarbleBot:
   if chatter != null:
     bot.chatter = chatter
 
-  if not MultiplayerClient.is_authority():
+  if not is_game_host:
     bot.freeze = true
   return bot
 
@@ -168,7 +180,7 @@ func _apply_game_state() -> void:
 
 func _physics_process(delta: float) -> void:
   if Engine.is_editor_hint(): return
-  if not MultiplayerClient.is_authority(): return
+  if not is_game_host: return
   if game_state == null or game_state.game_state != MarblesGameState.GameState.Playing: return
 
   _sync_accumulator += delta

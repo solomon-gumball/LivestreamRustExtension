@@ -36,29 +36,29 @@ static var _script_registry: Dictionary[String, _ScriptRegistryEntry]
 ## Registers a script (an object type) to be serialized/deserialized. All custom types (including nested types) must be registered [b]before[/b] using this library.
 ## [param name] can be empty if script uses [code]class_name[/code] (e.g [code]ObjectSerializer.register_script(Data)[/code]), but it's generally better to set the name.
 ## Nested custom types referenced by typed properties are registered automatically.
-static func register_script(script: Script, name: StringName = "") -> void:
+static func register_script(script: Script, script_name: StringName = "") -> void:
 	var class_map: Dictionary[String, String] = {}
 	for cls in ProjectSettings.get_global_class_list():
 		class_map[cls["class"]] = cls["path"]
-	_register_script_recursive(script, name, class_map)
+	_register_script_recursive(script, script_name, class_map)
 
 
-static func _register_script_recursive(script: Script, name: StringName, class_map: Dictionary) -> void:
-	var script_name := _get_script_name(script, name)
-	assert(script_name, "Script must have name\n" + script.source_code)
-	var type_key := object_type_prefix + script_name
+static func _register_script_recursive(script: Script, script_name: StringName, class_map: Dictionary) -> void:
+	var resolved_name := _get_script_name(script, script_name)
+	assert(resolved_name, "Script must have name\n" + script.source_code)
+	var type_key := object_type_prefix + resolved_name
 	if _script_registry.has(type_key):
 		return
 	var entry := _ScriptRegistryEntry.new()
 	entry.script_type = script
 	entry.type = type_key
 	_script_registry[type_key] = entry
-	for property in script.get_script_property_list():
+	for property: Dictionary in script.get_script_property_list():
 		if property.type == TYPE_OBJECT and not (property.class_name as String).is_empty():
 			var cls_name: String = property.class_name
 			if class_map.has(cls_name):
 				_register_script_recursive(load(class_map[cls_name]), "", class_map)
-	for constant_name in script.get_script_constant_map():
+	for constant_name: StringName in script.get_script_constant_map():
 		var value: Variant = script.get_script_constant_map()[constant_name]
 		if value is Script:
 			_register_script_recursive(value, constant_name, class_map)
@@ -67,13 +67,13 @@ static func _register_script_recursive(script: Script, name: StringName, class_m
 ## Registers multiple scripts (object types) to be serialized/deserialized from a dictionary.
 ## See [method ObjectSerializer.register_script]
 static func register_scripts(scripts: Dictionary[String, Script]) -> void:
-	for name in scripts:
-		register_script(scripts[name], name)
+	for script_name: StringName in scripts:
+		register_script(scripts[script_name], script_name)
 
 
-static func _get_script_name(script: Script, name: StringName = "") -> StringName:
-	if name:
-		return name
+static func _get_script_name(script: Script, script_name: StringName = "") -> StringName:
+	if script_name:
+		return script_name
 	if script.resource_name:
 		return script.resource_name
 	if script.get_global_name():
@@ -81,9 +81,9 @@ static func _get_script_name(script: Script, name: StringName = "") -> StringNam
 	return ""
 
 
-static func _get_entry(name: StringName = "", script: Script = null) -> _ScriptRegistryEntry:
-	if name:
-		var entry: _ScriptRegistryEntry = _script_registry.get(name)
+static func _get_entry(entry_name: StringName = "", script: Script = null) -> _ScriptRegistryEntry:
+	if entry_name:
+		var entry: _ScriptRegistryEntry = _script_registry.get(entry_name)
 		if entry:
 			return entry
 
@@ -129,7 +129,7 @@ class _ScriptRegistryEntry:
 			):
 				result[property.name] = next.call(value.get(property.name))
 
-		for key in partial:
+		for key: String in partial:
 			result[key] = partial[key]
 
 		if value.has_method("_get_constructor_args"):

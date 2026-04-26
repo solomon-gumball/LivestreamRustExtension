@@ -13,7 +13,7 @@ data = PackedVector3Array(0, 0.315, -0.5391, 0.3812, 0.4097, -0.3812, 0, 0.4097,
 script = ExtResource("1_y341y")
 
 [node name="MarbleSpinner" type="MeshInstance3D" parent="." unique_id=1669511457]
-transform = Transform3D(-0.60876137, 0, -0.7933534, 0, 1, 0, 0.7933534, 0, -0.60876137, 0, 0, 0)
+transform = Transform3D(-0.85264176, 0, -0.522496, 0, 1, 0, 0.522496, 0, -0.85264176, 0, 0, 0)
 mesh = ExtResource("2_05l2c")
 
 [node name="StaticBody3D" type="StaticBody3D" parent="MarbleSpinner" unique_id=1961832873]
@@ -22,7 +22,7 @@ mesh = ExtResource("2_05l2c")
 shape = SubResource("ConcavePolygonShape3D_3p308")
 
 [node name="MarbleSpinner2" type="MeshInstance3D" parent="." unique_id=1472603871]
-transform = Transform3D(-0.60876137, 0, 0.7933534, 0, 1, 0, -0.7933534, 0, -0.60876137, 0, 0.840869, 0)
+transform = Transform3D(-0.85264176, 0, 0.522496, 0, 1, 0, -0.522496, 0, -0.85264176, 0, 0.840869, 0)
 mesh = ExtResource("2_05l2c")
 
 [node name="StaticBody3D" type="StaticBody3D" parent="MarbleSpinner2" unique_id=423904141]

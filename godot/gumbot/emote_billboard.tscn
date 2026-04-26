@@ -1,0 +1,19 @@
+[gd_scene format=3 uid="uid://18s1j8sdp2pt"]
+
+[ext_resource type="Shader" uid="uid://b00uak7trayog" path="res://materials/emote_icon/emote_icon.gdshader" id="1_sp5kc"]
+[ext_resource type="Texture2D" uid="uid://c53kbdrgxxvfc" path="res://icon.svg" id="2_rabkn"]
+[ext_resource type="Script" uid="uid://brp6rslrqd3ua" path="res://gumbot/emote_billboard.gd" id="3_rabkn"]
+
+[sub_resource type="QuadMesh" id="QuadMesh_q8oxr"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_q8oxr"]
+render_priority = -1
+shader = ExtResource("1_sp5kc")
+shader_parameter/emote_texture = ExtResource("2_rabkn")
+
+[node name="EmoteBillboard" type="MeshInstance3D" unique_id=665966681]
+transform = Transform3D(0.32189175, 0, 0, 0, 0.32189175, 0, 0, 0, 0.32189175, 0, 0, 0)
+mesh = SubResource("QuadMesh_q8oxr")
+surface_material_override/0 = SubResource("ShaderMaterial_q8oxr")
+script = ExtResource("3_rabkn")
+emote_material = SubResource("ShaderMaterial_q8oxr")

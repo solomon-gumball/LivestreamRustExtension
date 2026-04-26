@@ -6,13 +6,10 @@ var is_stream_overlay: bool = false
 func _ready() -> void:
   var cmd_args := OS.get_cmdline_args()
 
-  # LimboConsole.register_command(restart)
-
   var num_col := 2
   var num_row := 2
 
   # Find window index in cmdline args string. Example "--i=1" Id = 1.
-  print(cmd_args)
   for arg in cmd_args:
     if arg is String and arg.begins_with("--i="):
       var parts := arg.split("=")

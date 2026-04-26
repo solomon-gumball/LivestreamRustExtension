@@ -19,15 +19,34 @@ enum GlobalGameMessage {
 var chatters: Dictionary[String, Chatter] = {}
 var ready_peers: Dictionary[int, bool] = {}
 var is_game_host: bool = false
+var is_offline_mode: bool = true
 
 func _ready() -> void:
+  if Engine.is_editor_hint():
+    return
+
+  if is_offline_mode:
+    is_game_host = true
+    var mock_game_data := GameMetadata.new()
+    var mock_data := MockData.generate_mock_game_lobby(5, 3, 5, 5, mock_game_data)
+    lobby = mock_data.get("lobby")
+    print(lobby.peers)
+    await get_tree().physics_frame
+
+    for chatter in mock_data.get("chatters"):
+      chatter_loaded.emit(chatter)
+    all_chatters_loaded_locally.emit()
+    all_peers_loaded_in.emit()
+    return
+
+  assert(lobby != null, "Lobby should never be null in a GameBase instance")
+
   is_game_host = lobby.host_chatter_id == WSClient.my_chatter().id
 
   var user_sub_channels: Array[String] = []
   for peer in lobby.peers:
     user_sub_channels.append(peer.chatter_id)
 
-  print("READY CALLED FOR PEER ", WSClient.my_chatter().id)
   if !is_game_host:
     MultiplayerClient.send_packet(
       { "type": GlobalGameMessage.ClientReady },

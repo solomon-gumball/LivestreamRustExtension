@@ -18,7 +18,6 @@ var mute: bool = false:
 
 func _ready():
   load_settings_from_disk()
-  print(tts_enabled, slots_enabled, mute)
 
 func save_settings_to_disk():
   var save_file = FileAccess.open("user://settings.save", FileAccess.WRITE)

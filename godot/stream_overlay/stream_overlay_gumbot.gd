@@ -1,3 +1,4 @@
+@tool
 extends GumBot
 class_name StreamOverlayGumBot
 

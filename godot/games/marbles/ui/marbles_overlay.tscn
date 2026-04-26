@@ -3,10 +3,10 @@
 [ext_resource type="Script" uid="uid://bxeev786ka0t5" path="res://games/marbles/ui/marbles_overlay.gd" id="1_umhwi"]
 [ext_resource type="PackedScene" uid="uid://f6ong2f8cpcr" path="res://games/marbles/ui/marbles_leaderboard_row.tscn" id="2_j0uvo"]
 
-[node name="CanvasLayer" type="CanvasLayer"]
+[node name="CanvasLayer" type="CanvasLayer" unique_id=1482290356]
 script = ExtResource("1_umhwi")
 
-[node name="LeaderboardList" type="VBoxContainer" parent="."]
+[node name="LeaderboardList" type="VBoxContainer" parent="." unique_id=1798207291]
 anchors_preset = 1
 anchor_left = 1.0
 anchor_right = 1.0
@@ -14,8 +14,8 @@ offset_left = -40.0
 offset_bottom = 40.0
 grow_horizontal = 0
 
-[node name="MarblesLeaderBoardRow2" parent="LeaderboardList" instance=ExtResource("2_j0uvo")]
+[node name="MarblesLeaderBoardRow2" parent="LeaderboardList" unique_id=451669414 instance=ExtResource("2_j0uvo")]
 layout_mode = 2
 
-[node name="MarblesLeaderBoardRow" parent="LeaderboardList" instance=ExtResource("2_j0uvo")]
+[node name="MarblesLeaderBoardRow" parent="LeaderboardList" unique_id=1860630974 instance=ExtResource("2_j0uvo")]
 layout_mode = 2

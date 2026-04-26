@@ -6,6 +6,7 @@ class_name DebugCamera
 @export var mouse_sensitivity: float = 0.003
 @onready var camera: Camera3D = $Camera
 
+var follow_node: Node3D = null
 var _yaw: float = 0.0
 var _pitch: float = 0.0
 
@@ -26,7 +27,17 @@ func _input(event: InputEvent) -> void:
     _pitch -= event.relative.y * mouse_sensitivity
     _pitch = clamp(_pitch, deg_to_rad(-89.0), deg_to_rad(89.0))
 
+func enter_follow_mode(node_to_follow: Node3D) -> void:
+  follow_node = node_to_follow
+
+func _phys_follow_node(delta: float) -> void:
+  pass
+
 func _physics_process(delta: float) -> void:
+  if follow_node:
+    _phys_follow_node(delta)
+    return
+
   global_basis = Basis(Quaternion(Vector3.UP, _yaw) * Quaternion(Vector3.RIGHT, _pitch))
 
   var speed := 100.0

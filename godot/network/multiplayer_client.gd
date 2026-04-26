@@ -177,12 +177,12 @@ var is_rtc_connected: bool:
 
 func my_peer_id() -> int:
   if rtc_mp.get_connection_status() == MultiplayerPeer.CONNECTION_DISCONNECTED:
-    return -1
+    return 1
   return rtc_mp.get_unique_id()
 
 func is_authority() -> bool:
   if rtc_mp.get_connection_status() == MultiplayerPeer.CONNECTION_DISCONNECTED:
-    return false
+    return true
   return rtc_mp.get_unique_id() == 1
 
 func is_initialized() -> bool:

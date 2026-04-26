@@ -174,7 +174,6 @@ class DisconnectedState extends WSClientState:
     if debug_force_disconnected: return
     var url = net.getWsServerUrl()
     var err = net.remote_server_socket.connect_to_url(url, TLSOptions.client_unsafe() if net.use_local_server else null)
-    print("Attempting to connect to server")
     if err != OK:
       print("Error connecting to remote server: %d" % err)
 

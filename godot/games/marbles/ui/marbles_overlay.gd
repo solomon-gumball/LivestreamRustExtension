@@ -2,7 +2,8 @@ extends CanvasLayer
 class_name MarblesOverlay
 
 @onready var leaderboard_list: VBoxContainer = $LeaderboardList
-var spawned_bots: Dictionary[String, MarbleBot] = {}
+var bots_by_peer_id: Dictionary[int, MarbleBot] = {}
+var map: MarblesMap
 
 func _ready() -> void:
   var update_timer = Timer.new()
@@ -21,9 +22,12 @@ func refresh_leaderboard() -> void:
       child.queue_free()
 
   var bots: Array[MarbleBot] = []
-  bots.assign(spawned_bots.values())
+  bots.assign(bots_by_peer_id.values())
 
-  bots.sort_custom(func(a: MarbleBot, b: MarbleBot) -> bool: return a.position.y < b.position.y)
+  var curve := map.progress_curve.curve
+  bots.sort_custom(func(a: MarbleBot, b: MarbleBot) -> bool:
+    return curve.get_closest_offset(a.global_position) > curve.get_closest_offset(b.global_position)
+  )
   bots = bots.slice(0, num_of_entries_to_show)
   var rank: int = 0
   for bot in bots:

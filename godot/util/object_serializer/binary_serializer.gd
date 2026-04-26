@@ -9,14 +9,14 @@ extends Node
 static func serialize_var(value: Variant) -> Variant:
 	match typeof(value):
 		TYPE_OBJECT:
-			var name: StringName = value.get_script().get_global_name()
-			var object_entry := ObjectSerializer._get_entry(name, value.get_script())
+			var script_name: StringName = value.get_script().get_global_name()
+			var object_entry := ObjectSerializer._get_entry(script_name, value.get_script())
 			if !object_entry:
 				assert(
 					false,
 					(
 						"Could not find type (%s) in registry\n%s"
-						% [name if name else "no name", value.get_script().source_code]
+						% [String(script_name) if script_name else "no name", value.get_script().source_code]
 					)
 				)
 
@@ -42,11 +42,11 @@ static func deserialize_var(value: Variant) -> Variant:
 	match typeof(value):
 		TYPE_DICTIONARY:
 			if value.has(ObjectSerializer.type_field):
-				var type: String = value.get(ObjectSerializer.type_field)
-				if type.begins_with(ObjectSerializer.object_type_prefix):
-					var entry := ObjectSerializer._get_entry(type)
+				var type_key: String = value.get(ObjectSerializer.type_field)
+				if type_key.begins_with(ObjectSerializer.object_type_prefix):
+					var entry := ObjectSerializer._get_entry(type_key)
 					if !entry:
-						assert(false, "Could not find type (%s) in registry" % type)
+						assert(false, "Could not find type (%s) in registry" % type_key)
 
 					return entry.deserialize(value, deserialize_var)
 

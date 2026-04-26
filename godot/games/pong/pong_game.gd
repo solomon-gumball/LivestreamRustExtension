@@ -37,6 +37,8 @@ func save_paddle_positions() -> void:
 @export_range(0.0, 1.0) var players_distance_from_center: float = 0.0:
   set(new_value):
     players_distance_from_center = new_value
+    if not is_node_ready():
+      return
     if game_state:
       pong_paddle_l.position = lerp(game_state.paddle_l_state.position, Vector3(0, 0, -0.3), 1.0 - new_value)
       pong_paddle_r.position = lerp(game_state.paddle_r_state.position, Vector3(0, 0, 0.3), 1.0 - new_value)
@@ -126,7 +128,10 @@ func _ready() -> void:
   _handle_chatter_updated(WSClient.my_chatter())
 
 func _exit_tree() -> void:
-  MultiplayerClient.connected_state.left_lobby.disconnect(_left_lobby)
+  if Engine.is_editor_hint():
+    return
+  if MultiplayerClient.connected_state:
+    MultiplayerClient.connected_state.left_lobby.disconnect(_left_lobby)
   MultiplayerClient.packet_received.disconnect(_handle_peer_packet)
   WSClient.authenticated_state.chatter_updated.disconnect(_handle_chatter_updated)
   if MultiplayerClient.is_authority():
