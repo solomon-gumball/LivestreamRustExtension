@@ -2,23 +2,7 @@
 
 [ext_resource type="Script" uid="uid://ctjwoar8vnuu8" path="res://games/marbles/ui/marbles_leaderboard_row.gd" id="1_xjs6s"]
 
-[node name="PanelContainer" type="PanelContainer"]
+[node name="PanelContainer" type="Button" unique_id=1428939597]
+offset_right = 177.0
+offset_bottom = 33.0
 script = ExtResource("1_xjs6s")
-
-[node name="MarginContainer" type="MarginContainer" parent="."]
-layout_mode = 2
-theme_override_constants/margin_left = 5
-theme_override_constants/margin_top = 5
-theme_override_constants/margin_right = 5
-theme_override_constants/margin_bottom = 5
-
-[node name="HBoxContainer" type="HBoxContainer" parent="MarginContainer"]
-layout_mode = 2
-
-[node name="PlacementLabel" type="Label" parent="MarginContainer/HBoxContainer"]
-layout_mode = 2
-text = "1"
-
-[node name="UsernameLabel" type="Label" parent="MarginContainer/HBoxContainer"]
-layout_mode = 2
-text = "SolomonGumballTV"

@@ -34,6 +34,7 @@ func _ready() -> void:
   add_child(current_map)
 
   marbles_overlay.map = current_map
+  marbles_overlay.marble_selected.connect(follow_marble)
   MultiplayerClient.connected_state.left_lobby.connect(_left_lobby)
   MultiplayerClient.packet_received.connect(_handle_peer_packet)
 
@@ -45,6 +46,9 @@ func _ready() -> void:
     MultiplayerClient.rtc_peer_ready.connect(_peer_is_ready)
     _handle_peer_packet(1, { "type": MarblesMessage.StateRefresh, "state": new_state })
     _send_refresh_state(MultiplayerPeer.TARGET_PEER_BROADCAST)
+
+func follow_marble(marble: MarbleBot) -> void:
+  current_map.camera.enter_follow_mode(marble)
 
 func _peer_is_ready(peer_id: int) -> void:
   print("PEER IS READY")

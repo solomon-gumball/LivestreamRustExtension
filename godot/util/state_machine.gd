@@ -24,6 +24,10 @@ func process_state(delta : float) -> void:
   if is_instance_valid(current):
     current.update(delta)
 
+func input_state(event: InputEvent) -> void:
+  if is_instance_valid(current):
+    current.handle_input(event)
+
 func _physics_process(delta: float) -> void:
   if is_instance_valid(current):
     current.physics_update(delta)

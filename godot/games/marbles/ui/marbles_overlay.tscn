@@ -14,8 +14,9 @@ offset_left = -40.0
 offset_bottom = 40.0
 grow_horizontal = 0
 
-[node name="MarblesLeaderBoardRow2" parent="LeaderboardList" unique_id=451669414 instance=ExtResource("2_j0uvo")]
-layout_mode = 2
-
 [node name="MarblesLeaderBoardRow" parent="LeaderboardList" unique_id=1860630974 instance=ExtResource("2_j0uvo")]
+layout_mode = 2
+text = "1 - solomongumball"
+
+[node name="MarblesLeaderBoardRow2" parent="LeaderboardList" unique_id=1428939597 instance=ExtResource("2_j0uvo")]
 layout_mode = 2

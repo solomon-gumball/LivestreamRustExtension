@@ -6,3 +6,4 @@ class_name MarblesMap
 @export var spawn_path: Path3D
 
 @onready var progress_curve: Path3D = $ProgressCurve
+@onready var camera: DebugCamera = %DebugCamera

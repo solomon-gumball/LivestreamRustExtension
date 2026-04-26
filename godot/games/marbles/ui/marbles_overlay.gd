@@ -5,6 +5,8 @@ class_name MarblesOverlay
 var bots_by_peer_id: Dictionary[int, MarbleBot] = {}
 var map: MarblesMap
 
+signal marble_selected(marble: MarbleBot)
+
 func _ready() -> void:
   var update_timer = Timer.new()
   add_child(update_timer)
@@ -35,4 +37,5 @@ func refresh_leaderboard() -> void:
     var entry: MarblesLeaderboardRow = row_template.instantiate()
     entry.username = bot.chatter.display_name
     entry.rank = rank
+    entry.pressed.connect(marble_selected.emit.bind(bot))
     leaderboard_list.add_child(entry)

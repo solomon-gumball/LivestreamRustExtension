@@ -47,6 +47,7 @@ out_of_bounds_area = NodePath("OutOfBoundsArea")
 spawn_path = NodePath("Path3D")
 
 [node name="DebugCamera" parent="." index="0" unique_id=1098239593 instance=ExtResource("3_4cld7")]
+unique_name_in_owner = true
 transform = Transform3D(0.056996282, 0.4584169, -0.88690776, -0.029399082, 0.88873726, 0.45747322, 0.99794143, 0, 0.06413176, 110.93758, 94.113, 0)
 
 [node name="DirectionalLight3D" type="DirectionalLight3D" parent="DebugCamera" index="2" unique_id=860263462]

@@ -3,7 +3,6 @@ class_name MarbleBot
 
 #TODO: Fix chat bubbles
 
-@onready var sphere: CSGSphere3D = $Sphere
 @onready var label_node: Node = $LabelNode
 @onready var username_label: Node = $LabelNode/Label3D
 # @onready var chat_bubble: ChatBubble = $LabelNode/Chatbubble
