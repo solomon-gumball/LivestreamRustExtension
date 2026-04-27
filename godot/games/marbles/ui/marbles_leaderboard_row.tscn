@@ -1,8 +1,26 @@
 [gd_scene format=3 uid="uid://f6ong2f8cpcr"]
 
+[ext_resource type="FontFile" uid="uid://7uibxoligyvb" path="res://fonts/HomeVideo-BLG6G.ttf" id="1_tmq3e"]
 [ext_resource type="Script" uid="uid://ctjwoar8vnuu8" path="res://games/marbles/ui/marbles_leaderboard_row.gd" id="1_xjs6s"]
 
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_tmq3e"]
+content_margin_left = 4.0
+content_margin_top = 4.0
+content_margin_right = 4.0
+content_margin_bottom = 4.0
+bg_color = Color(0.1, 0.1, 0.1, 0.6)
+corner_radius_top_left = 3
+corner_radius_top_right = 3
+corner_radius_bottom_right = 3
+corner_radius_bottom_left = 3
+corner_detail = 5
+
 [node name="PanelContainer" type="Button" unique_id=1428939597]
+custom_minimum_size = Vector2(200, 0)
 offset_right = 177.0
 offset_bottom = 33.0
+theme_override_fonts/font = ExtResource("1_tmq3e")
+theme_override_styles/normal = SubResource("StyleBoxFlat_tmq3e")
+text = "solomongumbal1"
+alignment = 0
 script = ExtResource("1_xjs6s")

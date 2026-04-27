@@ -5,4 +5,4 @@ class_name MarblesLeaderboardRow
 @export var username: String = ""
 
 func _ready() -> void:
-  text = str(rank) + " " + username
+  text = str(rank) + ' - ' + username

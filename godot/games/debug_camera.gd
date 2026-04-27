@@ -5,6 +5,7 @@ class_name DebugCamera
 @export var fast_move_speed: float = 50.0
 @export var mouse_sensitivity: float = 0.003
 @onready var camera: Camera3D = $Camera
+@onready var collision_shape_cast: ShapeCast3D = %ShapeCast
 
 var _yaw: float = 0.0
 var _pitch: float = 0.0
@@ -28,7 +29,31 @@ func _ready() -> void:
   _state.change_state(_free_state)
 
 func _input(event: InputEvent) -> void:
+  if event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_RIGHT and event.pressed:
+    _try_follow_marble_at_cursor(event.position)
   _state.input_state(event)
+
+func _try_follow_marble_at_cursor(screen_pos: Vector2) -> void:
+  var origin := camera.project_ray_origin(screen_pos)
+  var direction := camera.project_ray_normal(screen_pos)
+  var space := get_world_3d().direct_space_state
+  var shape := SphereShape3D.new()
+  shape.radius = 0.4
+  var query := PhysicsShapeQueryParameters3D.new()
+  query.shape = shape
+  query.transform = Transform3D(Basis.IDENTITY, origin)
+  query.motion = direction * 1000.0
+  query.collision_mask = 2
+  var result := space.cast_motion(query)
+  if result[0] < 1.0:
+    var hit_pos := origin + direction * 1000.0 * result[1]
+    var shape_query := PhysicsShapeQueryParameters3D.new()
+    shape_query.shape = shape
+    shape_query.transform = Transform3D(Basis.IDENTITY, hit_pos)
+    shape_query.collision_mask = 2
+    var hits := space.intersect_shape(shape_query)
+    if hits.size() > 0 and hits[0].collider is Node3D:
+      enter_follow_mode(hits[0].collider)
 
 func enter_follow_mode(node_to_follow: Node3D) -> void:
   _follow_state.target = node_to_follow
@@ -79,12 +104,10 @@ func _init_input_actions() -> void:
   joy_right_event.axis_value = 1.0
   InputMap.action_add_event("move_right", joy_right_event)
 
-
 class DebugCameraState extends State:
   var cam: DebugCamera
   func _init(_cam: DebugCamera) -> void:
     cam = _cam
-
 
 class FreeState extends DebugCameraState:
   func handle_input(event: InputEvent) -> void:
@@ -123,7 +146,11 @@ class FreeState extends DebugCameraState:
 
 class FollowState extends DebugCameraState:
   const TRANSITION_DURATION: float = 0.5
+  const MIN_DISTANCE: float = 0.5
+  const ZOOM_RECOVER_SPEED: float = 2.0
+
   var invert_pitch: bool = true
+  var prevent_wall_clip: bool = true
 
   var target: Node3D = null:
     set(value):
@@ -133,7 +160,8 @@ class FollowState extends DebugCameraState:
       target = value
       if not is_instance_valid(target):
         return
-      # orbit_distance = cam.global_position.distance_to(target.global_position)
+      orbit_distance = cam.global_position.distance_to(target.global_position)
+      _current_distance = orbit_distance
       if not had_target:
         var forward := cam.global_transform.basis * Vector3.FORWARD
         cam._yaw = atan2(-forward.x, -forward.z)
@@ -141,6 +169,7 @@ class FollowState extends DebugCameraState:
         cam._pitch = clamp(cam._pitch, deg_to_rad(-89.0), deg_to_rad(89.0))
 
   var orbit_distance: float = 5.0
+  var _current_distance: float = 5.0
   var _t: float = 1.0
   var _from_transform: Transform3D
 
@@ -158,12 +187,12 @@ class FollowState extends DebugCameraState:
         else:
           Input.mouse_mode = Input.MOUSE_MODE_VISIBLE
       elif event.button_index == MOUSE_BUTTON_WHEEL_UP:
-        orbit_distance = max(0.5, orbit_distance - 0.5)
+        orbit_distance = max(MIN_DISTANCE, orbit_distance - 0.5)
       elif event.button_index == MOUSE_BUTTON_WHEEL_DOWN:
         orbit_distance += 0.5
 
     if event is InputEventPanGesture:
-      orbit_distance = max(0.5, orbit_distance + event.delta.y * 0.1)
+      orbit_distance = max(MIN_DISTANCE, orbit_distance + event.delta.y * 0.1)
 
     if event is InputEventMouseMotion and Input.mouse_mode == Input.MOUSE_MODE_CAPTURED:
       var pitch_sign := 1.0 if invert_pitch else -1.0
@@ -171,17 +200,38 @@ class FollowState extends DebugCameraState:
       cam._pitch += event.relative.y * cam.mouse_sensitivity * pitch_sign
       cam._pitch = clamp(cam._pitch, deg_to_rad(-89.0), deg_to_rad(89.0))
 
+  func _compute_safe_distance(orbit_dir: Vector3) -> float:
+    var sc := cam.collision_shape_cast
+    var world_end := target.global_position + orbit_dir * orbit_distance
+    sc.global_position = target.global_position
+    sc.target_position = sc.to_local(world_end)
+    sc.force_shapecast_update()
+    if sc.is_colliding():
+      print("IS COLLIDING")
+      var hit_fraction := sc.get_closest_collision_safe_fraction()
+      return maxf(orbit_distance * hit_fraction, MIN_DISTANCE)
+    return orbit_distance
+
   func physics_update(delta: float) -> void:
     if not is_instance_valid(target):
       return
 
-    var orbit_offset := Vector3(
+    var orbit_dir := Vector3(
       sin(cam._yaw) * cos(cam._pitch),
       sin(cam._pitch),
       cos(cam._yaw) * cos(cam._pitch)
-    ) * orbit_distance
+    )
 
-    var orbit_position := target.global_position + orbit_offset
+    var safe_distance := orbit_distance
+    if prevent_wall_clip:
+      safe_distance = _compute_safe_distance(orbit_dir)
+
+    if safe_distance < _current_distance:
+      _current_distance = safe_distance
+    else:
+      _current_distance = lerpf(_current_distance, safe_distance, ZOOM_RECOVER_SPEED * delta)
+
+    var orbit_position := target.global_position + orbit_dir * _current_distance
     var orbit_transform := Transform3D(cam.global_transform.basis, orbit_position)
     orbit_transform = orbit_transform.looking_at(target.global_position, Vector3.UP)
 

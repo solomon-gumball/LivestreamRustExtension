@@ -18,6 +18,8 @@ roughness = 0.5
 radius = 0.177366
 
 [node name="MarbleBot" type="RigidBody3D" unique_id=1385227533]
+collision_layer = 2
+collision_mask = 3
 physics_material_override = SubResource("PhysicsMaterial_6k1q8")
 script = ExtResource("1_34rat")
 bubble_mat = SubResource("StandardMaterial3D_dpqex")

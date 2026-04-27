@@ -21,6 +21,8 @@ enum MarblesMessage {
   GameStart,
 }
 
+signal leaderboard_updated
+
 var _sync_accumulator: float = 0.0
 const SYNC_RATE: float = 1.0 / 20.0
 
@@ -28,13 +30,21 @@ func _ready() -> void:
   super._ready()
   if Engine.is_editor_hint():
     return
+  
+  var update_timer = Timer.new()
+  add_child(update_timer)
+  update_timer.wait_time = 2.0
+  update_timer.one_shot = false
+  update_timer.start()
+  update_timer.timeout.connect(refresh_leaderboard)
 
   var map_scene = map[0]
   current_map = map_scene.instantiate()
   add_child(current_map)
 
   marbles_overlay.map = current_map
-  marbles_overlay.marble_selected.connect(follow_marble)
+  marbles_overlay.marble_selected.connect(_selected_marble_from_list)
+  marbles_overlay.placement_selected.connect(_placement_selected)
   MultiplayerClient.connected_state.left_lobby.connect(_left_lobby)
   MultiplayerClient.packet_received.connect(_handle_peer_packet)
 
@@ -47,11 +57,17 @@ func _ready() -> void:
     _handle_peer_packet(1, { "type": MarblesMessage.StateRefresh, "state": new_state })
     _send_refresh_state(MultiplayerPeer.TARGET_PEER_BROADCAST)
 
-func follow_marble(marble: MarbleBot) -> void:
+func _placement_selected(placement: int) -> void:
+  if leaderboard.get(placement):
+    var marble = leaderboard[placement]
+    _selected_marble_from_list(marble)
+
+# var followed_chatter: Chatter
+func _selected_marble_from_list(marble: MarbleBot) -> void:
   current_map.camera.enter_follow_mode(marble)
+  marbles_overlay.set_focused_bot(marble, leaderboard.find(marble))
 
 func _peer_is_ready(peer_id: int) -> void:
-  print("PEER IS READY")
   _send_refresh_state(peer_id)
 
 func _exit_tree() -> void:
@@ -93,6 +109,7 @@ func server_only_start_game() -> void:
 
     game_state.marbles_by_peer_id.set(peer.peer_id, marble_state)
     var marble := get_or_create_bot_for_peer(peer.peer_id)
+    marble.freeze = true
     marble.global_position = marble_state.position
     marble.global_rotation = marble_state.rotation
 
@@ -211,3 +228,15 @@ func _broadcast_marble_states() -> void:
     MultiplayerPeer.TARGET_PEER_BROADCAST,
     MultiplayerPeer.TRANSFER_MODE_UNRELIABLE_ORDERED
   )
+
+var leaderboard: Array[MarbleBot] = []
+func refresh_leaderboard() -> void:
+  leaderboard.clear()
+  leaderboard.assign(bots_by_peer_id.values())
+
+  var curve := current_map.progress_curve.curve
+  leaderboard.sort_custom(func(a: MarbleBot, b: MarbleBot) -> bool:
+    return curve.get_closest_offset(a.global_position) > curve.get_closest_offset(b.global_position)
+  )
+
+  marbles_overlay.refresh_leaderboard(leaderboard)
