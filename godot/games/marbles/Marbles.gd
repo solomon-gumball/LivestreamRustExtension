@@ -43,12 +43,21 @@ func _ready() -> void:
   add_child(current_map)
 
   marbles_overlay.map = current_map
-  marbles_overlay.marble_selected.connect(_selected_marble_from_list)
+  marbles_overlay.marble_selected.connect(func (marble: MarbleBot) -> void:
+    focused_marble = marble
+  )
   marbles_overlay.placement_selected.connect(_placement_selected)
+
+  current_map.camera.did_enter_free_cam.connect(func() -> void:
+    focused_marble = null
+  )
   MultiplayerClient.connected_state.left_lobby.connect(_left_lobby)
   MultiplayerClient.packet_received.connect(_handle_peer_packet)
 
+  _bind_inputs()
+
   if is_game_host:
+    current_map.out_of_bounds_area.body_entered.connect(_authority_handle_marble_out_of_bounds)
     peer_is_ready.connect(_peer_is_ready)
     all_peers_loaded_in.connect(server_only_start_game)
     chatter_loaded.connect(_on_loaded_chatter_data)
@@ -57,15 +66,38 @@ func _ready() -> void:
     _handle_peer_packet(1, { "type": MarblesMessage.StateRefresh, "state": new_state })
     _send_refresh_state(MultiplayerPeer.TARGET_PEER_BROADCAST)
 
+func _authority_handle_marble_out_of_bounds(body: Node) -> void:
+  if body is MarbleBot:
+    var marble_bot: MarbleBot = body as MarbleBot
+    print("Marble %s went out of bounds, resetting position" % body.chatter.display_name)
+    marble_bot.global_position = _get_random_spawn_position(0) # TODO: This should probably be based on the marble's original spawn position or something instead of always using the first spawn point
+    marble_bot.linear_velocity = Vector3.ZERO
+
+func _bind_inputs() -> void:
+  InputMap.add_action("next_placement")
+  InputMap.add_action("previous_placement")
+
+  var next_placement_event := InputEventKey.new()
+  next_placement_event.physical_keycode = KEY_RIGHT
+  InputMap.action_add_event("next_placement", next_placement_event)
+
+  var previous_placement_event := InputEventKey.new()
+  previous_placement_event.physical_keycode = KEY_LEFT
+  InputMap.action_add_event("previous_placement", previous_placement_event)
+
 func _placement_selected(placement: int) -> void:
   if leaderboard.get(placement):
     var marble = leaderboard[placement]
-    _selected_marble_from_list(marble)
+    focused_marble = marble
 
-# var followed_chatter: Chatter
-func _selected_marble_from_list(marble: MarbleBot) -> void:
-  current_map.camera.enter_follow_mode(marble)
-  marbles_overlay.set_focused_bot(marble, leaderboard.find(marble))
+var focused_marble: MarbleBot = null:
+  set(new_value):
+    if new_value != null:
+      current_map.camera.enter_follow_mode(new_value)
+      marbles_overlay.set_focused_bot(new_value, leaderboard.find(new_value))
+    else:
+      marbles_overlay.set_focused_bot(null)
+    focused_marble = new_value
 
 func _peer_is_ready(peer_id: int) -> void:
   _send_refresh_state(peer_id)
@@ -89,6 +121,52 @@ func _send_refresh_state(peer_id: int) -> void:
     MultiplayerPeer.TRANSFER_MODE_RELIABLE
   )
 
+func _input(event: InputEvent) -> void:
+  if event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_RIGHT and event.pressed:
+    _try_follow_marble_at_cursor(event.position)
+  if Input.is_action_just_pressed("next_placement"):
+    increment_focused_bot(-1)
+  if Input.is_action_just_pressed("previous_placement"):
+    increment_focused_bot(1)
+
+func increment_focused_bot(index_change: int) -> void:
+  if focused_marble == null:
+    return
+  var current_index := leaderboard.find(focused_marble)
+  var new_index := current_index + index_change
+  if new_index >= 0 and new_index < leaderboard.size():
+    focused_marble = leaderboard[new_index]
+
+func _try_follow_marble_at_cursor(screen_pos: Vector2) -> void:
+  var origin := current_map.camera.camera.project_ray_origin(screen_pos)
+  var direction := current_map.camera.camera.project_ray_normal(screen_pos)
+  var space := get_world_3d().direct_space_state
+  var shape := SphereShape3D.new()
+  shape.radius = 0.4
+  var query := PhysicsShapeQueryParameters3D.new()
+  query.shape = shape
+  query.transform = Transform3D(Basis.IDENTITY, origin)
+  query.motion = direction * 1000.0
+  query.collision_mask = 2
+  var result := space.cast_motion(query)
+  if result[0] < 1.0:
+    var hit_pos := origin + direction * 1000.0 * result[1]
+    var shape_query := PhysicsShapeQueryParameters3D.new()
+    shape_query.shape = shape
+    shape_query.transform = Transform3D(Basis.IDENTITY, hit_pos)
+    shape_query.collision_mask = 2
+    var hits := space.intersect_shape(shape_query)
+    if hits.size() > 0 and hits[0].collider is Node3D:
+      var selected_marble := hits[0].collider as MarbleBot
+      focused_marble = selected_marble
+
+func _get_random_spawn_position(join_index: int) -> Vector3:
+  var spawn_path_length = current_map.spawn_path.curve.get_baked_length()
+  var spawn_path_offset = spawn_path_length / lobby.peers.size() * join_index
+  var spawn_transform = current_map.spawn_path.global_transform * current_map.spawn_path.curve.sample_baked_with_rotation(spawn_path_offset)
+  var random_position_offset := Vector3(randf_range(-.2, .2), 0.0, randf_range(-.2, .2))
+  return spawn_transform.origin + random_position_offset
+
 var started := false
 func server_only_start_game() -> void:
   if started: return # TODO: Allow late joins?
@@ -100,16 +178,13 @@ func server_only_start_game() -> void:
   var join_index: int = 0
   for peer in lobby.peers:
     var marble_state := MarblesGameState.MarbleState.new()
-    var spawn_path_length = current_map.spawn_path.curve.get_baked_length()
-    var spawn_path_offset = spawn_path_length / lobby.peers.size() * join_index
-    var spawn_transform = current_map.spawn_path.global_transform * current_map.spawn_path.curve.sample_baked_with_rotation(spawn_path_offset)
-    var random_position_offset := Vector3(randf_range(-.2, .2), 0.0, randf_range(-.2, .2))
-    marble_state.position = spawn_transform.origin + random_position_offset
-    marble_state.rotation = spawn_transform.basis.get_euler()
+
+    marble_state.position = _get_random_spawn_position(join_index)
+    marble_state.rotation = Vector3.ZERO
 
     game_state.marbles_by_peer_id.set(peer.peer_id, marble_state)
     var marble := get_or_create_bot_for_peer(peer.peer_id)
-    marble.freeze = true
+    # marble.freeze = true
     marble.global_position = marble_state.position
     marble.global_rotation = marble_state.rotation
 

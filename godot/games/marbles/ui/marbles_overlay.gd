@@ -31,8 +31,18 @@ func set_focused_bot(marble_bot: MarbleBot, placement: int = -1) -> void:
   
   _focused_bot = marble_bot
   focused_chatter_header.visible = true
-  focused_chatter_placement_label.text = str(placement) + "st"
+  focused_chatter_placement_label.text = placement_string(placement + 1)
   focused_chatter_name_label.text = marble_bot.chatter.display_name
+
+func placement_string(placement: int) -> String:
+  if placement == 1:
+    return str(placement) + "st"
+  elif placement == 2:
+    return str(placement) + "nd"
+  elif placement == 3:
+    return str(placement) + "rd"
+  else:
+    return str(placement) + "th"
 
 func increment_focused_bot(index_change: int) -> void:
   placement_selected.emit(_placement + index_change)

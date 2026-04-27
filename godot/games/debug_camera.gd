@@ -14,6 +14,9 @@ var _state: StateMachine
 var _free_state: FreeState
 var _follow_state: FollowState
 
+@warning_ignore("UNUSED_SIGNAL")
+signal did_enter_free_cam()
+
 func _ready() -> void:
   _yaw = global_rotation.y
   _pitch = global_rotation.x
@@ -29,31 +32,7 @@ func _ready() -> void:
   _state.change_state(_free_state)
 
 func _input(event: InputEvent) -> void:
-  if event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_RIGHT and event.pressed:
-    _try_follow_marble_at_cursor(event.position)
   _state.input_state(event)
-
-func _try_follow_marble_at_cursor(screen_pos: Vector2) -> void:
-  var origin := camera.project_ray_origin(screen_pos)
-  var direction := camera.project_ray_normal(screen_pos)
-  var space := get_world_3d().direct_space_state
-  var shape := SphereShape3D.new()
-  shape.radius = 0.4
-  var query := PhysicsShapeQueryParameters3D.new()
-  query.shape = shape
-  query.transform = Transform3D(Basis.IDENTITY, origin)
-  query.motion = direction * 1000.0
-  query.collision_mask = 2
-  var result := space.cast_motion(query)
-  if result[0] < 1.0:
-    var hit_pos := origin + direction * 1000.0 * result[1]
-    var shape_query := PhysicsShapeQueryParameters3D.new()
-    shape_query.shape = shape
-    shape_query.transform = Transform3D(Basis.IDENTITY, hit_pos)
-    shape_query.collision_mask = 2
-    var hits := space.intersect_shape(shape_query)
-    if hits.size() > 0 and hits[0].collider is Node3D:
-      enter_follow_mode(hits[0].collider)
 
 func enter_follow_mode(node_to_follow: Node3D) -> void:
   _follow_state.target = node_to_follow
@@ -110,6 +89,12 @@ class DebugCameraState extends State:
     cam = _cam
 
 class FreeState extends DebugCameraState:
+  func enter_state(_previous_state: State) -> void:
+    var forward := cam.global_transform.basis * Vector3.FORWARD
+    cam._yaw = atan2(-forward.x, -forward.z)
+    cam._pitch = asin(clamp(forward.y, -1.0, 1.0))
+    cam._pitch = clamp(cam._pitch, deg_to_rad(-89.0), deg_to_rad(89.0))
+
   func handle_input(event: InputEvent) -> void:
     if event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_LEFT:
       if event.pressed:
@@ -148,6 +133,7 @@ class FollowState extends DebugCameraState:
   const TRANSITION_DURATION: float = 0.5
   const MIN_DISTANCE: float = 0.5
   const ZOOM_RECOVER_SPEED: float = 2.0
+  const DEFAULT_ORBIT_DISTANCE: float = 5.0
 
   var invert_pitch: bool = true
   var prevent_wall_clip: bool = true
@@ -160,7 +146,8 @@ class FollowState extends DebugCameraState:
       target = value
       if not is_instance_valid(target):
         return
-      orbit_distance = cam.global_position.distance_to(target.global_position)
+      # orbit_distance = cam.global_position.distance_to(target.global_position)
+      orbit_distance = DEFAULT_ORBIT_DISTANCE
       _current_distance = orbit_distance
       if not had_target:
         var forward := cam.global_transform.basis * Vector3.FORWARD
@@ -168,7 +155,7 @@ class FollowState extends DebugCameraState:
         cam._pitch = asin(clamp(-forward.y, -1.0, 1.0))
         cam._pitch = clamp(cam._pitch, deg_to_rad(-89.0), deg_to_rad(89.0))
 
-  var orbit_distance: float = 5.0
+  var orbit_distance: float = DEFAULT_ORBIT_DISTANCE
   var _current_distance: float = 5.0
   var _t: float = 1.0
   var _from_transform: Transform3D
@@ -180,6 +167,13 @@ class FollowState extends DebugCameraState:
     Input.mouse_mode = Input.MOUSE_MODE_VISIBLE
 
   func handle_input(event: InputEvent) -> void:
+    if Input.is_action_pressed("move_forward") \
+    or Input.is_action_pressed("move_back") \
+    or Input.is_action_pressed("move_left") or \
+    Input.is_action_pressed("move_right"):
+      cam.enter_free_mode()
+      cam.did_enter_free_cam.emit()
+
     if event is InputEventMouseButton:
       if event.button_index == MOUSE_BUTTON_LEFT:
         if event.pressed:
@@ -207,7 +201,6 @@ class FollowState extends DebugCameraState:
     sc.target_position = sc.to_local(world_end)
     sc.force_shapecast_update()
     if sc.is_colliding():
-      print("IS COLLIDING")
       var hit_fraction := sc.get_closest_collision_safe_fraction()
       return maxf(orbit_distance * hit_fraction, MIN_DISTANCE)
     return orbit_distance

@@ -18,6 +18,9 @@ size = Vector3(12.6067, 5.75934, 11.6197)
 [sub_resource type="BoxShape3D" id="BoxShape3D_87yb8"]
 size = Vector3(217.476, 30.0066, 259.342)
 
+[sub_resource type="BoxShape3D" id="BoxShape3D_fxgnb"]
+size = Vector3(213.22482, 30.007, 100)
+
 [sub_resource type="Curve3D" id="Curve3D_tjf41"]
 _data = {
 "points": PackedVector3Array(0, 0, 0, 0, 0, 0, 0.349159, -1.52588e-05, 1.83925, 0, 0, 0, 0, 0, 0, 1.10159, -1.52588e-05, 0.53112, 0, 0, 0, 0, 0, 0, 1.18027, -1.52588e-05, -0.914707, 0, 0, 0, 0, 0, 0, 0.885208, -1.52588e-05, -2.11979, 0, 0, 0, 0, 0, 0, 0.265564, -1.52588e-05, -3.21153),
@@ -76,22 +79,22 @@ transform = Transform3D(-0.388362, -0.443438, -0.807798, -0.509024, -0.627499, 0
 shadow_enabled = true
 shadow_opacity = 0.57
 
-[node name="Sphere" parent="." index="5" unique_id=1539904097]
+[node name="Sphere" parent="." index="5" unique_id=797528611]
 visible = false
 
-[node name="Sphere_001-noimport" parent="." index="6" unique_id=1163959254]
+[node name="Sphere_001-noimport" parent="." index="6" unique_id=1946804211]
 visible = false
 
-[node name="Funnel" parent="." index="8" unique_id=874887893]
+[node name="Funnel" parent="." index="8" unique_id=619474641]
 visible = false
 
-[node name="MarblesSpinner" parent="." index="18" unique_id=292895971]
+[node name="MarblesSpinner" parent="." index="18" unique_id=370493437]
 visible = false
 
-[node name="Circle_001" parent="." index="21" unique_id=992626112]
+[node name="Circle_001" parent="." index="21" unique_id=1440727696]
 visible = false
 
-[node name="Circle_002" parent="." index="22" unique_id=1514819569]
+[node name="Circle_002" parent="." index="22" unique_id=490685182]
 visible = false
 
 [node name="marbles-bumper3" parent="." index="24" unique_id=462884197 instance=ExtResource("4_sevp3")]
@@ -114,11 +117,18 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.580431, -1.09445, 0.181747)
 shape = SubResource("BoxShape3D_tjf41")
 
 [node name="OutOfBoundsArea" type="Area3D" parent="." index="32" unique_id=1964003097]
+unique_name_in_owner = true
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -13.6046, -5.97411)
+collision_layer = 0
+collision_mask = 2
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="OutOfBoundsArea" index="0" unique_id=2094111715]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 21.2718, -14.5033, 8.89998)
 shape = SubResource("BoxShape3D_87yb8")
+
+[node name="CollisionShape3D2" type="CollisionShape3D" parent="OutOfBoundsArea" index="1" unique_id=1668775284]
+transform = Transform3D(0.9427405, -0.33352715, 0, 0.33352715, 0.9427405, 0, 0, 0, 1, 135.67004, 74.86697, 8.89998)
+shape = SubResource("BoxShape3D_fxgnb")
 
 [node name="Path3D" type="Path3D" parent="." index="33" unique_id=454938272]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 121.146, 91.8646, 0)

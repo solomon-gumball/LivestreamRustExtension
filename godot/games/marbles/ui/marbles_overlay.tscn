@@ -33,6 +33,7 @@ offset_left = -20.0
 offset_right = 20.0
 offset_bottom = 40.0
 grow_horizontal = 2
+mouse_filter = 0
 
 [node name="LowerPlaceButton" type="Button" parent="FocusedChatterHeader" unique_id=1791509392]
 unique_name_in_owner = true
