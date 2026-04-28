@@ -13,7 +13,8 @@ signal all_peers_loaded_in()
 
 enum GlobalGameMessage {
   ClientReady = 1000,
-  CamFollow
+  CamFollow,
+  UpdateAnimation
 }
 
 var chatters: Dictionary[String, Chatter] = {}
@@ -24,6 +25,8 @@ var is_offline_mode: bool = true
 
 var peers_ready_fired: bool = false
 var chatters_loaded_fired: bool = false
+
+var game_state: BaseGameState = null
 
 func _ready() -> void:
   if Engine.is_editor_hint():
@@ -106,8 +109,19 @@ func _handle_chatter_updated(chatter: Chatter) -> void:
 func _base_handle_peer_packet(sender_id: int, packet: Dictionary) -> void:
   match packet.type:
     GlobalGameMessage.ClientReady:
-      print("PEER READY RECEIVED %d is ready" % sender_id)
       ready_peers[sender_id] = true
       peer_is_ready.emit(sender_id)
       if is_game_host:
         _check_game_ready()
+
+func handle_peer_packet(sender_id: int, packet: Dictionary) -> void:
+  
+  # assert(false, "handle_peer_packet should be overridden by game implementation")
+
+func start_animation(animation_name: String) -> void:
+  MultiplayerClient.send_packet({
+    "type": GlobalGameMessage.UpdateAnimation,
+    "animation_name": "intro",
+    "started_at": Time.get_unix_time_from_system(),
+    "skipped": false
+  }, true)

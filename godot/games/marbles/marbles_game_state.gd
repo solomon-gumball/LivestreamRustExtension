@@ -1,4 +1,5 @@
 class_name MarblesGameState
+extends BaseGameState
 
 enum GameState { Waiting, Playing, Ended }
 var game_state: int = GameState.Waiting
