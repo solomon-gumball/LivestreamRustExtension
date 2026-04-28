@@ -6,6 +6,7 @@ var bots_by_peer_id: Dictionary[int, MarbleBot] = {}
 var placements: Array[Chatter] = []
 var marble_bot_template: PackedScene = ResourceLoader.load("res://games/marbles/marbles_bot/marbles_bot.tscn")
 
+@onready var animation_synchronizer: AnimationSynchronizer = %AnimationSynchronizer
 @onready var marbles_overlay: MarblesOverlay = $MarblesOverlay
 
 var map: Array[PackedScene] = [
@@ -34,8 +35,6 @@ func _ready() -> void:
   super._ready()
   if Engine.is_editor_hint():
     return
-
-  ObjectSerializer.register_script(MarblesGameState)
   
   var update_timer = Timer.new()
   add_child(update_timer)
@@ -46,8 +45,7 @@ func _ready() -> void:
 
   var map_scene = map[0]
   current_map = map_scene.instantiate()
-
-  anim_player = current_map.animation_player
+  animation_synchronizer.animation_player = current_map.animation_player
   add_child(current_map)
 
   marbles_overlay.map = current_map
@@ -63,7 +61,7 @@ func _ready() -> void:
 
   # Get all nodes in a group for the current map
   _bind_inputs()
-
+  print(is_game_host, ' about to bind events')
   if is_game_host:
     peer_is_ready.connect(_peer_is_ready)
     chatter_loaded.connect(_on_loaded_chatter_data)
@@ -220,6 +218,7 @@ func _server_spawn_all_new_players() -> void:
 
 var started = false
 func server_only_start_game() -> void:
+  print("TRY START GAME")
   if started:
     assert(false, "server_only_start_game called multiple times, this should never happen")
   started = true
@@ -227,10 +226,9 @@ func server_only_start_game() -> void:
   _server_spawn_all_new_players()
   _send_refresh_state(MultiplayerPeer.TARGET_PEER_BROADCAST)
   _apply_game_state()
-
   if is_game_host:
-    authority_play_animation("Intro")
-    await animation_finished
+    animation_synchronizer.authority_play_animation("Intro")
+    await animation_synchronizer.animation_finished
     var anim_camera := get_viewport().get_camera_3d()
     current_map.camera.global_transform = anim_camera.global_transform
     current_map.camera.camera.current = true
@@ -245,7 +243,7 @@ func server_only_start_game() -> void:
 func _on_loaded_chatter_data(chatter: Chatter) -> void:
   var peer_id: int = lobby.peer_from_chatter.get(chatter.id, -1)
   if peer_id == -1:
-    print("Warning: Received loaded chatter data for chatter %d with no associated peer_id" % chatter.id)
+    print("Warning: Received loaded chatter data for chatter %s with no associated peer_id" % chatter.id)
     return
   var marble := get_or_create_bot_for_peer(peer_id)
   marble.chatter = chatter

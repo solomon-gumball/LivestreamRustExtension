@@ -2,6 +2,7 @@ class_name MockData
 extends Object
 
 static func generate_mock_game_lobby(
+  host_chatter: Chatter,
   num_players: int,
   num_connected_players: int,
   num_spectators: int,
@@ -10,6 +11,14 @@ static func generate_mock_game_lobby(
 ) -> Dictionary:
   var peer_id_counter := 1
   var peers_data: Array = []
+
+  peers_data.append({
+    "peerId": peer_id_counter,
+    "chatterId": host_chatter.id,
+    "connected": true,
+    "is_player": true,
+  })
+  peer_id_counter += 1
 
   for i in range(num_players):
     var chatter_id := "mock_player_%d" % (i + 1)
@@ -35,8 +44,8 @@ static func generate_mock_game_lobby(
 
   var lobby := Lobby.from_data({
     "name": "Mock Lobby",
-    "hostId": host_peer["peerId"],
-    "hostChatterId": host_peer["chatterId"],
+    "hostId": 1,
+    "hostChatterId": host_chatter.id,
     "mesh": false,
     "sealed": false,
     "started": false,

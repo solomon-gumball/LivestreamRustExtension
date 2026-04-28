@@ -1,0 +1,8 @@
+[gd_scene format=3 uid="uid://bx1uxpa8lb8fl"]
+
+[ext_resource type="Script" uid="uid://d0x4cffqw7pbk" path="res://games/_offline/offline_test_container.gd" id="1_85bdr"]
+[ext_resource type="PackedScene" uid="uid://iw1sikosn0si" path="res://games/marbles/Marbles.tscn" id="2_fq2lw"]
+
+[node name="OfflineTestContainer" type="Node" unique_id=1729950537]
+script = ExtResource("1_85bdr")
+child_scene = ExtResource("2_fq2lw")

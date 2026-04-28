@@ -11,6 +11,7 @@ func get_main_scene() -> PackedScene:
 func _ready() -> void:
   ObjectSerializer.register_script(BaseGameState)
   ObjectSerializer.register_script(PongGameState)
+  ObjectSerializer.register_script(MarblesGameState)
 
   var debug_ids: Dictionary[int, String] = {
     0: '22445910', # Gumball

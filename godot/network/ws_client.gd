@@ -11,6 +11,7 @@ var connected_state: ConnectedState = ConnectedState.new(self)
 var authenticated_state: AuthenticatedState = AuthenticatedState.new(self)
 
 var use_local_server: bool = true
+signal authenticated
 
 func my_chatter() -> Chatter:
   return authenticated_state.current_chatter
@@ -39,8 +40,12 @@ func _ready() -> void:
   state.add_child(connected_state)
   state.add_child(authenticated_state)
 
-  connected_state.authenticated_successfully.connect(state.change_state.bind(authenticated_state))
+  connected_state.authenticated_successfully.connect(_handle_authenticated)
   state.change_state(disconnected_state)
+
+func _handle_authenticated() -> void:
+  state.change_state(authenticated_state)
+  authenticated.emit()
 
 func fetchAudienceMembers(count: int, participants: Array[Chatter]) -> Array[Chatter]:
   var request = AwaitableHTTPRequest.new()

@@ -46,7 +46,7 @@ func _ready() -> void:
   state.change_state(disconnected_state)
 
 func is_lobby_host() -> bool:
-  if state.current is not Connected:
+  if current_lobby == null:
     print("ALERT! Called is_lobby_host when no lobby!")
     return false
   return current_lobby.host_chatter_id == WSClient.my_chatter().id
