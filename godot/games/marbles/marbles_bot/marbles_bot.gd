@@ -3,8 +3,8 @@ class_name MarbleBot
 
 #TODO: Fix chat bubbles
 
-@onready var label_node: Node = $LabelNode
-@onready var username_label: Node = $LabelNode/Label3D
+@onready var label_node: Node = %LabelNode
+@onready var username_label: Label3D = %UsernameLabel
 # @onready var chat_bubble: ChatBubble = $LabelNode/Chatbubble
 @onready var bubble: MeshInstance3D = $MarblesBubble
 @onready var follow_cam: Camera3D = $cam
@@ -22,10 +22,22 @@ func update_message(message: String) -> void:
 func _init() -> void:
   freeze = true
 
+var show_username: bool = false:
+  set(new_value):
+    if new_value != show_username:
+      if new_value:
+        username_label.modulate = Color(1, 1, 1, 0)
+        username_label.outline_modulate = Color(0, 0, 0, 0)
+        var tween := create_tween()
+        tween.tween_property(username_label, "modulate:a", 1.0, 0.5)
+        tween.tween_property(username_label, "outline_modulate:a", 1.0, 0.5)
+    
+    show_username = new_value
+    username_label.visible = new_value
+
 var chatter: Chatter = null:
   set(new_value):
     # if is_inside_tree() && new_value != null:
-    #   username_label.text = new_value.display_name
     #   var mat = bubble_mat.duplicate() as StandardMaterial3D
     #   mat.albedo_color = Color.from_string(new_value.color, Color.RED)
     #   bubble.set_surface_override_material(1, mat)
@@ -33,6 +45,8 @@ var chatter: Chatter = null:
     bubble_mat.albedo_color = Color.from_string(new_value.color, Color.GREEN)
     bubble_second_pass_mat.set_shader_parameter("color", Color.from_string(new_value.color, Color.GREEN))
     chatter = new_value
+
+    username_label.text = chatter.display_name
 
 func set_emote(emote_in: String) -> void:
   ImageLoader.load_emote(emote_in, func (image_tex: ImageTexture, _url: String) -> void:

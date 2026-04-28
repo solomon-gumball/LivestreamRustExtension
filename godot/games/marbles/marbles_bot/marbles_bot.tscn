@@ -71,9 +71,11 @@ surface_material_override/0 = SubResource("ShaderMaterial_xy0im")
 emote_material = SubResource("ShaderMaterial_xy0im")
 
 [node name="LabelNode" type="Node3D" parent="." unique_id=701709542]
+unique_name_in_owner = true
 top_level = true
 
-[node name="Label3D" type="Label3D" parent="LabelNode" unique_id=1826141472]
+[node name="UsernameLabel" type="Label3D" parent="LabelNode" unique_id=1826141472]
+unique_name_in_owner = true
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.25, 0)
 pixel_size = 0.001
 billboard = 1

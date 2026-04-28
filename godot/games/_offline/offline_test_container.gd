@@ -4,6 +4,8 @@ class_name OfflineTestContainer
 @export var child_scene: PackedScene
 var mock_lobby: Lobby
 func _ready() -> void:
+  ObjectSerializer.register_script(MarblesGameState)
+  
   if WSClient.state.current is not WSClient.AuthenticatedState:
     await WSClient.authenticated
 
@@ -16,4 +18,6 @@ func _ready() -> void:
 
   var scene_inst: GameBase = child_scene.instantiate() as GameBase
   scene_inst.lobby = mock_lobby
+  for chatter in mock_data.get("chatters"):
+    scene_inst.chatters[chatter.id] = chatter
   add_child(scene_inst)

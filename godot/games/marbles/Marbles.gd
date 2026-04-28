@@ -23,11 +23,11 @@ enum MarblesMessage {
   StateRefresh,
   MarblesUpdate,
   GameStart,
+  UsernameVisibility,
 }
 
 signal leaderboard_updated
 
-var all_props: Array[Node3D] = []
 var _sync_accumulator: float = 0.0
 const SYNC_RATE: float = 1.0 / 20.0
 
@@ -45,6 +45,7 @@ func _ready() -> void:
 
   var map_scene = map[0]
   current_map = map_scene.instantiate()
+  current_map.username_visibility_toggled.connect(toggle_username_visibility)
   animation_synchronizer.animation_player = current_map.animation_player
   add_child(current_map)
 
@@ -61,7 +62,6 @@ func _ready() -> void:
 
   # Get all nodes in a group for the current map
   _bind_inputs()
-  print(is_game_host, ' about to bind events')
   if is_game_host:
     peer_is_ready.connect(_peer_is_ready)
     chatter_loaded.connect(_on_loaded_chatter_data)
@@ -75,6 +75,9 @@ func _ready() -> void:
 
     _handle_peer_packet(1, { "type": MarblesMessage.StateRefresh, "state": new_state })
     _send_refresh_state(MultiplayerPeer.TARGET_PEER_BROADCAST)
+
+func toggle_username_visibility(new_visibility: bool) -> void:
+  _handle_peer_packet(1, { "type": MarblesMessage.UsernameVisibility, "visibility": new_visibility })
 
 func handle_lobby_updated() -> void:
   _server_spawn_all_new_players()
@@ -90,11 +93,11 @@ func _bind_inputs() -> void:
   InputMap.add_action("previous_placement")
 
   var next_placement_event := InputEventKey.new()
-  next_placement_event.physical_keycode = KEY_RIGHT
+  next_placement_event.physical_keycode = KEY_UP
   InputMap.action_add_event("next_placement", next_placement_event)
 
   var previous_placement_event := InputEventKey.new()
-  previous_placement_event.physical_keycode = KEY_LEFT
+  previous_placement_event.physical_keycode = KEY_DOWN
   InputMap.action_add_event("previous_placement", previous_placement_event)
 
 func handle_anim_finished(_anim_name: String) -> void:
@@ -126,7 +129,6 @@ func _left_lobby() -> void:
   game_finished.emit()
 
 func _send_refresh_state(peer_id: int) -> void:
-  print("Sending refresh state to peer_id %d with game_state %s" % [peer_id, game_state])
   MultiplayerClient.send_packet(
     { "type": MarblesMessage.StateRefresh, "state": game_state },
     peer_id,
@@ -218,7 +220,6 @@ func _server_spawn_all_new_players() -> void:
 
 var started = false
 func server_only_start_game() -> void:
-  print("TRY START GAME")
   if started:
     assert(false, "server_only_start_game called multiple times, this should never happen")
   started = true
@@ -226,11 +227,12 @@ func server_only_start_game() -> void:
   _server_spawn_all_new_players()
   _send_refresh_state(MultiplayerPeer.TARGET_PEER_BROADCAST)
   _apply_game_state()
+
   if is_game_host:
     animation_synchronizer.authority_play_animation("Intro")
     await animation_synchronizer.animation_finished
     var anim_camera := get_viewport().get_camera_3d()
-    current_map.camera.global_transform = anim_camera.global_transform
+    current_map.camera.snap_to_camera(anim_camera)
     current_map.camera.camera.current = true
 
     MultiplayerClient.send_packet(
@@ -295,7 +297,8 @@ func _handle_peer_packet(sender_id: int, packet: Dictionary) -> void:
         marble_state.position = data.get("position", Vector3.ZERO)
         marble_state.rotation = data.get("rotation", Vector3.ZERO)
         marble_state.linear_velocity = data.get("linear_velocity", Vector3.ZERO)
-
+    MarblesMessage.UsernameVisibility:
+      marbles_game_state.username_visibility = packet.get("visibility", false)
   _apply_game_state()
 
 func _apply_game_state() -> void:
@@ -305,6 +308,7 @@ func _apply_game_state() -> void:
     var marble: MarbleBot = get_or_create_bot_for_peer(peer_id)
     var marble_state: MarblesGameState.MarbleState = game_state.marbles_by_peer_id[peer_id]
     marble.sync_state = marble_state
+    marble.show_username = game_state.username_visibility
   for prop in current_map.all_props:
     prop.game_started_at = game_state.started_at
 

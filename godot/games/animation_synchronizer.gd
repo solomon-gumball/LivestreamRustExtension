@@ -75,7 +75,6 @@ func authority_play_animation(animation_name: String) -> void:
   if !MultiplayerClient.is_lobby_host():
     assert(false, "ERROR: Non-host player called authority_play_animation()!")
 
-  print("PLAYING ANIM!!")
   MultiplayerClient.send_packet(
     {
       "type": GameBase.GlobalGameMessage.UpdateAnimation,

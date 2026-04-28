@@ -41,6 +41,13 @@ func enter_follow_mode(node_to_follow: Node3D) -> void:
 func enter_free_mode() -> void:
   _state.change_state(_free_state)
 
+func snap_to_camera(source: Camera3D) -> void:
+  global_transform = source.global_transform
+  var forward := global_transform.basis * Vector3.FORWARD
+  _yaw = atan2(-forward.x, -forward.z)
+  _pitch = asin(clamp(forward.y, -1.0, 1.0))
+  _pitch = clamp(_pitch, deg_to_rad(-89.0), deg_to_rad(89.0))
+
 func _init_input_actions() -> void:
   InputMap.add_action("move_forward")
   InputMap.add_action("move_back")

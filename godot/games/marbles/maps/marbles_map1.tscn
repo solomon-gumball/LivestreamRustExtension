@@ -43,7 +43,7 @@ sky = SubResource("Sky_gp6tp")
 ambient_light_color = Color(0.5102944, 0.26274186, 0.71350974, 1)
 ambient_light_sky_contribution = 0.0
 
-[node name="gumball-map1" unique_id=308843674 node_paths=PackedStringArray("finish_area", "out_of_bounds_area", "spawn_path", "animation_player") instance=ExtResource("1_28nk5")]
+[node name="gumball-map1" unique_id=1920910813 node_paths=PackedStringArray("finish_area", "out_of_bounds_area", "spawn_path", "animation_player") instance=ExtResource("1_28nk5")]
 script = ExtResource("2_tjf41")
 finish_area = NodePath("FinishArea2")
 out_of_bounds_area = NodePath("OutOfBoundsArea")
@@ -76,22 +76,22 @@ transform = Transform3D(-0.388362, -0.443438, -0.807798, -0.509024, -0.627499, 0
 shadow_enabled = true
 shadow_opacity = 0.57
 
-[node name="Sphere" parent="." index="5" unique_id=1230704327]
+[node name="Sphere" parent="." index="5" unique_id=392529875]
 visible = false
 
-[node name="Sphere_001-noimport" parent="." index="6" unique_id=1038194291]
+[node name="Sphere_001-noimport" parent="." index="6" unique_id=749230988]
 visible = false
 
-[node name="Funnel" parent="." index="8" unique_id=320254984]
+[node name="Funnel" parent="." index="8" unique_id=1912995114]
 visible = false
 
-[node name="MarblesSpinner" parent="." index="18" unique_id=322482381]
+[node name="MarblesSpinner" parent="." index="18" unique_id=161828820]
 visible = false
 
-[node name="Circle_001" parent="." index="21" unique_id=574844238]
+[node name="Circle_001" parent="." index="21" unique_id=1458001982]
 visible = false
 
-[node name="Circle_002" parent="." index="22" unique_id=451740055]
+[node name="Circle_002" parent="." index="22" unique_id=1060341994]
 visible = false
 
 [node name="marbles-bumper3" parent="." index="24" unique_id=462884197 instance=ExtResource("4_sevp3")]
@@ -128,15 +128,16 @@ transform = Transform3D(0.9427405, -0.33352715, 0, 0.33352715, 0.9427405, 0, 0, 
 shape = SubResource("BoxShape3D_fxgnb")
 
 [node name="SpawnPath" type="Path3D" parent="." index="33" unique_id=454938272]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 116.146, 91.8646, 0.01438427)
+transform = Transform3D(0.9999978, 0.0015394343, 0.0014083391, -0.0015396923, 0.9999988, 0.00018113754, -0.0014080569, -0.00018331753, 0.999999, 119.5167, 91.8646, 0.01438427)
 curve = SubResource("Curve3D_tjf41")
 
 [node name="DebugCamera" parent="." index="34" unique_id=1098239593 instance=ExtResource("3_4cld7")]
 unique_name_in_owner = true
-transform = Transform3D(-0.029620912, -0.56637686, 0.82361394, -0.020025253, 0.8241464, 0.5660228, -0.9993606, 0.00027303345, -0.035753805, 117.68712, 91.51675, -0.6528377)
-
-[node name="Camera" parent="." index="35" unique_id=237500167]
-transform = Transform3D(-0.011791038, -0.5670638, 0.8235893, -0.012867093, 0.8236645, 0.56693125, -0.9998477, -0.003912494, -0.017008321, 117.70333, 91.523415, -0.4464121)
+transform = Transform3D(-0.029620912, -0.56637686, 0.82361394, -0.020025253, 0.8241464, 0.5660228, -0.9993606, 0.00027303345, -0.035753805, 117.68712, 95.07298, -0.6528377)
 
 [node name="WorldEnvironment" type="WorldEnvironment" parent="." index="36" unique_id=1610954951]
 environment = SubResource("Environment_8bl5g")
+
+[node name="Camera" parent="." index="37" unique_id=1067170835]
+transform = Transform3D(-0.016175402, -0.5578361, 0.8297933, -5.960465e-08, 0.8299019, 0.5579091, -0.99986917, 0.009024356, -0.01342403, 122.104454, 92.75128, -0.8500098)
+fov = 75.0

@@ -160,12 +160,13 @@ func send_packet(
   # var packet_data := payload
 
   if is_net_connected():
+    print("Sending packet to peer %d: %s" % [target_peer, str(packet)])
     rtc_mp.set_target_peer(target_peer)
     rtc_mp.set_transfer_mode(transfer_mode)
     rtc_mp.put_packet(packet_data)
 
   if call_self:
-    packet_received.emit(rtc_mp.get_unique_id(), packet)
+    packet_received.emit(my_peer_id(), packet)
 
 func is_net_connected() -> bool:
   return rtc_mp.get_connection_status() == MultiplayerPeer.CONNECTION_CONNECTED
