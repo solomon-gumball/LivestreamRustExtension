@@ -147,12 +147,9 @@ func send_packet(
   transfer_mode: int = MultiplayerPeer.TRANSFER_MODE_UNRELIABLE_ORDERED,
   call_self: bool = false
 ) -> void:
-  if not current_lobby:
-    if PRINT_DEBUG: print("Can't send packet, not in lobby")
-    return
-  if not is_net_connected():
-    if PRINT_DEBUG: print("Attempting to send packet while not connected")
-    return
+  # if not current_lobby:
+  #   if PRINT_DEBUG: print("Can't send packet, not in lobby")
+  #   return
   
   var serialized: Variant = BinarySerializer.serialize_var(packet)
   var payload := var_to_bytes(serialized)
@@ -162,9 +159,10 @@ func send_packet(
   var packet_data := magic + payload
   # var packet_data := payload
 
-  rtc_mp.set_target_peer(target_peer)
-  rtc_mp.set_transfer_mode(transfer_mode)
-  rtc_mp.put_packet(packet_data)
+  if is_net_connected():
+    rtc_mp.set_target_peer(target_peer)
+    rtc_mp.set_transfer_mode(transfer_mode)
+    rtc_mp.put_packet(packet_data)
 
   if call_self:
     packet_received.emit(rtc_mp.get_unique_id(), packet)

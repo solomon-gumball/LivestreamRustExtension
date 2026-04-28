@@ -13,7 +13,10 @@ var map: Array[PackedScene] = [
 ]
 
 var current_map: MarblesMap
-var game_state: MarblesGameState = null
+var marbles_game_state: MarblesGameState = null:
+  set(new_state):
+    marbles_game_state = new_state
+    game_state = new_state
 
 enum MarblesMessage {
   StateRefresh,
@@ -31,6 +34,8 @@ func _ready() -> void:
   super._ready()
   if Engine.is_editor_hint():
     return
+
+  ObjectSerializer.register_script(MarblesGameState)
   
   var update_timer = Timer.new()
   add_child(update_timer)
@@ -41,6 +46,8 @@ func _ready() -> void:
 
   var map_scene = map[0]
   current_map = map_scene.instantiate()
+
+  anim_player = current_map.animation_player
   add_child(current_map)
 
   marbles_overlay.map = current_map
@@ -58,10 +65,11 @@ func _ready() -> void:
   _bind_inputs()
 
   if is_game_host:
-    current_map.out_of_bounds_area.body_entered.connect(_authority_handle_marble_out_of_bounds)
     peer_is_ready.connect(_peer_is_ready)
-    all_peers_loaded_in.connect(server_only_start_game)
     chatter_loaded.connect(_on_loaded_chatter_data)
+    all_peers_loaded_in.connect(server_only_start_game)
+    current_map.out_of_bounds_area.body_entered.connect(_authority_handle_marble_out_of_bounds)
+
     var new_state := MarblesGameState.new()
     new_state.started_at = Time.get_unix_time_from_system()
 
@@ -90,6 +98,10 @@ func _bind_inputs() -> void:
   var previous_placement_event := InputEventKey.new()
   previous_placement_event.physical_keycode = KEY_LEFT
   InputMap.action_add_event("previous_placement", previous_placement_event)
+
+func handle_anim_finished(_anim_name: String) -> void:
+  print("handle anim_finished")
+  pass
 
 var focused_marble: MarbleBot = null:
   set(new_value):
@@ -161,12 +173,28 @@ func _try_follow_marble_at_cursor(screen_pos: Vector2) -> void:
       var selected_marble := hits[0].collider as MarbleBot
       focused_marble = selected_marble
 
+## Extra Y offset added on top of the raycast ground hit, so marbles spawn above the surface.
+## Set this to the marble's radius to avoid spawning inside geometry.
+@export var spawn_ground_offset: float = 0.15
+
 func _get_random_spawn_position(join_index: int) -> Vector3:
   var spawn_path_length = current_map.spawn_path.curve.get_baked_length()
   var spawn_path_offset = spawn_path_length / lobby.peers.size() * join_index
   var spawn_transform = current_map.spawn_path.global_transform * current_map.spawn_path.curve.sample_baked_with_rotation(spawn_path_offset)
   var random_position_offset := Vector3(randf_range(-.2, .2), 0.0, randf_range(-.2, .2))
-  return spawn_transform.origin + random_position_offset
+  var base_position: Vector3 = spawn_transform.origin + random_position_offset
+
+  var space := get_world_3d().direct_space_state
+  var ray := PhysicsRayQueryParameters3D.create(
+    base_position + Vector3.UP * 2.0,
+    base_position + Vector3.DOWN * 10.0
+  )
+  ray.collision_mask = 1
+  var hit := space.intersect_ray(ray)
+  if hit:
+    return hit.position + Vector3.UP * spawn_ground_offset
+
+  return base_position
 
 func _server_spawn_all_new_players() -> void:
   marbles_overlay.bots_by_peer_id = bots_by_peer_id
@@ -181,8 +209,6 @@ func _server_spawn_all_new_players() -> void:
     marble_state.position = _get_random_spawn_position(join_index)
     marble_state.rotation = Vector3.ZERO
     marble_state.frozen = game_state.game_state != MarblesGameState.GameState.Playing
-
-    print("Spawning marble for peer_id %d frozen=%s" % [peer.peer_id, marble_state.frozen])
 
     game_state.marbles_by_peer_id.set(peer.peer_id, marble_state)
     var marble := get_or_create_bot_for_peer(peer.peer_id)
@@ -203,7 +229,12 @@ func server_only_start_game() -> void:
   _apply_game_state()
 
   if is_game_host:
-    await get_tree().create_timer(3.0).timeout
+    authority_play_animation("Intro")
+    await animation_finished
+    var anim_camera := get_viewport().get_camera_3d()
+    current_map.camera.global_transform = anim_camera.global_transform
+    current_map.camera.camera.current = true
+
     MultiplayerClient.send_packet(
       { "type": MarblesMessage.GameStart, "started_at": Time.get_unix_time_from_system() },
       MultiplayerPeer.TARGET_PEER_BROADCAST,
@@ -250,7 +281,7 @@ func _handle_peer_packet(sender_id: int, packet: Dictionary) -> void:
     MarblesMessage.StateRefresh:
       var incoming = packet.get("state")
       if incoming is MarblesGameState:
-        game_state = incoming
+        marbles_game_state = incoming
     MarblesMessage.GameStart:
       if game_state:
         game_state.game_state = MarblesGameState.GameState.Playing
@@ -262,7 +293,7 @@ func _handle_peer_packet(sender_id: int, packet: Dictionary) -> void:
         var data: Dictionary = updates[peer_id]
         if not game_state.marbles_by_peer_id.has(peer_id):
           game_state.marbles_by_peer_id[peer_id] = MarblesGameState.MarbleState.new()
-        var marble_state := game_state.marbles_by_peer_id[peer_id]
+        var marble_state := marbles_game_state.marbles_by_peer_id[peer_id]
         marble_state.position = data.get("position", Vector3.ZERO)
         marble_state.rotation = data.get("rotation", Vector3.ZERO)
         marble_state.linear_velocity = data.get("linear_velocity", Vector3.ZERO)
@@ -299,7 +330,7 @@ func _broadcast_marble_states() -> void:
       "linear_velocity": bot.linear_velocity,
     }
     if game_state.marbles_by_peer_id.has(peer_id):
-      var s := game_state.marbles_by_peer_id[peer_id]
+      var s := marbles_game_state.marbles_by_peer_id[peer_id]
       s.position = bot.global_position
       s.rotation = bot.rotation
       s.linear_velocity = bot.linear_velocity

@@ -9,13 +9,6 @@
 [ext_resource type="Texture2D" uid="uid://ddovor3jdfvj4" path="res://textures/noise1.jpg" id="7_1um5w"]
 [ext_resource type="Texture2D" uid="uid://6om2hiwmkli" path="res://textures/panorama6.jpg" id="8_kvqxd"]
 
-[sub_resource type="Curve3D" id="Curve3D_fxgnb"]
-_data = {
-"points": PackedVector3Array(0, 0, 0, 0, 0, 0, 0.170578, 0.19428033, 0.5082085, -2.208968, 5.875877, 20.481342, 2.208968, -5.875877, -20.481342, 2.8957207, -6.3567996, -53.36677, 2.9369936, 2.5570984, 2.13089, -2.9369936, -2.5570984, -2.13089, 11.853274, -96.820496, -108.389114, 0.2731886, 1.5885544, 0.49028015, -0.2731886, -1.5885544, -0.49028015, 9.896584, -98.367714, -111.95825, 0, 0, 0, 0, 0, 0, 12.642717, -102.92736, -112.706894),
-"tilts": PackedFloat32Array(0, 0, 0, 0, 0)
-}
-point_count = 5
-
 [sub_resource type="BoxShape3D" id="BoxShape3D_ao6dl"]
 size = Vector3(21.9851, 1, 2.65137)
 
@@ -30,10 +23,10 @@ size = Vector3(213.22482, 30.007, 100)
 
 [sub_resource type="Curve3D" id="Curve3D_tjf41"]
 _data = {
-"points": PackedVector3Array(0, 0, 0, 0, 0, 0, 0.349159, -1.52588e-05, 1.83925, 0, 0, 0, 0, 0, 0, 1.10159, -1.52588e-05, 0.53112, 0, 0, 0, 0, 0, 0, 1.18027, -1.52588e-05, -0.914707, 0, 0, 0, 0, 0, 0, 0.885208, -1.52588e-05, -2.11979, 0, 0, 0, 0, 0, 0, 0.265564, -1.52588e-05, -3.21153),
-"tilts": PackedFloat32Array(0, 0, 0, 0, 0)
+"points": PackedVector3Array(0, 0, 0, 0, 0, 0, 0.34915924, -1.131424, 1.0147828, 0, 0, 0, 0, 0, 0, 0.26556396, -1.1836319, -2.2278976),
+"tilts": PackedFloat32Array(0, 0)
 }
-point_count = 5
+point_count = 2
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_rcfe2"]
 shader = ExtResource("6_fxgnb")
@@ -50,144 +43,18 @@ sky = SubResource("Sky_gp6tp")
 ambient_light_color = Color(0.5102944, 0.26274186, 0.71350974, 1)
 ambient_light_sky_contribution = 0.0
 
-[sub_resource type="Animation" id="Animation_fxgnb"]
-length = 0.001
-tracks/0/type = "bezier"
-tracks/0/imported = false
-tracks/0/enabled = true
-tracks/0/path = NodePath("Path3D/PathFollow3D:progress_ratio")
-tracks/0/interp = 1
-tracks/0/loop_wrap = true
-tracks/0/keys = {
-"handle_modes": PackedInt32Array(0),
-"points": PackedFloat32Array(0, -0.25, 0, 0.25, 0),
-"times": PackedFloat32Array(0)
-}
-tracks/1/type = "bezier"
-tracks/1/imported = false
-tracks/1/enabled = true
-tracks/1/path = NodePath("Path3D/PathFollow3D/DebugCamera:rotation:x")
-tracks/1/interp = 1
-tracks/1/loop_wrap = true
-tracks/1/keys = {
-"handle_modes": PackedInt32Array(3),
-"points": PackedFloat32Array(0, -0.25, 0, 0.25, 0),
-"times": PackedFloat32Array(0)
-}
-tracks/2/type = "bezier"
-tracks/2/imported = false
-tracks/2/enabled = true
-tracks/2/path = NodePath("Path3D/PathFollow3D/DebugCamera:rotation:y")
-tracks/2/interp = 1
-tracks/2/loop_wrap = true
-tracks/2/keys = {
-"handle_modes": PackedInt32Array(3),
-"points": PackedFloat32Array(0, -0.25, 0, 0.25, 0),
-"times": PackedFloat32Array(0)
-}
-tracks/3/type = "bezier"
-tracks/3/imported = false
-tracks/3/enabled = true
-tracks/3/path = NodePath("Path3D/PathFollow3D/DebugCamera:rotation:z")
-tracks/3/interp = 1
-tracks/3/loop_wrap = true
-tracks/3/keys = {
-"handle_modes": PackedInt32Array(3),
-"points": PackedFloat32Array(0, -0.25, 0, 0.25, 0),
-"times": PackedFloat32Array(0)
-}
-
-[sub_resource type="Animation" id="Animation_1um5w"]
-resource_name = "intro"
-length = 15.0
-step = 0.1
-tracks/0/type = "value"
-tracks/0/imported = false
-tracks/0/enabled = false
-tracks/0/path = NodePath("Path3D/PathFollow3D/DebugCamera:position")
-tracks/0/interp = 1
-tracks/0/loop_wrap = true
-tracks/0/keys = {
-"times": PackedFloat32Array(),
-"transitions": PackedFloat32Array(),
-"update": 0,
-"values": []
-}
-tracks/1/type = "bezier"
-tracks/1/imported = false
-tracks/1/enabled = true
-tracks/1/path = NodePath("Path3D/PathFollow3D:progress_ratio")
-tracks/1/interp = 1
-tracks/1/loop_wrap = true
-tracks/1/keys = {
-"handle_modes": PackedInt32Array(0, 3, 3),
-"points": PackedFloat32Array(0, -0.25, 0, 2.3, 0.0037436357, 0.35467738, -1.225, -0.25, 1.225, 0.25, 1, -3.5591621, -0.013934076, 3.5591621, 0.013934076),
-"times": PackedFloat32Array(0, 4.9, 10.6)
-}
-tracks/2/type = "bezier"
-tracks/2/imported = false
-tracks/2/enabled = true
-tracks/2/path = NodePath("Path3D/PathFollow3D/DebugCamera:rotation:x")
-tracks/2/interp = 1
-tracks/2/loop_wrap = true
-tracks/2/keys = {
-"handle_modes": PackedInt32Array(3, 3, 3, 3),
-"points": PackedFloat32Array(0, -0.25, 0, 0.25, 0, -1.5498524, -1.225, 0.3874631, 1.225, -0.3874631, -1.3177202, -0.32500005, -0.21816616, 0.32500005, 0.21816616, -0.67718774, -0.6000004, 0.013696849, 0.6000004, -0.013696849),
-"times": PackedFloat32Array(0, 4.9, 8.7, 10.6)
-}
-tracks/3/type = "bezier"
-tracks/3/imported = false
-tracks/3/enabled = true
-tracks/3/path = NodePath("Path3D/PathFollow3D/DebugCamera:rotation:y")
-tracks/3/interp = 1
-tracks/3/loop_wrap = true
-tracks/3/keys = {
-"handle_modes": PackedInt32Array(3, 3, 3, 3),
-"points": PackedFloat32Array(0, -0.25, 0, 0.25, 0, 0, -1.225, 0, 1.225, 0, -0.07872745, -0.32500005, 0, 0.32500005, 0, 0, -0.80424976, 0.026006399, 0.80424976, -0.026006399),
-"times": PackedFloat32Array(0, 4.9, 8.7, 10.6)
-}
-tracks/4/type = "bezier"
-tracks/4/imported = false
-tracks/4/enabled = true
-tracks/4/path = NodePath("Path3D/PathFollow3D/DebugCamera:rotation:z")
-tracks/4/interp = 1
-tracks/4/loop_wrap = true
-tracks/4/keys = {
-"handle_modes": PackedInt32Array(3, 3, 3, 3),
-"points": PackedFloat32Array(0, -0.25, 0, 0.25, 0, -0.17104226, -1, 0.008839369, 1, -0.008839369, -0.07504573, -0.32500005, -0.042760566, 0.32500005, 0.042760566, 0, -1.4250001, -0.042760566, 1.4250001, 0.042760566),
-"times": PackedFloat32Array(0, 4.9, 8.7, 10.6)
-}
-
-[sub_resource type="AnimationLibrary" id="AnimationLibrary_kvqxd"]
-_data = {
-&"RESET": SubResource("Animation_fxgnb"),
-&"intro": SubResource("Animation_1um5w")
-}
-
-[node name="gumball-map1" unique_id=401106848 node_paths=PackedStringArray("finish_area", "out_of_bounds_area", "spawn_path") instance=ExtResource("1_28nk5")]
+[node name="gumball-map1" unique_id=308843674 node_paths=PackedStringArray("finish_area", "out_of_bounds_area", "spawn_path", "animation_player") instance=ExtResource("1_28nk5")]
 script = ExtResource("2_tjf41")
 finish_area = NodePath("FinishArea2")
 out_of_bounds_area = NodePath("OutOfBoundsArea")
 spawn_path = NodePath("SpawnPath")
+animation_player = NodePath("AnimationPlayer")
 
 [node name="DirectionalLight3D2" type="DirectionalLight3D" parent="." index="0" unique_id=860263462]
 transform = Transform3D(-0.9306227, 0.14269298, -0.33701667, -0.029399123, 0.8887373, 0.45747313, 0.3647975, 0.43564287, -0.82288396, -11.540909, 25.993324, 2.970518)
 light_energy = 0.147
 
-[node name="Path3D" type="Path3D" parent="." index="1" unique_id=1673550459]
-transform = Transform3D(0.010440141, -0.98666036, -0.16245702, 0.06327625, 0.16279218, -0.9846293, 0.99794143, -6.8095005e-09, 0.06413176, 0.3029294, -3.4068518, -5.8076344)
-curve = SubResource("Curve3D_fxgnb")
-
-[node name="PathFollow3D" type="PathFollow3D" parent="Path3D" index="0" unique_id=1310313708]
-transform = Transform3D(0.9999615, 0, 0, 0, 0.99998, 0, 0, 0, 0.9999856, 10.039765, -98.01389, -110.27293)
-rotation_mode = 0
-tilt_enabled = false
-
-[node name="DebugCamera" parent="Path3D/PathFollow3D" index="0" unique_id=1098239593 instance=ExtResource("3_4cld7")]
-unique_name_in_owner = true
-transform = Transform3D(1.0000001, 0, 0, 0, 0.99999994, 0, 0, 0, 1.0000001, 0, 0, 0)
-
-[node name="StaticBody3D2" type="StaticBody3D" parent="." index="2" unique_id=589620629]
+[node name="StaticBody3D2" type="StaticBody3D" parent="." index="1" unique_id=589620629]
 transform = Transform3D(0, 1, 0, -1, 0, 0, 0, 0, 1, 26.1318, 27.8351, -5.28797)
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="StaticBody3D2" index="0" unique_id=2024379589]
@@ -198,55 +65,55 @@ shape = SubResource("BoxShape3D_ao6dl")
 transform = Transform3D(1.00291, 0, 0, 0, -4.38387e-08, -1.00291, 0, 1.00291, -4.38387e-08, -5.99255, -1.62842, -6.83066)
 shape = SubResource("BoxShape3D_ao6dl")
 
-[node name="MarblesSpinner2" parent="." index="3" unique_id=1084532358 groups=["marbles_prop"] instance=ExtResource("3_4nog8")]
+[node name="MarblesSpinner2" parent="." index="2" unique_id=1084532358 groups=["marbles_prop"] instance=ExtResource("3_4nog8")]
 transform = Transform3D(0.791536, -0.350981, 2.72184e-17, 0.350981, 0.791536, -2.88075e-16, 2.58047e-08, -3.49087e-16, 0.865861, 39.019, 50.5578, 0.33112)
 
-[node name="MarblesSpinner3" parent="." index="4" unique_id=788279968 groups=["marbles_prop"] instance=ExtResource("3_4nog8")]
+[node name="MarblesSpinner3" parent="." index="3" unique_id=788279968 groups=["marbles_prop"] instance=ExtResource("3_4nog8")]
 transform = Transform3D(0.8212067, -0.2744746, 7.262632e-17, 0.2744746, 0.8212067, -2.928115e-16, 2.5804699e-08, -1.0521121e-15, 0.86586094, 65.066, 68.2264, 2.93249)
 
-[node name="DirectionalLight3D" type="DirectionalLight3D" parent="." index="5" unique_id=1635784220]
+[node name="DirectionalLight3D" type="DirectionalLight3D" parent="." index="4" unique_id=1635784220]
 transform = Transform3D(-0.388362, -0.443438, -0.807798, -0.509024, -0.627499, 0.589185, -0.768159, 0.640006, 0.0179762, -10.4232, 5.8329, 0)
 shadow_enabled = true
 shadow_opacity = 0.57
 
-[node name="Sphere" parent="." index="6" unique_id=731978100]
+[node name="Sphere" parent="." index="5" unique_id=1230704327]
 visible = false
 
-[node name="Sphere_001-noimport" parent="." index="7" unique_id=1946579510]
+[node name="Sphere_001-noimport" parent="." index="6" unique_id=1038194291]
 visible = false
 
-[node name="Funnel" parent="." index="9" unique_id=1451237294]
+[node name="Funnel" parent="." index="8" unique_id=320254984]
 visible = false
 
-[node name="MarblesSpinner" parent="." index="19" unique_id=607055416]
+[node name="MarblesSpinner" parent="." index="18" unique_id=322482381]
 visible = false
 
-[node name="Circle_001" parent="." index="22" unique_id=1682319476]
+[node name="Circle_001" parent="." index="21" unique_id=574844238]
 visible = false
 
-[node name="Circle_002" parent="." index="23" unique_id=169980196]
+[node name="Circle_002" parent="." index="22" unique_id=451740055]
 visible = false
 
-[node name="marbles-bumper3" parent="." index="25" unique_id=462884197 instance=ExtResource("4_sevp3")]
+[node name="marbles-bumper3" parent="." index="24" unique_id=462884197 instance=ExtResource("4_sevp3")]
 transform = Transform3D(0.990595, 0, 0, 0, 0.349778, -0.926787, 0, 0.926787, 0.349778, 24.5844, 23.1001, -11.4756)
 
-[node name="marbles-bumper8" parent="." index="26" unique_id=1514189121 instance=ExtResource("4_sevp3")]
+[node name="marbles-bumper8" parent="." index="25" unique_id=1514189121 instance=ExtResource("4_sevp3")]
 transform = Transform3D(-0.990595, -8.10223e-08, -3.05786e-08, 0, 0.349778, -0.926787, 8.66006e-08, -0.926787, -0.349778, 24.5844, 23.4033, 0.83876)
 
-[node name="marbles-bumper2" parent="." index="27" unique_id=646239695 instance=ExtResource("4_sevp3")]
+[node name="marbles-bumper2" parent="." index="26" unique_id=646239695 instance=ExtResource("4_sevp3")]
 transform = Transform3D(0.990595, 0, 0, 0, 0.915989, -0.377151, 0, 0.377151, 0.915989, 24.5844, 17.5791, -8.61866)
 
-[node name="marbles-bumper5" parent="." index="28" unique_id=391888060 instance=ExtResource("4_sevp3")]
+[node name="marbles-bumper5" parent="." index="27" unique_id=391888060 instance=ExtResource("4_sevp3")]
 transform = Transform3D(0.990595, 0, 0, 0, 0.914853, 0.379899, 0, -0.379899, 0.914853, 24.5844, 17.7193, -2.0492)
 
-[node name="FinishArea2" type="Area3D" parent="." index="32" unique_id=749977209]
+[node name="FinishArea2" type="Area3D" parent="." index="31" unique_id=749977209]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -6.65094, -6.33502)
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="FinishArea2" index="0" unique_id=611692593]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.580431, -1.09445, 0.181747)
 shape = SubResource("BoxShape3D_tjf41")
 
-[node name="OutOfBoundsArea" type="Area3D" parent="." index="33" unique_id=1964003097]
+[node name="OutOfBoundsArea" type="Area3D" parent="." index="32" unique_id=1964003097]
 unique_name_in_owner = true
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -13.6046, -5.97411)
 collision_layer = 0
@@ -260,15 +127,16 @@ shape = SubResource("BoxShape3D_87yb8")
 transform = Transform3D(0.9427405, -0.33352715, 0, 0.33352715, 0.9427405, 0, 0, 0, 1, 135.67004, 74.86697, 8.89998)
 shape = SubResource("BoxShape3D_fxgnb")
 
-[node name="SpawnPath" type="Path3D" parent="." index="34" unique_id=454938272]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 121.146, 91.8646, 0.01438427)
+[node name="SpawnPath" type="Path3D" parent="." index="33" unique_id=454938272]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 116.146, 91.8646, 0.01438427)
 curve = SubResource("Curve3D_tjf41")
 
-[node name="Camera" parent="." index="35" unique_id=1185886552]
-transform = Transform3D(-0.011791038, -0.56706387, 0.82358944, -0.012867093, 0.82366455, 0.5669313, -0.9998477, -0.0039124945, -0.017008323, 117.70333, 91.523415, -0.4464121)
+[node name="DebugCamera" parent="." index="34" unique_id=1098239593 instance=ExtResource("3_4cld7")]
+unique_name_in_owner = true
+transform = Transform3D(-0.029620912, -0.56637686, 0.82361394, -0.020025253, 0.8241464, 0.5660228, -0.9993606, 0.00027303345, -0.035753805, 117.68712, 91.51675, -0.6528377)
+
+[node name="Camera" parent="." index="35" unique_id=237500167]
+transform = Transform3D(-0.011791038, -0.5670638, 0.8235893, -0.012867093, 0.8236645, 0.56693125, -0.9998477, -0.003912494, -0.017008321, 117.70333, 91.523415, -0.4464121)
 
 [node name="WorldEnvironment" type="WorldEnvironment" parent="." index="36" unique_id=1610954951]
 environment = SubResource("Environment_8bl5g")
-
-[node name="@AnimationPlayer@368340" type="AnimationPlayer" parent="." index="37" unique_id=432625537]
-libraries/ = SubResource("AnimationLibrary_kvqxd")

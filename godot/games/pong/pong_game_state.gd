@@ -1,4 +1,5 @@
 class_name PongGameState
+extends BaseGameState
 
 enum Phase { Intro, Playing, RoundComplete }
 @export_storage var phase: int = Phase.Intro
@@ -8,4 +9,5 @@ enum Phase { Intro, Playing, RoundComplete }
 @export_storage var paddle_l_state: PongEntity = PongEntity.new()
 @export_storage var paddle_r_state: PongEntity = PongEntity.new()
 @export_storage var ball_state: PongEntity = null
-@export_storage var animation_state: PongAnimationState = null
+@export_storage var pong_animation_state: PongAnimationState = null
+# @export_storage var animation_state: PongAnimationState = null
