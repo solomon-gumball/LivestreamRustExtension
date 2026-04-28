@@ -58,7 +58,6 @@ var sync_state: MarblesGameState.MarbleState = null:
   set(new_value):
     if sync_state:
       if has_authority() and freeze != new_value.frozen:
-        print("new frozen = %s for peer_id %d" % [new_value.frozen, MultiplayerClient.my_peer_id()])
         freeze = new_value.frozen
     sync_state = new_value
 

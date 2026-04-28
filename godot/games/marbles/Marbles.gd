@@ -30,18 +30,18 @@ signal leaderboard_updated
 
 var _sync_accumulator: float = 0.0
 const SYNC_RATE: float = 1.0 / 20.0
+var leaderboard_update_timer = Timer.new()
 
 func _ready() -> void:
   super._ready()
   if Engine.is_editor_hint():
     return
   
-  var update_timer = Timer.new()
-  add_child(update_timer)
-  update_timer.wait_time = 1.0
-  update_timer.one_shot = false
-  update_timer.start()
-  update_timer.timeout.connect(refresh_leaderboard)
+  add_child(leaderboard_update_timer)
+  leaderboard_update_timer.wait_time = 1.0
+  leaderboard_update_timer.one_shot = false
+  leaderboard_update_timer.start()
+  leaderboard_update_timer.timeout.connect(refresh_leaderboard)
 
   var map_scene = map[0]
   current_map = map_scene.instantiate()
@@ -144,6 +144,8 @@ func _input(event: InputEvent) -> void:
     increment_focused_bot(1)
 
 func increment_focused_bot(index_change: int) -> void:
+  refresh_leaderboard()
+  leaderboard_update_timer.start(0)
   if focused_marble == null:
     return
   var current_index := leaderboard.find(focused_marble)
@@ -283,16 +285,16 @@ func _handle_peer_packet(sender_id: int, packet: Dictionary) -> void:
       if incoming is MarblesGameState:
         marbles_game_state = incoming
     MarblesMessage.GameStart:
-      if game_state:
-        game_state.game_state = MarblesGameState.GameState.Playing
-        for game_state_marble in game_state.marbles_by_peer_id.values():
+      if marbles_game_state:
+        marbles_game_state.game_state = MarblesGameState.GameState.Playing
+        for game_state_marble in marbles_game_state.marbles_by_peer_id.values():
           game_state_marble.frozen = false
     MarblesMessage.MarblesUpdate:
       var updates: Dictionary = packet.get("marbles", {})
       for peer_id: int in updates:
         var data: Dictionary = updates[peer_id]
-        if not game_state.marbles_by_peer_id.has(peer_id):
-          game_state.marbles_by_peer_id[peer_id] = MarblesGameState.MarbleState.new()
+        if not marbles_game_state.marbles_by_peer_id.has(peer_id):
+          marbles_game_state.marbles_by_peer_id[peer_id] = MarblesGameState.MarbleState.new()
         var marble_state := marbles_game_state.marbles_by_peer_id[peer_id]
         marble_state.position = data.get("position", Vector3.ZERO)
         marble_state.rotation = data.get("rotation", Vector3.ZERO)
@@ -311,6 +313,7 @@ func _apply_game_state() -> void:
     marble.show_username = game_state.username_visibility
   for prop in current_map.all_props:
     prop.game_started_at = game_state.started_at
+  marbles_overlay.hidden = marbles_game_state.game_state != MarblesGameState.GameState.Playing
 
 func _physics_process(delta: float) -> void:
   if Engine.is_editor_hint(): return

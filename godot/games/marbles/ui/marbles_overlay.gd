@@ -3,10 +3,11 @@ class_name MarblesOverlay
 
 @onready var focused_chatter_placement_label: RichTextLabel = %FocusedChatterPlacement
 @onready var focused_chatter_name_label: RichTextLabel = %FocusedChatterNameLabel
-@onready var leaderboard_list: VBoxContainer = $LeaderboardList
+@onready var leaderboard_list: VBoxContainer = %LeaderboardList
 @onready var focused_chatter_header: Container = %FocusedChatterHeader
 @onready var lower_place_button: Button = %LowerPlaceButton
 @onready var higher_place_button: Button = %HigherPlaceButton
+@onready var page_container: Control = %PageContainer
 
 var bots_by_peer_id: Dictionary[int, MarbleBot] = {}
 var map: MarblesMap
@@ -14,6 +15,14 @@ const NUM_OF_PLACEMENTS_TO_SHOW = 10
 var row_template = load("res://games/marbles/ui/marbles_leaderboard_row.tscn")
 var _leaderboard_rows: Array[MarblesLeaderboardRow] = []
 var _last_placements: Array[MarbleBot] = []
+var hidden: bool = false:
+  set(new_hidden):
+    if !new_hidden and hidden:
+      print("animating in", new_hidden, hidden)
+      page_container.modulate.a = 0.0
+      var tween := create_tween()
+      tween.tween_property(page_container, "modulate:a", 1.0, 1.0)
+    hidden = new_hidden
 
 signal marble_selected(marble: MarbleBot)
 signal placement_changed(index_delta: int)
@@ -22,6 +31,9 @@ func _ready() -> void:
   set_focused_bot(null)
   higher_place_button.pressed.connect(increment_focused_bot.bind(-1))
   lower_place_button.pressed.connect(increment_focused_bot.bind(1))
+
+  for child in leaderboard_list.get_children():
+    child.queue_free()
   for i in NUM_OF_PLACEMENTS_TO_SHOW:
     var row: MarblesLeaderboardRow = row_template.instantiate()
     row.visible = false
