@@ -14,15 +14,14 @@ var num_of_entries_to_show = 10
 var row_template = load("res://games/marbles/ui/marbles_leaderboard_row.tscn")
 
 signal marble_selected(marble: MarbleBot)
-signal placement_selected(placement: int)
+signal placement_changed(index_delta: int)
 
 func _ready() -> void:
   set_focused_bot(null)
-  higher_place_button.pressed.connect(increment_focused_bot.bind(1))
-  lower_place_button.pressed.connect(increment_focused_bot.bind(-1))
+  higher_place_button.pressed.connect(increment_focused_bot.bind(-1))
+  lower_place_button.pressed.connect(increment_focused_bot.bind(1))
 
 var _focused_bot: MarbleBot = null
-var _placement: int = -1
 
 func set_focused_bot(marble_bot: MarbleBot, placement: int = -1) -> void:
   if marble_bot == null or marble_bot.chatter == null:
@@ -45,7 +44,7 @@ func placement_string(placement: int) -> String:
     return str(placement) + "th"
 
 func increment_focused_bot(index_change: int) -> void:
-  placement_selected.emit(_placement + index_change)
+  placement_changed.emit(index_change)
 
 func refresh_leaderboard(placements: Array[MarbleBot]) -> void:
   var children = leaderboard_list.get_children()
@@ -58,10 +57,11 @@ func refresh_leaderboard(placements: Array[MarbleBot]) -> void:
   for marble in marble_bots:
     rank += 1
     var entry: MarblesLeaderboardRow = row_template.instantiate()
-    entry.username = marble.chatter.display_name
-    entry.rank = rank
-    entry.pressed.connect(marble_selected.emit.bind(marble))
-    leaderboard_list.add_child(entry)
+    if marble.chatter:
+      entry.username = marble.chatter.display_name
+      entry.rank = rank
+      entry.pressed.connect(marble_selected.emit.bind(marble))
+      leaderboard_list.add_child(entry)
   
   if _focused_bot:
     var placement := placements.find(_focused_bot)

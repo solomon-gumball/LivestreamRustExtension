@@ -30,13 +30,9 @@ shader_parameter/bot_color = Color(1, 0, 0, 1)
 
 [sub_resource type="World3D" id="World3D_hb8fn"]
 
-[sub_resource type="LabelSettings" id="LabelSettings_jjmn7"]
-font = ExtResource("2_p5ued")
-font_size = 40
-
 [sub_resource type="LabelSettings" id="LabelSettings_sqe1x"]
 font = ExtResource("3_nspls")
-font_size = 40
+font_size = 20
 
 [sub_resource type="ViewportTexture" id="ViewportTexture_bpjvj"]
 viewport_path = NodePath("SubViewport")
@@ -122,12 +118,6 @@ anchor_right = 1.0
 offset_bottom = 53.0
 grow_horizontal = 0
 
-[node name="PingLabel" type="Label" parent="DebugList" unique_id=2000886091]
-unique_name_in_owner = true
-layout_mode = 2
-text = "PING: XXms"
-label_settings = SubResource("LabelSettings_jjmn7")
-
 [node name="HBoxContainer" type="HBoxContainer" parent="." unique_id=1557344406]
 layout_mode = 1
 anchors_preset = 3
@@ -152,27 +142,33 @@ offset_bottom = 518.5
 [node name="LobbyInfoPanel" type="VBoxContainer" parent="." unique_id=552457487]
 unique_name_in_owner = true
 layout_mode = 1
-anchors_preset = 5
-anchor_left = 0.5
-anchor_right = 0.5
-offset_left = -300.0
-offset_right = 300.0
-offset_bottom = 76.0
-grow_horizontal = 2
+anchors_preset = 2
+anchor_top = 1.0
+anchor_bottom = 1.0
+offset_top = -76.0
+offset_right = 600.0
+grow_vertical = 0
+alignment = 2
 
-[node name="LobbyNameLabel" type="Label" parent="LobbyInfoPanel" unique_id=1386173333]
+[node name="PingLabel" type="Label" parent="LobbyInfoPanel" unique_id=2000886091]
 unique_name_in_owner = true
 layout_mode = 2
-text = "IN LOBBY dpVeBJeFQLKSYmyF"
+text = "PING: XXms"
 label_settings = SubResource("LabelSettings_sqe1x")
-horizontal_alignment = 1
 
 [node name="ClientIdLabel" type="Label" parent="LobbyInfoPanel" unique_id=741555257]
 unique_name_in_owner = true
 layout_mode = 2
+theme_override_font_sizes/font_size = 20
 text = "CLIENT 329024"
 label_settings = SubResource("LabelSettings_sqe1x")
-horizontal_alignment = 1
+
+[node name="LobbyNameLabel" type="Label" parent="LobbyInfoPanel" unique_id=1386173333]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_font_sizes/font_size = 20
+text = "IN LOBBY dpVeBJeFQLKSYmyF"
+label_settings = SubResource("LabelSettings_sqe1x")
 
 [node name="StateMachine" type="Node" parent="." unique_id=1404217897]
 unique_name_in_owner = true

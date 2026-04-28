@@ -1,28 +1,56 @@
 [gd_scene format=3 uid="uid://b4y1nifskfobg"]
 
 [ext_resource type="Script" uid="uid://c4ivyfbuwvsti" path="res://games/marbles/marbles_bot/marbles_bot.gd" id="1_34rat"]
+[ext_resource type="Shader" uid="uid://bc57lb2k1uuvp" path="res://shaders/ss_dither.gdshader" id="2_jkymx"]
 [ext_resource type="PackedScene" uid="uid://18s1j8sdp2pt" path="res://gumbot/emote_billboard.tscn" id="2_q8oxr"]
 [ext_resource type="FontFile" uid="uid://7uibxoligyvb" path="res://fonts/HomeVideo-BLG6G.ttf" id="3_qhe1h"]
+[ext_resource type="Texture2D" uid="uid://dq0fst107hxb8" path="res://textures/DitherMask.jpg" id="3_xy0im"]
+[ext_resource type="Shader" uid="uid://b00uak7trayog" path="res://materials/emote_icon/emote_icon.gdshader" id="4_b3ckc"]
+[ext_resource type="Texture2D" uid="uid://c53kbdrgxxvfc" path="res://icon.svg" id="5_jkymx"]
 [ext_resource type="ArrayMesh" uid="uid://bgcod2p568c06" path="res://games/marbles/marbles_bot/marbles_bubble.res" id="5_lmqmq"]
 
 [sub_resource type="PhysicsMaterial" id="PhysicsMaterial_6k1q8"]
 bounce = 0.5
 
-[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_dpqex"]
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_aa8ei"]
+resource_local_to_scene = true
+render_priority = 0
+shader = ExtResource("2_jkymx")
+shader_parameter/color = Color(1, 1, 0, 1)
+shader_parameter/dither_pattern = ExtResource("3_xy0im")
+shader_parameter/dither_scale = 0.01
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_b8ety"]
 resource_name = "TranslucentBubble"
+next_pass = SubResource("ShaderMaterial_aa8ei")
 cull_mode = 2
-albedo_color = Color(0.91, 0.22204003, 0.1729, 0.63529414)
-roughness = 0.5
+albedo_color = Color(0.8901961, 0.2, 0.30980393, 1)
+roughness = 0.0
 
 [sub_resource type="SphereShape3D" id="SphereShape3D_50ojx"]
 radius = 0.177366
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_xy0im"]
+resource_name = "TransparentGlassBubble"
+next_pass = SubResource("ShaderMaterial_aa8ei")
+transparency = 4
+albedo_color = Color(0.9063318, 0.9063318, 0.9063318, 0.24475527)
+roughness = 0.14
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_xy0im"]
+resource_local_to_scene = true
+render_priority = -1
+shader = ExtResource("4_b3ckc")
+shader_parameter/emote_texture = ExtResource("5_jkymx")
 
 [node name="MarbleBot" type="RigidBody3D" unique_id=1385227533]
 collision_layer = 2
 collision_mask = 3
 physics_material_override = SubResource("PhysicsMaterial_6k1q8")
+freeze = true
 script = ExtResource("1_34rat")
-bubble_mat = SubResource("StandardMaterial3D_dpqex")
+bubble_mat = SubResource("StandardMaterial3D_b8ety")
+bubble_second_pass_mat = SubResource("ShaderMaterial_aa8ei")
 
 [node name="RemoteTransform3D" type="RemoteTransform3D" parent="." unique_id=588227373]
 remote_path = NodePath("../LabelNode")
@@ -34,9 +62,13 @@ shape = SubResource("SphereShape3D_50ojx")
 [node name="MarblesBubble" type="MeshInstance3D" parent="." unique_id=1036514611]
 transform = Transform3D(0.177536, 0, 0, 0, 0.177536, 0, 0, 0, 0.177536, 0, 0, 0)
 mesh = ExtResource("5_lmqmq")
+surface_material_override/0 = SubResource("StandardMaterial3D_xy0im")
+surface_material_override/1 = SubResource("StandardMaterial3D_b8ety")
 
 [node name="EmoteBillboard" parent="." unique_id=665966681 instance=ExtResource("2_q8oxr")]
 unique_name_in_owner = true
+surface_material_override/0 = SubResource("ShaderMaterial_xy0im")
+emote_material = SubResource("ShaderMaterial_xy0im")
 
 [node name="LabelNode" type="Node3D" parent="." unique_id=701709542]
 top_level = true
@@ -45,7 +77,6 @@ top_level = true
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.25, 0)
 pixel_size = 0.001
 billboard = 1
-no_depth_test = true
 fixed_size = true
 render_priority = 1
 text = "SolomonGumballTV"
@@ -56,3 +87,7 @@ outline_size = 10
 [node name="cam" type="Camera3D" parent="." unique_id=671135294]
 transform = Transform3D(1, 0, 0, 0, 0.9238662, 0.38271567, 0, -0.38271567, 0.9238662, 0, 1.6727548, 3.9917212)
 top_level = true
+
+[node name="CSGBox3D" type="CSGBox3D" parent="." unique_id=210233247]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.2650414, 0, 0)
+visible = false

@@ -23,6 +23,7 @@ enum MarblesMessage {
 
 signal leaderboard_updated
 
+var all_props: Array[Node3D] = []
 var _sync_accumulator: float = 0.0
 const SYNC_RATE: float = 1.0 / 20.0
 
@@ -33,7 +34,7 @@ func _ready() -> void:
   
   var update_timer = Timer.new()
   add_child(update_timer)
-  update_timer.wait_time = 2.0
+  update_timer.wait_time = 1.0
   update_timer.one_shot = false
   update_timer.start()
   update_timer.timeout.connect(refresh_leaderboard)
@@ -46,14 +47,14 @@ func _ready() -> void:
   marbles_overlay.marble_selected.connect(func (marble: MarbleBot) -> void:
     focused_marble = marble
   )
-  marbles_overlay.placement_selected.connect(_placement_selected)
-
+  marbles_overlay.placement_changed.connect(increment_focused_bot)
   current_map.camera.did_enter_free_cam.connect(func() -> void:
     focused_marble = null
   )
   MultiplayerClient.connected_state.left_lobby.connect(_left_lobby)
   MultiplayerClient.packet_received.connect(_handle_peer_packet)
 
+  # Get all nodes in a group for the current map
   _bind_inputs()
 
   if is_game_host:
@@ -62,14 +63,19 @@ func _ready() -> void:
     all_peers_loaded_in.connect(server_only_start_game)
     chatter_loaded.connect(_on_loaded_chatter_data)
     var new_state := MarblesGameState.new()
+    new_state.started_at = Time.get_unix_time_from_system()
+
     MultiplayerClient.rtc_peer_ready.connect(_peer_is_ready)
+
     _handle_peer_packet(1, { "type": MarblesMessage.StateRefresh, "state": new_state })
     _send_refresh_state(MultiplayerPeer.TARGET_PEER_BROADCAST)
+
+func handle_lobby_updated() -> void:
+  _server_spawn_all_new_players()
 
 func _authority_handle_marble_out_of_bounds(body: Node) -> void:
   if body is MarbleBot:
     var marble_bot: MarbleBot = body as MarbleBot
-    print("Marble %s went out of bounds, resetting position" % body.chatter.display_name)
     marble_bot.global_position = _get_random_spawn_position(0) # TODO: This should probably be based on the marble's original spawn position or something instead of always using the first spawn point
     marble_bot.linear_velocity = Vector3.ZERO
 
@@ -84,11 +90,6 @@ func _bind_inputs() -> void:
   var previous_placement_event := InputEventKey.new()
   previous_placement_event.physical_keycode = KEY_LEFT
   InputMap.action_add_event("previous_placement", previous_placement_event)
-
-func _placement_selected(placement: int) -> void:
-  if leaderboard.get(placement):
-    var marble = leaderboard[placement]
-    focused_marble = marble
 
 var focused_marble: MarbleBot = null:
   set(new_value):
@@ -115,6 +116,7 @@ func _left_lobby() -> void:
   game_finished.emit()
 
 func _send_refresh_state(peer_id: int) -> void:
+  print("Sending refresh state to peer_id %d with game_state %s" % [peer_id, game_state])
   MultiplayerClient.send_packet(
     { "type": MarblesMessage.StateRefresh, "state": game_state },
     peer_id,
@@ -133,9 +135,8 @@ func increment_focused_bot(index_change: int) -> void:
   if focused_marble == null:
     return
   var current_index := leaderboard.find(focused_marble)
-  var new_index := current_index + index_change
-  if new_index >= 0 and new_index < leaderboard.size():
-    focused_marble = leaderboard[new_index]
+  var new_index := (current_index + index_change) % leaderboard.size()
+  focused_marble = leaderboard[new_index]
 
 func _try_follow_marble_at_cursor(screen_pos: Vector2) -> void:
   var origin := current_map.camera.camera.project_ray_origin(screen_pos)
@@ -167,36 +168,44 @@ func _get_random_spawn_position(join_index: int) -> Vector3:
   var random_position_offset := Vector3(randf_range(-.2, .2), 0.0, randf_range(-.2, .2))
   return spawn_transform.origin + random_position_offset
 
-var started := false
-func server_only_start_game() -> void:
-  if started: return # TODO: Allow late joins?
-  started = true
-
+func _server_spawn_all_new_players() -> void:
   marbles_overlay.bots_by_peer_id = bots_by_peer_id
-  current_map.finish_area.body_entered.connect(on_finish_area_entered)
 
   var join_index: int = 0
   for peer in lobby.peers:
-    var marble_state := MarblesGameState.MarbleState.new()
+    # Only spawn a marble for this peer if they don't already have one (e.g. from a previous game or from joining late)
+    if game_state.marbles_by_peer_id.has(peer.peer_id):
+      continue
 
+    var marble_state := MarblesGameState.MarbleState.new()
     marble_state.position = _get_random_spawn_position(join_index)
     marble_state.rotation = Vector3.ZERO
+    marble_state.frozen = game_state.game_state != MarblesGameState.GameState.Playing
+
+    print("Spawning marble for peer_id %d frozen=%s" % [peer.peer_id, marble_state.frozen])
 
     game_state.marbles_by_peer_id.set(peer.peer_id, marble_state)
     var marble := get_or_create_bot_for_peer(peer.peer_id)
-    # marble.freeze = true
     marble.global_position = marble_state.position
     marble.global_rotation = marble_state.rotation
+    marble.sync_state = marble_state
 
     join_index += 1
 
+var started = false
+func server_only_start_game() -> void:
+  if started:
+    assert(false, "server_only_start_game called multiple times, this should never happen")
+  started = true
+
+  _server_spawn_all_new_players()
   _send_refresh_state(MultiplayerPeer.TARGET_PEER_BROADCAST)
   _apply_game_state()
 
   if is_game_host:
     await get_tree().create_timer(3.0).timeout
     MultiplayerClient.send_packet(
-      { "type": MarblesMessage.GameStart },
+      { "type": MarblesMessage.GameStart, "started_at": Time.get_unix_time_from_system() },
       MultiplayerPeer.TARGET_PEER_BROADCAST,
       MultiplayerPeer.TRANSFER_MODE_RELIABLE,
       true
@@ -224,9 +233,6 @@ func get_or_create_bot_for_peer(peer_id: int) -> MarbleBot:
   var chatter: Chatter = chatters.get(chatter_id)
   if chatter != null:
     bot.chatter = chatter
-
-  if not is_game_host:
-    bot.freeze = true
   return bot
 
 func on_finish_area_entered(body: PhysicsBody3D) -> void:
@@ -248,8 +254,8 @@ func _handle_peer_packet(sender_id: int, packet: Dictionary) -> void:
     MarblesMessage.GameStart:
       if game_state:
         game_state.game_state = MarblesGameState.GameState.Playing
-      for bot in bots_by_peer_id.values():
-        bot.frozen = false
+        for game_state_marble in game_state.marbles_by_peer_id.values():
+          game_state_marble.frozen = false
     MarblesMessage.MarblesUpdate:
       var updates: Dictionary = packet.get("marbles", {})
       for peer_id: int in updates:
@@ -270,6 +276,8 @@ func _apply_game_state() -> void:
     var marble: MarbleBot = get_or_create_bot_for_peer(peer_id)
     var marble_state: MarblesGameState.MarbleState = game_state.marbles_by_peer_id[peer_id]
     marble.sync_state = marble_state
+  for prop in current_map.all_props:
+    prop.game_started_at = game_state.started_at
 
 func _physics_process(delta: float) -> void:
   if Engine.is_editor_hint(): return

@@ -21,11 +21,10 @@ void vertex() {
 
 void fragment() {
 	vec2 uv = UV * 2.0 - 1.0;
-	if (length(uv) > 1.0) {
-		ALPHA = 0.0;
-	}
+	float circle_mask = length(uv) > 1.0 ? 0.0 : 1.0;
 	vec4 emote_color = texture(emote_texture, UV);
 	ALBEDO = emote_color.rgb;
+	ALPHA = emote_color.a * circle_mask;
 }
 
 //void light() {

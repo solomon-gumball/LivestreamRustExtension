@@ -31,7 +31,7 @@ func _ready() -> void:
   _state.add_child(_follow_state)
   _state.change_state(_free_state)
 
-func _input(event: InputEvent) -> void:
+func _unhandled_input(event: InputEvent) -> void:
   _state.input_state(event)
 
 func enter_follow_mode(node_to_follow: Node3D) -> void:
@@ -136,7 +136,7 @@ class FollowState extends DebugCameraState:
   const DEFAULT_ORBIT_DISTANCE: float = 5.0
 
   var invert_pitch: bool = true
-  var prevent_wall_clip: bool = true
+  var prevent_wall_clip: bool = false
 
   var target: Node3D = null:
     set(value):

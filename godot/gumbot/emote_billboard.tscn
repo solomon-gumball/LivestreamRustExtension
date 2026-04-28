@@ -7,6 +7,7 @@
 [sub_resource type="QuadMesh" id="QuadMesh_q8oxr"]
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_q8oxr"]
+resource_local_to_scene = true
 render_priority = -1
 shader = ExtResource("1_sp5kc")
 shader_parameter/emote_texture = ExtResource("2_rabkn")

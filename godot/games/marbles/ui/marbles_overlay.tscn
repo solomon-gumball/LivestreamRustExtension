@@ -4,6 +4,21 @@
 [ext_resource type="PackedScene" uid="uid://f6ong2f8cpcr" path="res://games/marbles/ui/marbles_leaderboard_row.tscn" id="2_j0uvo"]
 [ext_resource type="FontFile" uid="uid://7uibxoligyvb" path="res://fonts/HomeVideo-BLG6G.ttf" id="3_517xl"]
 
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_d0n27"]
+content_margin_left = 10.0
+content_margin_right = 10.0
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_517xl"]
+content_margin_left = 10.0
+content_margin_right = 10.0
+
+[sub_resource type="Theme" id="Theme_517xl"]
+Button/colors/font_color = Color(0.8745098, 0.8745098, 0.8745098, 0.25882354)
+Button/styles/focus = SubResource("StyleBoxEmpty_d0n27")
+Button/styles/hover = SubResource("StyleBoxEmpty_517xl")
+Button/styles/normal = SubResource("StyleBoxEmpty_d0n27")
+Button/styles/pressed = SubResource("StyleBoxEmpty_d0n27")
+
 [sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_iill1"]
 
 [node name="CanvasLayer" type="CanvasLayer" unique_id=1482290356]
@@ -24,30 +39,21 @@ text = "1 - solomongumball"
 [node name="MarblesLeaderBoardRow2" parent="LeaderboardList" unique_id=1428939597 instance=ExtResource("2_j0uvo")]
 layout_mode = 2
 
-[node name="FocusedChatterHeader" type="HBoxContainer" parent="." unique_id=774888651]
+[node name="FocusedChatterHeader" type="VBoxContainer" parent="." unique_id=1818461351]
 unique_name_in_owner = true
-anchors_preset = 5
-anchor_left = 0.5
-anchor_right = 0.5
-offset_left = -20.0
-offset_right = 20.0
-offset_bottom = 40.0
-grow_horizontal = 2
-mouse_filter = 0
-
-[node name="LowerPlaceButton" type="Button" parent="FocusedChatterHeader" unique_id=1791509392]
-unique_name_in_owner = true
-layout_mode = 2
-theme_override_fonts/font = ExtResource("3_517xl")
-theme_override_font_sizes/font_size = 80
-theme_override_styles/normal = SubResource("StyleBoxEmpty_iill1")
-text = "<"
-
-[node name="VBoxContainer" type="VBoxContainer" parent="FocusedChatterHeader" unique_id=1818461351]
 custom_minimum_size = Vector2(440, 0)
-layout_mode = 2
+anchors_preset = 7
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_left = -606.0
+offset_top = -117.0
+offset_right = 606.0
+grow_horizontal = 2
+grow_vertical = 0
 
-[node name="FocusedChatterPlacement" type="RichTextLabel" parent="FocusedChatterHeader/VBoxContainer" unique_id=1549555072]
+[node name="FocusedChatterPlacement" type="RichTextLabel" parent="FocusedChatterHeader" unique_id=1549555072]
 unique_name_in_owner = true
 layout_mode = 2
 theme_override_fonts/normal_font = ExtResource("3_517xl")
@@ -57,19 +63,35 @@ text = "[pulse][color=gold]1st place[/color][/pulse]"
 fit_content = true
 horizontal_alignment = 1
 
-[node name="FocusedChatterNameLabel" type="RichTextLabel" parent="FocusedChatterHeader/VBoxContainer" unique_id=1930715571]
+[node name="HBoxContainer" type="HBoxContainer" parent="FocusedChatterHeader" unique_id=1000411795]
+layout_mode = 2
+theme_override_constants/separation = 30
+alignment = 1
+
+[node name="LowerPlaceButton" type="Button" parent="FocusedChatterHeader/HBoxContainer" unique_id=1791509392]
+unique_name_in_owner = true
+layout_mode = 2
+theme = SubResource("Theme_517xl")
+theme_override_fonts/font = ExtResource("3_517xl")
+theme_override_font_sizes/font_size = 80
+theme_override_styles/normal = SubResource("StyleBoxEmpty_iill1")
+text = "<"
+
+[node name="FocusedChatterNameLabel" type="RichTextLabel" parent="FocusedChatterHeader/HBoxContainer" unique_id=1930715571]
 unique_name_in_owner = true
 layout_mode = 2
 theme_override_fonts/normal_font = ExtResource("3_517xl")
-theme_override_font_sizes/normal_font_size = 45
+theme_override_font_sizes/normal_font_size = 80
 bbcode_enabled = true
-text = "solomongumbal1"
+text = "solomongumbal1asefasef"
 fit_content = true
+autowrap_mode = 0
 horizontal_alignment = 1
 
-[node name="HigherPlaceButton" type="Button" parent="FocusedChatterHeader" unique_id=1417923664]
+[node name="HigherPlaceButton" type="Button" parent="FocusedChatterHeader/HBoxContainer" unique_id=1417923664]
 unique_name_in_owner = true
 layout_mode = 2
+theme = SubResource("Theme_517xl")
 theme_override_fonts/font = ExtResource("3_517xl")
 theme_override_font_sizes/font_size = 80
 theme_override_styles/normal = SubResource("StyleBoxEmpty_iill1")

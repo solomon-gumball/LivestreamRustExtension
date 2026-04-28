@@ -7,3 +7,8 @@ class_name MarblesMap
 
 @onready var progress_curve: Path3D = $ProgressCurve
 @onready var camera: DebugCamera = %DebugCamera
+
+var all_props: Array[Node] = []
+
+func _ready() -> void:
+  all_props = get_tree().get_nodes_in_group("marbles_prop")

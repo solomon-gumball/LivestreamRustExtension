@@ -18,8 +18,12 @@ enum GlobalGameMessage {
 
 var chatters: Dictionary[String, Chatter] = {}
 var ready_peers: Dictionary[int, bool] = {}
+
 var is_game_host: bool = false
 var is_offline_mode: bool = true
+
+var peers_ready_fired: bool = false
+var chatters_loaded_fired: bool = false
 
 func _ready() -> void:
   if Engine.is_editor_hint():
@@ -57,15 +61,33 @@ func _ready() -> void:
   WSClient.subscribe(user_sub_channels)
   WSClient.authenticated_state.chatter_updated.connect(_handle_chatter_updated)
   MultiplayerClient.packet_received.connect(_base_handle_peer_packet)
+  MultiplayerClient.connected_state.lobby_updated.connect(_lobby_was_updated)
 
   await get_tree().physics_frame
   _check_game_ready()
 
+func _lobby_was_updated() -> void:
+  lobby = MultiplayerClient.current_lobby
+  _subscribe_to_chatters_in_lobby()
+  handle_lobby_updated()
+
+func handle_lobby_updated() -> void:
+  assert(false, "handle_lobby_updated should be overridden by game implementation")
+
+func _subscribe_to_chatters_in_lobby() -> void:
+  var user_sub_channels: Array[String] = []
+  for peer in lobby.peers:
+    user_sub_channels.append(peer.chatter_id)
+  WSClient.subscribe(user_sub_channels)
+
 func _check_game_ready() -> void:
+  if peers_ready_fired:
+    return
   for peer in lobby.peers:
     if peer.peer_id == MultiplayerClient.my_peer_id(): continue
     if not ready_peers.has(peer.peer_id):
       return
+  peers_ready_fired = true
   all_peers_loaded_in.emit()
 
 func _handle_chatter_updated(chatter: Chatter) -> void:
@@ -75,6 +97,10 @@ func _handle_chatter_updated(chatter: Chatter) -> void:
   for peer in lobby.peers:
     if not chatters.has(peer.chatter_id):
       return
+
+  if chatters_loaded_fired: return
+
+  chatters_loaded_fired = true
   all_chatters_loaded_locally.emit()
 
 func _base_handle_peer_packet(sender_id: int, packet: Dictionary) -> void:
