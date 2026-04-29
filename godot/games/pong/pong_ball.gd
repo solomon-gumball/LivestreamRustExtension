@@ -2,13 +2,16 @@ extends CharacterBody3D
 class_name PongBall
 
 const MAX_PREDICTION_DELTA = 0.2
+const SPEED_INCREASE_PER_SECOND = 0.15
+const START_SPEED = 2.0
 
 @export var max_hit_angle_speed: float = 1.5
 @export var paddle_velocity_influence: float = 0.4
 @export var paddle_half_width: float = 0.5
+@export var material: StandardMaterial3D
 
 var sync_state: PongEntity = PongEntity.new()
-var speed: float = 2.0
+var speed: float = START_SPEED
 
 func has_authority() -> bool:
   return sync_state.owner == MultiplayerClient.my_peer_id()
@@ -38,6 +41,8 @@ func _handle_collision(collision: KinematicCollision3D) -> void:
     velocity = velocity.bounce(collision.get_normal())
     velocity.y = 0.0
 
+var slow_color := Color(1.0, 1.0, 1.0)
+var fast_color := Color(1.0, 0.0, 0.0)
 func _physics_process(delta: float) -> void:
   if !has_authority():
     position = sync_state.position
@@ -46,6 +51,9 @@ func _physics_process(delta: float) -> void:
     move(packet_delta)
   else:
     move(delta)
+  
+  if material:
+    material.emission = slow_color.lerp(fast_color, (velocity.length() - START_SPEED) / 3.0)
 
   if has_authority():
     velocity = velocity.normalized() * speed
@@ -55,4 +63,4 @@ func _physics_process(delta: float) -> void:
       "velocity": velocity,
       "sent_at": Time.get_unix_time_from_system()
     })
-    speed += delta * 0.05
+    speed += delta * SPEED_INCREASE_PER_SECOND

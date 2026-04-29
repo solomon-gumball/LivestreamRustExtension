@@ -7,6 +7,17 @@ const MAX_RANGE = 2.0
 const ACCELERATION = 0.2
 const DECELERATION = 5.0
 
+const START_WIDTH = 0.7
+const PADDLE_SHRINK_PER_SECOND = 0.01
+const MIN_PADDLE_WIDTH = 0.25
+
+var round_started_at: float = 0.0
+var paddle_width := START_WIDTH:
+  set(new_width):
+    paddle_width = new_width
+    paddle_mesh_box.size.x = new_width
+    paddle_collision_shape.size.x = new_width
+
 var peer_id: int
 var chatter: Chatter:
   set(new_chatter):
@@ -15,6 +26,9 @@ var chatter: Chatter:
 
 var chatter_id: String
 var velocity: Vector3 = Vector3.ZERO
+
+@export var paddle_mesh_box: BoxMesh
+@export var paddle_collision_shape: BoxShape3D
 
 @onready var paddle_mesh: Node3D = %PaddleMesh
 @onready var gumbot: GumBot = %GumBot
@@ -38,6 +52,7 @@ func _ready() -> void:
   sync_state = PongEntity.new()
   sync_state.position = position
   sync_state.velocity = velocity
+  paddle_width = paddle_width
 
 var movement_input: Vector2 = Vector2.ZERO
 func add_movement_input(direction: Vector2) -> void:
@@ -70,6 +85,8 @@ func _physics_process(delta: float) -> void:
     velocity = lerp(velocity, sync_state.velocity, delta * 10.0)
   
   _phys_move(delta)
+  var seconds_since_round_start := Time.get_unix_time_from_system() - round_started_at
+  paddle_width = max(MIN_PADDLE_WIDTH, START_WIDTH - seconds_since_round_start * PADDLE_SHRINK_PER_SECOND)
 
   if has_authority():
     MultiplayerClient.send_packet({

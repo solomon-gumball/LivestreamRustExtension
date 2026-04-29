@@ -2,12 +2,12 @@ class_name PongGameState
 extends BaseGameState
 
 enum Phase { Intro, Playing, RoundComplete }
-@export_storage var phase: int = Phase.Intro
+var phase: int = Phase.Intro
 
-@export_storage var score_l: int = 0
-@export_storage var score_r: int = 0
-@export_storage var paddle_l_state: PongEntity = PongEntity.new()
-@export_storage var paddle_r_state: PongEntity = PongEntity.new()
-@export_storage var ball_state: PongEntity = null
-@export_storage var pong_animation_state: PongAnimationState = null
-# @export_storage var animation_state: PongAnimationState = null
+var phase_started_at: float = 0.0
+var score_l: int = 0
+var score_r: int = 0
+var paddle_l_state: PongEntity = PongEntity.new()
+var paddle_r_state: PongEntity = PongEntity.new()
+var ball_state: PongEntity = null
+var pong_animation_state: PongAnimationState = null

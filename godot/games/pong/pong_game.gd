@@ -93,14 +93,15 @@ func _ready() -> void:
 
   if MultiplayerClient.is_authority():
     var new_game_state = PongGameState.new()
+    new_game_state.phase_started_at = Time.get_unix_time_from_system()
     new_game_state.paddle_l_state.owner = lobby.players[0].peer_id
     new_game_state.paddle_r_state.owner = lobby.players[1].peer_id
 
     new_game_state.paddle_l_state.position = Vector3(0, 0, -paddle_start_distance)
     new_game_state.paddle_r_state.position = Vector3(0, 0, paddle_start_distance)
 
-    score_region_l.body_entered.connect(_area_entered.bind(lobby.players[1].peer_id))
-    score_region_r.body_entered.connect(_area_entered.bind(lobby.players[0].peer_id))
+    score_region_l.body_entered.connect(_score_area_hit.bind(lobby.players[1].peer_id))
+    score_region_r.body_entered.connect(_score_area_hit.bind(lobby.players[0].peer_id))
 
     anim_player.animation_finished.connect(_anim_finished)
 
@@ -184,7 +185,8 @@ func _send_refresh_state(peer_id: int) -> void:
     MultiplayerPeer.TRANSFER_MODE_RELIABLE,
   )
 
-func _area_entered(candidate: Node, winning_peer: int) -> void:
+const NUM_ROUNDS = 3
+func _score_area_hit(candidate: Node, winning_peer: int) -> void:
   if candidate != ball:
     return
 
@@ -195,8 +197,8 @@ func _area_entered(candidate: Node, winning_peer: int) -> void:
   _handle_peer_packet(1, message)
   MultiplayerClient.send_packet(message)
 
-  if game_state.paddle_l_state.score > 0 or\
-    game_state.paddle_r_state.score > 0:
+  if game_state.paddle_l_state.score >= NUM_ROUNDS or\
+    game_state.paddle_r_state.score >= NUM_ROUNDS:
       MultiplayerClient.send_packet({
           "type": PongGameMessage.UpdateAnimation,
           "animation_name": "outro",
@@ -213,7 +215,7 @@ func _area_entered(candidate: Node, winning_peer: int) -> void:
 
 func _start_round() -> void:
   MultiplayerClient.send_packet(
-    { "type": PongGameMessage.StartRound },
+    { "type": PongGameMessage.StartRound, "started_at": Time.get_unix_time_from_system() },
     MultiplayerPeer.TARGET_PEER_BROADCAST,
     MultiplayerPeer.TRANSFER_MODE_RELIABLE,
     true
@@ -258,27 +260,28 @@ func _handle_peer_packet(sender_id: int, packet: Dictionary) -> void:
     PongGameMessage.ClientReady:
       _send_refresh_state(sender_id)
     PongGameMessage.UpdateAnimation:
-      game_state.pong_animation_state = PongAnimationState.new()
-      game_state.pong_animation_state.started_at = packet.get("started_at", 0)
-      game_state.pong_animation_state.animation_name = packet.get("animation_name", "")
-      game_state.pong_animation_state.skipped = packet.get("skipped", false)
+      pong_state.pong_animation_state = PongAnimationState.new()
+      pong_state.pong_animation_state.started_at = packet.get("started_at", 0)
+      pong_state.pong_animation_state.animation_name = packet.get("animation_name", "")
+      pong_state.pong_animation_state.skipped = packet.get("skipped", false)
     PongGameMessage.StateRefresh:
-      game_state = packet.get("state") as PongGameState
+      pong_state = packet.get("state") as PongGameState
     PongGameMessage.RoundComplete:
-      game_state.ball_state = null
-      game_state.phase = PongGameState.Phase.RoundComplete
+      pong_state.ball_state = null
+      pong_state.phase = PongGameState.Phase.RoundComplete
       var paddle_state := paddle_state_for_peer(packet.get("winning_peer"))
       paddle_state.score += 1
     PongGameMessage.BallMove:
-      if game_state.ball_state:
-        game_state.ball_state.sent_at = packet.get("sent_at", 0)
-        game_state.ball_state.position = packet.get("position", Vector3.ZERO)
-        game_state.ball_state.velocity = packet.get("velocity", Vector3.ZERO)
+      if pong_state.ball_state:
+        pong_state.ball_state.sent_at = packet.get("sent_at", 0)
+        pong_state.ball_state.position = packet.get("position", Vector3.ZERO)
+        pong_state.ball_state.velocity = packet.get("velocity", Vector3.ZERO)
     PongGameMessage.StartRound:
-      game_state.ball_state = PongEntity.new()
-      game_state.ball_state.owner = 1
-      game_state.ball_state.position = pong_spawn_location.global_position
-      game_state.phase = PongGameState.Phase.Playing
+      pong_state.ball_state = PongEntity.new()
+      pong_state.ball_state.owner = 1
+      pong_state.ball_state.position = pong_spawn_location.global_position
+      pong_state.phase = PongGameState.Phase.Playing
+      pong_state.phase_started_at = packet.get("started_at", 0)
     PongGameMessage.PaddleMove:
       var paddle_state := paddle_state_for_peer(sender_id)
       paddle_state.position = packet.get("position", Vector3.ZERO)
@@ -320,6 +323,9 @@ func _apply_game_state() -> void:
       ball.sync_state = game_state.ball_state
       add_child(ball)
     ball.sync_state = game_state.ball_state
+
+  pong_paddle_l.round_started_at = pong_state.phase_started_at
+  pong_paddle_r.round_started_at = pong_state.phase_started_at
 
   pong_paddle_l.sync_state = game_state.paddle_l_state  
   pong_paddle_r.sync_state = game_state.paddle_r_state

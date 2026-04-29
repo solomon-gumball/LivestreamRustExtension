@@ -2,16 +2,16 @@
 
 [ext_resource type="Script" uid="uid://beq5kaqaqnvpq" path="res://games/pong/pong_ball.gd" id="1_c3wl3"]
 
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_c3wl3"]
+emission_enabled = true
+emission = Color(0.13333334, 0.7019608, 0.95686275, 1)
+emission_energy_multiplier = 3.0
+
 [sub_resource type="BoxShape3D" id="BoxShape3D_racd5"]
 size = Vector3(0.1, 0.1, 0.1)
 
 [sub_resource type="BoxMesh" id="BoxMesh_racd5"]
 size = Vector3(0.1, 0.1, 0.1)
-
-[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_u5md4"]
-emission_enabled = true
-emission = Color(0.13333334, 0.7019608, 0.95686275, 1)
-emission_energy_multiplier = 3.0
 
 [sub_resource type="Curve" id="Curve_c3wl3"]
 _data = [Vector2(0, 1), 0.0, 0.0, 0, 0, Vector2(1, 0), -2.4491432, 0.0, 0, 0]
@@ -31,19 +31,25 @@ scale_min = 0.02
 scale_max = 0.06
 scale_curve = SubResource("CurveTexture_yj2yu")
 
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_u5md4"]
+emission_enabled = true
+emission = Color(0.13333334, 0.7019608, 0.95686275, 1)
+emission_energy_multiplier = 3.0
+
 [sub_resource type="BoxMesh" id="BoxMesh_c3wl3"]
 material = SubResource("StandardMaterial3D_u5md4")
 
 [node name="PongBall" type="CharacterBody3D" unique_id=1722297091]
 motion_mode = 1
 script = ExtResource("1_c3wl3")
+material = SubResource("StandardMaterial3D_c3wl3")
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="." unique_id=1270520286]
 shape = SubResource("BoxShape3D_racd5")
 
 [node name="MeshInstance3D" type="MeshInstance3D" parent="." unique_id=489528167]
 mesh = SubResource("BoxMesh_racd5")
-surface_material_override/0 = SubResource("StandardMaterial3D_u5md4")
+surface_material_override/0 = SubResource("StandardMaterial3D_c3wl3")
 
 [node name="GPUParticles3D" type="GPUParticles3D" parent="." unique_id=855916313]
 amount = 15
