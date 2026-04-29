@@ -310,6 +310,8 @@ func on_finish_area_entered(body: PhysicsBody3D) -> void:
         MultiplayerPeer.TRANSFER_MODE_RELIABLE,
         true
       )
+      await get_tree().create_timer(5.0).timeout
+      game_finished.emit()
 
 func _handle_peer_packet(sender_id: int, packet: Dictionary) -> void:
   if game_state == null and packet.type != MarblesMessage.StateRefresh:

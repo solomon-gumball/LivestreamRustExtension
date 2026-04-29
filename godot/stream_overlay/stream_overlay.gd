@@ -20,6 +20,12 @@ func _ready():
   MultiplayerClient.state.changed.connect(_handle_multiplayer_connection_changed)
   WSClient.state.changed.connect(_handle_websocket_connection_changed)
 
+  game_state.game_finished.connect(_handle_game_finished)
+
+func _handle_game_finished() -> void:
+  print("Game finished, returning to roaming state.")
+  state.change_state(roaming_state)
+
 func _handle_multiplayer_connection_changed(_connection_state: MultiplayerClient.MultiplayerClientState) -> void:
   print("Multiplayer connection state changed: %s" % MultiplayerClient.state.current)
   _handle_updates()
@@ -85,14 +91,17 @@ class RoamingState extends StreamOverlayState:
     scene.queue_free()
 
 class GameState extends StreamOverlayState:
-  var scene: PongGame
+  var game_container: GameContainer
   var lobby: Lobby
   var pong_game_template: PackedScene = preload("res://games/pong/pong_game.tscn")
+  signal game_finished
 
   func enter_state(_previous_state: State) -> void:
-    scene = pong_game_template.instantiate() as PongGame
-    scene.lobby = lobby
-    overlay.add_child(scene)
-  
+    game_container = GameContainer.new()
+    overlay.add_child(game_container)
+    game_container.game_finished.connect(game_finished.emit)
+    await game_container.load_game_from_lobby(MultiplayerClient.current_lobby)
+
   func exit_state() -> void:
-    scene.queue_free()
+    MultiplayerClient.leave_lobby()
+    game_container.queue_free()
