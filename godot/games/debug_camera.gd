@@ -135,7 +135,6 @@ class FreeState extends DebugCameraState:
     cam.velocity = cam.velocity.limit_length(20.0)
     cam.move_and_slide()
 
-
 class FollowState extends DebugCameraState:
   const TRANSITION_DURATION: float = 0.5
   const MIN_DISTANCE: float = 0.5
@@ -147,13 +146,13 @@ class FollowState extends DebugCameraState:
 
   var target: Node3D = null:
     set(value):
-      _from_transform = cam.global_transform
       _t = 0.0
       var had_target := is_instance_valid(target)
+      _from_target = target if had_target else null
+      _from_transform = cam.global_transform
       target = value
       if not is_instance_valid(target):
         return
-      # orbit_distance = cam.global_position.distance_to(target.global_position)
       orbit_distance = DEFAULT_ORBIT_DISTANCE
       _current_distance = orbit_distance
       if not had_target:
@@ -165,6 +164,7 @@ class FollowState extends DebugCameraState:
   var orbit_distance: float = DEFAULT_ORBIT_DISTANCE
   var _current_distance: float = 5.0
   var _t: float = 1.0
+  var _from_target: Node3D = null
   var _from_transform: Transform3D
 
   func enter_state(_previous_state: State) -> void:
@@ -172,6 +172,7 @@ class FollowState extends DebugCameraState:
 
   func exit_state() -> void:
     Input.mouse_mode = Input.MOUSE_MODE_VISIBLE
+    target = null
 
   func handle_input(event: InputEvent) -> void:
     if Input.is_action_pressed("move_forward") \
@@ -237,8 +238,14 @@ class FollowState extends DebugCameraState:
 
     if _t < 1.0:
       _t = minf(_t + delta / TRANSITION_DURATION, 1.0)
-      cam.global_transform = _from_transform.interpolate_with(orbit_transform, ease(_t, -2.0))
+      var from_transform := _from_transform
+      if is_instance_valid(_from_target):
+        var from_pos := _from_target.global_position + orbit_dir * _current_distance
+        from_transform = Transform3D(cam.global_transform.basis, from_pos)
+        from_transform = from_transform.looking_at(_from_target.global_position, Vector3.UP)
+      cam.global_transform = from_transform.interpolate_with(orbit_transform, ease(_t, -2.0))
     else:
+      _from_target = null
       cam.global_transform = orbit_transform
 
     cam.velocity = Vector3.ZERO

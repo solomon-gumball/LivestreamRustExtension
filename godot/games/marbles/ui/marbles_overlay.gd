@@ -23,12 +23,12 @@ var hidden: bool = false:
       var tween := create_tween()
       tween.tween_property(page_container, "modulate:a", 1.0, 1.0)
     hidden = new_hidden
+    visible = !hidden
 
 signal marble_selected(marble: MarbleBot)
 signal placement_changed(index_delta: int)
 
 func _ready() -> void:
-  set_focused_bot(null)
   higher_place_button.pressed.connect(increment_focused_bot.bind(-1))
   lower_place_button.pressed.connect(increment_focused_bot.bind(1))
 
@@ -43,16 +43,19 @@ func _ready() -> void:
 var _focused_bot: MarbleBot = null
 
 func set_focused_bot(marble_bot: MarbleBot, placement: int = -1) -> void:
+  _update_focused_bot_ui(marble_bot, placement)
+  refresh_leaderboard(_last_placements)
+
+func _update_focused_bot_ui(marble_bot: MarbleBot, placement: int = -1) -> void:
+  _focused_bot = marble_bot
+
   if marble_bot == null or marble_bot.chatter == null:
     focused_chatter_header.visible = false
     return
 
-  _focused_bot = marble_bot
   focused_chatter_header.visible = true
   focused_chatter_placement_label.text = placement_string(placement + 1)
   focused_chatter_name_label.text = marble_bot.chatter.display_name
-  if _last_placements:
-    refresh_leaderboard(_last_placements)
 
 func placement_string(placement: int) -> String:
   if placement == 1:
@@ -68,8 +71,14 @@ func increment_focused_bot(index_change: int) -> void:
   placement_changed.emit(index_change)
 
 func refresh_leaderboard(placements: Array[MarbleBot]) -> void:
+  _render_leaderboard(placements)
+  _update_focused_bot_ui(_focused_bot, placements.find(_focused_bot))
+
+func _render_leaderboard(placements: Array[MarbleBot]) -> void:
   _last_placements = placements
   var marble_bots := placements.slice(0, NUM_OF_PLACEMENTS_TO_SHOW)
+
+  if !is_node_ready(): return
 
   for i in NUM_OF_PLACEMENTS_TO_SHOW:
     var row := _leaderboard_rows[i]

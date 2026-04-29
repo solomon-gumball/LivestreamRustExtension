@@ -42,8 +42,9 @@ var chatter: Chatter = null:
     #   mat.albedo_color = Color.from_string(new_value.color, Color.RED)
     #   bubble.set_surface_override_material(1, mat)
     set_emote(new_value.emote)
-    bubble_mat.albedo_color = Color.from_string(new_value.color, Color.GREEN)
-    bubble_second_pass_mat.set_shader_parameter("color", Color.from_string(new_value.color, Color.GREEN))
+    var bot_color := Color.from_string(new_value.color, Color.GREEN)
+    bubble_mat.albedo_color = bot_color
+    bubble_second_pass_mat.set_shader_parameter("color", bot_color)
     chatter = new_value
 
     username_label.text = chatter.display_name
