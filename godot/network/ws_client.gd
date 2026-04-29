@@ -10,14 +10,14 @@ var disconnected_state: DisconnectedState = DisconnectedState.new(self)
 var connected_state: ConnectedState = ConnectedState.new(self)
 var authenticated_state: AuthenticatedState = AuthenticatedState.new(self)
 
-var use_local_server: bool = true
+var use_local_server: bool = false
 signal authenticated
 
 func my_chatter() -> Chatter:
   return authenticated_state.current_chatter
 
 func getServerDomain() -> String:
-   return "localhost:1235" if self.use_local_server else "livestream-listener-913887936892.us-central1.run.app"
+   return "localhost:1235" if self.use_local_server else "livestream-listener-475alhkiqa-uc.a.run.app/"
 
 func get_database_server_url(path: String = "") -> String:
   return "https://%s/%s" % [getServerDomain(), path]

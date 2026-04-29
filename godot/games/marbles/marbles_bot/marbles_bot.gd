@@ -65,9 +65,9 @@ func set_emote(emote_in: String) -> void:
   
 var sync_state: MarblesGameState.MarbleState = null:
   set(new_value):
-    if sync_state:
+    if new_value:
       if freeze != new_value.frozen:
-        # print(MultiplayerClient.my_peer_id(), ' freeze -> ', new_value.frozen)
+        # print(MultiplayerClient.my_peer_id(), ' is setting freeze -> ', new_value.frozen)
         freeze = new_value.frozen
     sync_state = new_value
 

@@ -60,27 +60,39 @@ func _ready() -> void:
     all_peers_loaded_in.emit()
     all_chatters_loaded_locally.emit()
   else:
-    _check_game_ready()
+    # _check_game_ready()
+    peers_ready_fired = true
+    all_peers_loaded_in.emit()
 
 func _lobby_was_updated() -> void:
   lobby = MultiplayerClient.current_lobby
+  if lobby == null:
+    game_finished.emit()
+    return
   _subscribe_to_chatters_in_lobby()
   handle_lobby_updated()
+  _check_game_ready()
 
 func handle_lobby_updated() -> void:
   assert(false, "handle_lobby_updated should be overridden by game implementation")
 
 func _subscribe_to_chatters_in_lobby() -> void:
+  if lobby == null: return
   var user_sub_channels: Array[String] = []
   for peer in lobby.peers:
     user_sub_channels.append(peer.chatter_id)
   WSClient.subscribe(user_sub_channels)
 
 func _check_game_ready() -> void:
+  if lobby == null: return
   if peers_ready_fired:
     return
+  # print("CHECKING GAME READY")
   for peer in lobby.peers:
+    # print(peer.peer_id, " lobby peers are")
+
     if peer.peer_id == MultiplayerClient.my_peer_id(): continue
+    if !peer.connected: continue
     if not ready_peers.has(peer.peer_id):
       return
   peers_ready_fired = true

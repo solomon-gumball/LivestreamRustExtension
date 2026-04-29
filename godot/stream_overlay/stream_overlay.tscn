@@ -1,11 +1,35 @@
 [gd_scene format=3 uid="uid://3g113mji7che"]
 
 [ext_resource type="Script" uid="uid://fxuvhmkvh6nh" path="res://stream_overlay/stream_overlay.gd" id="1_5bn8s"]
+[ext_resource type="PackedScene" uid="uid://dngl47xquv3cd" path="res://ui/loading/loading.tscn" id="2_4xtu5"]
+[ext_resource type="Shader" uid="uid://ddsoj1lgtm34y" path="res://materials/transition/hex_transition.gdshader" id="3_mi6u7"]
+
+[sub_resource type="ViewportTexture" id="ViewportTexture_5bn8s"]
+viewport_path = NodePath("SubViewport")
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_n3vit"]
+resource_local_to_scene = true
+shader = ExtResource("3_mi6u7")
+shader_parameter/to_tex = SubResource("ViewportTexture_5bn8s")
+shader_parameter/progress = 0.0
+shader_parameter/hex_size = 0.08
+shader_parameter/randomness = 0.05
+shader_parameter/edge_softness = 0.01
+shader_parameter/transition_speed = 0.3
+shader_parameter/reverse = false
 
 [node name="StreamOverlay" type="Node3D" unique_id=750317293]
 script = ExtResource("1_5bn8s")
 
 [node name="CanvasLayer" type="CanvasLayer" parent="." unique_id=924569731]
+layer = 3
+
+[node name="Loading" parent="CanvasLayer" unique_id=884817838 instance=ExtResource("2_4xtu5")]
+unique_name_in_owner = true
+visible = false
+z_index = 10
+transition_material = SubResource("ShaderMaterial_n3vit")
+progress = 0.0
 
 [node name="DebugLabel" type="Label" parent="CanvasLayer" unique_id=1386033444]
 unique_name_in_owner = true

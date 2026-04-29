@@ -6,7 +6,11 @@ var roaming_state = RoamingState.new(self)
 var game_state = GameState.new(self)
 var lobby_list: Array[Lobby] = []
 
+@onready var loading: Loading = %Loading
 @onready var debug_label: Label = %DebugLabel
+
+var game_container: GameContainer = null
+var roaming_scene: RoamingBots = null
 
 func _ready():
   WSClient.authenticated_state.message_received.connect(_handle_ws_message)
@@ -23,8 +27,8 @@ func _ready():
   game_state.game_finished.connect(_handle_game_finished)
 
 func _handle_game_finished() -> void:
-  print("Game finished, returning to roaming state.")
-  state.change_state(roaming_state)
+  MultiplayerClient.leave_lobby()
+  _handle_updates()
 
 func _handle_multiplayer_connection_changed(_connection_state: MultiplayerClient.MultiplayerClientState) -> void:
   print("Multiplayer connection state changed: %s" % MultiplayerClient.state.current)
@@ -80,28 +84,32 @@ class StreamOverlayState extends State:
     self.overlay = _overlay
 
 class RoamingState extends StreamOverlayState:
-  var scene: RoamingBots
   var roaming_bots_template: PackedScene = preload("res://stream_overlay/roaming_bots.tscn")
 
   func enter_state(_previous_state: State) -> void:
-    scene = roaming_bots_template.instantiate() as RoamingBots
-    overlay.add_child(scene)
-  
-  func exit_state() -> void:
-    scene.queue_free()
+    if _previous_state is GameState:
+      await overlay.loading.transition_in()
+    
+    overlay.roaming_scene = roaming_bots_template.instantiate() as RoamingBots
+    overlay.add_child(overlay.roaming_scene)
+    
+    if _previous_state is GameState:
+      if overlay.game_container:
+        overlay.game_container.queue_free()
+      await overlay.loading.transition_out()
 
 class GameState extends StreamOverlayState:
-  var game_container: GameContainer
   var lobby: Lobby
   var pong_game_template: PackedScene = preload("res://games/pong/pong_game.tscn")
   signal game_finished
 
   func enter_state(_previous_state: State) -> void:
-    game_container = GameContainer.new()
-    overlay.add_child(game_container)
-    game_container.game_finished.connect(game_finished.emit)
-    await game_container.load_game_from_lobby(MultiplayerClient.current_lobby)
-
-  func exit_state() -> void:
-    MultiplayerClient.leave_lobby()
-    game_container.queue_free()
+    await overlay.loading.transition_in()
+    if _previous_state is RoamingState:
+      if overlay.roaming_scene:
+        overlay.roaming_scene.queue_free()
+    overlay.game_container = GameContainer.new()
+    overlay.add_child(overlay.game_container)
+    overlay.game_container.game_finished.connect(game_finished.emit)
+    await overlay.game_container.load_game_from_lobby(MultiplayerClient.current_lobby)
+    await overlay.loading.transition_out()

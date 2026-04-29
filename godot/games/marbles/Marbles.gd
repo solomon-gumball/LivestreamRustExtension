@@ -224,12 +224,12 @@ func _server_spawn_all_new_players() -> void:
     marble_state.position = _get_random_spawn_position(join_index)
     marble_state.rotation = Vector3.ZERO
     marble_state.frozen = game_state.game_state != MarblesGameState.GameState.Playing
-
     game_state.marbles_by_peer_id.set(peer.peer_id, marble_state)
     var marble := get_or_create_bot_for_peer(peer.peer_id)
     marble.global_position = marble_state.position
     marble.global_rotation = marble_state.rotation
     marble.sync_state = marble_state
+    print("SERVER is spawning peer marble ", peer.peer_id, " frozen =>  ", marble_state.frozen)
 
     join_index += 1
 
