@@ -8,12 +8,13 @@
 [ext_resource type="Shader" uid="uid://5hci2mcg6lv0" path="res://shaders/galaxy_sky.gdshader" id="6_fxgnb"]
 [ext_resource type="Texture2D" uid="uid://ddovor3jdfvj4" path="res://textures/noise1.jpg" id="7_1um5w"]
 [ext_resource type="Texture2D" uid="uid://6om2hiwmkli" path="res://textures/panorama6.jpg" id="8_kvqxd"]
+[ext_resource type="PackedScene" uid="uid://c6ybf4jojq1uj" path="res://games/marbles/props/marbles_shattering_glass.tscn" id="9_1um5w"]
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_ao6dl"]
 size = Vector3(21.9851, 1, 2.65137)
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_tjf41"]
-size = Vector3(12.6067, 5.75934, 11.6197)
+size = Vector3(12.6067, 5.75934, 1.5885799)
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_87yb8"]
 size = Vector3(217.476, 30.0066, 259.342)
@@ -43,7 +44,14 @@ sky = SubResource("Sky_gp6tp")
 ambient_light_color = Color(0.5102944, 0.26274186, 0.71350974, 1)
 ambient_light_sky_contribution = 0.0
 
-[node name="gumball-map1" unique_id=1920910813 node_paths=PackedStringArray("finish_area", "out_of_bounds_area", "spawn_path", "animation_player") instance=ExtResource("1_28nk5")]
+[sub_resource type="SphereShape3D" id="SphereShape3D_kvqxd"]
+radius = 0.20016275
+
+[sub_resource type="SphereMesh" id="SphereMesh_rcfe2"]
+radius = 0.175
+height = 0.35
+
+[node name="gumball-map1" unique_id=1958007422 node_paths=PackedStringArray("finish_area", "out_of_bounds_area", "spawn_path", "animation_player") instance=ExtResource("1_28nk5")]
 script = ExtResource("2_tjf41")
 finish_area = NodePath("FinishArea2")
 out_of_bounds_area = NodePath("OutOfBoundsArea")
@@ -76,22 +84,22 @@ transform = Transform3D(-0.388362, -0.443438, -0.807798, -0.509024, -0.627499, 0
 shadow_enabled = true
 shadow_opacity = 0.57
 
-[node name="Sphere" parent="." index="5" unique_id=392529875]
+[node name="Sphere" parent="." index="5" unique_id=1218526013]
 visible = false
 
-[node name="Sphere_001-noimport" parent="." index="6" unique_id=749230988]
+[node name="Sphere_001-noimport" parent="." index="6" unique_id=1365265424]
 visible = false
 
-[node name="Funnel" parent="." index="8" unique_id=1912995114]
+[node name="Funnel" parent="." index="8" unique_id=45935798]
 visible = false
 
-[node name="MarblesSpinner" parent="." index="18" unique_id=161828820]
+[node name="MarblesSpinner" parent="." index="18" unique_id=256819916]
 visible = false
 
-[node name="Circle_001" parent="." index="21" unique_id=1458001982]
+[node name="Circle_001" parent="." index="21" unique_id=804863669]
 visible = false
 
-[node name="Circle_002" parent="." index="22" unique_id=1060341994]
+[node name="Circle_002" parent="." index="22" unique_id=259667857]
 visible = false
 
 [node name="marbles-bumper3" parent="." index="24" unique_id=462884197 instance=ExtResource("4_sevp3")]
@@ -108,9 +116,10 @@ transform = Transform3D(0.990595, 0, 0, 0, 0.914853, 0.379899, 0, -0.379899, 0.9
 
 [node name="FinishArea2" type="Area3D" parent="." index="31" unique_id=749977209]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -6.65094, -6.33502)
+collision_mask = 2
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="FinishArea2" index="0" unique_id=611692593]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.580431, -1.09445, 0.181747)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.580431, -11.536358, -8.960535)
 shape = SubResource("BoxShape3D_tjf41")
 
 [node name="OutOfBoundsArea" type="Area3D" parent="." index="32" unique_id=1964003097]
@@ -120,24 +129,50 @@ collision_layer = 0
 collision_mask = 2
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="OutOfBoundsArea" index="0" unique_id=2094111715]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 21.2718, -14.5033, 8.89998)
+transform = Transform3D(0.2860898, -0.95820284, 0, 0.95820284, 0.2860898, 0, 0, 0, 1, 21.2718, -55.751175, 8.89998)
 shape = SubResource("BoxShape3D_87yb8")
 
-[node name="CollisionShape3D2" type="CollisionShape3D" parent="OutOfBoundsArea" index="1" unique_id=1668775284]
+[node name="CollisionShape3D3" type="CollisionShape3D" parent="OutOfBoundsArea" index="1" unique_id=6106296]
+transform = Transform3D(-0.38358617, -0.923505, 0, 0.923505, -0.38358617, 0, 0, 0, 1, -21.208937, -55.751175, 8.89998)
+shape = SubResource("BoxShape3D_87yb8")
+
+[node name="CollisionShape3D2" type="CollisionShape3D" parent="OutOfBoundsArea" index="2" unique_id=1668775284]
 transform = Transform3D(0.9427405, -0.33352715, 0, 0.33352715, 0.9427405, 0, 0, 0, 1, 135.67004, 74.86697, 8.89998)
 shape = SubResource("BoxShape3D_fxgnb")
 
 [node name="SpawnPath" type="Path3D" parent="." index="33" unique_id=454938272]
 transform = Transform3D(0.9999978, 0.0015394343, 0.0014083391, -0.0015396923, 0.9999988, 0.00018113754, -0.0014080569, -0.00018331753, 0.999999, 119.5167, 91.8646, 0.01438427)
+visible = false
 curve = SubResource("Curve3D_tjf41")
 
-[node name="DebugCamera" parent="." index="34" unique_id=1098239593 instance=ExtResource("3_4cld7")]
-unique_name_in_owner = true
-transform = Transform3D(-0.029620912, -0.56637686, 0.82361394, -0.020025253, 0.8241464, 0.5660228, -0.9993606, 0.00027303345, -0.035753805, 117.68712, 95.07298, -0.6528377)
+[node name="SpawnPathTEST" type="Path3D" parent="." index="34" unique_id=1977413412]
+transform = Transform3D(0.9999978, 0.0015394343, 0.0014083391, -0.0015396923, 0.9999988, 0.00018113754, -0.0014080569, -0.00018331753, 0.999999, 7.280916, 5.418811, -6.2699146)
+curve = SubResource("Curve3D_tjf41")
 
-[node name="WorldEnvironment" type="WorldEnvironment" parent="." index="36" unique_id=1610954951]
+[node name="DebugCamera" parent="." index="35" unique_id=1098239593 instance=ExtResource("3_4cld7")]
+unique_name_in_owner = true
+transform = Transform3D(-0.029620912, -0.56637686, 0.82361394, -0.020025253, 0.8241464, 0.5660228, -0.9993606, 0.00027303345, -0.035753805, 107.32893, 95.07298, -0.6528377)
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="." index="37" unique_id=1610954951]
 environment = SubResource("Environment_8bl5g")
 
-[node name="Camera" parent="." index="37" unique_id=1067170835]
-transform = Transform3D(-0.016175402, -0.5578361, 0.8297933, -5.960465e-08, 0.8299019, 0.5579091, -0.99986917, 0.009024356, -0.01342403, 122.104454, 92.75128, -0.8500098)
+[node name="shattering-glass" parent="." index="38" unique_id=1880019793 instance=ExtResource("9_1um5w")]
+transform = Transform3D(0.66785985, 0, 0, 0, 0.6653849, 0.05744333, 0, -0.05744333, 0.6653849, 0.66866255, -18.913874, -14.3682375)
+
+[node name="Cube" parent="." index="39" unique_id=387175557]
+visible = false
+
+[node name="Camera" parent="." index="40" unique_id=1104200011]
+transform = Transform3D(-0.9975296, -0.039191514, 0.058298104, -0.040830627, 0.9987958, -0.02719535, -0.05716209, -0.029508531, -0.99792874, 1.1586246, -19.553673, -22.03782)
+current = true
 fov = 75.0
+
+[node name="RigidBody3D" type="RigidBody3D" parent="." index="44" unique_id=857522275]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -14.875166, -17.274761)
+visible = false
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="RigidBody3D" index="0" unique_id=1303953486]
+shape = SubResource("SphereShape3D_kvqxd")
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="RigidBody3D" index="1" unique_id=8812853]
+mesh = SubResource("SphereMesh_rcfe2")

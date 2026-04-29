@@ -4,7 +4,6 @@ extends Node
 @export var animation_player: AnimationPlayer:
   set(anim_player):
     animation_player = anim_player
-    animation_player.animation_finished.connect(animation_finished.emit)
 
 var state: AnimationState = null
 
@@ -70,6 +69,9 @@ func authority_skip_current_animation() -> void:
       MultiplayerPeer.TRANSFER_MODE_RELIABLE,
       true
     )
+
+func handle_animation_finished(animation_name: String) -> void:
+  pass
 
 func authority_play_animation(animation_name: String) -> void:
   if !MultiplayerClient.is_lobby_host():

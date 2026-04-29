@@ -1,0 +1,2446 @@
+[gd_scene format=3 uid="uid://c6ybf4jojq1uj"]
+
+[ext_resource type="PackedScene" uid="uid://bxisycfus6yg3" path="res://games/marbles/maps/shattering-glass.blend" id="1_duhg1"]
+[ext_resource type="Script" uid="uid://bn3fnovif6d68" path="res://games/marbles/props/breakable.gd" id="2_6ofuy"]
+[ext_resource type="Texture2D" uid="uid://c53kbdrgxxvfc" path="res://icon.svg" id="3_mynci"]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_6ofuy"]
+resource_name = "ShardSurface"
+cull_mode = 2
+albedo_texture = ExtResource("3_mynci")
+roughness = 0.5
+
+[node name="shattering-glass" unique_id=1880019793 instance=ExtResource("1_duhg1")]
+script = ExtResource("2_6ofuy")
+surface_material = SubResource("StandardMaterial3D_6ofuy")
+
+[node name="Glass_cell_037_cell" parent="." index="0" unique_id=1162988760]
+collision_layer = 0
+collision_mask = 2
+freeze = true
+freeze_mode = 1
+contact_monitor = true
+max_contacts_reported = 1
+
+[node name="Glass_cell_037_cell" parent="Glass_cell_037_cell" index="0" unique_id=1931236808]
+surface_material_override/0 = SubResource("StandardMaterial3D_6ofuy")
+
+[node name="Glass_cell_037_cell_001" parent="." index="1" unique_id=1127827794]
+collision_layer = 0
+collision_mask = 2
+freeze = true
+freeze_mode = 1
+contact_monitor = true
+max_contacts_reported = 1
+
+[node name="Glass_cell_037_cell_001" parent="Glass_cell_037_cell_001" index="0" unique_id=1059991182]
+surface_material_override/0 = SubResource("StandardMaterial3D_6ofuy")
+
+[node name="Glass_cell_037_cell_003" parent="." index="2" unique_id=1012131627]
+collision_layer = 0
+collision_mask = 2
+freeze = true
+freeze_mode = 1
+contact_monitor = true
+max_contacts_reported = 1
+
+[node name="Glass_cell_037_cell_003" parent="Glass_cell_037_cell_003" index="0" unique_id=2113159079]
+surface_material_override/0 = SubResource("StandardMaterial3D_6ofuy")
+
+[node name="Glass_cell_037_cell_004" parent="." index="3" unique_id=1501793482]
+collision_layer = 0
+collision_mask = 2
+freeze = true
+freeze_mode = 1
+contact_monitor = true
+max_contacts_reported = 1
+
+[node name="Glass_cell_037_cell_004" parent="Glass_cell_037_cell_004" index="0" unique_id=352490438]
+surface_material_override/0 = SubResource("StandardMaterial3D_6ofuy")
+
+[node name="Glass_cell_037_cell_005" parent="." index="4" unique_id=565378626]
+collision_layer = 0
+collision_mask = 2
+freeze = true
+freeze_mode = 1
+contact_monitor = true
+max_contacts_reported = 1
+
+[node name="Glass_cell_037_cell_005" parent="Glass_cell_037_cell_005" index="0" unique_id=291515495]
+surface_material_override/0 = SubResource("StandardMaterial3D_6ofuy")
+
+[node name="Glass_cell_037_cell_007" parent="." index="5" unique_id=1501763616]
+collision_layer = 0
+collision_mask = 2
+freeze = true
+freeze_mode = 1
+contact_monitor = true
+max_contacts_reported = 1
+
+[node name="Glass_cell_037_cell_007" parent="Glass_cell_037_cell_007" index="0" unique_id=1671872653]
+surface_material_override/0 = SubResource("StandardMaterial3D_6ofuy")
+
+[node name="Glass_cell_036_cell" parent="." index="6" unique_id=1273040620]
+collision_layer = 0
+collision_mask = 2
+freeze = true
+freeze_mode = 1
+contact_monitor = true
+max_contacts_reported = 1
+
+[node name="Glass_cell_036_cell" parent="Glass_cell_036_cell" index="0" unique_id=2676564]
+surface_material_override/0 = SubResource("StandardMaterial3D_6ofuy")
+
+[node name="Glass_cell_036_cell_001" parent="." index="7" unique_id=1158543631]
+collision_layer = 0
+collision_mask = 2
+freeze = true
+freeze_mode = 1
+contact_monitor = true
+max_contacts_reported = 1
+
+[node name="Glass_cell_036_cell_001" parent="Glass_cell_036_cell_001" index="0" unique_id=1971675985]
+surface_material_override/0 = SubResource("StandardMaterial3D_6ofuy")
+
+[node name="Glass_cell_036_cell_002" parent="." index="8" unique_id=1689149760]
+collision_layer = 0
+collision_mask = 2
+freeze = true
+freeze_mode = 1
+contact_monitor = true
+max_contacts_reported = 1
+
+[node name="Glass_cell_036_cell_002" parent="Glass_cell_036_cell_002" index="0" unique_id=2092475065]
+surface_material_override/0 = SubResource("StandardMaterial3D_6ofuy")
+
+[node name="Glass_cell_036_cell_004" parent="." index="9" unique_id=624564316]
+collision_layer = 0
+collision_mask = 2
+freeze = true
+freeze_mode = 1
+contact_monitor = true
+max_contacts_reported = 1
+
+[node name="Glass_cell_036_cell_004" parent="Glass_cell_036_cell_004" index="0" unique_id=1098585078]
+surface_material_override/0 = SubResource("StandardMaterial3D_6ofuy")
+
+[node name="Glass_cell_036_cell_005" parent="." index="10" unique_id=621459317]
+collision_layer = 0
+collision_mask = 2
+freeze = true
+freeze_mode = 1
+contact_monitor = true
+max_contacts_reported = 1
+
+[node name="Glass_cell_036_cell_005" parent="Glass_cell_036_cell_005" index="0" unique_id=751005631]
+surface_material_override/0 = SubResource("StandardMaterial3D_6ofuy")
+
+[node name="Glass_cell_036_cell_006" parent="." index="11" unique_id=1857718812]
+collision_layer = 0
+collision_mask = 2
+freeze = true
+freeze_mode = 1
+contact_monitor = true
+max_contacts_reported = 1
+
+[node name="Glass_cell_036_cell_006" parent="Glass_cell_036_cell_006" index="0" unique_id=55082808]
+surface_material_override/0 = SubResource("StandardMaterial3D_6ofuy")
+
+[node name="Glass_cell_035_cell" parent="." index="12" unique_id=518837801]
+collision_layer = 0
+collision_mask = 2
+freeze = true
+freeze_mode = 1
+contact_monitor = true
+max_contacts_reported = 1
+
+[node name="Glass_cell_035_cell" parent="Glass_cell_035_cell" index="0" unique_id=2130881134]
+surface_material_override/0 = SubResource("StandardMaterial3D_6ofuy")
+
+[node name="Glass_cell_035_cell_001" parent="." index="13" unique_id=940878403]
+collision_layer = 0
+collision_mask = 2
+freeze = true
+freeze_mode = 1
+contact_monitor = true
+max_contacts_reported = 1
+
+[node name="Glass_cell_035_cell_001" parent="Glass_cell_035_cell_001" index="0" unique_id=356539919]
+surface_material_override/0 = SubResource("StandardMaterial3D_6ofuy")
+
+[node name="Glass_cell_035_cell_002" parent="." index="14" unique_id=768033346]
+collision_layer = 0
+collision_mask = 2
+freeze = true
+freeze_mode = 1
+contact_monitor = true
+max_contacts_reported = 1
+
+[node name="Glass_cell_035_cell_002" parent="Glass_cell_035_cell_002" index="0" unique_id=1895995870]
+surface_material_override/0 = SubResource("StandardMaterial3D_6ofuy")
+
+[node name="Glass_cell_035_cell_003" parent="." index="15" unique_id=437745052]
+collision_layer = 0
+collision_mask = 2
+freeze = true
+freeze_mode = 1
+contact_monitor = true
+max_contacts_reported = 1
+
+[node name="Glass_cell_035_cell_003" parent="Glass_cell_035_cell_003" index="0" unique_id=2128070]
+surface_material_override/0 = SubResource("StandardMaterial3D_6ofuy")
+
+[node name="Glass_cell_035_cell_005" parent="." index="16" unique_id=1702443464]
+collision_layer = 0
+collision_mask = 2
+freeze = true
+freeze_mode = 1
+contact_monitor = true
+max_contacts_reported = 1
+
+[node name="Glass_cell_035_cell_005" parent="Glass_cell_035_cell_005" index="0" unique_id=1751897714]
+surface_material_override/0 = SubResource("StandardMaterial3D_6ofuy")
+
+[node name="Glass_cell_035_cell_006" parent="." index="17" unique_id=150423130]
+collision_layer = 0
+collision_mask = 2
+freeze = true
+freeze_mode = 1
+contact_monitor = true
+max_contacts_reported = 1
+
+[node name="Glass_cell_035_cell_006" parent="Glass_cell_035_cell_006" index="0" unique_id=1313932299]
+surface_material_override/0 = SubResource("StandardMaterial3D_6ofuy")
+
+[node name="Glass_cell_034_cell" parent="." index="18" unique_id=411923195]
+collision_layer = 0
+collision_mask = 2
+freeze = true
+freeze_mode = 1
+contact_monitor = true
+max_contacts_reported = 1
+
+[node name="Glass_cell_034_cell" parent="Glass_cell_034_cell" index="0" unique_id=292852813]
+surface_material_override/0 = SubResource("StandardMaterial3D_6ofuy")
+
+[node name="Glass_cell_034_cell_001" parent="." index="19" unique_id=1337972652]
+collision_layer = 0
+collision_mask = 2
+freeze = true
+freeze_mode = 1
+contact_monitor = true
+max_contacts_reported = 1
+
+[node name="Glass_cell_034_cell_001" parent="Glass_cell_034_cell_001" index="0" unique_id=162693750]
+surface_material_override/0 = SubResource("StandardMaterial3D_6ofuy")
+
+[node name="Glass_cell_034_cell_002" parent="." index="20" unique_id=149267716]
+collision_layer = 0
+collision_mask = 2
+freeze = true
+freeze_mode = 1
+contact_monitor = true
+max_contacts_reported = 1
+
+[node name="Glass_cell_034_cell_002" parent="Glass_cell_034_cell_002" index="0" unique_id=175910330]
+surface_material_override/0 = SubResource("StandardMaterial3D_6ofuy")
+
+[node name="Glass_cell_034_cell_003" parent="." index="21" unique_id=248959514]
+collision_layer = 0
+collision_mask = 2
+freeze = true
+freeze_mode = 1
+contact_monitor = true
+max_contacts_reported = 1
+
+[node name="Glass_cell_034_cell_003" parent="Glass_cell_034_cell_003" index="0" unique_id=868511288]
+surface_material_override/0 = SubResource("StandardMaterial3D_6ofuy")
+
+[node name="Glass_cell_033_cell" parent="." index="22" unique_id=2058390389]
+collision_layer = 0
+collision_mask = 2
+freeze = true
+freeze_mode = 1
+contact_monitor = true
+max_contacts_reported = 1
+
+[node name="Glass_cell_033_cell" parent="Glass_cell_033_cell" index="0" unique_id=1824640509]
+surface_material_override/0 = SubResource("StandardMaterial3D_6ofuy")
+
+[node name="Glass_cell_033_cell_002" parent="." index="23" unique_id=380749030]
+collision_layer = 0
+collision_mask = 2
+freeze = true
+freeze_mode = 1
+contact_monitor = true
+max_contacts_reported = 1
+
+[node name="Glass_cell_033_cell_002" parent="Glass_cell_033_cell_002" index="0" unique_id=1339590829]
+surface_material_override/0 = SubResource("StandardMaterial3D_6ofuy")
+
+[node name="Glass_cell_033_cell_004" parent="." index="24" unique_id=2102208178]
+collision_layer = 0
+collision_mask = 2
+freeze = true
+freeze_mode = 1
+contact_monitor = true
+max_contacts_reported = 1
+
+[node name="Glass_cell_033_cell_004" parent="Glass_cell_033_cell_004" index="0" unique_id=96353306]
+surface_material_override/0 = SubResource("StandardMaterial3D_6ofuy")
+
+[node name="Glass_cell_033_cell_005" parent="." index="25" unique_id=1046709259]
+collision_layer = 0
+collision_mask = 2
+freeze = true
+freeze_mode = 1
+contact_monitor = true
+max_contacts_reported = 1
+
+[node name="Glass_cell_033_cell_005" parent="Glass_cell_033_cell_005" index="0" unique_id=1683116659]
+surface_material_override/0 = SubResource("StandardMaterial3D_6ofuy")
+
+[node name="Glass_cell_033_cell_006" parent="." index="26" unique_id=1132989231]
+collision_layer = 0
+collision_mask = 2
+freeze = true
+freeze_mode = 1
+contact_monitor = true
+max_contacts_reported = 1
+
+[node name="Glass_cell_033_cell_006" parent="Glass_cell_033_cell_006" index="0" unique_id=1715629312]
+surface_material_override/0 = SubResource("StandardMaterial3D_6ofuy")
+
+[node name="Glass_cell_032_cell_001" parent="." index="27" unique_id=876915272]
+collision_layer = 0
+collision_mask = 2
+freeze = true
+freeze_mode = 1
+contact_monitor = true
+max_contacts_reported = 1
+
+[node name="Glass_cell_032_cell_001" parent="Glass_cell_032_cell_001" index="0" unique_id=34656853]
+surface_material_override/0 = SubResource("StandardMaterial3D_6ofuy")
+
+[node name="Glass_cell_032_cell_002" parent="." index="28" unique_id=659130536]
+collision_layer = 0
+collision_mask = 2
+freeze = true
+freeze_mode = 1
+contact_monitor = true
+max_contacts_reported = 1
+
+[node name="Glass_cell_032_cell_002" parent="Glass_cell_032_cell_002" index="0" unique_id=1789213991]
+surface_material_override/0 = SubResource("StandardMaterial3D_6ofuy")
+
+[node name="Glass_cell_032_cell_003" parent="." index="29" unique_id=484752547]
+collision_layer = 0
+collision_mask = 2
+freeze = true
+freeze_mode = 1
+contact_monitor = true
+max_contacts_reported = 1
+
+[node name="Glass_cell_032_cell_003" parent="Glass_cell_032_cell_003" index="0" unique_id=1434552759]
+surface_material_override/0 = SubResource("StandardMaterial3D_6ofuy")
+
+[node name="Glass_cell_032_cell_004" parent="." index="30" unique_id=711191900]
+collision_layer = 0
+collision_mask = 2
+freeze = true
+freeze_mode = 1
+contact_monitor = true
+max_contacts_reported = 1
+
+[node name="Glass_cell_032_cell_004" parent="Glass_cell_032_cell_004" index="0" unique_id=1399926529]
+surface_material_override/0 = SubResource("StandardMaterial3D_6ofuy")
+
+[node name="Glass_cell_032_cell_005" parent="." index="31" unique_id=1559419298]
+collision_layer = 0
+collision_mask = 2
+freeze = true
+freeze_mode = 1
+contact_monitor = true
+max_contacts_reported = 1
+
+[node name="Glass_cell_032_cell_005" parent="Glass_cell_032_cell_005" index="0" unique_id=1157209976]
+surface_material_override/0 = SubResource("StandardMaterial3D_6ofuy")
+
+[node name="Glass_cell_032_cell_006" parent="." index="32" unique_id=1605918372]
+collision_layer = 0
+collision_mask = 2
+freeze = true
+freeze_mode = 1
+contact_monitor = true
+max_contacts_reported = 1
+
+[node name="Glass_cell_032_cell_006" parent="Glass_cell_032_cell_006" index="0" unique_id=280864715]
+surface_material_override/0 = SubResource("StandardMaterial3D_6ofuy")
+
+[node name="Glass_cell_032_cell_007" parent="." index="33" unique_id=1205046143]
+collision_layer = 0
+collision_mask = 2
+freeze = true
+freeze_mode = 1
+contact_monitor = true
+max_contacts_reported = 1
+
+[node name="Glass_cell_032_cell_007" parent="Glass_cell_032_cell_007" index="0" unique_id=1212781650]
+surface_material_override/0 = SubResource("StandardMaterial3D_6ofuy")
+
+[node name="Glass_cell_031_cell" parent="." index="34" unique_id=1405549614]
+collision_layer = 0
+collision_mask = 2
+freeze = true
+freeze_mode = 1
+contact_monitor = true
+max_contacts_reported = 1
+
+[node name="Glass_cell_031_cell" parent="Glass_cell_031_cell" index="0" unique_id=1050535619]
+surface_material_override/0 = SubResource("StandardMaterial3D_6ofuy")
+
+[node name="Glass_cell_031_cell_001" parent="." index="35" unique_id=281907734]
+collision_layer = 0
+collision_mask = 2
+freeze = true
+freeze_mode = 1
+contact_monitor = true
+max_contacts_reported = 1
+
+[node name="Glass_cell_031_cell_001" parent="Glass_cell_031_cell_001" index="0" unique_id=1512527618]
+surface_material_override/0 = SubResource("StandardMaterial3D_6ofuy")
+
+[node name="Glass_cell_031_cell_002" parent="." index="36" unique_id=1509233477]
+collision_layer = 0
+collision_mask = 2
+freeze = true
+freeze_mode = 1
+contact_monitor = true
+max_contacts_reported = 1
+
+[node name="Glass_cell_031_cell_002" parent="Glass_cell_031_cell_002" index="0" unique_id=53931898]
+surface_material_override/0 = SubResource("StandardMaterial3D_6ofuy")
+
+[node name="Glass_cell_031_cell_003" parent="." index="37" unique_id=1715957531]
+collision_layer = 0
+collision_mask = 2
+freeze = true
+freeze_mode = 1
+contact_monitor = true
+max_contacts_reported = 1
+
+[node name="Glass_cell_031_cell_003" parent="Glass_cell_031_cell_003" index="0" unique_id=985317563]
+surface_material_override/0 = SubResource("StandardMaterial3D_6ofuy")
+
+[node name="Glass_cell_031_cell_004" parent="." index="38" unique_id=534758116]
+collision_layer = 0
+collision_mask = 2
+freeze = true
+freeze_mode = 1
+contact_monitor = true
+max_contacts_reported = 1
+
+[node name="Glass_cell_031_cell_004" parent="Glass_cell_031_cell_004" index="0" unique_id=1756600237]
+surface_material_override/0 = SubResource("StandardMaterial3D_6ofuy")
+
+[node name="Glass_cell_031_cell_005" parent="." index="39" unique_id=514418027]
+collision_layer = 0
+collision_mask = 2
+freeze = true
+freeze_mode = 1
+contact_monitor = true
+max_contacts_reported = 1
+
+[node name="Glass_cell_031_cell_005" parent="Glass_cell_031_cell_005" index="0" unique_id=1918552676]
+surface_material_override/0 = SubResource("StandardMaterial3D_6ofuy")
+
+[node name="Glass_cell_031_cell_006" parent="." index="40" unique_id=630004803]
+collision_layer = 0
+collision_mask = 2
+freeze = true
+freeze_mode = 1
+contact_monitor = true
+max_contacts_reported = 1
+
+[node name="Glass_cell_031_cell_006" parent="Glass_cell_031_cell_006" index="0" unique_id=113620850]
+surface_material_override/0 = SubResource("StandardMaterial3D_6ofuy")
+
+[node name="Glass_cell_030_cell" parent="." index="41" unique_id=1125905]
+collision_layer = 0
+collision_mask = 2
+freeze = true
+freeze_mode = 1
+contact_monitor = true
+max_contacts_reported = 1
+
+[node name="Glass_cell_030_cell" parent="Glass_cell_030_cell" index="0" unique_id=230938039]
+surface_material_override/0 = SubResource("StandardMaterial3D_6ofuy")
+
+[node name="Glass_cell_030_cell_001" parent="." index="42" unique_id=322379840]
+collision_layer = 0
+collision_mask = 2
+freeze = true
+freeze_mode = 1
+contact_monitor = true
+max_contacts_reported = 1
+
+[node name="Glass_cell_030_cell_001" parent="Glass_cell_030_cell_001" index="0" unique_id=2013090789]
+surface_material_override/0 = SubResource("StandardMaterial3D_6ofuy")
+
+[node name="Glass_cell_030_cell_002" parent="." index="43" unique_id=1650718720]
+collision_layer = 0
+collision_mask = 2
+freeze = true
+freeze_mode = 1
+contact_monitor = true
+max_contacts_reported = 1
+
+[node name="Glass_cell_030_cell_002" parent="Glass_cell_030_cell_002" index="0" unique_id=520751937]
+surface_material_override/0 = SubResource("StandardMaterial3D_6ofuy")
+
+[node name="Glass_cell_030_cell_003" parent="." index="44" unique_id=442915325]
+collision_layer = 0
+collision_mask = 2
+freeze = true
+freeze_mode = 1
+contact_monitor = true
+max_contacts_reported = 1
+
+[node name="Glass_cell_030_cell_003" parent="Glass_cell_030_cell_003" index="0" unique_id=501944080]
+surface_material_override/0 = SubResource("StandardMaterial3D_6ofuy")
+
+[node name="Glass_cell_030_cell_004" parent="." index="45" unique_id=1875344435]
+collision_layer = 0
+collision_mask = 2
+freeze = true
+freeze_mode = 1
+contact_monitor = true
+max_contacts_reported = 1
+
+[node name="Glass_cell_030_cell_004" parent="Glass_cell_030_cell_004" index="0" unique_id=847525147]
+surface_material_override/0 = SubResource("StandardMaterial3D_6ofuy")
+
+[node name="Glass_cell_030_cell_005" parent="." index="46" unique_id=450053076]
+collision_layer = 0
+collision_mask = 2
+freeze = true
+freeze_mode = 1
+contact_monitor = true
+max_contacts_reported = 1
+
+[node name="Glass_cell_030_cell_005" parent="Glass_cell_030_cell_005" index="0" unique_id=1700915208]
+surface_material_override/0 = SubResource("StandardMaterial3D_6ofuy")
+
+[node name="Glass_cell_029_cell" parent="." index="47" unique_id=186476333]
+collision_layer = 0
+collision_mask = 2
+freeze = true
+freeze_mode = 1
+contact_monitor = true
+max_contacts_reported = 1
+
+[node name="Glass_cell_029_cell" parent="Glass_cell_029_cell" index="0" unique_id=696353727]
+surface_material_override/0 = SubResource("StandardMaterial3D_6ofuy")
+
+[node name="Glass_cell_029_cell_001" parent="." index="48" unique_id=1312631175]
+collision_layer = 0
+collision_mask = 2
+freeze = true
+freeze_mode = 1
+contact_monitor = true
+max_contacts_reported = 1
+
+[node name="Glass_cell_029_cell_001" parent="Glass_cell_029_cell_001" index="0" unique_id=1356014774]
+surface_material_override/0 = SubResource("StandardMaterial3D_6ofuy")
+
+[node name="Glass_cell_029_cell_002" parent="." index="49" unique_id=1311122658]
+collision_layer = 0
+collision_mask = 2
+freeze = true
+freeze_mode = 1
+contact_monitor = true
+max_contacts_reported = 1
+
+[node name="Glass_cell_029_cell_002" parent="Glass_cell_029_cell_002" index="0" unique_id=739662489]
+surface_material_override/0 = SubResource("StandardMaterial3D_6ofuy")
+
+[node name="Glass_cell_029_cell_003" parent="." index="50" unique_id=377557548]
+collision_layer = 0
+collision_mask = 2
+freeze = true
+freeze_mode = 1
+contact_monitor = true
+max_contacts_reported = 1
+
+[node name="Glass_cell_029_cell_003" parent="Glass_cell_029_cell_003" index="0" unique_id=340574702]
+surface_material_override/0 = SubResource("StandardMaterial3D_6ofuy")
+
+[node name="Glass_cell_029_cell_004" parent="." index="51" unique_id=135840191]
+collision_layer = 0
+collision_mask = 2
+freeze = true
+freeze_mode = 1
+contact_monitor = true
+max_contacts_reported = 1
+
+[node name="Glass_cell_029_cell_004" parent="Glass_cell_029_cell_004" index="0" unique_id=742642611]
+surface_material_override/0 = SubResource("StandardMaterial3D_6ofuy")
+
+[node name="Glass_cell_029_cell_006" parent="." index="52" unique_id=439557076]
+collision_layer = 0
+collision_mask = 2
+freeze = true
+freeze_mode = 1
+contact_monitor = true
+max_contacts_reported = 1
+
+[node name="Glass_cell_029_cell_006" parent="Glass_cell_029_cell_006" index="0" unique_id=233258582]
+surface_material_override/0 = SubResource("StandardMaterial3D_6ofuy")
+
+[node name="Glass_cell_029_cell_007" parent="." index="53" unique_id=584289066]
+collision_layer = 0
+collision_mask = 2
+freeze = true
+freeze_mode = 1
+contact_monitor = true
+max_contacts_reported = 1
+
+[node name="Glass_cell_029_cell_007" parent="Glass_cell_029_cell_007" index="0" unique_id=1378397520]
+surface_material_override/0 = SubResource("StandardMaterial3D_6ofuy")
+
+[node name="Glass_cell_028_cell" parent="." index="54" unique_id=231254207]
+collision_layer = 0
+collision_mask = 2
+freeze = true
+freeze_mode = 1
+contact_monitor = true
+max_contacts_reported = 1
+
+[node name="Glass_cell_028_cell" parent="Glass_cell_028_cell" index="0" unique_id=50225734]
+surface_material_override/0 = SubResource("StandardMaterial3D_6ofuy")
+
+[node name="Glass_cell_028_cell_001" parent="." index="55" unique_id=787875174]
+collision_layer = 0
+collision_mask = 2
+freeze = true
+freeze_mode = 1
+contact_monitor = true
+max_contacts_reported = 1
+
+[node name="Glass_cell_028_cell_001" parent="Glass_cell_028_cell_001" index="0" unique_id=475681797]
+surface_material_override/0 = SubResource("StandardMaterial3D_6ofuy")
+
+[node name="Glass_cell_028_cell_002" parent="." index="56" unique_id=604445711]
+collision_layer = 0
+collision_mask = 2
+freeze = true
+freeze_mode = 1
+contact_monitor = true
+max_contacts_reported = 1
+
+[node name="Glass_cell_028_cell_002" parent="Glass_cell_028_cell_002" index="0" unique_id=333147518]
+surface_material_override/0 = SubResource("StandardMaterial3D_6ofuy")
+
+[node name="Glass_cell_028_cell_003" parent="." index="57" unique_id=2055621528]
+collision_layer = 0
+collision_mask = 2
+freeze = true
+freeze_mode = 1
+contact_monitor = true
+max_contacts_reported = 1
+
+[node name="Glass_cell_028_cell_003" parent="Glass_cell_028_cell_003" index="0" unique_id=1796316692]
+surface_material_override/0 = SubResource("StandardMaterial3D_6ofuy")
+
+[node name="Glass_cell_028_cell_004" parent="." index="58" unique_id=423203345]
+collision_layer = 0
+collision_mask = 2
+freeze = true
+freeze_mode = 1
+contact_monitor = true
+max_contacts_reported = 1
+
+[node name="Glass_cell_028_cell_004" parent="Glass_cell_028_cell_004" index="0" unique_id=224653529]
+surface_material_override/0 = SubResource("StandardMaterial3D_6ofuy")
+
+[node name="Glass_cell_028_cell_005" parent="." index="59" unique_id=789437670]
+collision_layer = 0
+collision_mask = 2
+freeze = true
+freeze_mode = 1
+contact_monitor = true
+max_contacts_reported = 1
+
+[node name="Glass_cell_028_cell_005" parent="Glass_cell_028_cell_005" index="0" unique_id=33583358]
+surface_material_override/0 = SubResource("StandardMaterial3D_6ofuy")
+
+[node name="Glass_cell_028_cell_006" parent="." index="60" unique_id=58275058]
+collision_layer = 0
+collision_mask = 2
+freeze = true
+freeze_mode = 1
+contact_monitor = true
+max_contacts_reported = 1
+
+[node name="Glass_cell_028_cell_006" parent="Glass_cell_028_cell_006" index="0" unique_id=1970074739]
+surface_material_override/0 = SubResource("StandardMaterial3D_6ofuy")
+
+[node name="Glass_cell_028_cell_007" parent="." index="61" unique_id=927151972]
+collision_layer = 0
+collision_mask = 2
+freeze = true
+freeze_mode = 1
+contact_monitor = true
+max_contacts_reported = 1
+
+[node name="Glass_cell_028_cell_007" parent="Glass_cell_028_cell_007" index="0" unique_id=1605489560]
+surface_material_override/0 = SubResource("StandardMaterial3D_6ofuy")
+
+[node name="Glass_cell_027_cell" parent="." index="62" unique_id=752962522]
+collision_layer = 0
+collision_mask = 2
+freeze = true
+freeze_mode = 1
+contact_monitor = true
+max_contacts_reported = 1
+
+[node name="Glass_cell_027_cell" parent="Glass_cell_027_cell" index="0" unique_id=1657027007]
+surface_material_override/0 = SubResource("StandardMaterial3D_6ofuy")
+
+[node name="Glass_cell_027_cell_002" parent="." index="63" unique_id=307801489]
+collision_layer = 0
+collision_mask = 2
+freeze = true
+freeze_mode = 1
+contact_monitor = true
+max_contacts_reported = 1
+
+[node name="Glass_cell_027_cell_002" parent="Glass_cell_027_cell_002" index="0" unique_id=1475867133]
+surface_material_override/0 = SubResource("StandardMaterial3D_6ofuy")
+
+[node name="Glass_cell_027_cell_004" parent="." index="64" unique_id=996181644]
+collision_layer = 0
+collision_mask = 2
+freeze = true
+freeze_mode = 1
+contact_monitor = true
+max_contacts_reported = 1
+
+[node name="Glass_cell_027_cell_004" parent="Glass_cell_027_cell_004" index="0" unique_id=1138813045]
+surface_material_override/0 = SubResource("StandardMaterial3D_6ofuy")
+
+[node name="Glass_cell_027_cell_005" parent="." index="65" unique_id=611292040]
+collision_layer = 0
+collision_mask = 2
+freeze = true
+freeze_mode = 1
+contact_monitor = true
+max_contacts_reported = 1
+
+[node name="Glass_cell_027_cell_005" parent="Glass_cell_027_cell_005" index="0" unique_id=1477367268]
+surface_material_override/0 = SubResource("StandardMaterial3D_6ofuy")
+
+[node name="Glass_cell_027_cell_006" parent="." index="66" unique_id=1613320525]
+collision_layer = 0
+collision_mask = 2
+freeze = true
+freeze_mode = 1
+contact_monitor = true
+max_contacts_reported = 1
+
+[node name="Glass_cell_027_cell_006" parent="Glass_cell_027_cell_006" index="0" unique_id=741074238]
+surface_material_override/0 = SubResource("StandardMaterial3D_6ofuy")
+
+[node name="Glass_cell_026_cell" parent="." index="67" unique_id=2081891947]
+collision_layer = 0
+collision_mask = 2
+freeze = true
+freeze_mode = 1
+contact_monitor = true
+max_contacts_reported = 1
+
+[node name="Glass_cell_026_cell" parent="Glass_cell_026_cell" index="0" unique_id=1060445216]
+surface_material_override/0 = SubResource("StandardMaterial3D_6ofuy")
+
+[node name="Glass_cell_026_cell_001" parent="." index="68" unique_id=1912730479]
+collision_layer = 0
+collision_mask = 2
+freeze = true
+freeze_mode = 1
+contact_monitor = true
+max_contacts_reported = 1
+
+[node name="Glass_cell_026_cell_001" parent="Glass_cell_026_cell_001" index="0" unique_id=611438429]
+surface_material_override/0 = SubResource("StandardMaterial3D_6ofuy")
+
+[node name="Glass_cell_026_cell_002" parent="." index="69" unique_id=2137411778]
+collision_layer = 0
+collision_mask = 2
+freeze = true
+freeze_mode = 1
+contact_monitor = true
+max_contacts_reported = 1
+
+[node name="Glass_cell_026_cell_002" parent="Glass_cell_026_cell_002" index="0" unique_id=1446439934]
+surface_material_override/0 = SubResource("StandardMaterial3D_6ofuy")
+
+[node name="Glass_cell_026_cell_003" parent="." index="70" unique_id=634057367]
+collision_layer = 0
+collision_mask = 2
+freeze = true
+freeze_mode = 1
+contact_monitor = true
+max_contacts_reported = 1
+
+[node name="Glass_cell_026_cell_003" parent="Glass_cell_026_cell_003" index="0" unique_id=472144939]
+surface_material_override/0 = SubResource("StandardMaterial3D_6ofuy")
+
+[node name="Glass_cell_026_cell_004" parent="." index="71" unique_id=219876987]
+collision_layer = 0
+collision_mask = 2
+freeze = true
+freeze_mode = 1
+contact_monitor = true
+max_contacts_reported = 1
+
+[node name="Glass_cell_026_cell_004" parent="Glass_cell_026_cell_004" index="0" unique_id=1597665559]
+surface_material_override/0 = SubResource("StandardMaterial3D_6ofuy")
+
+[node name="Glass_cell_026_cell_005" parent="." index="72" unique_id=1965799525]
+collision_layer = 0
+collision_mask = 2
+freeze = true
+freeze_mode = 1
+contact_monitor = true
+max_contacts_reported = 1
+
+[node name="Glass_cell_026_cell_005" parent="Glass_cell_026_cell_005" index="0" unique_id=881414720]
+surface_material_override/0 = SubResource("StandardMaterial3D_6ofuy")
+
+[node name="Glass_cell_026_cell_006" parent="." index="73" unique_id=1526725796]
+collision_layer = 0
+collision_mask = 2
+freeze = true
+freeze_mode = 1
+contact_monitor = true
+max_contacts_reported = 1
+
+[node name="Glass_cell_026_cell_006" parent="Glass_cell_026_cell_006" index="0" unique_id=281168642]
+surface_material_override/0 = SubResource("StandardMaterial3D_6ofuy")
+
+[node name="Glass_cell_025_cell" parent="." index="74" unique_id=456617286]
+collision_layer = 0
+collision_mask = 2
+freeze = true
+freeze_mode = 1
+contact_monitor = true
+max_contacts_reported = 1
+
+[node name="Glass_cell_025_cell" parent="Glass_cell_025_cell" index="0" unique_id=860459973]
+surface_material_override/0 = SubResource("StandardMaterial3D_6ofuy")
+
+[node name="Glass_cell_025_cell_001" parent="." index="75" unique_id=1294014355]
+collision_layer = 0
+collision_mask = 2
+freeze = true
+freeze_mode = 1
+contact_monitor = true
+max_contacts_reported = 1
+
+[node name="Glass_cell_025_cell_001" parent="Glass_cell_025_cell_001" index="0" unique_id=21267936]
+surface_material_override/0 = SubResource("StandardMaterial3D_6ofuy")
+
+[node name="Glass_cell_025_cell_002" parent="." index="76" unique_id=982397957]
+collision_layer = 0
+collision_mask = 2
+freeze = true
+freeze_mode = 1
+contact_monitor = true
+max_contacts_reported = 1
+
+[node name="Glass_cell_025_cell_002" parent="Glass_cell_025_cell_002" index="0" unique_id=194566578]
+surface_material_override/0 = SubResource("StandardMaterial3D_6ofuy")
+
+[node name="Glass_cell_025_cell_003" parent="." index="77" unique_id=1832398803]
+collision_layer = 0
+collision_mask = 2
+freeze = true
+freeze_mode = 1
+contact_monitor = true
+max_contacts_reported = 1
+
+[node name="Glass_cell_025_cell_003" parent="Glass_cell_025_cell_003" index="0" unique_id=1737092043]
+surface_material_override/0 = SubResource("StandardMaterial3D_6ofuy")
+
+[node name="Glass_cell_025_cell_004" parent="." index="78" unique_id=1103631088]
+collision_layer = 0
+collision_mask = 2
+freeze = true
+freeze_mode = 1
+contact_monitor = true
+max_contacts_reported = 1
+
+[node name="Glass_cell_025_cell_004" parent="Glass_cell_025_cell_004" index="0" unique_id=1981262686]
+surface_material_override/0 = SubResource("StandardMaterial3D_6ofuy")
+
+[node name="Glass_cell_024_cell" parent="." index="79" unique_id=897375395]
+collision_layer = 0
+collision_mask = 2
+freeze = true
+freeze_mode = 1
+contact_monitor = true
+max_contacts_reported = 1
+
+[node name="Glass_cell_024_cell" parent="Glass_cell_024_cell" index="0" unique_id=1204041674]
+surface_material_override/0 = SubResource("StandardMaterial3D_6ofuy")
+
+[node name="Glass_cell_024_cell_001" parent="." index="80" unique_id=604497456]
+collision_layer = 0
+collision_mask = 2
+freeze = true
+freeze_mode = 1
+contact_monitor = true
+max_contacts_reported = 1
+
+[node name="Glass_cell_024_cell_001" parent="Glass_cell_024_cell_001" index="0" unique_id=2130462451]
+surface_material_override/0 = SubResource("StandardMaterial3D_6ofuy")
+
+[node name="Glass_cell_024_cell_002" parent="." index="81" unique_id=955568376]
+collision_layer = 0
+collision_mask = 2
+freeze = true
+freeze_mode = 1
+contact_monitor = true
+max_contacts_reported = 1
+
+[node name="Glass_cell_024_cell_002" parent="Glass_cell_024_cell_002" index="0" unique_id=40352885]
+surface_material_override/0 = SubResource("StandardMaterial3D_6ofuy")
+
+[node name="Glass_cell_024_cell_003" parent="." index="82" unique_id=1866934945]
+collision_layer = 0
+collision_mask = 2
+freeze = true
+freeze_mode = 1
+contact_monitor = true
+max_contacts_reported = 1
+
+[node name="Glass_cell_024_cell_003" parent="Glass_cell_024_cell_003" index="0" unique_id=2061322138]
+surface_material_override/0 = SubResource("StandardMaterial3D_6ofuy")
+
+[node name="Glass_cell_024_cell_004" parent="." index="83" unique_id=342648994]
+collision_layer = 0
+collision_mask = 2
+freeze = true
+freeze_mode = 1
+contact_monitor = true
+max_contacts_reported = 1
+
+[node name="Glass_cell_024_cell_004" parent="Glass_cell_024_cell_004" index="0" unique_id=1075564001]
+surface_material_override/0 = SubResource("StandardMaterial3D_6ofuy")
+
+[node name="Glass_cell_023_cell" parent="." index="84" unique_id=430561923]
+collision_layer = 0
+collision_mask = 2
+freeze = true
+freeze_mode = 1
+contact_monitor = true
+max_contacts_reported = 1
+
+[node name="Glass_cell_023_cell" parent="Glass_cell_023_cell" index="0" unique_id=976351771]
+surface_material_override/0 = SubResource("StandardMaterial3D_6ofuy")
+
+[node name="Glass_cell_023_cell_001" parent="." index="85" unique_id=985018324]
+collision_layer = 0
+collision_mask = 2
+freeze = true
+freeze_mode = 1
+contact_monitor = true
+max_contacts_reported = 1
+
+[node name="Glass_cell_023_cell_001" parent="Glass_cell_023_cell_001" index="0" unique_id=555213053]
+surface_material_override/0 = SubResource("StandardMaterial3D_6ofuy")
+
+[node name="Glass_cell_023_cell_002" parent="." index="86" unique_id=171056766]
+collision_layer = 0
+collision_mask = 2
+freeze = true
+freeze_mode = 1
+contact_monitor = true
+max_contacts_reported = 1
+
+[node name="Glass_cell_023_cell_002" parent="Glass_cell_023_cell_002" index="0" unique_id=1368766865]
+surface_material_override/0 = SubResource("StandardMaterial3D_6ofuy")
+
+[node name="Glass_cell_023_cell_004" parent="." index="87" unique_id=1034646361]
+collision_layer = 0
+collision_mask = 2
+freeze = true
+freeze_mode = 1
+contact_monitor = true
+max_contacts_reported = 1
+
+[node name="Glass_cell_023_cell_004" parent="Glass_cell_023_cell_004" index="0" unique_id=717186452]
+surface_material_override/0 = SubResource("StandardMaterial3D_6ofuy")
+
+[node name="Glass_cell_023_cell_005" parent="." index="88" unique_id=105756211]
+collision_layer = 0
+collision_mask = 2
+freeze = true
+freeze_mode = 1
+contact_monitor = true
+max_contacts_reported = 1
+
+[node name="Glass_cell_023_cell_005" parent="Glass_cell_023_cell_005" index="0" unique_id=1538919032]
+surface_material_override/0 = SubResource("StandardMaterial3D_6ofuy")
+
+[node name="Glass_cell_023_cell_006" parent="." index="89" unique_id=2120939290]
+collision_layer = 0
+collision_mask = 2
+freeze = true
+freeze_mode = 1
+contact_monitor = true
+max_contacts_reported = 1
+
+[node name="Glass_cell_023_cell_006" parent="Glass_cell_023_cell_006" index="0" unique_id=923955443]
+surface_material_override/0 = SubResource("StandardMaterial3D_6ofuy")
+
+[node name="Glass_cell_022_cell" parent="." index="90" unique_id=521075134]
+collision_layer = 0
+collision_mask = 2
+freeze = true
+freeze_mode = 1
+contact_monitor = true
+max_contacts_reported = 1
+
+[node name="Glass_cell_022_cell" parent="Glass_cell_022_cell" index="0" unique_id=1675578832]
+surface_material_override/0 = SubResource("StandardMaterial3D_6ofuy")
+
+[node name="Glass_cell_022_cell_001" parent="." index="91" unique_id=670614830]
+collision_layer = 0
+collision_mask = 2
+freeze = true
+freeze_mode = 1
+contact_monitor = true
+max_contacts_reported = 1
+
+[node name="Glass_cell_022_cell_001" parent="Glass_cell_022_cell_001" index="0" unique_id=1077078765]
+surface_material_override/0 = SubResource("StandardMaterial3D_6ofuy")
+
+[node name="Glass_cell_022_cell_002" parent="." index="92" unique_id=1857645439]
+collision_layer = 0
+collision_mask = 2
+freeze = true
+freeze_mode = 1
+contact_monitor = true
+max_contacts_reported = 1
+
+[node name="Glass_cell_022_cell_002" parent="Glass_cell_022_cell_002" index="0" unique_id=233552504]
+surface_material_override/0 = SubResource("StandardMaterial3D_6ofuy")
+
+[node name="Glass_cell_022_cell_003" parent="." index="93" unique_id=1210896948]
+collision_layer = 0
+collision_mask = 2
+freeze = true
+freeze_mode = 1
+contact_monitor = true
+max_contacts_reported = 1
+
+[node name="Glass_cell_022_cell_003" parent="Glass_cell_022_cell_003" index="0" unique_id=309046630]
+surface_material_override/0 = SubResource("StandardMaterial3D_6ofuy")
+
+[node name="Glass_cell_022_cell_004" parent="." index="94" unique_id=1488602362]
+collision_layer = 0
+collision_mask = 2
+freeze = true
+freeze_mode = 1
+contact_monitor = true
+max_contacts_reported = 1
+
+[node name="Glass_cell_022_cell_004" parent="Glass_cell_022_cell_004" index="0" unique_id=597869514]
+surface_material_override/0 = SubResource("StandardMaterial3D_6ofuy")
+
+[node name="Glass_cell_022_cell_005" parent="." index="95" unique_id=154343502]
+collision_layer = 0
+collision_mask = 2
+freeze = true
+freeze_mode = 1
+contact_monitor = true
+max_contacts_reported = 1
+
+[node name="Glass_cell_022_cell_005" parent="Glass_cell_022_cell_005" index="0" unique_id=347582882]
+surface_material_override/0 = SubResource("StandardMaterial3D_6ofuy")
+
+[node name="Glass_cell_022_cell_006" parent="." index="96" unique_id=642366905]
+collision_layer = 0
+collision_mask = 2
+freeze = true
+freeze_mode = 1
+contact_monitor = true
+max_contacts_reported = 1
+
+[node name="Glass_cell_022_cell_006" parent="Glass_cell_022_cell_006" index="0" unique_id=1287823481]
+surface_material_override/0 = SubResource("StandardMaterial3D_6ofuy")
+
+[node name="Glass_cell_022_cell_007" parent="." index="97" unique_id=290676137]
+collision_layer = 0
+collision_mask = 2
+freeze = true
+freeze_mode = 1
+contact_monitor = true
+max_contacts_reported = 1
+
+[node name="Glass_cell_022_cell_007" parent="Glass_cell_022_cell_007" index="0" unique_id=291601451]
+surface_material_override/0 = SubResource("StandardMaterial3D_6ofuy")
+
+[node name="Glass_cell_021_cell_001" parent="." index="98" unique_id=319735548]
+collision_layer = 0
+collision_mask = 2
+freeze = true
+freeze_mode = 1
+contact_monitor = true
+max_contacts_reported = 1
+
+[node name="Glass_cell_021_cell_001" parent="Glass_cell_021_cell_001" index="0" unique_id=1881240894]
+surface_material_override/0 = SubResource("StandardMaterial3D_6ofuy")
+
+[node name="Glass_cell_021_cell_002" parent="." index="99" unique_id=2104097575]
+collision_layer = 0
+collision_mask = 2
+freeze = true
+freeze_mode = 1
+contact_monitor = true
+max_contacts_reported = 1
+
+[node name="Glass_cell_021_cell_002" parent="Glass_cell_021_cell_002" index="0" unique_id=2062837732]
+surface_material_override/0 = SubResource("StandardMaterial3D_6ofuy")
+
+[node name="Glass_cell_021_cell_004" parent="." index="100" unique_id=1241839167]
+collision_layer = 0
+collision_mask = 2
+freeze = true
+freeze_mode = 1
+contact_monitor = true
+max_contacts_reported = 1
+
+[node name="Glass_cell_021_cell_004" parent="Glass_cell_021_cell_004" index="0" unique_id=125858787]
+surface_material_override/0 = SubResource("StandardMaterial3D_6ofuy")
+
+[node name="Glass_cell_021_cell_005" parent="." index="101" unique_id=1203940104]
+collision_layer = 0
+collision_mask = 2
+freeze = true
+freeze_mode = 1
+contact_monitor = true
+max_contacts_reported = 1
+
+[node name="Glass_cell_021_cell_005" parent="Glass_cell_021_cell_005" index="0" unique_id=1013452863]
+surface_material_override/0 = SubResource("StandardMaterial3D_6ofuy")
+
+[node name="Glass_cell_021_cell_006" parent="." index="102" unique_id=758378447]
+collision_layer = 0
+collision_mask = 2
+freeze = true
+freeze_mode = 1
+contact_monitor = true
+max_contacts_reported = 1
+
+[node name="Glass_cell_021_cell_006" parent="Glass_cell_021_cell_006" index="0" unique_id=1054684762]
+surface_material_override/0 = SubResource("StandardMaterial3D_6ofuy")
+
+[node name="Glass_cell_021_cell_007" parent="." index="103" unique_id=800264990]
+collision_layer = 0
+collision_mask = 2
+freeze = true
+freeze_mode = 1
+contact_monitor = true
+max_contacts_reported = 1
+
+[node name="Glass_cell_021_cell_007" parent="Glass_cell_021_cell_007" index="0" unique_id=1085986885]
+surface_material_override/0 = SubResource("StandardMaterial3D_6ofuy")
+
+[node name="Glass_cell_020_cell" parent="." index="104" unique_id=1980840423]
+collision_layer = 0
+collision_mask = 2
+freeze = true
+freeze_mode = 1
+contact_monitor = true
+max_contacts_reported = 1
+
+[node name="Glass_cell_020_cell" parent="Glass_cell_020_cell" index="0" unique_id=891880067]
+surface_material_override/0 = SubResource("StandardMaterial3D_6ofuy")
+
+[node name="Glass_cell_020_cell_001" parent="." index="105" unique_id=888461323]
+collision_layer = 0
+collision_mask = 2
+freeze = true
+freeze_mode = 1
+contact_monitor = true
+max_contacts_reported = 1
+
+[node name="Glass_cell_020_cell_001" parent="Glass_cell_020_cell_001" index="0" unique_id=1259221265]
+surface_material_override/0 = SubResource("StandardMaterial3D_6ofuy")
+
+[node name="Glass_cell_020_cell_003" parent="." index="106" unique_id=204028295]
+collision_layer = 0
+collision_mask = 2
+freeze = true
+freeze_mode = 1
+contact_monitor = true
+max_contacts_reported = 1
+
+[node name="Glass_cell_020_cell_003" parent="Glass_cell_020_cell_003" index="0" unique_id=1595989687]
+surface_material_override/0 = SubResource("StandardMaterial3D_6ofuy")
+
+[node name="Glass_cell_020_cell_004" parent="." index="107" unique_id=132742428]
+collision_layer = 0
+collision_mask = 2
+freeze = true
+freeze_mode = 1
+contact_monitor = true
+max_contacts_reported = 1
+
+[node name="Glass_cell_020_cell_004" parent="Glass_cell_020_cell_004" index="0" unique_id=310384171]
+surface_material_override/0 = SubResource("StandardMaterial3D_6ofuy")
+
+[node name="Glass_cell_020_cell_005" parent="." index="108" unique_id=1633616152]
+collision_layer = 0
+collision_mask = 2
+freeze = true
+freeze_mode = 1
+contact_monitor = true
+max_contacts_reported = 1
+
+[node name="Glass_cell_020_cell_005" parent="Glass_cell_020_cell_005" index="0" unique_id=2138402342]
+surface_material_override/0 = SubResource("StandardMaterial3D_6ofuy")
+
+[node name="Glass_cell_020_cell_006" parent="." index="109" unique_id=283579952]
+collision_layer = 0
+collision_mask = 2
+freeze = true
+freeze_mode = 1
+contact_monitor = true
+max_contacts_reported = 1
+
+[node name="Glass_cell_020_cell_006" parent="Glass_cell_020_cell_006" index="0" unique_id=1322621380]
+surface_material_override/0 = SubResource("StandardMaterial3D_6ofuy")
+
+[node name="Glass_cell_019_cell" parent="." index="110" unique_id=394649952]
+collision_layer = 0
+collision_mask = 2
+freeze = true
+freeze_mode = 1
+contact_monitor = true
+max_contacts_reported = 1
+
+[node name="Glass_cell_019_cell" parent="Glass_cell_019_cell" index="0" unique_id=671013378]
+surface_material_override/0 = SubResource("StandardMaterial3D_6ofuy")
+
+[node name="Glass_cell_019_cell_001" parent="." index="111" unique_id=1319656666]
+collision_layer = 0
+collision_mask = 2
+freeze = true
+freeze_mode = 1
+contact_monitor = true
+max_contacts_reported = 1
+
+[node name="Glass_cell_019_cell_001" parent="Glass_cell_019_cell_001" index="0" unique_id=169499286]
+surface_material_override/0 = SubResource("StandardMaterial3D_6ofuy")
+
+[node name="Glass_cell_019_cell_002" parent="." index="112" unique_id=2100387135]
+collision_layer = 0
+collision_mask = 2
+freeze = true
+freeze_mode = 1
+contact_monitor = true
+max_contacts_reported = 1
+
+[node name="Glass_cell_019_cell_002" parent="Glass_cell_019_cell_002" index="0" unique_id=299770507]
+surface_material_override/0 = SubResource("StandardMaterial3D_6ofuy")
+
+[node name="Glass_cell_019_cell_003" parent="." index="113" unique_id=1701739916]
+collision_layer = 0
+collision_mask = 2
+freeze = true
+freeze_mode = 1
+contact_monitor = true
+max_contacts_reported = 1
+
+[node name="Glass_cell_019_cell_003" parent="Glass_cell_019_cell_003" index="0" unique_id=696901158]
+surface_material_override/0 = SubResource("StandardMaterial3D_6ofuy")
+
+[node name="Glass_cell_019_cell_004" parent="." index="114" unique_id=1777986490]
+collision_layer = 0
+collision_mask = 2
+freeze = true
+freeze_mode = 1
+contact_monitor = true
+max_contacts_reported = 1
+
+[node name="Glass_cell_019_cell_004" parent="Glass_cell_019_cell_004" index="0" unique_id=1153064076]
+surface_material_override/0 = SubResource("StandardMaterial3D_6ofuy")
+
+[node name="Glass_cell_019_cell_005" parent="." index="115" unique_id=674952227]
+collision_layer = 0
+collision_mask = 2
+freeze = true
+freeze_mode = 1
+contact_monitor = true
+max_contacts_reported = 1
+
+[node name="Glass_cell_019_cell_005" parent="Glass_cell_019_cell_005" index="0" unique_id=507663899]
+surface_material_override/0 = SubResource("StandardMaterial3D_6ofuy")
+
+[node name="Glass_cell_019_cell_006" parent="." index="116" unique_id=1367417341]
+collision_layer = 0
+collision_mask = 2
+freeze = true
+freeze_mode = 1
+contact_monitor = true
+max_contacts_reported = 1
+
+[node name="Glass_cell_019_cell_006" parent="Glass_cell_019_cell_006" index="0" unique_id=1313586242]
+surface_material_override/0 = SubResource("StandardMaterial3D_6ofuy")
+
+[node name="Glass_cell_018_cell" parent="." index="117" unique_id=421429958]
+collision_layer = 0
+collision_mask = 2
+freeze = true
+freeze_mode = 1
+contact_monitor = true
+max_contacts_reported = 1
+
+[node name="Glass_cell_018_cell" parent="Glass_cell_018_cell" index="0" unique_id=2115977423]
+surface_material_override/0 = SubResource("StandardMaterial3D_6ofuy")
+
+[node name="Glass_cell_018_cell_001" parent="." index="118" unique_id=1670844758]
+collision_layer = 0
+collision_mask = 2
+freeze = true
+freeze_mode = 1
+contact_monitor = true
+max_contacts_reported = 1
+
+[node name="Glass_cell_018_cell_001" parent="Glass_cell_018_cell_001" index="0" unique_id=2091669691]
+surface_material_override/0 = SubResource("StandardMaterial3D_6ofuy")
+
+[node name="Glass_cell_018_cell_002" parent="." index="119" unique_id=896979477]
+collision_layer = 0
+collision_mask = 2
+freeze = true
+freeze_mode = 1
+contact_monitor = true
+max_contacts_reported = 1
+
+[node name="Glass_cell_018_cell_002" parent="Glass_cell_018_cell_002" index="0" unique_id=1147145120]
+surface_material_override/0 = SubResource("StandardMaterial3D_6ofuy")
+
+[node name="Glass_cell_018_cell_003" parent="." index="120" unique_id=1245496513]
+collision_layer = 0
+collision_mask = 2
+freeze = true
+freeze_mode = 1
+contact_monitor = true
+max_contacts_reported = 1
+
+[node name="Glass_cell_018_cell_003" parent="Glass_cell_018_cell_003" index="0" unique_id=590331165]
+surface_material_override/0 = SubResource("StandardMaterial3D_6ofuy")
+
+[node name="Glass_cell_017_cell" parent="." index="121" unique_id=149960396]
+collision_layer = 0
+collision_mask = 2
+freeze = true
+freeze_mode = 1
+contact_monitor = true
+max_contacts_reported = 1
+
+[node name="Glass_cell_017_cell" parent="Glass_cell_017_cell" index="0" unique_id=1962230262]
+surface_material_override/0 = SubResource("StandardMaterial3D_6ofuy")
+
+[node name="Glass_cell_017_cell_002" parent="." index="122" unique_id=328688826]
+collision_layer = 0
+collision_mask = 2
+freeze = true
+freeze_mode = 1
+contact_monitor = true
+max_contacts_reported = 1
+
+[node name="Glass_cell_017_cell_002" parent="Glass_cell_017_cell_002" index="0" unique_id=1890501171]
+surface_material_override/0 = SubResource("StandardMaterial3D_6ofuy")
+
+[node name="Glass_cell_017_cell_003" parent="." index="123" unique_id=55272465]
+collision_layer = 0
+collision_mask = 2
+freeze = true
+freeze_mode = 1
+contact_monitor = true
+max_contacts_reported = 1
+
+[node name="Glass_cell_017_cell_003" parent="Glass_cell_017_cell_003" index="0" unique_id=20229175]
+surface_material_override/0 = SubResource("StandardMaterial3D_6ofuy")
+
+[node name="Glass_cell_017_cell_004" parent="." index="124" unique_id=1761568592]
+collision_layer = 0
+collision_mask = 2
+freeze = true
+freeze_mode = 1
+contact_monitor = true
+max_contacts_reported = 1
+
+[node name="Glass_cell_017_cell_004" parent="Glass_cell_017_cell_004" index="0" unique_id=1701204494]
+surface_material_override/0 = SubResource("StandardMaterial3D_6ofuy")
+
+[node name="Glass_cell_017_cell_005" parent="." index="125" unique_id=779067519]
+collision_layer = 0
+collision_mask = 2
+freeze = true
+freeze_mode = 1
+contact_monitor = true
+max_contacts_reported = 1
+
+[node name="Glass_cell_017_cell_005" parent="Glass_cell_017_cell_005" index="0" unique_id=1435630497]
+surface_material_override/0 = SubResource("StandardMaterial3D_6ofuy")
+
+[node name="Glass_cell_016_cell" parent="." index="126" unique_id=637911166]
+collision_layer = 0
+collision_mask = 2
+freeze = true
+freeze_mode = 1
+contact_monitor = true
+max_contacts_reported = 1
+
+[node name="Glass_cell_016_cell" parent="Glass_cell_016_cell" index="0" unique_id=1380973386]
+surface_material_override/0 = SubResource("StandardMaterial3D_6ofuy")
+
+[node name="Glass_cell_016_cell_001" parent="." index="127" unique_id=1112560551]
+collision_layer = 0
+collision_mask = 2
+freeze = true
+freeze_mode = 1
+contact_monitor = true
+max_contacts_reported = 1
+
+[node name="Glass_cell_016_cell_001" parent="Glass_cell_016_cell_001" index="0" unique_id=1248084914]
+surface_material_override/0 = SubResource("StandardMaterial3D_6ofuy")
+
+[node name="Glass_cell_016_cell_002" parent="." index="128" unique_id=1883633739]
+collision_layer = 0
+collision_mask = 2
+freeze = true
+freeze_mode = 1
+contact_monitor = true
+max_contacts_reported = 1
+
+[node name="Glass_cell_016_cell_002" parent="Glass_cell_016_cell_002" index="0" unique_id=2129459746]
+surface_material_override/0 = SubResource("StandardMaterial3D_6ofuy")
+
+[node name="Glass_cell_016_cell_004" parent="." index="129" unique_id=32229708]
+collision_layer = 0
+collision_mask = 2
+freeze = true
+freeze_mode = 1
+contact_monitor = true
+max_contacts_reported = 1
+
+[node name="Glass_cell_016_cell_004" parent="Glass_cell_016_cell_004" index="0" unique_id=2073801800]
+surface_material_override/0 = SubResource("StandardMaterial3D_6ofuy")
+
+[node name="Glass_cell_016_cell_005" parent="." index="130" unique_id=1560689957]
+collision_layer = 0
+collision_mask = 2
+freeze = true
+freeze_mode = 1
+contact_monitor = true
+max_contacts_reported = 1
+
+[node name="Glass_cell_016_cell_005" parent="Glass_cell_016_cell_005" index="0" unique_id=1059040148]
+surface_material_override/0 = SubResource("StandardMaterial3D_6ofuy")
+
+[node name="Glass_cell_016_cell_006" parent="." index="131" unique_id=2095973076]
+collision_layer = 0
+collision_mask = 2
+freeze = true
+freeze_mode = 1
+contact_monitor = true
+max_contacts_reported = 1
+
+[node name="Glass_cell_016_cell_006" parent="Glass_cell_016_cell_006" index="0" unique_id=835108530]
+surface_material_override/0 = SubResource("StandardMaterial3D_6ofuy")
+
+[node name="Glass_cell_015_cell" parent="." index="132" unique_id=1494459240]
+collision_layer = 0
+collision_mask = 2
+freeze = true
+freeze_mode = 1
+contact_monitor = true
+max_contacts_reported = 1
+
+[node name="Glass_cell_015_cell" parent="Glass_cell_015_cell" index="0" unique_id=1430518172]
+surface_material_override/0 = SubResource("StandardMaterial3D_6ofuy")
+
+[node name="Glass_cell_015_cell_001" parent="." index="133" unique_id=1062374117]
+collision_layer = 0
+collision_mask = 2
+freeze = true
+freeze_mode = 1
+contact_monitor = true
+max_contacts_reported = 1
+
+[node name="Glass_cell_015_cell_001" parent="Glass_cell_015_cell_001" index="0" unique_id=1153601683]
+surface_material_override/0 = SubResource("StandardMaterial3D_6ofuy")
+
+[node name="Glass_cell_015_cell_002" parent="." index="134" unique_id=2103497529]
+collision_layer = 0
+collision_mask = 2
+freeze = true
+freeze_mode = 1
+contact_monitor = true
+max_contacts_reported = 1
+
+[node name="Glass_cell_015_cell_002" parent="Glass_cell_015_cell_002" index="0" unique_id=857505970]
+surface_material_override/0 = SubResource("StandardMaterial3D_6ofuy")
+
+[node name="Glass_cell_015_cell_003" parent="." index="135" unique_id=997605866]
+collision_layer = 0
+collision_mask = 2
+freeze = true
+freeze_mode = 1
+contact_monitor = true
+max_contacts_reported = 1
+
+[node name="Glass_cell_015_cell_003" parent="Glass_cell_015_cell_003" index="0" unique_id=979056631]
+surface_material_override/0 = SubResource("StandardMaterial3D_6ofuy")
+
+[node name="Glass_cell_015_cell_004" parent="." index="136" unique_id=503448872]
+collision_layer = 0
+collision_mask = 2
+freeze = true
+freeze_mode = 1
+contact_monitor = true
+max_contacts_reported = 1
+
+[node name="Glass_cell_015_cell_004" parent="Glass_cell_015_cell_004" index="0" unique_id=1921092779]
+surface_material_override/0 = SubResource("StandardMaterial3D_6ofuy")
+
+[node name="Glass_cell_014_cell" parent="." index="137" unique_id=718738514]
+collision_layer = 0
+collision_mask = 2
+freeze = true
+freeze_mode = 1
+contact_monitor = true
+max_contacts_reported = 1
+
+[node name="Glass_cell_014_cell" parent="Glass_cell_014_cell" index="0" unique_id=395496136]
+surface_material_override/0 = SubResource("StandardMaterial3D_6ofuy")
+
+[node name="Glass_cell_014_cell_001" parent="." index="138" unique_id=17474824]
+collision_layer = 0
+collision_mask = 2
+freeze = true
+freeze_mode = 1
+contact_monitor = true
+max_contacts_reported = 1
+
+[node name="Glass_cell_014_cell_001" parent="Glass_cell_014_cell_001" index="0" unique_id=1061766244]
+surface_material_override/0 = SubResource("StandardMaterial3D_6ofuy")
+
+[node name="Glass_cell_014_cell_002" parent="." index="139" unique_id=2000341017]
+collision_layer = 0
+collision_mask = 2
+freeze = true
+freeze_mode = 1
+contact_monitor = true
+max_contacts_reported = 1
+
+[node name="Glass_cell_014_cell_002" parent="Glass_cell_014_cell_002" index="0" unique_id=1315249702]
+surface_material_override/0 = SubResource("StandardMaterial3D_6ofuy")
+
+[node name="Glass_cell_014_cell_003" parent="." index="140" unique_id=65003245]
+collision_layer = 0
+collision_mask = 2
+freeze = true
+freeze_mode = 1
+contact_monitor = true
+max_contacts_reported = 1
+
+[node name="Glass_cell_014_cell_003" parent="Glass_cell_014_cell_003" index="0" unique_id=224754675]
+surface_material_override/0 = SubResource("StandardMaterial3D_6ofuy")
+
+[node name="Glass_cell_014_cell_004" parent="." index="141" unique_id=223401033]
+collision_layer = 0
+collision_mask = 2
+freeze = true
+freeze_mode = 1
+contact_monitor = true
+max_contacts_reported = 1
+
+[node name="Glass_cell_014_cell_004" parent="Glass_cell_014_cell_004" index="0" unique_id=168710735]
+surface_material_override/0 = SubResource("StandardMaterial3D_6ofuy")
+
+[node name="Glass_cell_014_cell_005" parent="." index="142" unique_id=500521622]
+collision_layer = 0
+collision_mask = 2
+freeze = true
+freeze_mode = 1
+contact_monitor = true
+max_contacts_reported = 1
+
+[node name="Glass_cell_014_cell_005" parent="Glass_cell_014_cell_005" index="0" unique_id=208755010]
+surface_material_override/0 = SubResource("StandardMaterial3D_6ofuy")
+
+[node name="Glass_cell_013_cell" parent="." index="143" unique_id=1642657511]
+collision_layer = 0
+collision_mask = 2
+freeze = true
+freeze_mode = 1
+contact_monitor = true
+max_contacts_reported = 1
+
+[node name="Glass_cell_013_cell" parent="Glass_cell_013_cell" index="0" unique_id=203011830]
+surface_material_override/0 = SubResource("StandardMaterial3D_6ofuy")
+
+[node name="Glass_cell_013_cell_001" parent="." index="144" unique_id=278375164]
+collision_layer = 0
+collision_mask = 2
+freeze = true
+freeze_mode = 1
+contact_monitor = true
+max_contacts_reported = 1
+
+[node name="Glass_cell_013_cell_001" parent="Glass_cell_013_cell_001" index="0" unique_id=1945421372]
+surface_material_override/0 = SubResource("StandardMaterial3D_6ofuy")
+
+[node name="Glass_cell_013_cell_003" parent="." index="145" unique_id=1453725807]
+collision_layer = 0
+collision_mask = 2
+freeze = true
+freeze_mode = 1
+contact_monitor = true
+max_contacts_reported = 1
+
+[node name="Glass_cell_013_cell_003" parent="Glass_cell_013_cell_003" index="0" unique_id=1440074364]
+surface_material_override/0 = SubResource("StandardMaterial3D_6ofuy")
+
+[node name="Glass_cell_013_cell_004" parent="." index="146" unique_id=2138326468]
+collision_layer = 0
+collision_mask = 2
+freeze = true
+freeze_mode = 1
+contact_monitor = true
+max_contacts_reported = 1
+
+[node name="Glass_cell_013_cell_004" parent="Glass_cell_013_cell_004" index="0" unique_id=854348267]
+surface_material_override/0 = SubResource("StandardMaterial3D_6ofuy")
+
+[node name="Glass_cell_013_cell_005" parent="." index="147" unique_id=558634806]
+collision_layer = 0
+collision_mask = 2
+freeze = true
+freeze_mode = 1
+contact_monitor = true
+max_contacts_reported = 1
+
+[node name="Glass_cell_013_cell_005" parent="Glass_cell_013_cell_005" index="0" unique_id=536422446]
+surface_material_override/0 = SubResource("StandardMaterial3D_6ofuy")
+
+[node name="Glass_cell_013_cell_006" parent="." index="148" unique_id=591129935]
+collision_layer = 0
+collision_mask = 2
+freeze = true
+freeze_mode = 1
+contact_monitor = true
+max_contacts_reported = 1
+
+[node name="Glass_cell_013_cell_006" parent="Glass_cell_013_cell_006" index="0" unique_id=963557478]
+surface_material_override/0 = SubResource("StandardMaterial3D_6ofuy")
+
+[node name="Glass_cell_012_cell" parent="." index="149" unique_id=345113478]
+collision_layer = 0
+collision_mask = 2
+freeze = true
+freeze_mode = 1
+contact_monitor = true
+max_contacts_reported = 1
+
+[node name="Glass_cell_012_cell" parent="Glass_cell_012_cell" index="0" unique_id=1342108878]
+surface_material_override/0 = SubResource("StandardMaterial3D_6ofuy")
+
+[node name="Glass_cell_012_cell_001" parent="." index="150" unique_id=219004361]
+collision_layer = 0
+collision_mask = 2
+freeze = true
+freeze_mode = 1
+contact_monitor = true
+max_contacts_reported = 1
+
+[node name="Glass_cell_012_cell_001" parent="Glass_cell_012_cell_001" index="0" unique_id=301469063]
+surface_material_override/0 = SubResource("StandardMaterial3D_6ofuy")
+
+[node name="Glass_cell_012_cell_002" parent="." index="151" unique_id=1917507023]
+collision_layer = 0
+collision_mask = 2
+freeze = true
+freeze_mode = 1
+contact_monitor = true
+max_contacts_reported = 1
+
+[node name="Glass_cell_012_cell_002" parent="Glass_cell_012_cell_002" index="0" unique_id=539566154]
+surface_material_override/0 = SubResource("StandardMaterial3D_6ofuy")
+
+[node name="Glass_cell_012_cell_003" parent="." index="152" unique_id=575064836]
+collision_layer = 0
+collision_mask = 2
+freeze = true
+freeze_mode = 1
+contact_monitor = true
+max_contacts_reported = 1
+
+[node name="Glass_cell_012_cell_003" parent="Glass_cell_012_cell_003" index="0" unique_id=312309079]
+surface_material_override/0 = SubResource("StandardMaterial3D_6ofuy")
+
+[node name="Glass_cell_012_cell_005" parent="." index="153" unique_id=1100463295]
+collision_layer = 0
+collision_mask = 2
+freeze = true
+freeze_mode = 1
+contact_monitor = true
+max_contacts_reported = 1
+
+[node name="Glass_cell_012_cell_005" parent="Glass_cell_012_cell_005" index="0" unique_id=1879627813]
+surface_material_override/0 = SubResource("StandardMaterial3D_6ofuy")
+
+[node name="Glass_cell_011_cell" parent="." index="154" unique_id=539213694]
+collision_layer = 0
+collision_mask = 2
+freeze = true
+freeze_mode = 1
+contact_monitor = true
+max_contacts_reported = 1
+
+[node name="Glass_cell_011_cell" parent="Glass_cell_011_cell" index="0" unique_id=792472305]
+surface_material_override/0 = SubResource("StandardMaterial3D_6ofuy")
+
+[node name="Glass_cell_011_cell_001" parent="." index="155" unique_id=102190415]
+collision_layer = 0
+collision_mask = 2
+freeze = true
+freeze_mode = 1
+contact_monitor = true
+max_contacts_reported = 1
+
+[node name="Glass_cell_011_cell_001" parent="Glass_cell_011_cell_001" index="0" unique_id=1155364704]
+surface_material_override/0 = SubResource("StandardMaterial3D_6ofuy")
+
+[node name="Glass_cell_011_cell_002" parent="." index="156" unique_id=869560598]
+collision_layer = 0
+collision_mask = 2
+freeze = true
+freeze_mode = 1
+contact_monitor = true
+max_contacts_reported = 1
+
+[node name="Glass_cell_011_cell_002" parent="Glass_cell_011_cell_002" index="0" unique_id=449787664]
+surface_material_override/0 = SubResource("StandardMaterial3D_6ofuy")
+
+[node name="Glass_cell_011_cell_003" parent="." index="157" unique_id=47211105]
+collision_layer = 0
+collision_mask = 2
+freeze = true
+freeze_mode = 1
+contact_monitor = true
+max_contacts_reported = 1
+
+[node name="Glass_cell_011_cell_003" parent="Glass_cell_011_cell_003" index="0" unique_id=91482775]
+surface_material_override/0 = SubResource("StandardMaterial3D_6ofuy")
+
+[node name="Glass_cell_010_cell" parent="." index="158" unique_id=1775616614]
+collision_layer = 0
+collision_mask = 2
+freeze = true
+freeze_mode = 1
+contact_monitor = true
+max_contacts_reported = 1
+
+[node name="Glass_cell_010_cell" parent="Glass_cell_010_cell" index="0" unique_id=541504176]
+surface_material_override/0 = SubResource("StandardMaterial3D_6ofuy")
+
+[node name="Glass_cell_010_cell_001" parent="." index="159" unique_id=930793252]
+collision_layer = 0
+collision_mask = 2
+freeze = true
+freeze_mode = 1
+contact_monitor = true
+max_contacts_reported = 1
+
+[node name="Glass_cell_010_cell_001" parent="Glass_cell_010_cell_001" index="0" unique_id=11616766]
+surface_material_override/0 = SubResource("StandardMaterial3D_6ofuy")
+
+[node name="Glass_cell_010_cell_002" parent="." index="160" unique_id=1400174767]
+collision_layer = 0
+collision_mask = 2
+freeze = true
+freeze_mode = 1
+contact_monitor = true
+max_contacts_reported = 1
+
+[node name="Glass_cell_010_cell_002" parent="Glass_cell_010_cell_002" index="0" unique_id=1523295763]
+surface_material_override/0 = SubResource("StandardMaterial3D_6ofuy")
+
+[node name="Glass_cell_010_cell_003" parent="." index="161" unique_id=1355682088]
+collision_layer = 0
+collision_mask = 2
+freeze = true
+freeze_mode = 1
+contact_monitor = true
+max_contacts_reported = 1
+
+[node name="Glass_cell_010_cell_003" parent="Glass_cell_010_cell_003" index="0" unique_id=1992111287]
+surface_material_override/0 = SubResource("StandardMaterial3D_6ofuy")
+
+[node name="Glass_cell_010_cell_004" parent="." index="162" unique_id=414459319]
+collision_layer = 0
+collision_mask = 2
+freeze = true
+freeze_mode = 1
+contact_monitor = true
+max_contacts_reported = 1
+
+[node name="Glass_cell_010_cell_004" parent="Glass_cell_010_cell_004" index="0" unique_id=265975974]
+surface_material_override/0 = SubResource("StandardMaterial3D_6ofuy")
+
+[node name="Glass_cell_010_cell_005" parent="." index="163" unique_id=365654269]
+collision_layer = 0
+collision_mask = 2
+freeze = true
+freeze_mode = 1
+contact_monitor = true
+max_contacts_reported = 1
+
+[node name="Glass_cell_010_cell_005" parent="Glass_cell_010_cell_005" index="0" unique_id=59377322]
+surface_material_override/0 = SubResource("StandardMaterial3D_6ofuy")
+
+[node name="Glass_cell_009_cell_002" parent="." index="164" unique_id=1116598678]
+collision_layer = 0
+collision_mask = 2
+freeze = true
+freeze_mode = 1
+contact_monitor = true
+max_contacts_reported = 1
+
+[node name="Glass_cell_009_cell_002" parent="Glass_cell_009_cell_002" index="0" unique_id=259301919]
+surface_material_override/0 = SubResource("StandardMaterial3D_6ofuy")
+
+[node name="Glass_cell_009_cell_003" parent="." index="165" unique_id=901166503]
+collision_layer = 0
+collision_mask = 2
+freeze = true
+freeze_mode = 1
+contact_monitor = true
+max_contacts_reported = 1
+
+[node name="Glass_cell_009_cell_003" parent="Glass_cell_009_cell_003" index="0" unique_id=813409624]
+surface_material_override/0 = SubResource("StandardMaterial3D_6ofuy")
+
+[node name="Glass_cell_009_cell_004" parent="." index="166" unique_id=1699203304]
+collision_layer = 0
+collision_mask = 2
+freeze = true
+freeze_mode = 1
+contact_monitor = true
+max_contacts_reported = 1
+
+[node name="Glass_cell_009_cell_004" parent="Glass_cell_009_cell_004" index="0" unique_id=1574812896]
+surface_material_override/0 = SubResource("StandardMaterial3D_6ofuy")
+
+[node name="Glass_cell_009_cell_005" parent="." index="167" unique_id=1962971402]
+collision_layer = 0
+collision_mask = 2
+freeze = true
+freeze_mode = 1
+contact_monitor = true
+max_contacts_reported = 1
+
+[node name="Glass_cell_009_cell_005" parent="Glass_cell_009_cell_005" index="0" unique_id=495037351]
+surface_material_override/0 = SubResource("StandardMaterial3D_6ofuy")
+
+[node name="Glass_cell_009_cell_006" parent="." index="168" unique_id=1674094954]
+collision_layer = 0
+collision_mask = 2
+freeze = true
+freeze_mode = 1
+contact_monitor = true
+max_contacts_reported = 1
+
+[node name="Glass_cell_009_cell_006" parent="Glass_cell_009_cell_006" index="0" unique_id=1737678471]
+surface_material_override/0 = SubResource("StandardMaterial3D_6ofuy")
+
+[node name="Glass_cell_008_cell_001" parent="." index="169" unique_id=2080624369]
+collision_layer = 0
+collision_mask = 2
+freeze = true
+freeze_mode = 1
+contact_monitor = true
+max_contacts_reported = 1
+
+[node name="Glass_cell_008_cell_001" parent="Glass_cell_008_cell_001" index="0" unique_id=1332345649]
+surface_material_override/0 = SubResource("StandardMaterial3D_6ofuy")
+
+[node name="Glass_cell_008_cell_002" parent="." index="170" unique_id=1453874418]
+collision_layer = 0
+collision_mask = 2
+freeze = true
+freeze_mode = 1
+contact_monitor = true
+max_contacts_reported = 1
+
+[node name="Glass_cell_008_cell_002" parent="Glass_cell_008_cell_002" index="0" unique_id=671123849]
+surface_material_override/0 = SubResource("StandardMaterial3D_6ofuy")
+
+[node name="Glass_cell_008_cell_003" parent="." index="171" unique_id=982815397]
+collision_layer = 0
+collision_mask = 2
+freeze = true
+freeze_mode = 1
+contact_monitor = true
+max_contacts_reported = 1
+
+[node name="Glass_cell_008_cell_003" parent="Glass_cell_008_cell_003" index="0" unique_id=773170039]
+surface_material_override/0 = SubResource("StandardMaterial3D_6ofuy")
+
+[node name="Glass_cell_007_cell" parent="." index="172" unique_id=149763653]
+collision_layer = 0
+collision_mask = 2
+freeze = true
+freeze_mode = 1
+contact_monitor = true
+max_contacts_reported = 1
+
+[node name="Glass_cell_007_cell" parent="Glass_cell_007_cell" index="0" unique_id=1293502239]
+surface_material_override/0 = SubResource("StandardMaterial3D_6ofuy")
+
+[node name="Glass_cell_007_cell_002" parent="." index="173" unique_id=1433692673]
+collision_layer = 0
+collision_mask = 2
+freeze = true
+freeze_mode = 1
+contact_monitor = true
+max_contacts_reported = 1
+
+[node name="Glass_cell_007_cell_002" parent="Glass_cell_007_cell_002" index="0" unique_id=1251958117]
+surface_material_override/0 = SubResource("StandardMaterial3D_6ofuy")
+
+[node name="Glass_cell_007_cell_003" parent="." index="174" unique_id=337590574]
+collision_layer = 0
+collision_mask = 2
+freeze = true
+freeze_mode = 1
+contact_monitor = true
+max_contacts_reported = 1
+
+[node name="Glass_cell_007_cell_003" parent="Glass_cell_007_cell_003" index="0" unique_id=1613194190]
+surface_material_override/0 = SubResource("StandardMaterial3D_6ofuy")
+
+[node name="Glass_cell_007_cell_004" parent="." index="175" unique_id=433006935]
+collision_layer = 0
+collision_mask = 2
+freeze = true
+freeze_mode = 1
+contact_monitor = true
+max_contacts_reported = 1
+
+[node name="Glass_cell_007_cell_004" parent="Glass_cell_007_cell_004" index="0" unique_id=1772069939]
+surface_material_override/0 = SubResource("StandardMaterial3D_6ofuy")
+
+[node name="Glass_cell_007_cell_005" parent="." index="176" unique_id=102703251]
+collision_layer = 0
+collision_mask = 2
+freeze = true
+freeze_mode = 1
+contact_monitor = true
+max_contacts_reported = 1
+
+[node name="Glass_cell_007_cell_005" parent="Glass_cell_007_cell_005" index="0" unique_id=1260178230]
+surface_material_override/0 = SubResource("StandardMaterial3D_6ofuy")
+
+[node name="Glass_cell_007_cell_006" parent="." index="177" unique_id=1410939154]
+collision_layer = 0
+collision_mask = 2
+freeze = true
+freeze_mode = 1
+contact_monitor = true
+max_contacts_reported = 1
+
+[node name="Glass_cell_007_cell_006" parent="Glass_cell_007_cell_006" index="0" unique_id=1848754258]
+surface_material_override/0 = SubResource("StandardMaterial3D_6ofuy")
+
+[node name="Glass_cell_006_cell" parent="." index="178" unique_id=347480647]
+collision_layer = 0
+collision_mask = 2
+freeze = true
+freeze_mode = 1
+contact_monitor = true
+max_contacts_reported = 1
+
+[node name="Glass_cell_006_cell" parent="Glass_cell_006_cell" index="0" unique_id=72528448]
+surface_material_override/0 = SubResource("StandardMaterial3D_6ofuy")
+
+[node name="Glass_cell_006_cell_002" parent="." index="179" unique_id=1201656304]
+collision_layer = 0
+collision_mask = 2
+freeze = true
+freeze_mode = 1
+contact_monitor = true
+max_contacts_reported = 1
+
+[node name="Glass_cell_006_cell_002" parent="Glass_cell_006_cell_002" index="0" unique_id=1740119983]
+surface_material_override/0 = SubResource("StandardMaterial3D_6ofuy")
+
+[node name="Glass_cell_006_cell_003" parent="." index="180" unique_id=1902920185]
+collision_layer = 0
+collision_mask = 2
+freeze = true
+freeze_mode = 1
+contact_monitor = true
+max_contacts_reported = 1
+
+[node name="Glass_cell_006_cell_003" parent="Glass_cell_006_cell_003" index="0" unique_id=1098808793]
+surface_material_override/0 = SubResource("StandardMaterial3D_6ofuy")
+
+[node name="Glass_cell_006_cell_004" parent="." index="181" unique_id=147375196]
+collision_layer = 0
+collision_mask = 2
+freeze = true
+freeze_mode = 1
+contact_monitor = true
+max_contacts_reported = 1
+
+[node name="Glass_cell_006_cell_004" parent="Glass_cell_006_cell_004" index="0" unique_id=1332450568]
+surface_material_override/0 = SubResource("StandardMaterial3D_6ofuy")
+
+[node name="Glass_cell_006_cell_005" parent="." index="182" unique_id=803493587]
+collision_layer = 0
+collision_mask = 2
+freeze = true
+freeze_mode = 1
+contact_monitor = true
+max_contacts_reported = 1
+
+[node name="Glass_cell_006_cell_005" parent="Glass_cell_006_cell_005" index="0" unique_id=1731252597]
+surface_material_override/0 = SubResource("StandardMaterial3D_6ofuy")
+
+[node name="Glass_cell_006_cell_006" parent="." index="183" unique_id=1108411664]
+collision_layer = 0
+collision_mask = 2
+freeze = true
+freeze_mode = 1
+contact_monitor = true
+max_contacts_reported = 1
+
+[node name="Glass_cell_006_cell_006" parent="Glass_cell_006_cell_006" index="0" unique_id=1755412404]
+surface_material_override/0 = SubResource("StandardMaterial3D_6ofuy")
+
+[node name="Glass_cell_005_cell" parent="." index="184" unique_id=1433894993]
+collision_layer = 0
+collision_mask = 2
+freeze = true
+freeze_mode = 1
+contact_monitor = true
+max_contacts_reported = 1
+
+[node name="Glass_cell_005_cell" parent="Glass_cell_005_cell" index="0" unique_id=538661995]
+surface_material_override/0 = SubResource("StandardMaterial3D_6ofuy")
+
+[node name="Glass_cell_005_cell_001" parent="." index="185" unique_id=1801105984]
+collision_layer = 0
+collision_mask = 2
+freeze = true
+freeze_mode = 1
+contact_monitor = true
+max_contacts_reported = 1
+
+[node name="Glass_cell_005_cell_001" parent="Glass_cell_005_cell_001" index="0" unique_id=60783324]
+surface_material_override/0 = SubResource("StandardMaterial3D_6ofuy")
+
+[node name="Glass_cell_005_cell_002" parent="." index="186" unique_id=1246200520]
+collision_layer = 0
+collision_mask = 2
+freeze = true
+freeze_mode = 1
+contact_monitor = true
+max_contacts_reported = 1
+
+[node name="Glass_cell_005_cell_002" parent="Glass_cell_005_cell_002" index="0" unique_id=785006306]
+surface_material_override/0 = SubResource("StandardMaterial3D_6ofuy")
+
+[node name="Glass_cell_005_cell_003" parent="." index="187" unique_id=2086145681]
+collision_layer = 0
+collision_mask = 2
+freeze = true
+freeze_mode = 1
+contact_monitor = true
+max_contacts_reported = 1
+
+[node name="Glass_cell_005_cell_003" parent="Glass_cell_005_cell_003" index="0" unique_id=1252672681]
+surface_material_override/0 = SubResource("StandardMaterial3D_6ofuy")
+
+[node name="Glass_cell_005_cell_005" parent="." index="189" unique_id=1235795708]
+collision_layer = 0
+collision_mask = 2
+freeze = true
+freeze_mode = 1
+contact_monitor = true
+max_contacts_reported = 1
+
+[node name="Glass_cell_005_cell_005" parent="Glass_cell_005_cell_005" index="0" unique_id=1535046501]
+surface_material_override/0 = SubResource("StandardMaterial3D_6ofuy")
+
+[node name="Glass_cell_004_cell" parent="." index="190" unique_id=1420346807]
+collision_layer = 0
+collision_mask = 2
+freeze = true
+freeze_mode = 1
+contact_monitor = true
+max_contacts_reported = 1
+
+[node name="Glass_cell_004_cell" parent="Glass_cell_004_cell" index="0" unique_id=1380629516]
+surface_material_override/0 = SubResource("StandardMaterial3D_6ofuy")
+
+[node name="Glass_cell_004_cell_002" parent="." index="191" unique_id=886247784]
+collision_layer = 0
+collision_mask = 2
+freeze = true
+freeze_mode = 1
+contact_monitor = true
+max_contacts_reported = 1
+
+[node name="Glass_cell_004_cell_002" parent="Glass_cell_004_cell_002" index="0" unique_id=2116865834]
+surface_material_override/0 = SubResource("StandardMaterial3D_6ofuy")
+
+[node name="Glass_cell_004_cell_003" parent="." index="192" unique_id=117953552]
+collision_layer = 0
+collision_mask = 2
+freeze = true
+freeze_mode = 1
+contact_monitor = true
+max_contacts_reported = 1
+
+[node name="Glass_cell_004_cell_003" parent="Glass_cell_004_cell_003" index="0" unique_id=1228840776]
+surface_material_override/0 = SubResource("StandardMaterial3D_6ofuy")
+
+[node name="Glass_cell_004_cell_004" parent="." index="193" unique_id=531524536]
+collision_layer = 0
+collision_mask = 2
+freeze = true
+freeze_mode = 1
+contact_monitor = true
+max_contacts_reported = 1
+
+[node name="Glass_cell_004_cell_004" parent="Glass_cell_004_cell_004" index="0" unique_id=723198896]
+surface_material_override/0 = SubResource("StandardMaterial3D_6ofuy")
+
+[node name="Glass_cell_004_cell_006" parent="." index="194" unique_id=155427928]
+collision_layer = 0
+collision_mask = 2
+freeze = true
+freeze_mode = 1
+contact_monitor = true
+max_contacts_reported = 1
+
+[node name="Glass_cell_004_cell_006" parent="Glass_cell_004_cell_006" index="0" unique_id=1220999113]
+surface_material_override/0 = SubResource("StandardMaterial3D_6ofuy")
+
+[node name="Glass_cell_004_cell_007" parent="." index="195" unique_id=973468221]
+collision_layer = 0
+collision_mask = 2
+freeze = true
+freeze_mode = 1
+contact_monitor = true
+max_contacts_reported = 1
+
+[node name="Glass_cell_004_cell_007" parent="Glass_cell_004_cell_007" index="0" unique_id=453078202]
+surface_material_override/0 = SubResource("StandardMaterial3D_6ofuy")
+
+[node name="Glass_cell_003_cell" parent="." index="196" unique_id=1209853557]
+collision_layer = 0
+collision_mask = 2
+freeze = true
+freeze_mode = 1
+contact_monitor = true
+max_contacts_reported = 1
+
+[node name="Glass_cell_003_cell" parent="Glass_cell_003_cell" index="0" unique_id=1660162606]
+surface_material_override/0 = SubResource("StandardMaterial3D_6ofuy")
+
+[node name="Glass_cell_003_cell_002" parent="." index="197" unique_id=1771386496]
+collision_layer = 0
+collision_mask = 2
+freeze = true
+freeze_mode = 1
+contact_monitor = true
+max_contacts_reported = 1
+
+[node name="Glass_cell_003_cell_002" parent="Glass_cell_003_cell_002" index="0" unique_id=334560943]
+surface_material_override/0 = SubResource("StandardMaterial3D_6ofuy")
+
+[node name="Glass_cell_003_cell_003" parent="." index="198" unique_id=2067183232]
+collision_layer = 0
+collision_mask = 2
+freeze = true
+freeze_mode = 1
+contact_monitor = true
+max_contacts_reported = 1
+
+[node name="Glass_cell_003_cell_003" parent="Glass_cell_003_cell_003" index="0" unique_id=983441305]
+surface_material_override/0 = SubResource("StandardMaterial3D_6ofuy")
+
+[node name="Glass_cell_003_cell_004" parent="." index="199" unique_id=70034273]
+collision_layer = 0
+collision_mask = 2
+freeze = true
+freeze_mode = 1
+contact_monitor = true
+max_contacts_reported = 1
+
+[node name="Glass_cell_003_cell_004" parent="Glass_cell_003_cell_004" index="0" unique_id=276189741]
+surface_material_override/0 = SubResource("StandardMaterial3D_6ofuy")
+
+[node name="Glass_cell_003_cell_005" parent="." index="200" unique_id=1385658521]
+collision_layer = 0
+collision_mask = 2
+freeze = true
+freeze_mode = 1
+contact_monitor = true
+max_contacts_reported = 1
+
+[node name="Glass_cell_003_cell_005" parent="Glass_cell_003_cell_005" index="0" unique_id=1719535378]
+surface_material_override/0 = SubResource("StandardMaterial3D_6ofuy")
+
+[node name="Glass_cell_003_cell_006" parent="." index="201" unique_id=1656256683]
+collision_layer = 0
+collision_mask = 2
+freeze = true
+freeze_mode = 1
+contact_monitor = true
+max_contacts_reported = 1
+
+[node name="Glass_cell_003_cell_006" parent="Glass_cell_003_cell_006" index="0" unique_id=1570980806]
+surface_material_override/0 = SubResource("StandardMaterial3D_6ofuy")
+
+[node name="Glass_cell_002_cell" parent="." index="202" unique_id=274769569]
+collision_layer = 0
+collision_mask = 2
+freeze = true
+freeze_mode = 1
+contact_monitor = true
+max_contacts_reported = 1
+
+[node name="Glass_cell_002_cell" parent="Glass_cell_002_cell" index="0" unique_id=1353600776]
+surface_material_override/0 = SubResource("StandardMaterial3D_6ofuy")
+
+[node name="Glass_cell_002_cell_001" parent="." index="203" unique_id=1869852530]
+collision_layer = 0
+collision_mask = 2
+freeze = true
+freeze_mode = 1
+contact_monitor = true
+max_contacts_reported = 1
+
+[node name="Glass_cell_002_cell_001" parent="Glass_cell_002_cell_001" index="0" unique_id=551560825]
+surface_material_override/0 = SubResource("StandardMaterial3D_6ofuy")
+
+[node name="Glass_cell_002_cell_002" parent="." index="204" unique_id=23162386]
+collision_layer = 0
+collision_mask = 2
+freeze = true
+freeze_mode = 1
+contact_monitor = true
+max_contacts_reported = 1
+
+[node name="Glass_cell_002_cell_002" parent="Glass_cell_002_cell_002" index="0" unique_id=1086444795]
+surface_material_override/0 = SubResource("StandardMaterial3D_6ofuy")
+
+[node name="Glass_cell_002_cell_003" parent="." index="205" unique_id=1292441062]
+collision_layer = 0
+collision_mask = 2
+freeze = true
+freeze_mode = 1
+contact_monitor = true
+max_contacts_reported = 1
+
+[node name="Glass_cell_002_cell_003" parent="Glass_cell_002_cell_003" index="0" unique_id=2090451527]
+surface_material_override/0 = SubResource("StandardMaterial3D_6ofuy")
+
+[node name="Glass_cell_002_cell_004" parent="." index="206" unique_id=2106163379]
+collision_layer = 0
+collision_mask = 2
+freeze = true
+freeze_mode = 1
+contact_monitor = true
+max_contacts_reported = 1
+
+[node name="Glass_cell_002_cell_004" parent="Glass_cell_002_cell_004" index="0" unique_id=1346176813]
+surface_material_override/0 = SubResource("StandardMaterial3D_6ofuy")
+
+[node name="Glass_cell_002_cell_005" parent="." index="207" unique_id=1622043098]
+collision_layer = 0
+collision_mask = 2
+freeze = true
+freeze_mode = 1
+contact_monitor = true
+max_contacts_reported = 1
+
+[node name="Glass_cell_002_cell_005" parent="Glass_cell_002_cell_005" index="0" unique_id=871844579]
+surface_material_override/0 = SubResource("StandardMaterial3D_6ofuy")
+
+[node name="Glass_cell_002_cell_006" parent="." index="208" unique_id=1881925878]
+collision_layer = 0
+collision_mask = 2
+freeze = true
+freeze_mode = 1
+contact_monitor = true
+max_contacts_reported = 1
+
+[node name="Glass_cell_002_cell_006" parent="Glass_cell_002_cell_006" index="0" unique_id=754137694]
+surface_material_override/0 = SubResource("StandardMaterial3D_6ofuy")
+
+[node name="Glass_cell_002_cell_007" parent="." index="209" unique_id=662597063]
+collision_layer = 0
+collision_mask = 2
+freeze = true
+freeze_mode = 1
+contact_monitor = true
+max_contacts_reported = 1
+
+[node name="Glass_cell_002_cell_007" parent="Glass_cell_002_cell_007" index="0" unique_id=291457792]
+surface_material_override/0 = SubResource("StandardMaterial3D_6ofuy")
+
+[node name="Glass_cell_001_cell" parent="." index="210" unique_id=1213489449]
+collision_layer = 0
+collision_mask = 2
+freeze = true
+freeze_mode = 1
+contact_monitor = true
+max_contacts_reported = 1
+
+[node name="Glass_cell_001_cell" parent="Glass_cell_001_cell" index="0" unique_id=1104055775]
+surface_material_override/0 = SubResource("StandardMaterial3D_6ofuy")
+
+[node name="Glass_cell_001_cell_002" parent="." index="211" unique_id=2077990943]
+collision_layer = 0
+collision_mask = 2
+freeze = true
+freeze_mode = 1
+contact_monitor = true
+max_contacts_reported = 1
+
+[node name="Glass_cell_001_cell_002" parent="Glass_cell_001_cell_002" index="0" unique_id=102324913]
+surface_material_override/0 = SubResource("StandardMaterial3D_6ofuy")
+
+[node name="Glass_cell_001_cell_003" parent="." index="212" unique_id=702933569]
+collision_layer = 0
+collision_mask = 2
+freeze = true
+freeze_mode = 1
+contact_monitor = true
+max_contacts_reported = 1
+
+[node name="Glass_cell_001_cell_003" parent="Glass_cell_001_cell_003" index="0" unique_id=433067319]
+surface_material_override/0 = SubResource("StandardMaterial3D_6ofuy")
+
+[node name="Glass_cell_001_cell_004" parent="." index="213" unique_id=770228605]
+collision_layer = 0
+collision_mask = 2
+freeze = true
+freeze_mode = 1
+contact_monitor = true
+max_contacts_reported = 1
+
+[node name="Glass_cell_001_cell_004" parent="Glass_cell_001_cell_004" index="0" unique_id=795681325]
+surface_material_override/0 = SubResource("StandardMaterial3D_6ofuy")
+
+[node name="Glass_cell_001_cell_005" parent="." index="214" unique_id=1972115085]
+collision_layer = 0
+collision_mask = 2
+freeze = true
+freeze_mode = 1
+contact_monitor = true
+max_contacts_reported = 1
+
+[node name="Glass_cell_001_cell_005" parent="Glass_cell_001_cell_005" index="0" unique_id=598485139]
+surface_material_override/0 = SubResource("StandardMaterial3D_6ofuy")
+
+[node name="Glass_cell_001_cell_006" parent="." index="215" unique_id=860288667]
+collision_layer = 0
+collision_mask = 2
+freeze = true
+freeze_mode = 1
+contact_monitor = true
+max_contacts_reported = 1
+
+[node name="Glass_cell_001_cell_006" parent="Glass_cell_001_cell_006" index="0" unique_id=1558036587]
+surface_material_override/0 = SubResource("StandardMaterial3D_6ofuy")
+
+[node name="Glass_cell_cell" parent="." index="216" unique_id=56749693]
+collision_layer = 0
+collision_mask = 2
+freeze = true
+freeze_mode = 1
+contact_monitor = true
+max_contacts_reported = 1
+
+[node name="Glass_cell_cell" parent="Glass_cell_cell" index="0" unique_id=1441777975]
+surface_material_override/0 = SubResource("StandardMaterial3D_6ofuy")
+
+[node name="Glass_cell_cell_001" parent="." index="217" unique_id=478706914]
+collision_layer = 0
+collision_mask = 2
+freeze = true
+freeze_mode = 1
+contact_monitor = true
+max_contacts_reported = 1
+
+[node name="Glass_cell_cell_001" parent="Glass_cell_cell_001" index="0" unique_id=871910473]
+surface_material_override/0 = SubResource("StandardMaterial3D_6ofuy")
+
+[node name="Glass_cell_cell_002" parent="." index="218" unique_id=3473514]
+collision_layer = 0
+collision_mask = 2
+freeze = true
+freeze_mode = 1
+contact_monitor = true
+max_contacts_reported = 1
+
+[node name="Glass_cell_cell_002" parent="Glass_cell_cell_002" index="0" unique_id=2129642544]
+surface_material_override/0 = SubResource("StandardMaterial3D_6ofuy")
+
+[node name="Glass_cell_cell_003" parent="." index="219" unique_id=1954093706]
+collision_layer = 0
+collision_mask = 2
+freeze = true
+freeze_mode = 1
+contact_monitor = true
+max_contacts_reported = 1
+
+[node name="Glass_cell_cell_003" parent="Glass_cell_cell_003" index="0" unique_id=689219279]
+surface_material_override/0 = SubResource("StandardMaterial3D_6ofuy")
+
+[node name="Glass_cell_cell_004" parent="." index="220" unique_id=1563797225]
+collision_layer = 0
+collision_mask = 2
+freeze = true
+freeze_mode = 1
+contact_monitor = true
+max_contacts_reported = 1
+
+[node name="Glass_cell_cell_004" parent="Glass_cell_cell_004" index="0" unique_id=155994520]
+surface_material_override/0 = SubResource("StandardMaterial3D_6ofuy")
+
+[node name="Glass_cell_cell_005" parent="." index="221" unique_id=1472334310]
+collision_layer = 0
+collision_mask = 2
+freeze = true
+freeze_mode = 1
+contact_monitor = true
+max_contacts_reported = 1
+
+[node name="Glass_cell_cell_005" parent="Glass_cell_cell_005" index="0" unique_id=598670061]
+surface_material_override/0 = SubResource("StandardMaterial3D_6ofuy")

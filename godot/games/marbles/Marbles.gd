@@ -22,14 +22,14 @@ var marbles_game_state: MarblesGameState = null:
 enum MarblesMessage {
   StateRefresh,
   MarblesUpdate,
-  GameStart,
+  UpdateGamePhase,
   UsernameVisibility,
 }
 
 signal leaderboard_updated
 
 var _sync_accumulator: float = 0.0
-const SYNC_RATE: float = 1.0 / 20.0
+const SYNC_RATE: float = 1.0 / 30.0
 var leaderboard_update_timer = Timer.new()
 
 func _ready() -> void:
@@ -60,12 +60,15 @@ func _ready() -> void:
   MultiplayerClient.connected_state.left_lobby.connect(_left_lobby)
   MultiplayerClient.packet_received.connect(_handle_peer_packet)
 
+  animation_synchronizer.animation_finished.connect(handle_anim_finished)
   # Get all nodes in a group for the current map
   _bind_inputs()
   if is_game_host:
     peer_is_ready.connect(_peer_is_ready)
     chatter_loaded.connect(_on_loaded_chatter_data)
     all_peers_loaded_in.connect(server_only_start_game)
+
+    current_map.finish_area.body_entered.connect(on_finish_area_entered)
     current_map.out_of_bounds_area.body_entered.connect(_authority_handle_marble_out_of_bounds)
 
     var new_state := MarblesGameState.new()
@@ -101,8 +104,10 @@ func _bind_inputs() -> void:
   InputMap.action_add_event("previous_placement", previous_placement_event)
 
 func handle_anim_finished(_anim_name: String) -> void:
-  print("handle anim_finished")
-  pass
+  if _anim_name == "Intro":
+    var anim_camera := get_viewport().get_camera_3d()
+    current_map.camera.snap_to_camera(anim_camera)
+    current_map.camera.camera.current = true
 
 var focused_marble: MarbleBot = null:
   set(new_value):
@@ -114,6 +119,7 @@ var focused_marble: MarbleBot = null:
     focused_marble = new_value
 
 func _peer_is_ready(peer_id: int) -> void:
+  print("Sending refresh state to new peer %d" % peer_id  )
   _send_refresh_state(peer_id)
 
 func _exit_tree() -> void:
@@ -145,6 +151,10 @@ func _input(event: InputEvent) -> void:
 
 func increment_focused_bot(index_change: int) -> void:
   refresh_leaderboard()
+  for bot in leaderboard:
+    if bot.chatter:
+      print(bot.chatter.login, ' is frozen -> ', bot.freeze)
+
   leaderboard_update_timer.start(0)
   if focused_marble == null:
     return
@@ -233,12 +243,9 @@ func server_only_start_game() -> void:
   if is_game_host:
     animation_synchronizer.authority_play_animation("Intro")
     await animation_synchronizer.animation_finished
-    var anim_camera := get_viewport().get_camera_3d()
-    current_map.camera.snap_to_camera(anim_camera)
-    current_map.camera.camera.current = true
 
     MultiplayerClient.send_packet(
-      { "type": MarblesMessage.GameStart, "started_at": Time.get_unix_time_from_system() },
+      { "type": MarblesMessage.UpdateGamePhase, "phase": MarblesGameState.GameState.Playing },
       MultiplayerPeer.TARGET_PEER_BROADCAST,
       MultiplayerPeer.TRANSFER_MODE_RELIABLE,
       true
@@ -268,10 +275,28 @@ func get_or_create_bot_for_peer(peer_id: int) -> MarbleBot:
     bot.chatter = chatter
   return bot
 
+var game_is_finished := false
 func on_finish_area_entered(body: PhysicsBody3D) -> void:
+  if game_is_finished or !MultiplayerClient.is_lobby_host():
+    return
+
   if body is MarbleBot:
     if not placements.has(body.chatter):
       placements.append(body.chatter)
+      game_is_finished = true
+      MultiplayerClient.send_packet(
+        { "type": MarblesMessage.UpdateGamePhase, "phase": MarblesGameState.GameState.Slowmo },
+        MultiplayerPeer.TARGET_PEER_BROADCAST,
+        MultiplayerPeer.TRANSFER_MODE_RELIABLE,
+        true
+      )
+      await get_tree().create_timer(.3).timeout
+      MultiplayerClient.send_packet(
+        { "type": MarblesMessage.UpdateGamePhase, "phase": MarblesGameState.GameState.Ended },
+        MultiplayerPeer.TARGET_PEER_BROADCAST,
+        MultiplayerPeer.TRANSFER_MODE_RELIABLE,
+        true
+      )
 
 func _handle_peer_packet(sender_id: int, packet: Dictionary) -> void:
   if game_state == null and packet.type != MarblesMessage.StateRefresh:
@@ -284,9 +309,9 @@ func _handle_peer_packet(sender_id: int, packet: Dictionary) -> void:
       var incoming = packet.get("state")
       if incoming is MarblesGameState:
         marbles_game_state = incoming
-    MarblesMessage.GameStart:
+    MarblesMessage.UpdateGamePhase:
       if marbles_game_state:
-        marbles_game_state.game_state = MarblesGameState.GameState.Playing
+        marbles_game_state.game_state = packet.get("phase", MarblesGameState.GameState.Waiting)
         for game_state_marble in marbles_game_state.marbles_by_peer_id.values():
           game_state_marble.frozen = false
     MarblesMessage.MarblesUpdate:
@@ -315,12 +340,19 @@ func _apply_game_state() -> void:
     prop.game_started_at = game_state.started_at
   marbles_overlay.hidden = marbles_game_state.game_state != MarblesGameState.GameState.Playing
 
+  if marbles_game_state.game_state == MarblesGameState.GameState.Slowmo:
+    # print(MultiplayerClient.is_lobby_host(), ' - ', 0.1)
+    Engine.time_scale = 0.1
+  else:
+    # print(MultiplayerClient.is_lobby_host(), ' - ', 1.0)
+    Engine.time_scale = 1.0
+
 func _physics_process(delta: float) -> void:
   if Engine.is_editor_hint(): return
-  if not is_game_host: return
-  if game_state == null or game_state.game_state != MarblesGameState.GameState.Playing: return
+  if not MultiplayerClient.is_lobby_host(): return
+  if game_state == null: return
 
-  _sync_accumulator += delta
+  _sync_accumulator += delta / Engine.time_scale
   if _sync_accumulator >= SYNC_RATE:
     _sync_accumulator -= SYNC_RATE
     _broadcast_marble_states()

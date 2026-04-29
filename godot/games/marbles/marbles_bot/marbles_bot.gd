@@ -20,7 +20,15 @@ func update_message(message: String) -> void:
   # chat_bubble.show_message(message, chatter)
 
 func _init() -> void:
-  freeze = true
+  freeze = false
+  freeze_mode = RigidBody3D.FREEZE_MODE_KINEMATIC
+  contact_monitor = true
+  can_sleep = false
+  max_contacts_reported = 1
+
+func _ready() -> void:
+  if Engine.is_editor_hint():
+    return
 
 var show_username: bool = false:
   set(new_value):
@@ -59,23 +67,28 @@ var sync_state: MarblesGameState.MarbleState = null:
   set(new_value):
     if sync_state:
       if has_authority() and freeze != new_value.frozen:
+        # print(MultiplayerClient.my_peer_id(), ' freeze -> ', new_value.frozen)
         freeze = new_value.frozen
     sync_state = new_value
 
 func has_authority() -> bool:
   return MultiplayerClient.my_peer_id() == 1
 
+const LERP_SPEED := 5.0
 var acc_xz_velocity: Vector3 = Vector3.FORWARD
 func _physics_process(_delta: float) -> void:
   if not has_authority() and sync_state != null:
+    var real_delta := _delta / Engine.time_scale
     var dist := global_position.distance_to(sync_state.position)
     if dist > 2.0:
       global_position = sync_state.position
     else:
-      global_position = global_position.lerp(sync_state.position, _delta * 10.0)
+      global_position = global_position.lerp(sync_state.position, real_delta * LERP_SPEED)
+    linear_velocity = linear_velocity.lerp(sync_state.linear_velocity, real_delta * LERP_SPEED)
 
     rotation = Vector3(
-      lerp_angle(rotation.x, sync_state.rotation.x, _delta * 10.0),
-      lerp_angle(rotation.y, sync_state.rotation.y, _delta * 10.0),
-      lerp_angle(rotation.z, sync_state.rotation.z, _delta * 10.0)
+      lerp_angle(rotation.x, sync_state.rotation.x, real_delta * LERP_SPEED),
+      lerp_angle(rotation.y, sync_state.rotation.y, real_delta * LERP_SPEED),
+      lerp_angle(rotation.z, sync_state.rotation.z, real_delta * LERP_SPEED)
     )
+
