@@ -10,7 +10,9 @@ func _post_import(scene: Node) -> Object:
 
 func _collect_meshes(node: Node, result: Array[MeshInstance3D]) -> void:
 	if node is MeshInstance3D:
-		result.append(node as MeshInstance3D)
+		var has_mesh_child := node.get_children().any(func(c): return c is MeshInstance3D)
+		if not has_mesh_child:
+			result.append(node as MeshInstance3D)
 	for child in node.get_children():
 		_collect_meshes(child, result)
 
@@ -24,6 +26,7 @@ func _replace_with_rigid_body(mesh_instance: MeshInstance3D, scene: Node) -> voi
 		return
 
 	var idx := mesh_instance.get_index()
+	mesh_instance.owner = null
 	parent.remove_child(mesh_instance)
 
 	var body := RigidBody3D.new()

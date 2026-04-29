@@ -48,7 +48,14 @@ func snap_to_camera(source: Camera3D) -> void:
   _pitch = asin(clamp(forward.y, -1.0, 1.0))
   _pitch = clamp(_pitch, deg_to_rad(-89.0), deg_to_rad(89.0))
 
+func _exit_tree() -> void:
+  for action in ["move_forward", "move_back", "move_right", "move_left"]:
+    if InputMap.has_action(action):
+      InputMap.erase_action(action)
+
 func _init_input_actions() -> void:
+  if InputMap.has_action("move_forward"):
+    return
   InputMap.add_action("move_forward")
   InputMap.add_action("move_back")
   InputMap.add_action("move_right")

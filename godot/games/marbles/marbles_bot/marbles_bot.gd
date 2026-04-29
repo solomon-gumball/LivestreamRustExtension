@@ -20,7 +20,7 @@ func update_message(message: String) -> void:
   # chat_bubble.show_message(message, chatter)
 
 func _init() -> void:
-  freeze = false
+  freeze = true
   freeze_mode = RigidBody3D.FREEZE_MODE_KINEMATIC
   contact_monitor = true
   can_sleep = false
@@ -66,7 +66,7 @@ func set_emote(emote_in: String) -> void:
 var sync_state: MarblesGameState.MarbleState = null:
   set(new_value):
     if sync_state:
-      if has_authority() and freeze != new_value.frozen:
+      if freeze != new_value.frozen:
         # print(MultiplayerClient.my_peer_id(), ' freeze -> ', new_value.frozen)
         freeze = new_value.frozen
     sync_state = new_value

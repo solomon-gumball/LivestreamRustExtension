@@ -4,6 +4,7 @@ extends Node
 @export var animation_player: AnimationPlayer:
   set(anim_player):
     animation_player = anim_player
+    animation_player.animation_finished.connect(animation_finished.emit)
 
 var state: AnimationState = null
 
@@ -23,6 +24,8 @@ func _new_peer_ready(peer_id: int) -> void:
 
 func _handle_peer_packet(_sender_id: int, packet: Dictionary) -> void:
   match packet.type:
+    GameBase.GlobalGameMessage.ClientReady:
+      _new_peer_ready(_sender_id)
     GameBase.GlobalGameMessage.UpdateAnimation:
       state = AnimationState.new()
       state.started_at = packet.get("started_at", 0)

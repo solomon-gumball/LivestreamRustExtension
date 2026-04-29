@@ -24,6 +24,7 @@ enum MarblesMessage {
   MarblesUpdate,
   UpdateGamePhase,
   UsernameVisibility,
+  SetGameWinner
 }
 
 signal leaderboard_updated
@@ -61,11 +62,12 @@ func _ready() -> void:
   MultiplayerClient.packet_received.connect(_handle_peer_packet)
 
   animation_synchronizer.animation_finished.connect(handle_anim_finished)
+  chatter_loaded.connect(_on_loaded_chatter_data)
+
   # Get all nodes in a group for the current map
   _bind_inputs()
   if is_game_host:
     peer_is_ready.connect(_peer_is_ready)
-    chatter_loaded.connect(_on_loaded_chatter_data)
     all_peers_loaded_in.connect(server_only_start_game)
 
     current_map.finish_area.body_entered.connect(on_finish_area_entered)
@@ -74,8 +76,6 @@ func _ready() -> void:
     var new_state := MarblesGameState.new()
     new_state.started_at = Time.get_unix_time_from_system()
 
-    MultiplayerClient.rtc_peer_ready.connect(_peer_is_ready)
-
     _handle_peer_packet(1, { "type": MarblesMessage.StateRefresh, "state": new_state })
     _send_refresh_state(MultiplayerPeer.TARGET_PEER_BROADCAST)
 
@@ -83,7 +83,8 @@ func toggle_username_visibility(new_visibility: bool) -> void:
   _handle_peer_packet(1, { "type": MarblesMessage.UsernameVisibility, "visibility": new_visibility })
 
 func handle_lobby_updated() -> void:
-  _server_spawn_all_new_players()
+  if MultiplayerClient.is_lobby_host():
+    _server_spawn_all_new_players()
 
 func _authority_handle_marble_out_of_bounds(body: Node) -> void:
   if body is MarbleBot:
@@ -92,6 +93,8 @@ func _authority_handle_marble_out_of_bounds(body: Node) -> void:
     marble_bot.linear_velocity = Vector3.ZERO
 
 func _bind_inputs() -> void:
+  if InputMap.has_action("next_placement"):
+    return
   InputMap.add_action("next_placement")
   InputMap.add_action("previous_placement")
 
@@ -123,6 +126,9 @@ func _peer_is_ready(peer_id: int) -> void:
   _send_refresh_state(peer_id)
 
 func _exit_tree() -> void:
+  for action in ["next_placement", "previous_placement"]:
+    if InputMap.has_action(action):
+      InputMap.erase_action(action)
   if Engine.is_editor_hint():
     return
   if MultiplayerClient.connected_state:
@@ -151,9 +157,6 @@ func _input(event: InputEvent) -> void:
 
 func increment_focused_bot(index_change: int) -> void:
   refresh_leaderboard()
-  for bot in leaderboard:
-    if bot.chatter:
-      print(bot.chatter.login, ' is frozen -> ', bot.freeze)
 
   leaderboard_update_timer.start(0)
   if focused_marble == null:
@@ -256,6 +259,9 @@ func _on_loaded_chatter_data(chatter: Chatter) -> void:
   if peer_id == -1:
     print("Warning: Received loaded chatter data for chatter %s with no associated peer_id" % chatter.id)
     return
+  # if !MultiplayerClient.is_lobby_host():
+  #   print("loaded chatter on non-host!! ", chatter.login)
+
   var marble := get_or_create_bot_for_peer(peer_id)
   marble.chatter = chatter
 
@@ -290,7 +296,14 @@ func on_finish_area_entered(body: PhysicsBody3D) -> void:
         MultiplayerPeer.TRANSFER_MODE_RELIABLE,
         true
       )
-      await get_tree().create_timer(.3).timeout
+      await get_tree().create_timer(.15).timeout
+      MultiplayerClient.send_packet(
+        { "type": MarblesMessage.SetGameWinner, "chatter": body.chatter.id if body.chatter != null else -1 },
+        MultiplayerPeer.TARGET_PEER_BROADCAST,
+        MultiplayerPeer.TRANSFER_MODE_RELIABLE,
+        true
+      )
+      await get_tree().create_timer(.15).timeout
       MultiplayerClient.send_packet(
         { "type": MarblesMessage.UpdateGamePhase, "phase": MarblesGameState.GameState.Ended },
         MultiplayerPeer.TARGET_PEER_BROADCAST,
@@ -305,6 +318,10 @@ func _handle_peer_packet(sender_id: int, packet: Dictionary) -> void:
   match packet.type:
     GlobalGameMessage.ClientReady:
       _send_refresh_state(sender_id)
+    MarblesMessage.SetGameWinner:
+      var winner_id: String = packet.get("chatter", "")
+      print("winner_id ", winner_id)
+      marbles_game_state.winning_chatter = winner_id
     MarblesMessage.StateRefresh:
       var incoming = packet.get("state")
       if incoming is MarblesGameState:
@@ -338,14 +355,17 @@ func _apply_game_state() -> void:
     marble.show_username = game_state.username_visibility
   for prop in current_map.all_props:
     prop.game_started_at = game_state.started_at
-  marbles_overlay.hidden = marbles_game_state.game_state != MarblesGameState.GameState.Playing
 
   if marbles_game_state.game_state == MarblesGameState.GameState.Slowmo:
-    # print(MultiplayerClient.is_lobby_host(), ' - ', 0.1)
     Engine.time_scale = 0.1
   else:
-    # print(MultiplayerClient.is_lobby_host(), ' - ', 1.0)
     Engine.time_scale = 1.0
+  
+  var winning_chatter = chatters.get(marbles_game_state.winning_chatter)\
+    if chatters.has(marbles_game_state.winning_chatter)\
+    else null
+  marbles_overlay.winning_chatter = winning_chatter
+  marbles_overlay.hud_hidden = marbles_game_state.game_state != MarblesGameState.GameState.Playing
 
 func _physics_process(delta: float) -> void:
   if Engine.is_editor_hint(): return

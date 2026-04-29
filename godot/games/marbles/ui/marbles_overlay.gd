@@ -8,6 +8,7 @@ class_name MarblesOverlay
 @onready var lower_place_button: Button = %LowerPlaceButton
 @onready var higher_place_button: Button = %HigherPlaceButton
 @onready var page_container: Control = %PageContainer
+@onready var winner_text: RichTextLabel = %WinnerText
 
 var bots_by_peer_id: Dictionary[int, MarbleBot] = {}
 var map: MarblesMap
@@ -15,15 +16,14 @@ const NUM_OF_PLACEMENTS_TO_SHOW = 10
 var row_template = load("res://games/marbles/ui/marbles_leaderboard_row.tscn")
 var _leaderboard_rows: Array[MarblesLeaderboardRow] = []
 var _last_placements: Array[MarbleBot] = []
-var hidden: bool = false:
+var hud_hidden: bool = false:
   set(new_hidden):
-    if !new_hidden and hidden:
-      print("animating in", new_hidden, hidden)
+    if !new_hidden and hud_hidden:
       page_container.modulate.a = 0.0
       var tween := create_tween()
       tween.tween_property(page_container, "modulate:a", 1.0, 1.0)
-    hidden = new_hidden
-    visible = !hidden
+    hud_hidden = new_hidden
+    page_container.visible = !hud_hidden
 
 signal marble_selected(marble: MarbleBot)
 signal placement_changed(index_delta: int)
@@ -31,6 +31,7 @@ signal placement_changed(index_delta: int)
 func _ready() -> void:
   higher_place_button.pressed.connect(increment_focused_bot.bind(-1))
   lower_place_button.pressed.connect(increment_focused_bot.bind(1))
+  winner_text.visible = false
 
   for child in leaderboard_list.get_children():
     child.queue_free()
@@ -56,6 +57,14 @@ func _update_focused_bot_ui(marble_bot: MarbleBot, placement: int = -1) -> void:
   focused_chatter_header.visible = true
   focused_chatter_placement_label.text = placement_string(placement + 1)
   focused_chatter_name_label.text = marble_bot.chatter.display_name
+
+var winning_chatter: Chatter = null:
+  set(new_chatter):
+    if winning_chatter == new_chatter: return
+    winning_chatter = new_chatter
+    if winning_chatter:
+      winner_text.text = "[wave][color=pink]%s[/color][/wave]\n[wave][color=green]wins![/color]" % winning_chatter.display_name
+      winner_text.visible = true
 
 func placement_string(placement: int) -> String:
   if placement == 1:
