@@ -104,6 +104,7 @@ func set_role(is_player: bool) -> Error:
 func create_lobby(game_title: String) -> String:
   var request = AwaitableHTTPRequest.new()
   add_child(request)
+  print('my_chatter ', WSClient.my_chatter())
   var response := await request.async_request(
     WSClient.get_database_server_url("game-lobby"),
     PackedStringArray(["Content-Type: application/json"]),

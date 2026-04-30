@@ -2,9 +2,12 @@ class_name AnimationSynchronizer
 extends Node
 
 @export var animation_player: AnimationPlayer:
-  set(anim_player):
-    animation_player = anim_player
-    animation_player.animation_finished.connect(animation_finished.emit)
+  set(new_animation_player):
+    if animation_player:
+      animation_player.animation_finished.disconnect(animation_finished.emit)
+    animation_player = new_animation_player
+    if animation_player:
+      animation_player.animation_finished.connect(animation_finished.emit)
 
 var state: AnimationState = null
 

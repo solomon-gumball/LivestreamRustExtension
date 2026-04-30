@@ -6,7 +6,6 @@ const SPEED_INCREASE_PER_SECOND: float = 0.1
 
 @export var max_hit_angle_speed: float = 1.5
 @export var paddle_velocity_influence: float = 0.4
-@export var paddle_half_width: float = 0.5
 @onready var shape_cast: ShapeCast3D = %ShapeCast
 
 var sync_state: PongGameState.PongEntity = PongGameState.PongEntity.new()
@@ -74,6 +73,7 @@ func _check_bounces(proj: Vector3) -> bool:
       return false
     var new_vel: Vector3
     if absf(normal.z) > 0.5:
+      var paddle_half_width := paddle.paddle_collision_box.size.x * 0.5
       var hit_offset := clampf((bounce_position.x - paddle.position.x) / paddle_half_width, -1.0, 1.0)
       new_vel = Vector3(
         hit_offset * max_hit_angle_speed + paddle.velocity.x * paddle_velocity_influence,

@@ -234,8 +234,6 @@ func _handle_peer_packet(sender_id: int, packet: Dictionary) -> void:
       var paddle_state := paddle_state_for_peer(packet.get("winning_peer"))
       paddle_state.score += 1
     PongGameMessage.BallMove:
-      if !MultiplayerClient.is_lobby_host():
-        print("non host received bounce!")
       pong_state.ball_state = PongGameState.PongEntity.new()
       pong_state.ball_state.position = packet.get("position", Vector3.ZERO)
       pong_state.ball_state.velocity = packet.get("velocity", Vector3.ZERO)
