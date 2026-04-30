@@ -6,16 +6,14 @@ const SPEED: float = 3.0
 @export var max_hit_angle_speed: float = 1.5
 @export var paddle_velocity_influence: float = 0.4
 @export var paddle_half_width: float = 0.5
+@onready var shape_cast: ShapeCast3D = %ShapeCast
 
 var sync_state: PongGameState.PongEntity = PongGameState.PongEntity.new()
 
 var paddle_l: PongPaddle = null
 var paddle_r: PongPaddle = null
 
-var _shape := SphereShape3D.new()
-
-func _ready() -> void:
-  _shape.radius = 0.05
+var _last_position: Vector3
 
 func has_authority() -> bool:
   return MultiplayerClient.is_authority()
@@ -32,26 +30,13 @@ func _projected_position() -> Vector3:
   var elapsed := Time.get_unix_time_from_system() - sync_state.sent_at
   return sync_state.position + sync_state.velocity * elapsed
 
-func _find_clear_position(from: Vector3, direction: Vector3) -> Vector3:
-  var space := get_world_3d().direct_space_state
-  var query := PhysicsShapeQueryParameters3D.new()
-  query.shape = _shape
-  query.exclude = [self]
-  var step := _shape.radius
-  var pos := from
-  for i in 5:
-    query.transform = Transform3D(Basis.IDENTITY, pos)
-    if space.intersect_shape(query).is_empty():
-      return pos
-    pos += direction * step
-  return pos
-
 func _send_bounce(bounce_position: Vector3, bounce_velocity: Vector3) -> void:
   var now := Time.get_unix_time_from_system()
-  sync_state.position = _find_clear_position(bounce_position, bounce_velocity.normalized())
+  sync_state.position = bounce_position
   sync_state.velocity = bounce_velocity
   sync_state.sent_at = now
-  print("PEER:", MultiplayerClient.my_peer_id(), " SENT BOUNCE EVENT AT Z - ", bounce_position.z)
+  _last_position = bounce_position
+
   MultiplayerClient.send_packet(
     {
       "type": PongGame.PongGameMessage.BallMove,
@@ -64,53 +49,43 @@ func _send_bounce(bounce_position: Vector3, bounce_velocity: Vector3) -> void:
     true
   )
 
-func _check_bounces(proj: Vector3) -> void:
-  var space := get_world_3d().direct_space_state
-  var query := PhysicsShapeQueryParameters3D.new()
-  query.shape = _shape
-  query.transform = Transform3D(Basis.IDENTITY, proj)
-  query.exclude = [self]
+func _check_bounces(proj: Vector3) -> bool:
+  shape_cast.global_position = _last_position
+  shape_cast.target_position = shape_cast.to_local(proj)
+  shape_cast.force_shapecast_update()
 
-  var hits := space.intersect_shape(query)
-  if hits.is_empty():
-    return
+  if not shape_cast.is_colliding():
+    return false
 
-  var collider: Object = hits[0].collider
+  var collider: Object = shape_cast.get_collider(0)
+  var normal: Vector3 = shape_cast.get_collision_normal(0)
+  var safe_fraction := shape_cast.get_closest_collision_safe_fraction()
+  var bounce_position: Vector3 = shape_cast.to_global(shape_cast.target_position * safe_fraction) + normal * 0.01
   var paddle := collider.get_parent() as PongPaddle if collider else null
-
-  # Ray from behind the ball through the contact point to get the surface normal
-  var ray_origin := proj - sync_state.velocity.normalized() * _shape.radius * 2.0
-  var ray_target := proj + sync_state.velocity.normalized() * _shape.radius * 2.0
-  var ray := PhysicsRayQueryParameters3D.create(ray_origin, ray_target)
-  ray.exclude = [self]
-  var ray_hit := space.intersect_ray(ray)
-  if ray_hit.is_empty():
-    return
-  var normal: Vector3 = ray_hit.normal
 
   if paddle:
     if paddle != _my_paddle():
-      return
+      return false
     var new_vel: Vector3
-    # Face hit (Z normal): apply hit-offset angle based on where on the face the ball landed
     if absf(normal.z) > 0.5:
-      var hit_offset := clampf((proj.x - paddle.position.x) / paddle_half_width, -1.0, 1.0)
+      var hit_offset := clampf((bounce_position.x - paddle.position.x) / paddle_half_width, -1.0, 1.0)
       new_vel = Vector3(
         hit_offset * max_hit_angle_speed + paddle.velocity.x * paddle_velocity_influence,
         0.0,
         -sync_state.velocity.z
       )
     else:
-      # Top/bottom edge hit: reflect off the actual normal
       new_vel = sync_state.velocity.bounce(normal)
       new_vel.y = 0.0
-    _send_bounce(proj, new_vel.normalized() * SPEED)
+    _send_bounce(bounce_position, new_vel.normalized() * SPEED)
+    return true
   else:
     if not has_authority():
-      return
+      return false
     var new_vel := sync_state.velocity.bounce(normal)
     new_vel.y = 0.0
-    _send_bounce(proj, new_vel.normalized() * SPEED)
+    _send_bounce(bounce_position, new_vel.normalized() * SPEED)
+    return true
 
 func _physics_process(_delta: float) -> void:
   if sync_state.sent_at == 0.0:
@@ -119,4 +94,6 @@ func _physics_process(_delta: float) -> void:
   var proj := _projected_position()
   position = proj
 
-  _check_bounces(proj)
+  var bounced := _check_bounces(proj)
+  if not bounced:
+    _last_position = proj

@@ -2,6 +2,9 @@
 
 [ext_resource type="Script" uid="uid://beq5kaqaqnvpq" path="res://games/pong/pong_ball.gd" id="1_c3wl3"]
 
+[sub_resource type="SphereShape3D" id="SphereShape3D_c3wl3"]
+radius = 0.05
+
 [sub_resource type="BoxShape3D" id="BoxShape3D_racd5"]
 size = Vector3(0.1, 0.1, 0.1)
 
@@ -42,6 +45,11 @@ material = SubResource("StandardMaterial3D_u5md4")
 [node name="PongBall" type="CharacterBody3D" unique_id=1722297091]
 motion_mode = 1
 script = ExtResource("1_c3wl3")
+
+[node name="ShapeCast" type="ShapeCast3D" parent="." unique_id=442187417]
+unique_name_in_owner = true
+shape = SubResource("SphereShape3D_c3wl3")
+target_position = Vector3(0, -0.2, 0)
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="." unique_id=1270520286]
 shape = SubResource("BoxShape3D_racd5")
