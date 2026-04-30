@@ -10,4 +10,3 @@ var score_r: int = 0
 var paddle_l_state: PongEntity = PongEntity.new()
 var paddle_r_state: PongEntity = PongEntity.new()
 var ball_state: PongEntity = null
-var pong_animation_state: PongAnimationState = null

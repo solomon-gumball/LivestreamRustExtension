@@ -4,6 +4,7 @@
 [ext_resource type="PackedScene" uid="uid://b2ne4k7x0p3jp" path="res://games/pong/pong_paddle.tscn" id="2_racd5"]
 [ext_resource type="FontFile" uid="uid://7uibxoligyvb" path="res://fonts/HomeVideo-BLG6G.ttf" id="3_433xj"]
 [ext_resource type="Script" uid="uid://bb5m0cki1i1a1" path="res://games/pong/pong_cam_boom.gd" id="3_r2ito"]
+[ext_resource type="Script" uid="uid://txxkpqyixtos" path="res://games/animation_synchronizer.gd" id="anim_sync_script"]
 
 [sub_resource type="Gradient" id="Gradient_racd5"]
 interpolation_mode = 1
@@ -588,6 +589,12 @@ size = Vector3(10, 1, 10)
 transform = Transform3D(8.628619, 0, 0, 0, 1.1936697e-09, 1.0000002, 0, 0.027307978, -4.3711395e-08, 0, 0.008476796, -3.7053255e-10)
 mesh = SubResource("QuadMesh_racd5")
 surface_material_override/0 = SubResource("StandardMaterial3D_r2ito")
+
+[node name="AnimationSynchronizer" type="Node" parent="." unique_id=1548074125 node_paths=PackedStringArray("animation_player")]
+unique_name_in_owner = true
+script = ExtResource("anim_sync_script")
+animation_player = NodePath("../AnimationPlayer")
+metadata/_custom_type_script = "uid://txxkpqyixtos"
 
 [node name="AnimationPlayer" type="AnimationPlayer" parent="." unique_id=1269414756]
 unique_name_in_owner = true

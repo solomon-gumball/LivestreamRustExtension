@@ -48,7 +48,7 @@ node_connections = [&"output", 0, &"StateMachine"]
 [node name="gumbot" unique_id=2126276004 instance=ExtResource("1_npqf2")]
 surface_mat = SubResource("ShaderMaterial_npqf2")
 
-[node name="Skeleton3D" parent="Armature" parent_id_path=PackedInt32Array(1640859719) index="0" unique_id=1320069354]
+[node name="Skeleton3D" parent="Armature" parent_id_path=PackedInt32Array(1663396712) index="0" unique_id=563597638]
 bones/1/position = Vector3(0, 0.11674871, 0)
 bones/2/rotation = Quaternion(-1.9465932e-07, 0.022172924, 0.99975413, -4.3172244e-09)
 bones/3/rotation = Quaternion(-0.036444955, 2.382602e-07, -2.2881357e-08, 0.99933565)
@@ -83,25 +83,25 @@ bones/24/rotation = Quaternion(2.5288108e-07, 0.70710677, 0.70710677, 2.5288108e
 [node name="Hand_L_Socket" parent="Armature/Skeleton3D" index="0" unique_id=541900749]
 transform = Transform3D(-1.0000002, 1.4210855e-14, -3.8941496e-07, 1.85095e-14, -1, -2.644956e-07, -3.894142e-07, -7.8231096e-08, 1.0000017, 0.077872805, 0.09493588, -7.683411e-09)
 
-[node name="Arm" parent="Armature/Skeleton3D" index="1" unique_id=117812780]
+[node name="Arm" parent="Armature/Skeleton3D" index="1" unique_id=704682357]
 surface_material_override/0 = SubResource("ShaderMaterial_npqf2")
 
-[node name="Body" parent="Armature/Skeleton3D" index="2" unique_id=1287329360]
+[node name="Body" parent="Armature/Skeleton3D" index="2" unique_id=63735229]
 surface_material_override/0 = SubResource("ShaderMaterial_npqf2")
 
-[node name="Button" parent="Armature/Skeleton3D" index="3" unique_id=2113639975]
+[node name="Button" parent="Armature/Skeleton3D" index="3" unique_id=73887596]
 surface_material_override/0 = SubResource("ShaderMaterial_npqf2")
 
-[node name="Circle" parent="Armature/Skeleton3D" index="4" unique_id=1107740376]
+[node name="Circle" parent="Armature/Skeleton3D" index="4" unique_id=650134915]
 surface_material_override/0 = SubResource("ShaderMaterial_npqf2")
 
-[node name="Hand_L" parent="Armature/Skeleton3D" index="5" unique_id=1600673180]
+[node name="Hand_L" parent="Armature/Skeleton3D" index="5" unique_id=1520541614]
 surface_material_override/0 = SubResource("ShaderMaterial_npqf2")
 
-[node name="Hand_R" parent="Armature/Skeleton3D" index="6" unique_id=923083982]
+[node name="Hand_R" parent="Armature/Skeleton3D" index="6" unique_id=1851473670]
 surface_material_override/0 = SubResource("ShaderMaterial_npqf2")
 
-[node name="Leg" parent="Armature/Skeleton3D" index="8" unique_id=324976678]
+[node name="Leg" parent="Armature/Skeleton3D" index="8" unique_id=532915998]
 surface_material_override/0 = SubResource("ShaderMaterial_npqf2")
 
 [node name="Head_Socket" parent="Armature/Skeleton3D" index="9" unique_id=1137685559]
@@ -110,8 +110,11 @@ transform = Transform3D(1, 0, 2.3841856e-07, 0, 0.99999994, 0, -2.3841856e-07, 0
 [node name="Spine_Socket" parent="Armature/Skeleton3D" index="10" unique_id=365435926]
 transform = Transform3D(1, 0, 2.3841852e-07, 0, 0.99999994, 0, -2.3841852e-07, 0, 1, 0, 0.14432992, 0)
 
-[node name="Sphere_001" parent="Armature/Skeleton3D" index="12" unique_id=1775802343]
+[node name="Sphere_001" parent="Armature/Skeleton3D" index="12" unique_id=2105630468]
 surface_material_override/0 = SubResource("ShaderMaterial_npqf2")
+
+[node name="CollisionShape3D" parent="." index="4" unique_id=701422005]
+disabled = true
 
 [node name="AnimationTree" parent="." index="5" unique_id=498575357]
 tree_root = SubResource("AnimationNodeBlendTree_jmqfg")

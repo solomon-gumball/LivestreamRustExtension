@@ -16,7 +16,7 @@ var paddle_width := START_WIDTH:
   set(new_width):
     paddle_width = new_width
     paddle_mesh_box.size.x = new_width
-    paddle_collision_shape.size.x = new_width
+    paddle_collision_box.size.x = new_width
 
 var peer_id: int
 var chatter: Chatter:
@@ -28,8 +28,9 @@ var chatter_id: String
 var velocity: Vector3 = Vector3.ZERO
 
 @export var paddle_mesh_box: BoxMesh
-@export var paddle_collision_shape: BoxShape3D
+@export var paddle_collision_box: BoxShape3D
 
+@onready var paddle_collision_shape: CollisionShape3D = %PaddleCollisionShape
 @onready var paddle_mesh: Node3D = %PaddleMesh
 @onready var gumbot: GumBot = %GumBot
 @onready var collision_body: StaticBody3D = %PaddleCollisionArea
@@ -61,7 +62,10 @@ func add_movement_input(direction: Vector2) -> void:
 func has_authority():
   return sync_state.owner == MultiplayerClient.my_peer_id()
 
-var sync_state: PongEntity
+var sync_state: PongEntity:
+  set(new_state):
+    sync_state = new_state
+    # paddle_collision_shape.disabled = !has_authority()
 
 func _phys_move(delta: float) -> void:
   position += velocity * delta

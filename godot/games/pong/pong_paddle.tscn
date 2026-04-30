@@ -28,7 +28,7 @@ emission_energy_multiplier = 3.0
 [node name="PongPaddle" type="Node3D" unique_id=372987713]
 script = ExtResource("1_a14gn")
 paddle_mesh_box = SubResource("BoxMesh_a14gn")
-paddle_collision_shape = SubResource("BoxShape3D_a14gn")
+paddle_collision_box = SubResource("BoxShape3D_a14gn")
 
 [node name="GumBot" parent="." unique_id=2126276004 instance=ExtResource("2_v7xyw")]
 unique_name_in_owner = true
