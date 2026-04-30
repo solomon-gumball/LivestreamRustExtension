@@ -8,7 +8,7 @@
 
 [sub_resource type="Gradient" id="Gradient_p5pdg"]
 offsets = PackedFloat32Array(0, 0.5375335, 1)
-colors = PackedColorArray(0.97, 0.307975, 0.08729998, 0, 0.972549, 0.31764707, 0.09019608, 1, 0.97, 0.307975, 0.08729998, 0)
+colors = PackedColorArray(1, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1, 0)
 
 [sub_resource type="GradientTexture1D" id="GradientTexture1D_xp1vb"]
 gradient = SubResource("Gradient_p5pdg")
@@ -24,7 +24,7 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-color = Color(0, 0, 0, 0.47843137)
+color = Color(0, 0, 0, 0.6666667)
 
 [node name="Panel" type="Control" parent="Overlay" unique_id=2008302669]
 layout_mode = 1
@@ -38,6 +38,7 @@ grow_horizontal = 2
 grow_vertical = 2
 
 [node name="Background" type="TextureRect" parent="Overlay/Panel" unique_id=1113935989]
+self_modulate = Color(0.9137255, 0.36862746, 0.24313726, 1)
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -48,9 +49,15 @@ theme = SubResource("Theme_1i3b8")
 texture = SubResource("GradientTexture1D_xp1vb")
 
 [node name="MarginContainer" type="MarginContainer" parent="Overlay/Panel" unique_id=1027877222]
-layout_mode = 0
-offset_right = 1600.0
-offset_bottom = 263.0
+layout_mode = 1
+anchors_preset = 14
+anchor_top = 0.5
+anchor_right = 1.0
+anchor_bottom = 0.5
+offset_top = -131.5
+offset_bottom = 131.5
+grow_horizontal = 2
+grow_vertical = 2
 theme_override_constants/margin_left = 0
 theme_override_constants/margin_top = 40
 theme_override_constants/margin_right = 0

@@ -40,10 +40,10 @@ grow_horizontal = 2
 grow_vertical = 2
 
 [node name="ColorRect" type="ColorRect" parent="CanvasLayer" unique_id=498058461]
-offset_left = -85.0
-offset_top = -9.0
-offset_right = 110.0
-offset_bottom = 1000.0
+offset_left = -33.680096
+offset_top = -9.895792
+offset_right = 109.99217
+offset_bottom = 1095.0896
 rotation = -0.017453292
 color = Color(0.9137255, 0.36862746, 0.24313726, 1)
 
