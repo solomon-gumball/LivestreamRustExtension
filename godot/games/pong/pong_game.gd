@@ -212,7 +212,7 @@ func _physics_process(_delta: float) -> void:
   if Input.is_key_pressed(KEY_S) or Input.is_key_pressed(KEY_DOWN):
       my_player_paddle.add_movement_input(Vector2(0, -1))
 
-func paddle_state_for_peer(peer_id: int) -> PongEntity:
+func paddle_state_for_peer(peer_id: int) -> PongGameState.PongEntity:
   # print("lookup peer=%d l_owner=%d r_owner=%d" % [peer_id, game_state.paddle_l_state.owner, game_state.paddle_r_state.owner])
   return game_state.paddle_l_state\
     if game_state.paddle_l_state.owner == peer_id\
@@ -236,13 +236,13 @@ func _handle_peer_packet(sender_id: int, packet: Dictionary) -> void:
     PongGameMessage.BallMove:
       if !MultiplayerClient.is_lobby_host():
         print("non host received bounce!")
-      pong_state.ball_state = PongEntity.new()
+      pong_state.ball_state = PongGameState.PongEntity.new()
       pong_state.ball_state.position = packet.get("position", Vector3.ZERO)
       pong_state.ball_state.velocity = packet.get("velocity", Vector3.ZERO)
       pong_state.ball_state.sent_at = packet.get("sent_at", 0.0)
     PongGameMessage.StartRound:
       var direction: Vector3 = packet.get("direction", Vector3(1, 0, 0))
-      pong_state.ball_state = PongEntity.new()
+      pong_state.ball_state = PongGameState.PongEntity.new()
       pong_state.ball_state.owner = 1
       pong_state.ball_state.position = pong_spawn_location.global_position
       pong_state.ball_state.velocity = direction.normalized() * PongBall.SPEED

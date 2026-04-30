@@ -7,7 +7,7 @@ const SPEED: float = 3.0
 @export var paddle_velocity_influence: float = 0.4
 @export var paddle_half_width: float = 0.5
 
-var sync_state: PongEntity = PongEntity.new()
+var sync_state: PongGameState.PongEntity = PongGameState.PongEntity.new()
 
 var paddle_l: PongPaddle = null
 var paddle_r: PongPaddle = null

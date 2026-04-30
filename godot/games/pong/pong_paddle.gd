@@ -50,7 +50,7 @@ enum GumbotAnimState { Taunt, Walking, Pong }
     gumbot.show_name_label = gumbot_animation_state != GumbotAnimState.Pong
 
 func _ready() -> void:
-  sync_state = PongEntity.new()
+  sync_state = PongGameState.PongEntity.new()
   sync_state.position = position
   sync_state.velocity = velocity
   paddle_width = paddle_width
@@ -62,7 +62,7 @@ func add_movement_input(direction: Vector2) -> void:
 func has_authority():
   return sync_state.owner == MultiplayerClient.my_peer_id()
 
-var sync_state: PongEntity:
+var sync_state: PongGameState.PongEntity:
   set(new_state):
     sync_state = new_state
     # paddle_collision_shape.disabled = !has_authority()
