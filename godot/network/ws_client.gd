@@ -10,7 +10,8 @@ var disconnected_state: DisconnectedState = DisconnectedState.new(self)
 var connected_state: ConnectedState = ConnectedState.new(self)
 var authenticated_state: AuthenticatedState = AuthenticatedState.new(self)
 
-var use_local_server: bool = false
+var use_local_server: bool = !OS.has_feature("prod_server")
+
 signal authenticated
 
 func my_chatter() -> Chatter:

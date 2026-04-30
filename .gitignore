@@ -10,6 +10,8 @@ web/node_modules
 web/localhost-key.pem
 web/localhost.pem
 
+overlay/*
+
 # Blender
 *.blend[1-9]
 

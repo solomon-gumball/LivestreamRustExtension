@@ -1,13 +1,24 @@
 GODOT ?= godot
 GODOT_PROJECT = godot
-EXPORT_PRESET = TwitchExtension
-EXPORT_PATH = ../web/public/index.html
 
-.PHONY: export build-rust export-games
+.PHONY: export extension-prod extension-local overlay overlay-linux minigame build-rust export-games
 
-# export: build-rust
-export:
-	$(GODOT) --headless --path $(GODOT_PROJECT) --export-debug "$(EXPORT_PRESET)" "$(EXPORT_PATH)"
+export: extension-prod
+
+extension-prod:
+	$(GODOT) --headless --path $(GODOT_PROJECT) --export-debug "extension_prod" "../web/public/index.html"
+
+extension-local:
+	$(GODOT) --headless --path $(GODOT_PROJECT) --export-debug "extension_local" "../web/public/index.html"
+
+overlay:
+	$(GODOT) --headless --path $(GODOT_PROJECT) --export-debug "overlay" "../overlay/index.html"
+
+overlay-linux:
+	$(GODOT) --headless --path $(GODOT_PROJECT) --export-debug "Linux" "../overlay/gumbots_overlay.x86_64"
+
+minigame:
+	$(GODOT) --headless --path $(GODOT_PROJECT) --export-debug "minigame" "../../livestream-listener/public/games/pong.html"
 
 export-games:
 	bash export_games.sh $(GAME)

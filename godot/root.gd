@@ -6,12 +6,13 @@ var stream_overlay_scene: PackedScene = preload("res://stream_overlay/stream_ove
 var extension_scene: PackedScene = preload("res://pages/extension_root.tscn")
 
 func get_main_scene() -> PackedScene:
-  return stream_overlay_scene if DebugScreenLayout.is_stream_overlay else extension_scene
+  return stream_overlay_scene if OS.has_feature("overlay") else extension_scene
 
 func _ready() -> void:
   ObjectSerializer.register_script(BaseGameState)
   ObjectSerializer.register_script(PongGameState)
   ObjectSerializer.register_script(MarblesGameState)
+  print(OS.has_feature("overlay"))
 
   var debug_ids: Dictionary[int, String] = {
     0: '22445910', # Gumball

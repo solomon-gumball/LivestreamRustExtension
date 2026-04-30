@@ -67,12 +67,10 @@ func _fetch_and_cache_pck(game: GameMetadata) -> bool:
 
   return true
  
-const DISABLE_LOAD_FROM_PCK := true
-
 func load_game_from_lobby(lobby: Lobby) -> void:
   var game := lobby.game
 
-  if !DISABLE_LOAD_FROM_PCK:
+  if OS.has_feature("game_pcks"):
     var loaded := await _fetch_and_cache_pck(game)
     if not loaded:
       return
