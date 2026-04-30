@@ -562,7 +562,6 @@ shape = SubResource("BoxShape3D_433xj")
 
 [node name="CSGBox3D" type="CSGBox3D" parent="WallTop/CollisionShape3D" unique_id=1689618756]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0.11808205)
-visible = false
 size = Vector3(10, 1, 1)
 
 [node name="WallBottom" type="StaticBody3D" parent="." unique_id=2009670674]
@@ -599,3 +598,6 @@ metadata/_custom_type_script = "uid://txxkpqyixtos"
 [node name="AnimationPlayer" type="AnimationPlayer" parent="." unique_id=1269414756]
 unique_name_in_owner = true
 libraries/ = SubResource("AnimationLibrary_oe0u4")
+
+[node name="Marker3D" type="Marker3D" parent="." unique_id=476489750]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.3657775, 0, 0)
