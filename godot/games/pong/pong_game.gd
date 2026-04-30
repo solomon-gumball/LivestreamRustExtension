@@ -245,7 +245,7 @@ func _handle_peer_packet(sender_id: int, packet: Dictionary) -> void:
       pong_state.ball_state = PongGameState.PongEntity.new()
       pong_state.ball_state.owner = 1
       pong_state.ball_state.position = pong_spawn_location.global_position
-      pong_state.ball_state.velocity = direction.normalized() * PongBall.SPEED
+      pong_state.ball_state.velocity = direction.normalized() * PongBall.BASE_SPEED
       pong_state.ball_state.sent_at = packet.get("started_at", 0.0)
       pong_state.phase = PongGameState.Phase.Playing
       pong_state.phase_started_at = packet.get("started_at", 0.0)

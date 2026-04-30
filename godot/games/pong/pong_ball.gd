@@ -1,7 +1,8 @@
 extends CharacterBody3D
 class_name PongBall
 
-const SPEED: float = 3.0
+const BASE_SPEED: float = 3.0
+const SPEED_INCREASE_PER_SECOND: float = 0.1
 
 @export var max_hit_angle_speed: float = 1.5
 @export var paddle_velocity_influence: float = 0.4
@@ -65,6 +66,9 @@ func _check_bounces(proj: Vector3) -> bool:
   var bounce_position: Vector3 = shape_cast.to_global(shape_cast.target_position * safe_fraction) + normal * BOUNCE_OFFSET_MARGIN
   var paddle := collider.get_parent() as PongPaddle if collider else null
 
+  var time_since_last_bounce := Time.get_unix_time_from_system() - sync_state.sent_at
+  var new_speed: float = sync_state.velocity.length() + SPEED_INCREASE_PER_SECOND * time_since_last_bounce
+
   if paddle:
     if paddle != _my_paddle():
       return false
@@ -79,14 +83,14 @@ func _check_bounces(proj: Vector3) -> bool:
     else:
       new_vel = sync_state.velocity.bounce(normal)
       new_vel.y = 0.0
-    _send_bounce(bounce_position, new_vel.normalized() * SPEED)
+    _send_bounce(bounce_position, new_vel.normalized() * new_speed)
     return true
   else:
     if not has_authority():
       return false
     var new_vel := sync_state.velocity.bounce(normal)
     new_vel.y = 0.0
-    _send_bounce(bounce_position, new_vel.normalized() * SPEED)
+    _send_bounce(bounce_position, new_vel.normalized() * new_speed)
     return true
 
 func _physics_process(_delta: float) -> void:
