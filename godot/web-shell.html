@@ -20,59 +20,9 @@
     </style>
     <script src="https://extension-files.twitch.tv/helper/v1/twitch-ext.min.js"></script>
   </head>
-  <body>
+  <body data-godot-config='$GODOT_CONFIG'>
     <canvas id="canvas"></canvas>
     <script src="$GODOT_URL"></script>
-    <script>
-      window.Twitch.ext.onAuthorized((auth) => {
-        const check_godot_interval = setInterval(() => {
-          if (window.twitchTokenCallback) {
-            console.log('calling token callback')
-            window.twitchTokenCallback(auth.token)
-            clearInterval(check_godot_interval)
-          } else {
-            console.log('NO callback')
-          }
-        }, 1000)
-      })
-      function startGodot() {
-        const engine = new Engine($GODOT_CONFIG);
-        engine.startGame({
-          // persistentPaths: [],
-          // Explicitly pass the canvas so Godot doesn't go hunting for it
-          canvas: document.getElementById("canvas"),
-        }).catch(function (err) {
-          console.error("Godot startup failed:", err);
-        });
-      }
-
-      function waitForSize(callback) {
-        const canvas = document.getElementById("canvas");
-        // If we already have a size, go immediately
-        if (canvas.offsetWidth > 0 && canvas.offsetHeight > 0) {
-          callback();
-          return;
-        }
-
-        // Otherwise poll until the iframe has been given dimensions
-        const observer = new ResizeObserver(function (entries) {
-          for (const entry of entries) {
-            if (entry.contentRect.width > 0 && entry.contentRect.height > 0) {
-              observer.disconnect();
-              callback();
-              return;
-            }
-          }
-        });
-        observer.observe(canvas);
-      }
-      // Wait for DOM + iframe sizing to settle before handing off to Godot
-      // setTimeout(() => {
-      //   startGodot()
-      // }, 2000)
-      window.addEventListener("load", function () {
-        waitForSize(startGodot);
-      });
-    </script>
+    <script src="./init.js"></script>
   </body>
 </html>
