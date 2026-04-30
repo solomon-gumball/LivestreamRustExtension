@@ -10,7 +10,7 @@
 size = Vector3(0.7, 0.2, 0.06)
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_a14gn"]
-size = Vector3(0.7, 0.2, 0.06)
+size = Vector3(0.7, 0.2, 0.1447461)
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_a14gn"]
 resource_local_to_scene = true
@@ -47,5 +47,5 @@ material = SubResource("StandardMaterial3D_u5md4")
 
 [node name="PaddleCollisionShape" type="CollisionShape3D" parent="PaddleCollisionArea" unique_id=794019334]
 unique_name_in_owner = true
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.11558321, 0)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.11558321, -0.042373046)
 shape = SubResource("BoxShape3D_a14gn")

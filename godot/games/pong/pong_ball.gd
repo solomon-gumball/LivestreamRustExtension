@@ -34,7 +34,8 @@ func _projected_position() -> Vector3:
 
 func _send_bounce(bounce_position: Vector3, bounce_velocity: Vector3) -> void:
   var now := Time.get_unix_time_from_system()
-  sync_state.position = bounce_position
+  # Push slightly off the surface so the next intersect_shape doesn't re-detect the same collision
+  sync_state.position = bounce_position + bounce_velocity.normalized() * _shape.radius * 2.0
   sync_state.velocity = bounce_velocity
   sync_state.sent_at = now
   print("PEER:", MultiplayerClient.my_peer_id(), " SENT BOUNCE EVENT AT Z - ", bounce_position.z)
@@ -50,26 +51,13 @@ func _send_bounce(bounce_position: Vector3, bounce_velocity: Vector3) -> void:
     true
   )
 
-func _check_bounces(from: Vector3, motion: Vector3) -> void:
+func _check_bounces(proj: Vector3) -> void:
   var space := get_world_3d().direct_space_state
   var query := PhysicsShapeQueryParameters3D.new()
   query.shape = _shape
-  query.transform = Transform3D(Basis.IDENTITY, from)
-  query.motion = motion
+  query.transform = Transform3D(Basis.IDENTITY, proj)
   query.exclude = [self]
-
-  var result := space.cast_motion(query)
-  # result[0] == 1.0 means no collision this frame
-  if result[0] >= 1.0:
-    return
-
-  # Place shape at the unsafe position to find what we hit
-  var hit_pos := from + motion * result[1]
-  var info_query := PhysicsShapeQueryParameters3D.new()
-  info_query.shape = _shape
-  info_query.transform = Transform3D(Basis.IDENTITY, hit_pos)
-  info_query.exclude = [self]
-  var hits := space.intersect_shape(info_query)
+  var hits := space.intersect_shape(query)
   if hits.is_empty():
     return
 
@@ -80,19 +68,19 @@ func _check_bounces(from: Vector3, motion: Vector3) -> void:
     # Only the paddle owner sends paddle bounces
     if paddle != _my_paddle():
       return
-    var hit_offset := clampf((hit_pos.x - paddle.position.x) / paddle_half_width, -1.0, 1.0)
+    var hit_offset := clampf((proj.x - paddle.position.x) / paddle_half_width, -1.0, 1.0)
     var new_vel := Vector3(
       hit_offset * max_hit_angle_speed + paddle.velocity.x * paddle_velocity_influence,
       0.0,
       -sync_state.velocity.z
     ).normalized() * SPEED
-    _send_bounce(hit_pos, new_vel)
+    _send_bounce(proj, new_vel)
   else:
     # Wall — only the host sends wall bounces
     if not has_authority():
       return
     var new_vel := Vector3(-sync_state.velocity.x, 0.0, sync_state.velocity.z).normalized() * SPEED
-    _send_bounce(hit_pos, new_vel)
+    _send_bounce(proj, new_vel)
 
 func _physics_process(_delta: float) -> void:
   if sync_state.sent_at == 0.0:
@@ -101,5 +89,4 @@ func _physics_process(_delta: float) -> void:
   var proj := _projected_position()
   position = proj
 
-  var motion := sync_state.velocity * (Time.get_unix_time_from_system() - sync_state.sent_at)
-  _check_bounces(sync_state.position, motion)
+  _check_bounces(proj)
