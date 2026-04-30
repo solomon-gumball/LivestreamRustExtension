@@ -36,6 +36,7 @@ func _send_bounce(bounce_position: Vector3, bounce_velocity: Vector3) -> void:
   sync_state.velocity = bounce_velocity
   sync_state.sent_at = now
   _last_position = bounce_position
+  position = bounce_position
 
   MultiplayerClient.send_packet(
     {
@@ -49,6 +50,7 @@ func _send_bounce(bounce_position: Vector3, bounce_velocity: Vector3) -> void:
     true
   )
 
+const BOUNCE_OFFSET_MARGIN = 0.005
 func _check_bounces(proj: Vector3) -> bool:
   shape_cast.global_position = _last_position
   shape_cast.target_position = shape_cast.to_local(proj)
@@ -60,7 +62,7 @@ func _check_bounces(proj: Vector3) -> bool:
   var collider: Object = shape_cast.get_collider(0)
   var normal: Vector3 = shape_cast.get_collision_normal(0)
   var safe_fraction := shape_cast.get_closest_collision_safe_fraction()
-  var bounce_position: Vector3 = shape_cast.to_global(shape_cast.target_position * safe_fraction) + normal * 0.01
+  var bounce_position: Vector3 = shape_cast.to_global(shape_cast.target_position * safe_fraction) + normal * BOUNCE_OFFSET_MARGIN
   var paddle := collider.get_parent() as PongPaddle if collider else null
 
   if paddle:
