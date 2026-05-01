@@ -6,22 +6,19 @@ GODOT_PROJECT = godot
 export: extension-prod
 
 extension-prod:
-	$(GODOT) --headless --path $(GODOT_PROJECT) --export-debug "extension_prod" "../web/public/index.html"
+	$(GODOT) --headless --path $(GODOT_PROJECT) --export-debug "extension_prod"
 
 extension-local:
-	$(GODOT) --headless --path $(GODOT_PROJECT) --export-debug "extension_local" "../web/public/index.html"
+	$(GODOT) --headless --path $(GODOT_PROJECT) --export-debug "extension_local"
 
 website-prod:
-	$(GODOT) --headless --path $(GODOT_PROJECT) --export-debug "website_prod" "../web/public/index.html"
+	$(GODOT) --headless --path $(GODOT_PROJECT) --export-debug "website_prod"
 
 website-local:
-	$(GODOT) --headless --path $(GODOT_PROJECT) --export-debug "website_local" "../web/public/index.html"
+	$(GODOT) --headless --path $(GODOT_PROJECT) --export-debug "website_local"
 
 overlay:
-	$(GODOT) --headless --path $(GODOT_PROJECT) --export-debug "overlay" "../overlay/index.html"
-
-overlay-linux:
-	$(GODOT) --headless --path $(GODOT_PROJECT) --export-debug "Linux" "../overlay/gumbots_overlay.x86_64"
+	$(GODOT) --headless --path $(GODOT_PROJECT) --export-debug "overlay"
 
 minigame:
 	$(GODOT) --headless --path $(GODOT_PROJECT) --export-debug "minigame" "../../livestream-listener/public/games/pong.html"

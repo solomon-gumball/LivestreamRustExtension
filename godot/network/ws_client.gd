@@ -18,7 +18,7 @@ func my_chatter() -> Chatter:
   return authenticated_state.current_chatter
 
 func getServerDomain() -> String:
-   return "localhost:1235" if self.use_local_server else "livestream-listener-475alhkiqa-uc.a.run.app/"
+   return "localhost:1235" if self.use_local_server else "livestream-listener-475alhkiqa-uc.a.run.app"
 
 func get_database_server_url(path: String = "") -> String:
   return "https://%s/%s" % [getServerDomain(), path]
@@ -98,9 +98,21 @@ func subscribe(channels: Array[String]) -> void:
 func wear_item(item: String) -> Chatter:
   var request = AwaitableHTTPRequest.new()
   add_child(request)
+  var auth_token: String
+  var auth_type: String
+  if not debug_chatter_id.is_empty():
+    auth_token = JSON.stringify({ "user_id": debug_chatter_id, "role": "broadcaster" })
+    auth_type = "debug"
+  elif not connected_state.twitch_oauth_token.is_empty():
+    auth_token = connected_state.twitch_oauth_token
+    auth_type = "oauth"
+  else:
+    auth_token = connected_state.twitch_extension_auth_token
+    auth_type = "extension"
   var headers: PackedStringArray = [
     "Content-Type: application/json",
-    "Authorization: Bearer " + (connected_state.twitch_oauth_token if not connected_state.twitch_oauth_token.is_empty() else connected_state.twitch_extension_auth_token),
+    "Authorization: Bearer " + auth_token,
+    "x-auth-type: " + auth_type,
   ]
   var response := await request.async_request(
     get_database_server_url("wear-item"),
@@ -126,11 +138,16 @@ func _process(_delta: float) -> void:
       if state.current is DisconnectedState:
         state.change_state(connected_state)
       while remote_server_socket.get_available_packet_count() > 0:
-        var parsed = JSON.parse_string(remote_server_socket.get_packet().get_string_from_utf8())
-        if parsed is Array:
+        var raw = remote_server_socket.get_packet().get_string_from_utf8()
+        var parsed = JSON.parse_string(raw)
+        if parsed == null:
+          print("[WSClient] ERROR: failed to parse packet, len=", raw.length(), " preview=", raw.substr(0, 100))
+        elif parsed is Array:
           for message in parsed:
+            print("[WSClient] received message type=", message.get("type", "unknown"))
             state.current.handle_remote_message(message)
         else:
+          print("[WSClient] received message type=", parsed.get("type", "unknown"))
           state.current.handle_remote_message(parsed)
 
     WebSocketPeer.STATE_CLOSING:
@@ -178,9 +195,12 @@ class DisconnectedState extends WSClientState:
   func _try_connect_to_remote_server() -> void:
     if debug_force_disconnected: return
     var url = net.getWsServerUrl()
+    print("[WSClient] Connecting to: ", url)
     var err = net.remote_server_socket.connect_to_url(url, TLSOptions.client_unsafe() if net.use_local_server else null)
     if err != OK:
-      print("Error connecting to remote server: %d" % err)
+      print("[WSClient] Error connecting to remote server: %d" % err)
+    else:
+      print("[WSClient] connect_to_url OK, waiting for STATE_OPEN...")
 
 class ConnectedState extends WSClientState:
   signal authenticated_successfully
@@ -192,43 +212,55 @@ class ConnectedState extends WSClientState:
   var twitch_extension_cb: JavaScriptObject
 
   func _ready() -> void:
+    print("[WSClient/ConnectedState] _ready — has extension feature: ", OS.has_feature("extension"), " | has oauth feature: ", OS.has_feature("oauth"))
     if OS.has_feature("extension"):
       twitch_extension_cb = JavaScriptBridge.create_callback(_on_twitch_authorized)
       JavaScriptBridge.get_interface("window").twitchTokenCallback = twitch_extension_cb
     if OS.has_feature("oauth"):
-      twitch_oauth_token = str(JavaScriptBridge.get_interface("window").oauthToken)
+      var raw = JavaScriptBridge.get_interface("window").oauthToken
+      twitch_oauth_token = str(raw) if raw != null else ""
+      print("[WSClient/ConnectedState] oauthToken from window: ", "present (len=" + str(twitch_oauth_token.length()) + ")" if not twitch_oauth_token.is_empty() else "MISSING")
 
   func enter_state(_previous_state: State) -> void:
+    print("[WSClient] STATE_OPEN — entering ConnectedState, calling _try_authenticate")
     _try_authenticate()
-  
+
   func _on_twitch_authorized(args: Array) -> void:
     twitch_extension_auth_token = str(args[0])
+    print("[WSClient/ConnectedState] Twitch extension token received, re-authenticating")
     _try_authenticate()
-  
+
   func _try_authenticate() -> void:
     var auth_msg := { "type": "authenticate" }
 
     if not net.debug_chatter_id.is_empty():
       auth_msg["debugAuthId"] = net.debug_chatter_id
+      print("[WSClient] Authenticating with debugAuthId: ", net.debug_chatter_id)
     elif not twitch_extension_auth_token.is_empty():
       auth_msg["token"] = twitch_extension_auth_token
+      print("[WSClient] Authenticating with Twitch extension token")
     elif not twitch_oauth_token.is_empty():
       auth_msg["oauthToken"] = twitch_oauth_token
-    
+      print("[WSClient] Authenticating with OAuth JWT")
+    else:
+      print("[WSClient] WARNING: No auth token available — sending authenticate with no credentials")
+
     var subscribe_method := { "type": "subscribe", "channels": ["LOBBIES"] }
     net.remote_server_socket.send_text(JSON.stringify([auth_msg, subscribe_method]))
   
   func handle_remote_message(message: Variant) -> void:
     match message.type:
       "authenticated":
-        if message.get("success", false):
+        var success = message.get("success", false)
+        print("[WSClient] authenticated response — success: ", success, " | error: ", message.get("error", "none"))
+        if success:
           if message.get("turnCredentials") != null:
             turn_credentials = message.turnCredentials
           if message.get("chatter"):
             current_chatter = Chatter.FromData(message.get("chatter"))
+            print("[WSClient] Authenticated as chatter: ", current_chatter.id)
           if message.get("store"):
             store_data = Message.StoreData.FromData(message.get("store"))
-
           authenticated_successfully.emit()
 
 class AuthenticatedState extends WSClientState:

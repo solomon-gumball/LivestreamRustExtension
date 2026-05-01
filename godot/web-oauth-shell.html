@@ -51,25 +51,51 @@
   </head>
   <body>
     <canvas id="canvas"></canvas>
-    <script src="$GODOT_URL"></script>
     <script>
+      window.addEventListener("error", function(e) {
+        console.error("[window.onerror]", e.message, e.filename, e.lineno);
+      });
+      window.addEventListener("unhandledrejection", function(e) {
+        console.error("[unhandledrejection]", e.reason);
+      });
+    </script>
+    <script src="$GODOT_URL" onload="console.log('[index.js] loaded, Engine defined:', typeof Engine !== 'undefined')" onerror="console.error('[index.js] FAILED TO LOAD')"></script>
+    <script>
+      var GCS_BASE = 'https://storage.googleapis.com/twitchextensionserver-static';
+      var IS_LOCAL = window.location.hostname === 'localhost';
+
       function startGodot() {
-        const engine = new Engine($GODOT_CONFIG);
+        console.log("[startGodot] called, Engine defined:", typeof Engine !== "undefined");
+        console.log("[startGodot] crossOriginIsolated:", window.crossOriginIsolated);
+        console.log("[startGodot] SharedArrayBuffer available:", typeof SharedArrayBuffer !== "undefined");
+        // In production, point index.pck and index.side.wasm at GCS directly so they
+        // bypass Cloud Run's 32MB response limit. Locally, use relative paths.
+        var config = IS_LOCAL ? $GODOT_CONFIG : Object.assign({}, $GODOT_CONFIG, {
+          executable: GCS_BASE + '/index',
+          mainPack: GCS_BASE + '/index.pck',
+        });
+        console.log("[startGodot] config.executable:", config.executable);
+        console.log("[startGodot] config.mainPack:", config.mainPack);
+        const engine = new Engine(config);
         engine.startGame({
           canvas: document.getElementById("canvas"),
+        }).then(function() {
+          console.log("[startGodot] engine.startGame() resolved successfully");
         }).catch(function (err) {
-          console.error("Godot startup failed:", err);
+          console.error("[startGodot] Godot startup failed:", err);
         });
       }
 
       function waitForSize(callback) {
         const canvas = document.getElementById("canvas");
+        console.log("[waitForSize] canvas size:", canvas.offsetWidth, "x", canvas.offsetHeight);
         if (canvas.offsetWidth > 0 && canvas.offsetHeight > 0) {
           callback();
           return;
         }
         const observer = new ResizeObserver(function (entries) {
           for (const entry of entries) {
+            console.log("[waitForSize] ResizeObserver fired:", entry.contentRect.width, "x", entry.contentRect.height);
             if (entry.contentRect.width > 0 && entry.contentRect.height > 0) {
               observer.disconnect();
               callback();
@@ -81,6 +107,7 @@
       }
 
       window.addEventListener("load", function () {
+        console.log("[load] event fired, calling waitForSize");
         waitForSize(startGodot);
       });
     </script>

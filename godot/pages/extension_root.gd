@@ -16,6 +16,7 @@ var host_game_page_template: PackedScene = preload("res://pages/host_game_page.t
 enum ExtensionPage { Profile, PlayGame, HostGame }
 
 func _ready() -> void:
+  print("[ExtensionRoot] _ready — Godot scene tree is running")
   WSClient.state.changed.connect(_handle_connection_status_changed)
   _handle_connection_status_changed(WSClient.state.current)
 

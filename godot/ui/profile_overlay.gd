@@ -12,7 +12,10 @@ var chatter: Chatter:
     _update_grid_items()
 
 func _handle_item_selected(value: String) -> void:
-  WSClient.wear_item(value)
+  if !value.is_empty():
+    WSClient.wear_item(value)
+
+var loading_icon: CompressedTexture2D = preload("res://ui/icons/missing.png")
 
 func _update_grid_items() -> void:
   if !is_node_ready() or chatter == null: return
@@ -34,8 +37,11 @@ func _update_grid_items() -> void:
       var cached = ImageLoader.load_asset_thumbnail(wearable_item.name, func(tex, _url):
         if is_instance_valid(captured_grid_item):
           captured_grid_item.icon_texture = tex)
-      if cached != null:
+      if cached:
         grid_item.icon_texture = cached
+      else:
+        grid_item.icon_texture = loading_icon
+      
       asset_index += 1
       grid_item.value = wearable_item.name
     else:
