@@ -18,28 +18,44 @@
         height: 100%;
       }
     </style>
-    <script src="https://extension-files.twitch.tv/helper/v1/twitch-ext.min.js"></script>
+    <script>
+      (function () {
+        const TOKEN_KEY = 'oauth_token'
+
+        // If the OAuth redirect landed a token in the URL hash, persist it and clean the URL.
+        const hash = new URLSearchParams(window.location.hash.slice(1))
+        const hashToken = hash.get('oauth_token')
+        if (hashToken) {
+          localStorage.setItem(TOKEN_KEY, hashToken)
+          history.replaceState(null, '', window.location.pathname)
+        }
+
+        // Check for an auth error from the OAuth callback.
+        const hashError = hash.get('auth_error') || new URLSearchParams(window.location.search).get('auth_error')
+        if (hashError) {
+          localStorage.removeItem(TOKEN_KEY)
+          window.location.href = '/auth/twitch'
+          return
+        }
+
+        const token = localStorage.getItem(TOKEN_KEY)
+        if (!token) {
+          window.location.href = '/auth/twitch'
+          return
+        }
+
+        // Expose the token so Godot can read it via JavaScriptBridge before the engine starts.
+        window.oauthToken = token
+      })()
+    </script>
   </head>
   <body>
     <canvas id="canvas"></canvas>
-    <script src="/client/$GODOT_URL"></script>
+    <script src="$GODOT_URL"></script>
     <script>
-      window.Twitch.ext.onAuthorized((auth) => {
-        const check_godot_interval = setInterval(() => {
-          if (window.twitchTokenCallback) {
-            console.log('calling token callback')
-            window.twitchTokenCallback(auth.token)
-            clearInterval(check_godot_interval)
-          } else {
-            console.log('NO callback')
-          }
-        }, 1000)
-      })
       function startGodot() {
         const engine = new Engine($GODOT_CONFIG);
         engine.startGame({
-          // persistentPaths: [],
-          // Explicitly pass the canvas so Godot doesn't go hunting for it
           canvas: document.getElementById("canvas"),
         }).catch(function (err) {
           console.error("Godot startup failed:", err);
@@ -48,13 +64,10 @@
 
       function waitForSize(callback) {
         const canvas = document.getElementById("canvas");
-        // If we already have a size, go immediately
         if (canvas.offsetWidth > 0 && canvas.offsetHeight > 0) {
           callback();
           return;
         }
-
-        // Otherwise poll until the iframe has been given dimensions
         const observer = new ResizeObserver(function (entries) {
           for (const entry of entries) {
             if (entry.contentRect.width > 0 && entry.contentRect.height > 0) {
@@ -66,10 +79,7 @@
         });
         observer.observe(canvas);
       }
-      // Wait for DOM + iframe sizing to settle before handing off to Godot
-      // setTimeout(() => {
-      //   startGodot()
-      // }, 2000)
+
       window.addEventListener("load", function () {
         waitForSize(startGodot);
       });

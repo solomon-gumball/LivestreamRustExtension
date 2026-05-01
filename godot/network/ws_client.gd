@@ -100,7 +100,7 @@ func wear_item(item: String) -> Chatter:
   add_child(request)
   var headers: PackedStringArray = [
     "Content-Type: application/json",
-    "Authorization: Bearer " + connected_state.twitch_auth_token,
+    "Authorization: Bearer " + (connected_state.twitch_oauth_token if not connected_state.twitch_oauth_token.is_empty() else connected_state.twitch_extension_auth_token),
   ]
   var response := await request.async_request(
     get_database_server_url("wear-item"),
@@ -114,7 +114,6 @@ func wear_item(item: String) -> Chatter:
     if result.get("success"):
       return Chatter.FromData(result["updated"])
   return null
-
 
 var debug_force_disconnected := false
 
@@ -188,19 +187,22 @@ class ConnectedState extends WSClientState:
   var current_chatter: Chatter = null
   var turn_credentials: Dictionary = {}
   var store_data: Message.StoreData
-  var twitch_auth_token: String = ""
-  var callback: JavaScriptObject
+  var twitch_extension_auth_token: String = ""
+  var twitch_oauth_token: String = ""
+  var twitch_extension_cb: JavaScriptObject
 
   func _ready() -> void:
-    if OS.get_name() == "Web":
-      callback = JavaScriptBridge.create_callback(_on_twitch_authorized)
-      JavaScriptBridge.get_interface("window").twitchTokenCallback = callback
+    if OS.has_feature("extension"):
+      twitch_extension_cb = JavaScriptBridge.create_callback(_on_twitch_authorized)
+      JavaScriptBridge.get_interface("window").twitchTokenCallback = twitch_extension_cb
+    if OS.has_feature("oauth"):
+      twitch_oauth_token = str(JavaScriptBridge.get_interface("window").oauthToken)
 
   func enter_state(_previous_state: State) -> void:
     _try_authenticate()
   
   func _on_twitch_authorized(args: Array) -> void:
-    twitch_auth_token = str(args[0])
+    twitch_extension_auth_token = str(args[0])
     _try_authenticate()
   
   func _try_authenticate() -> void:
@@ -208,8 +210,10 @@ class ConnectedState extends WSClientState:
 
     if not net.debug_chatter_id.is_empty():
       auth_msg["debugAuthId"] = net.debug_chatter_id
-    elif not twitch_auth_token.is_empty():
-      auth_msg["token"] = twitch_auth_token
+    elif not twitch_extension_auth_token.is_empty():
+      auth_msg["token"] = twitch_extension_auth_token
+    elif not twitch_oauth_token.is_empty():
+      auth_msg["oauthToken"] = twitch_oauth_token
     
     var subscribe_method := { "type": "subscribe", "channels": ["LOBBIES"] }
     net.remote_server_socket.send_text(JSON.stringify([auth_msg, subscribe_method]))

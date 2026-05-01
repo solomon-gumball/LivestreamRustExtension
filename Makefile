@@ -1,7 +1,7 @@
 GODOT ?= godot
 GODOT_PROJECT = godot
 
-.PHONY: export extension-prod extension-local overlay overlay-linux minigame build-rust export-games
+.PHONY: export extension-prod extension-local website-prod website-local overlay overlay-linux minigame build-rust export-games
 
 export: extension-prod
 
@@ -10,6 +10,12 @@ extension-prod:
 
 extension-local:
 	$(GODOT) --headless --path $(GODOT_PROJECT) --export-debug "extension_local" "../web/public/index.html"
+
+website-prod:
+	$(GODOT) --headless --path $(GODOT_PROJECT) --export-debug "website_prod" "../web/public/index.html"
+
+website-local:
+	$(GODOT) --headless --path $(GODOT_PROJECT) --export-debug "website_local" "../web/public/index.html"
 
 overlay:
 	$(GODOT) --headless --path $(GODOT_PROJECT) --export-debug "overlay" "../overlay/index.html"
