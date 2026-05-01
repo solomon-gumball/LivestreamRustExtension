@@ -26,6 +26,9 @@ func get_database_server_url(path: String = "") -> String:
 func getWsServerUrl() -> String:
   return "wss://%s" % [getServerDomain()]
 
+func is_moderator() -> bool:
+  return my_chatter().id == '22445910'
+
 var inbox_size = 10
 func _ready() -> void:
   if DebugScreenLayout.window_index == 0:
@@ -43,6 +46,18 @@ func _ready() -> void:
 
   connected_state.authenticated_successfully.connect(_handle_authenticated)
   state.change_state(disconnected_state)
+
+func create_lobby(game_title: String) -> String:
+  var response: HTTPResult = await create_authorized_request(
+    get_database_server_url("game-lobby"),
+    HTTPClient.METHOD_POST,
+    { "game": game_title, "is_player": true }
+  )
+  if not response.success() or not response.status_ok():
+    return "Request failed"
+  var body: Dictionary = response.body_as_json()
+  var err = body.get("error", "")
+  return "" if err == null else err
 
 func _handle_authenticated() -> void:
   state.change_state(authenticated_state)
@@ -95,7 +110,7 @@ func slots_activated(uuid: String, gumbucksWon: float) -> void:
 func subscribe(channels: Array[String]) -> void:
   send_socket_message({ "type": "subscribe", "channels": channels })
 
-func wear_item(item: String) -> Chatter:
+func create_authorized_request(url: String, method: int, body: Dictionary) -> HTTPResult:
   var request = AwaitableHTTPRequest.new()
   add_child(request)
   var auth_token: String
@@ -114,13 +129,16 @@ func wear_item(item: String) -> Chatter:
     "Authorization: Bearer " + auth_token,
     "x-auth-type: " + auth_type,
   ]
-  var response := await request.async_request(
-    get_database_server_url("wear-item"),
-    headers,
-    HTTPClient.METHOD_PUT,
-    JSON.stringify({ "item": item })
-  )
+  var response := await request.async_request(url, headers, method, JSON.stringify(body))
+  request.queue_free()
+  return response
 
+func wear_item(item: String) -> Chatter:
+  var response: HTTPResult = await create_authorized_request(
+    get_database_server_url("wear-item"),
+    HTTPClient.METHOD_PUT,
+    { "item": item }
+  )
   if response.success() and response.status_ok():
     var result: Dictionary = response.body_as_json()
     if result.get("success"):
@@ -144,10 +162,8 @@ func _process(_delta: float) -> void:
           print("[WSClient] ERROR: failed to parse packet, len=", raw.length(), " preview=", raw.substr(0, 100))
         elif parsed is Array:
           for message in parsed:
-            print("[WSClient] received message type=", message.get("type", "unknown"))
             state.current.handle_remote_message(message)
         else:
-          print("[WSClient] received message type=", parsed.get("type", "unknown"))
           state.current.handle_remote_message(parsed)
 
     WebSocketPeer.STATE_CLOSING:

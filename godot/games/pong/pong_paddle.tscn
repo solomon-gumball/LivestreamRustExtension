@@ -32,6 +32,7 @@ paddle_collision_box = SubResource("BoxShape3D_a14gn")
 
 [node name="GumBot" parent="." unique_id=2126276004 instance=ExtResource("2_v7xyw")]
 unique_name_in_owner = true
+visible = false
 surface_mat = SubResource("ShaderMaterial_a14gn")
 
 [node name="PaddleCollisionArea" type="StaticBody3D" parent="." unique_id=976740426]

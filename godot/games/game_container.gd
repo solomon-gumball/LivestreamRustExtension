@@ -75,12 +75,30 @@ func load_game_from_lobby(lobby: Lobby) -> void:
     if not loaded:
       return
 
-  var packed_scene := ResourceLoader.load(game.entry) as PackedScene
+  if DebugScreenLayout.window_index == 1:
+    await get_tree().create_timer(3.0).timeout
+
+  var packed_scene: PackedScene
+  if OS.has_feature("threads"):
+    ResourceLoader.load_threaded_request(game.entry)
+    var status := ResourceLoader.THREAD_LOAD_IN_PROGRESS
+    while status == ResourceLoader.THREAD_LOAD_IN_PROGRESS:
+      await get_tree().process_frame
+      status = ResourceLoader.load_threaded_get_status(game.entry)
+      print(status) # This can take a while for large scenes, so it's good to have some indication that progress is being made
+
+    if status == ResourceLoader.THREAD_LOAD_FAILED:
+      push_error("GameContainer: threaded load failed for '%s'" % game.entry)
+      return
+    packed_scene = ResourceLoader.load_threaded_get(game.entry) as PackedScene
+  else:
+    packed_scene = ResourceLoader.load(game.entry) as PackedScene
+
   if packed_scene == null:
     push_error("GameContainer: could not load scene at entry path '%s'" % game.entry)
     return
-  _game_scene = packed_scene.instantiate() as GameBase
 
+  _game_scene = packed_scene.instantiate() as GameBase
   _game_scene.lobby = lobby
   add_child(_game_scene)
   _game_scene.game_finished.connect(game_finished.emit)

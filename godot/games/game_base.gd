@@ -42,7 +42,7 @@ func _ready() -> void:
   var user_sub_channels: Array[String] = []
   for peer in lobby.peers:
     user_sub_channels.append(peer.chatter_id)
-
+  
   if !is_game_host:
     MultiplayerClient.send_packet(
       { "type": GlobalGameMessage.ClientReady },
@@ -60,9 +60,9 @@ func _ready() -> void:
     all_peers_loaded_in.emit()
     all_chatters_loaded_locally.emit()
   else:
-    # _check_game_ready()
-    peers_ready_fired = true
-    all_peers_loaded_in.emit()
+    _check_game_ready()
+    # peers_ready_fired = true
+    # all_peers_loaded_in.emit()
 
 func _lobby_was_updated() -> void:
   lobby = MultiplayerClient.current_lobby
@@ -87,10 +87,8 @@ func _check_game_ready() -> void:
   if lobby == null: return
   if peers_ready_fired:
     return
-  # print("CHECKING GAME READY")
   for peer in lobby.peers:
     # print(peer.peer_id, " lobby peers are")
-
     if peer.peer_id == MultiplayerClient.my_peer_id(): continue
     if !peer.connected: continue
     if not ready_peers.has(peer.peer_id):
@@ -114,6 +112,7 @@ func _handle_chatter_updated(chatter: Chatter) -> void:
 func _base_handle_peer_packet(sender_id: int, packet: Dictionary) -> void:
   match packet.type:
     GlobalGameMessage.ClientReady:
+      print("game_host=", MultiplayerClient.is_lobby_host(), " received ready from ", sender_id)
       ready_peers[sender_id] = true
       peer_is_ready.emit(sender_id)
       if is_game_host:

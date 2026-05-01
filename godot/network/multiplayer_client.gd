@@ -101,23 +101,6 @@ func join_lobby(lobby: Lobby, is_player: bool = false) -> Error:
 func set_role(is_player: bool) -> Error:
   return WSClient.send_socket_message({ "type": "rtc-set-role", "is_player": is_player })
 
-func create_lobby(game_title: String) -> String:
-  var request = AwaitableHTTPRequest.new()
-  add_child(request)
-  print('my_chatter ', WSClient.my_chatter())
-  var response := await request.async_request(
-    WSClient.get_database_server_url("game-lobby"),
-    PackedStringArray(["Content-Type: application/json"]),
-    HTTPClient.METHOD_POST,
-    JSON.stringify({ "chatterId": WSClient.my_chatter().id, "game": game_title, "is_player": true })
-  )
-  request.queue_free()
-  if not response.success() or not response.status_ok():
-    return "Request failed"
-  var body: Dictionary = response.body_as_json()
-  var err = body.get("error", "")
-  return "" if err == null else err
-
 func seal_lobby() -> Error:
   return WSClient.send_socket_message({ "type": "rtc-seal-lobby" })
 

@@ -332,7 +332,7 @@ func _parse_glb(glb_data: PackedByteArray) -> Node3D:
 
 func load_asset_thumbnail(asset_name: String, callback: Callable = Callable()) -> ImageTexture:
 	var url := WSClient.get_database_server_url("items/%s.png" % asset_name.to_lower())
-	return load_image(url, callback, true, true)
+	return load_image(url, callback, true, false)
 
 func load_emote(emote_id: String, callback: Callable = Callable()) -> ImageTexture:
 	var url = "https://static-cdn.jtvnw.net/emoticons/v1/%s/3.0" % emote_id

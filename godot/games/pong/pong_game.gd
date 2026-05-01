@@ -63,6 +63,8 @@ func save_paddle_positions() -> void:
     dotted_line_mat.albedo_color.a = new_value
 
 func _ready() -> void:
+  super._ready()
+
   if Engine.is_editor_hint():
     return
 
@@ -75,7 +77,7 @@ func _ready() -> void:
   visible = false
   MultiplayerClient.connected_state.left_lobby.connect(_left_lobby)
   MultiplayerClient.packet_received.connect(_handle_peer_packet)
-  WSClient.authenticated_state.chatter_updated.connect(_handle_chatter_updated)
+  chatter_loaded.connect(_handle_chatter_loaded)
 
   var sub_channels: Array[String] = []
   for peer in lobby.peers:
@@ -92,38 +94,33 @@ func _ready() -> void:
     "score": paddle_r_score
   }
 
-  if MultiplayerClient.is_authority():
-    var new_game_state = PongGameState.new()
-    new_game_state.phase_started_at = Time.get_unix_time_from_system()
-    new_game_state.paddle_l_state.owner = lobby.players[0].peer_id
-    new_game_state.paddle_r_state.owner = lobby.players[1].peer_id
-
-    new_game_state.paddle_l_state.position = Vector3(0, 0, -paddle_start_distance)
-    new_game_state.paddle_r_state.position = Vector3(0, 0, paddle_start_distance)
-
-    score_region_l.body_entered.connect(_score_area_hit.bind(lobby.players[1].peer_id))
-    score_region_r.body_entered.connect(_score_area_hit.bind(lobby.players[0].peer_id))
-
-    anim_sync.animation_finished.connect(_anim_finished)
-
-    _handle_peer_packet(1, {
-      "type": PongGameMessage.StateRefresh,
-      "state": new_game_state
-    })
-    anim_sync.authority_play_animation("intro")
-    _send_refresh_state(MultiplayerPeer.TARGET_PEER_BROADCAST)
-    MultiplayerClient.rtc_peer_ready.connect(_send_refresh_state)
-  else:
-    MultiplayerClient.send_packet(
-      {
-        "type": PongGameMessage.ClientReady,
-      },
-      MultiplayerPeer.TARGET_PEER_SERVER,
-      MultiplayerPeer.TRANSFER_MODE_RELIABLE
-    )
+  if MultiplayerClient.is_lobby_host():
+    all_peers_loaded_in.connect(_authority_start_game)
 
   # This must be at the end so the paddle by id is ready
-  _handle_chatter_updated(WSClient.my_chatter())
+  _handle_chatter_loaded(WSClient.my_chatter())
+
+func _authority_start_game() -> void:
+  var new_game_state = PongGameState.new()
+  new_game_state.phase_started_at = Time.get_unix_time_from_system()
+  new_game_state.paddle_l_state.owner = lobby.players[0].peer_id
+  new_game_state.paddle_r_state.owner = lobby.players[1].peer_id
+
+  new_game_state.paddle_l_state.position = Vector3(0, 0, -paddle_start_distance)
+  new_game_state.paddle_r_state.position = Vector3(0, 0, paddle_start_distance)
+
+  score_region_l.body_entered.connect(_score_area_hit.bind(lobby.players[1].peer_id))
+  score_region_r.body_entered.connect(_score_area_hit.bind(lobby.players[0].peer_id))
+
+  anim_sync.animation_finished.connect(_anim_finished)
+
+  _handle_peer_packet(1, {
+    "type": PongGameMessage.StateRefresh,
+    "state": new_game_state
+  })
+  anim_sync.authority_play_animation("intro")
+  _send_refresh_state(MultiplayerPeer.TARGET_PEER_BROADCAST)
+  MultiplayerClient.rtc_peer_ready.connect(_send_refresh_state)
 
 func _exit_tree() -> void:
   if Engine.is_editor_hint():
@@ -131,7 +128,7 @@ func _exit_tree() -> void:
   if MultiplayerClient.connected_state:
     MultiplayerClient.connected_state.left_lobby.disconnect(_left_lobby)
   MultiplayerClient.packet_received.disconnect(_handle_peer_packet)
-  WSClient.authenticated_state.chatter_updated.disconnect(_handle_chatter_updated)
+  WSClient.authenticated_state.chatter_updated.disconnect(_handle_chatter_loaded)
   if MultiplayerClient.is_authority():
     MultiplayerClient.rtc_peer_ready.disconnect(_send_refresh_state)
 
@@ -193,11 +190,12 @@ func _start_round() -> void:
     true
   )
 
-func _handle_chatter_updated(chatter: Chatter) -> void:
-  var peer_id := lobby.peer_from_chatter[chatter.id]
-  var paddle = nodes_by_peer_id.get(peer_id, {}).get("paddle")
-  if paddle:
-    paddle.chatter = chatter
+func _handle_chatter_loaded(chatter: Chatter) -> void:
+  if lobby.peer_from_chatter.has(chatter.id):
+    var peer_id := lobby.peer_from_chatter[chatter.id]
+    var paddle = nodes_by_peer_id.get(peer_id, {}).get("paddle")
+    if paddle:
+      paddle.chatter = chatter
 
 func _physics_process(_delta: float) -> void:
   if Engine.is_editor_hint(): return

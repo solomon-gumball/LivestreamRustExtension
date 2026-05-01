@@ -52,7 +52,6 @@ func _ready() -> void:
   game_active_state.game_ended.connect(_handle_game_ended)
 
   _handle_chatter_updated(WSClient.my_chatter())
-
   _handle_websocket_connection_changed(WSClient.state.current)
   WSClient.state.changed.connect(_handle_websocket_connection_changed)
 
@@ -74,7 +73,6 @@ func _handle_ws_message(parsed: Variant) -> void:
     _handle_updates()
 
 func _handle_updates() -> void:
-
   if WSClient.state.current is WSClient.DisconnectedState:
     state.change_state(disconnected_state)
     return

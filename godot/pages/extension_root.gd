@@ -32,6 +32,11 @@ func _handle_connection_status_changed(state: WSClient.WSClientState) -> void:
   else:
     AlertLayer.hide_alert()
 
+  if state is WSClient.AuthenticatedState and WSClient.authenticated_state.current_chatter:
+    host_game_button.visible = WSClient.is_moderator()
+  else:
+    host_game_button.visible = false
+
 func _navigate_to_page(page: int) -> void:
   if active_page:
     active_page.queue_free()

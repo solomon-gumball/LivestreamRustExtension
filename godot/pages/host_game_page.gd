@@ -10,7 +10,7 @@ func _ready() -> void:
   _load_games()
 
 func _on_game_selected(metadata: GameMetadata) -> void:
-  var error := await MultiplayerClient.create_lobby(metadata.title)
+  var error: String = await WSClient.create_lobby(metadata.title)
   if error.is_empty():
     on_lobby_created.emit()
   else:
