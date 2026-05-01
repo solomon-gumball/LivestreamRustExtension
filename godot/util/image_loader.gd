@@ -69,7 +69,7 @@ func _fetch_image(url: String, filename: String, save_to_disk: bool) -> void:
 		var err = img.load_png_from_buffer(response.bytes)
 		if err == OK:
 			if save_to_disk:
-				img.save_png(filename)
+				call_deferred("_save_image_to_disk", img, filename)
 			result = ImageTexture.create_from_image(img)
 			_cache[filename] = result
 
@@ -78,6 +78,9 @@ func _fetch_image(url: String, filename: String, save_to_disk: bool) -> void:
 	for cb in callbacks:
 		if cb.is_valid():
 			cb.call(result, url)
+
+func _save_image_to_disk(img: Image, filename: String) -> void:
+	img.save_png(filename)
 
 # Load a GLB model. Returns cached Node3D immediately if available, otherwise null.
 # callback(node: Node3D, url: String) is called once when the load completes.
@@ -94,15 +97,9 @@ func load_glb(url: String, callback: Callable = Callable(), no_cached: bool = fa
 
 		if FileAccess.file_exists(filename):
 			if debug_logging: print("LOADER: Cached from FILE: ", url)
-			var file = FileAccess.open(filename, FileAccess.READ)
-			if file:
-				var glb_data = file.get_buffer(file.get_length())
-				file.close()
-				var glb_scene = _parse_glb(glb_data)
-				_glb_cache[filename] = glb_scene
-				if callback.is_valid():
-					callback.call(glb_scene, url)
-				return glb_scene
+			if callback.is_valid():
+				call_deferred("_load_glb_from_disk", filename, url, callback)
+			return null
 
 	if callback.is_valid():
 		if !_pending_glb_callbacks.has(filename):
@@ -111,6 +108,17 @@ func load_glb(url: String, callback: Callable = Callable(), no_cached: bool = fa
 		_pending_glb_callbacks[filename].append(callback)
 
 	return null
+
+func _load_glb_from_disk(filename: String, url: String, callback: Callable) -> void:
+	var file = FileAccess.open(filename, FileAccess.READ)
+	if not file:
+		return
+	var glb_data = file.get_buffer(file.get_length())
+	file.close()
+	var glb_scene = _parse_glb(glb_data)
+	_glb_cache[filename] = glb_scene
+	if callback.is_valid():
+		callback.call(glb_scene, url)
 
 func _fetch_glb(url: String, filename: String) -> void:
 	if debug_logging: print("[LOADER] url not cached: ", url)
@@ -123,10 +131,7 @@ func _fetch_glb(url: String, filename: String) -> void:
 	var result: Node3D = null
 	if response.success() and response.status_ok():
 		var glb_data = response.bytes
-		var file = FileAccess.open(filename, FileAccess.WRITE)
-		if file:
-			file.store_buffer(glb_data)
-			file.close()
+		call_deferred("_save_glb_to_disk", glb_data, filename)
 		result = _parse_glb(glb_data)
 		_glb_cache[filename] = result
 	else:
@@ -137,6 +142,12 @@ func _fetch_glb(url: String, filename: String) -> void:
 	for cb in callbacks:
 		if cb.is_valid():
 			cb.call(result, url)
+
+func _save_glb_to_disk(glb_data: PackedByteArray, filename: String) -> void:
+	var file = FileAccess.open(filename, FileAccess.WRITE)
+	if file:
+		file.store_buffer(glb_data)
+		file.close()
 
 func _parse_glb(glb_data: PackedByteArray) -> Node3D:
 	var gltf = GLTFDocument.new()
