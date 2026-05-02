@@ -7,6 +7,7 @@ const PCK_CACHE_PATH := "user://games/pck_cache.json"
 
 var _game_scene: GameBase = null
 var _pck_cache: Dictionary = {}
+var _session_sync: SessionSynchronizer = null
 
 func _ready() -> void:
   _load_pck_cache()
@@ -66,8 +67,16 @@ func _fetch_and_cache_pck(game: GameMetadata) -> bool:
     return false
 
   return true
- 
+
 func load_game_from_lobby(lobby: Lobby) -> void:
+  if is_instance_valid(_session_sync):
+    _session_sync.queue_free()
+    _session_sync = null
+
+  _session_sync = SessionSynchronizer.new()
+  add_child(_session_sync)
+  _session_sync.setup(lobby)
+
   var game := lobby.game
 
   if OS.has_feature("game_pcks"):
@@ -85,8 +94,6 @@ func load_game_from_lobby(lobby: Lobby) -> void:
     while status == ResourceLoader.THREAD_LOAD_IN_PROGRESS:
       await get_tree().process_frame
       status = ResourceLoader.load_threaded_get_status(game.entry)
-      print(status) # This can take a while for large scenes, so it's good to have some indication that progress is being made
-
     if status == ResourceLoader.THREAD_LOAD_FAILED:
       push_error("GameContainer: threaded load failed for '%s'" % game.entry)
       return
@@ -100,5 +107,11 @@ func load_game_from_lobby(lobby: Lobby) -> void:
 
   _game_scene = packed_scene.instantiate() as GameBase
   _game_scene.lobby = lobby
-  add_child(_game_scene)
   _game_scene.game_finished.connect(game_finished.emit)
+  _game_scene.game_finished.connect(_session_sync.queue_free)
+  add_child.call_deferred(_game_scene)
+
+  await _game_scene.ready
+  _session_sync.notify_ready.call_deferred()
+  await _session_sync.all_peers_ready
+  _game_scene.start_game()

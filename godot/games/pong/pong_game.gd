@@ -94,13 +94,12 @@ func _ready() -> void:
     "score": paddle_r_score
   }
 
-  if MultiplayerClient.is_lobby_host():
-    all_peers_loaded_in.connect(_authority_start_game)
-
   # This must be at the end so the paddle by id is ready
   _handle_chatter_loaded(WSClient.my_chatter())
 
-func _authority_start_game() -> void:
+func start_game() -> void:
+  if not MultiplayerClient.is_lobby_host():
+    return
   var new_game_state = PongGameState.new()
   new_game_state.phase_started_at = Time.get_unix_time_from_system()
   new_game_state.paddle_l_state.owner = lobby.players[0].peer_id

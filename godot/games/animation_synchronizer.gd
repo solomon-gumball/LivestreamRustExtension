@@ -13,11 +13,11 @@ var state: AnimationState = null
 
 func _ready() -> void:
   MultiplayerClient.packet_received.connect(_handle_peer_packet)
-  MultiplayerClient.rtc_peer_ready.connect(_new_peer_ready)
+  SessionSynchronizer.get_instance().peer_is_ready.connect(_new_peer_ready)
 
 func _new_peer_ready(peer_id: int) -> void:
   MultiplayerClient.send_packet({
-      "type": GameBase.GlobalGameMessage.AnimationStateRefresh,
+      "type": SessionSynchronizer.GlobalGameMessage.AnimationStateRefresh,
       "state": state
     },
     peer_id,
@@ -27,14 +27,12 @@ func _new_peer_ready(peer_id: int) -> void:
 
 func _handle_peer_packet(_sender_id: int, packet: Dictionary) -> void:
   match packet.type:
-    GameBase.GlobalGameMessage.ClientReady:
-      _new_peer_ready(_sender_id)
-    GameBase.GlobalGameMessage.UpdateAnimation:
+    SessionSynchronizer.GlobalGameMessage.UpdateAnimation:
       state = AnimationState.new()
       state.started_at = packet.get("started_at", 0)
       state.animation_name = packet.get("animation_name", "")
       state.skipped = packet.get("skipped", false)
-    GameBase.GlobalGameMessage.AnimationStateRefresh:
+    SessionSynchronizer.GlobalGameMessage.AnimationStateRefresh:
       state = packet.get("state")
   if state:
     if !state.equals(local_anim_state):
@@ -61,12 +59,12 @@ func _sync_animation_state() -> void:
 
 func authority_skip_current_animation() -> void:
   if !MultiplayerClient.is_lobby_host():
-    assert(false, "ERROR: Non-host player called authority_skip_current_animation()!")  
+    assert(false, "ERROR: Non-host player called authority_skip_current_animation()!")
 
   if local_anim_state and !local_anim_state.skipped:
     MultiplayerClient.send_packet(
       {
-        "type": GameBase.GlobalGameMessage.UpdateAnimation,
+        "type": SessionSynchronizer.GlobalGameMessage.UpdateAnimation,
         "animation_name": local_anim_state.animation_name,
         "started_at": local_anim_state.started_at,
         "skipped": true
@@ -85,7 +83,7 @@ func authority_play_animation(animation_name: String) -> void:
 
   MultiplayerClient.send_packet(
     {
-      "type": GameBase.GlobalGameMessage.UpdateAnimation,
+      "type": SessionSynchronizer.GlobalGameMessage.UpdateAnimation,
       "animation_name": animation_name,
       "started_at": Time.get_unix_time_from_system(),
       "skipped": false
