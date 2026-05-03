@@ -8,7 +8,8 @@ var lobby_list: Array[Lobby] = []
 
 @onready var loading: Loading = %Loading
 @onready var debug_label: Label = %DebugLabel
-
+@onready var lobby_text: RichTextLabel = %LobbyText
+@onready var animation_player: AnimationPlayer = %AnimationPlayer
 var game_container: GameContainer = null
 var roaming_scene: RoamingBots = null
 
@@ -40,7 +41,6 @@ func _handle_websocket_connection_changed(connection_state: WSClient.WSClientSta
 
 func _input(_event):
   if Input.is_action_just_pressed("StartLobby"):
-    print(MultiplayerClient.state.current is MultiplayerClient.Disconnected)
     if MultiplayerClient.state.current is MultiplayerClient.Connected:
       MultiplayerClient.start_lobby()
     else:
@@ -48,23 +48,43 @@ func _input(_event):
       pass
     pass
 
+func _create_lobby_text(lobby: Lobby) -> String:
+  return "[shake][color=orange][font_size=30]ATTENTION[/font_size][/color][/shake]
+[pulse][wave][color=orange][font_size=70]%s STARTING SOON[/font_size][/color][/wave]
+[pulse][wave][font_size=40]%d players * type !join to join[/font_size][/wave][/pulse]"\
+ % [lobby.game.title, lobby.players.size()]
+
+var show_lobby_notification: bool = false:
+  set(new_value):
+    if new_value != show_lobby_notification:
+      if new_value:
+        animation_player.play("show_lobby")
+      else:
+        animation_player.play_backwards("show_lobby")
+    show_lobby_notification = new_value
+
 var is_joining := false
 func _handle_updates() -> void:
   var lobby = MultiplayerClient.current_lobby
 
   if lobby:
     is_joining = false
+
     if lobby.started:
+      show_lobby_notification = false
       game_state.lobby = lobby
       state.change_state(game_state)
-    return
-  
-  state.change_state(roaming_state)
-  if lobby_list.size() > 0 and not is_joining:
-    var available_lobby = lobby_list[0]
-    print("Joining lobby: %s" % available_lobby.name)
-    is_joining = true
-    MultiplayerClient.join_lobby(available_lobby)
+    else:
+      lobby_text.text = _create_lobby_text(lobby)
+      show_lobby_notification = true
+  else:
+    show_lobby_notification = false
+    state.change_state(roaming_state)
+
+    if lobby_list.size() > 0 and not is_joining:
+      var available_lobby = lobby_list[0]
+      is_joining = true
+      MultiplayerClient.join_lobby(available_lobby)
 
 func _handle_ws_message(parsed: Variant) -> void:
   if typeof(parsed) != TYPE_DICTIONARY:
@@ -105,6 +125,7 @@ class GameState extends StreamOverlayState:
 
   func enter_state(_previous_state: State) -> void:
     await overlay.loading.transition_in()
+
     if _previous_state is RoamingState:
       if overlay.roaming_scene:
         overlay.roaming_scene.queue_free()

@@ -3,6 +3,8 @@ class_name RoamingBots
 
 @onready var camera: Camera3D = %Camera
 @onready var bot_spawn_location: Node3D = %BotSpawnLocation
+@onready var gamba_action_handler: GambaActionHandler = %GambaActionHandler
+@onready var action_queue_manager: ActionQueueManager = %ActionQueueManager
 
 var spawned_bots = {}
 
@@ -13,6 +15,19 @@ func _ready():
   WSClient.authenticated_state.emote_triggered.connect(emote_triggered)
 
   store_data_received()
+  _poll_action_queue()
+
+func _poll_action_queue() -> void:
+  while is_inside_tree():
+    await get_tree().create_timer(1.0).timeout
+    if gamba_action_handler.is_busy():
+      continue
+    var action = action_queue_manager.get_next_valid_action()
+    if action == null:
+      continue
+    if action is Message.SlotsRequest:
+      action_queue_manager.complete_action(action)
+      gamba_action_handler.handle_action(action, action_queue_manager)
 
 func emote_triggered(chatter: Chatter, emote: String):
   var bot := get_or_create_bot_for_user(chatter)

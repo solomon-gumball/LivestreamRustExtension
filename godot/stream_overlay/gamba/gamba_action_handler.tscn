@@ -1,0 +1,14 @@
+[gd_scene format=3 uid="uid://qyhgu3bbkucx"]
+
+[ext_resource type="PackedScene" uid="uid://c5n1uoo7diw0j" path="res://stream_overlay/gamba/gamba_machine.tscn" id="1_nrsg6"]
+
+[node name="GambaActionHandler" type="Node3D" unique_id=676642780]
+
+[node name="Camera" type="Camera3D" parent="." unique_id=1085651007]
+unique_name_in_owner = true
+current = true
+fov = 20.0
+size = 2.0
+
+[node name="GambaMachine" parent="." unique_id=1269194837 instance=ExtResource("1_nrsg6")]
+unique_name_in_owner = true

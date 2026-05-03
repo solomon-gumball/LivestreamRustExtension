@@ -3,6 +3,8 @@
 [ext_resource type="PackedScene" uid="uid://bn7vuka4ytk5c" path="res://games/pong/pong_gumbot.tscn" id="1_nopgx"]
 [ext_resource type="Script" uid="uid://dirfmih3jjasa" path="res://stream_overlay/roaming_bots.gd" id="1_qub5t"]
 [ext_resource type="Shader" uid="uid://cw1km147x2fwu" path="res://materials/bot_mat/bot_shader.gdshader" id="2_qub5t"]
+[ext_resource type="Script" uid="uid://de7m16kxewii6" path="res://network/action_queue_manager.gd" id="2_xt8k4"]
+[ext_resource type="PackedScene" uid="uid://qyhgu3bbkucx" path="res://stream_overlay/gamba/gamba_action_handler.tscn" id="3_0umhx"]
 [ext_resource type="Texture2D" uid="uid://cas3gr887xevi" path="res://materials/bot_mat/bot_albedo.png" id="3_ciw3m"]
 [ext_resource type="Texture2D" uid="uid://ba6mac1k3t38a" path="res://materials/bot_mat/bot_normals.png" id="4_xt8k4"]
 
@@ -15,6 +17,14 @@ cell_size = 0.01
 cell_height = 0.01
 agent_radius = 0.1
 
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_qub5t"]
+resource_local_to_scene = true
+render_priority = 0
+shader = ExtResource("2_qub5t")
+shader_parameter/albedo_texture = ExtResource("3_ciw3m")
+shader_parameter/normal_map = ExtResource("4_xt8k4")
+shader_parameter/bot_color = Color(1, 0, 0, 1)
+
 [sub_resource type="BoxShape3D" id="BoxShape3D_px3ik"]
 size = Vector3(4, 1, 2)
 
@@ -26,14 +36,6 @@ size = Vector3(0.86120605, 2.4926758, 4.076582)
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_n3vit"]
 size = Vector3(0.86120605, 2.4926758, 4.076582)
-
-[sub_resource type="ShaderMaterial" id="ShaderMaterial_ciw3m"]
-resource_local_to_scene = true
-render_priority = 0
-shader = ExtResource("2_qub5t")
-shader_parameter/albedo_texture = ExtResource("3_ciw3m")
-shader_parameter/normal_map = ExtResource("4_xt8k4")
-shader_parameter/bot_color = Color(1, 0, 0, 1)
 
 [sub_resource type="Environment" id="Environment_5bn8s"]
 background_mode = 3
@@ -49,15 +51,28 @@ script = ExtResource("1_qub5t")
 transform = Transform3D(-1, 0, 8.742278e-08, 0, 1, 0, -8.742278e-08, 0, -1, 0, 1.6412506, -3.5453691)
 navigation_mesh = SubResource("NavigationMesh_5bn8s")
 
+[node name="ActionQueueManager" type="Node" parent="." unique_id=1873251462]
+unique_name_in_owner = true
+script = ExtResource("2_xt8k4")
+metadata/_custom_type_script = "uid://de7m16kxewii6"
+
 [node name="Camera" type="Camera3D" parent="." unique_id=740580361]
 unique_name_in_owner = true
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.1585627, 3.6985846)
+current = true
 fov = 20.0
 size = 2.0
 
+[node name="GambaActionHandler" parent="Camera" unique_id=676642780 instance=ExtResource("3_0umhx")]
+unique_name_in_owner = true
+
 [node name="BotSpawnLocation" type="Marker3D" parent="." unique_id=1213857580]
 unique_name_in_owner = true
-transform = Transform3D(-1, 0, 8.742278e-08, 0, 1, 0, -8.742278e-08, 0, -1, 0, 0.51779485, -3.5453691)
+transform = Transform3D(-1, 0, 8.742278e-08, 0, 1, 0, -8.742278e-08, 0, -1, 0, 2.6813412, -3.5453691)
+
+[node name="gumbot" parent="BotSpawnLocation" unique_id=2126276004 instance=ExtResource("1_nopgx")]
+transform = Transform3D(-1, 0, -8.742278e-08, 0, 1, 0, 8.742278e-08, 0, -1, 0, 0, 0)
+surface_mat = SubResource("ShaderMaterial_qub5t")
 
 [node name="Floor" type="StaticBody3D" parent="." unique_id=1579219069 groups=["nav"]]
 transform = Transform3D(-1, 0, 8.742278e-08, 0, 1, 0, -8.742278e-08, 0, -1, 0, -0.5, -3.5453691)
@@ -85,10 +100,6 @@ shape = SubResource("BoxShape3D_5bn8s")
 [node name="CollisionShape3D5" type="CollisionShape3D" parent="Walls" unique_id=980588501]
 transform = Transform3D(-1, 0, 8.742278e-08, 0, 1, 0, -8.742278e-08, 0, -1, 2.2648401, 1.3542237, -3.545369)
 shape = SubResource("BoxShape3D_n3vit")
-
-[node name="gumbot" parent="." unique_id=2126276004 instance=ExtResource("1_nopgx")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 3.5204692, -3.5352066)
-surface_mat = SubResource("ShaderMaterial_ciw3m")
 
 [node name="DirectionalLight3D" type="DirectionalLight3D" parent="." unique_id=948621070]
 transform = Transform3D(0.18701153, 0.62628746, 0.7568294, 0.06279059, -0.77646667, 0.6270222, 0.98034894, -0.069738604, -0.18453318, 1.137617, 0.9017843, -0.071688496)

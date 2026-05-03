@@ -1,6 +1,7 @@
 @tool
 extends Node3D
 class_name GambaMachine
+
 @export var screen_1: MeshInstance3D
 @export var screen_2: MeshInstance3D
 @export var screen_3: MeshInstance3D
