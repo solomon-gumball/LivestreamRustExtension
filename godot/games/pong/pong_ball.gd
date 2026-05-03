@@ -47,7 +47,7 @@ func _send_bounce(bounce_position: Vector3, bounce_velocity: Vector3) -> void:
     },
     MultiplayerPeer.TARGET_PEER_BROADCAST,
     MultiplayerPeer.TRANSFER_MODE_RELIABLE,
-    true
+    MultiplayerClient.PacketSelfMode.SelfIncluded
   )
 
 const BOUNCE_OFFSET_MARGIN = 0.005
@@ -69,8 +69,6 @@ func _check_bounces(proj: Vector3) -> bool:
   var new_speed: float = sync_state.velocity.length() + SPEED_INCREASE_PER_SECOND * time_since_last_bounce
 
   if paddle:
-    if paddle != _my_paddle():
-      return false
     var new_vel: Vector3
     if absf(normal.z) > 0.5:
       var paddle_half_width := paddle.paddle_collision_box.size.x * 0.5
@@ -83,13 +81,37 @@ func _check_bounces(proj: Vector3) -> bool:
     else:
       new_vel = sync_state.velocity.bounce(normal)
       new_vel.y = 0.0
+    if paddle != _my_paddle():
+      MultiplayerClient.send_packet(
+        {
+          "type": PongGame.PongGameMessage.BallMove,
+          "position": bounce_position,
+          "velocity": new_vel.normalized() * new_speed,
+          "sent_at": Time.get_unix_time_from_system(),
+        },
+        MultiplayerPeer.TARGET_PEER_BROADCAST,
+        MultiplayerPeer.TRANSFER_MODE_RELIABLE,
+        MultiplayerClient.PacketSelfMode.SelfOnly
+      )
+      return true
     _send_bounce(bounce_position, new_vel.normalized() * new_speed)
     return true
   else:
-    if not has_authority():
-      return false
     var new_vel := sync_state.velocity.bounce(normal)
     new_vel.y = 0.0
+    if not has_authority():
+      MultiplayerClient.send_packet(
+        {
+          "type": PongGame.PongGameMessage.BallMove,
+          "position": bounce_position,
+          "velocity": new_vel.normalized() * new_speed,
+          "sent_at": Time.get_unix_time_from_system(),
+        },
+        MultiplayerPeer.TARGET_PEER_BROADCAST,
+        MultiplayerPeer.TRANSFER_MODE_RELIABLE,
+        MultiplayerClient.PacketSelfMode.SelfOnly
+      )
+      return true
     _send_bounce(bounce_position, new_vel.normalized() * new_speed)
     return true
 

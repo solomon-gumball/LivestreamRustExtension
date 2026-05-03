@@ -1,9 +1,12 @@
 [gd_scene format=3 uid="uid://s2gi2fhmi7ir"]
 
 [ext_resource type="Script" uid="uid://cp25ws8vhg2f5" path="res://games/pong/pong_game.gd" id="1_0ehfm"]
+[ext_resource type="Shader" uid="uid://b0ejr8ho7s47" path="res://games/pong/vhs_shader.gdshader" id="2_atkvq"]
 [ext_resource type="PackedScene" uid="uid://b2ne4k7x0p3jp" path="res://games/pong/pong_paddle.tscn" id="2_racd5"]
 [ext_resource type="FontFile" uid="uid://7uibxoligyvb" path="res://fonts/HomeVideo-BLG6G.ttf" id="3_433xj"]
 [ext_resource type="Script" uid="uid://bb5m0cki1i1a1" path="res://games/pong/pong_cam_boom.gd" id="3_r2ito"]
+[ext_resource type="Texture2D" uid="uid://casmdw1resubx" path="res://icons/w.png" id="4_fnvpw"]
+[ext_resource type="Shader" uid="uid://bqw622cobg44v" path="res://materials/outline/outline.gdshader" id="8_gfeu2"]
 [ext_resource type="Script" uid="uid://txxkpqyixtos" path="res://games/animation_synchronizer.gd" id="anim_sync_script"]
 
 [sub_resource type="Gradient" id="Gradient_racd5"]
@@ -22,6 +25,47 @@ emission_energy_multiplier = 3.0
 emission_texture = SubResource("GradientTexture1D_433xj")
 uv1_scale = Vector3(40, 40, 40)
 
+[sub_resource type="QuadMesh" id="QuadMesh_fhe3k"]
+lightmap_size_hint = Vector2i(12, 12)
+flip_faces = true
+size = Vector2(2, 2)
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_hwkty"]
+render_priority = 127
+shader = ExtResource("8_gfeu2")
+shader_parameter/thickness = 2.0
+shader_parameter/outline_color = Color(0, 0, 0, 1)
+shader_parameter/threshold = 0.00356999991075
+shader_parameter/samples = 8
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_fnvpw"]
+shader = ExtResource("2_atkvq")
+shader_parameter/overlay = false
+shader_parameter/scanlines_opacity = 0.2370000112575
+shader_parameter/scanlines_width = 0.25
+shader_parameter/grille_opacity = 0.3
+shader_parameter/resolution = Vector2(640, 480)
+shader_parameter/pixelate = true
+shader_parameter/roll = true
+shader_parameter/roll_speed = 3.0
+shader_parameter/roll_size = 15.0
+shader_parameter/roll_variation = 3.36500015657762
+shader_parameter/distort_intensity = 0.002000000095
+shader_parameter/noise_opacity = 0.06000000285
+shader_parameter/noise_speed = 5.0
+shader_parameter/static_noise_intensity = 0.0710000033725
+shader_parameter/aberration = 0.010000047974999982
+shader_parameter/brightness = 1.4
+shader_parameter/discolor = true
+shader_parameter/warp_amount = 0.0450000021375
+shader_parameter/clip_warp = false
+shader_parameter/vignette_intensity = 0.4
+shader_parameter/vignette_opacity = 0.28400001349
+
+[sub_resource type="LabelSettings" id="LabelSettings_gfeu2"]
+font = ExtResource("3_433xj")
+font_size = 50
+
 [sub_resource type="BoxShape3D" id="BoxShape3D_racd5"]
 size = Vector3(10, 1, 1)
 
@@ -30,8 +74,10 @@ size = Vector3(10, 1, 1)
 
 [sub_resource type="Environment" id="Environment_racd5"]
 background_mode = 1
+background_color = Color(0.13, 0.029444996, 0.011699996, 1)
 ambient_light_source = 2
-ambient_light_color = Color(0.6052743, 0.6052743, 0.6052743, 1)
+ambient_light_color = Color(0.95815676, 0.95815676, 0.95815676, 1)
+ambient_light_energy = 1.5
 glow_enabled = true
 glow_intensity = 0.5
 
@@ -298,6 +344,18 @@ tracks/9/keys = {
 "method": &"save_paddle_positions"
 }]
 }
+tracks/10/type = "value"
+tracks/10/imported = false
+tracks/10/enabled = true
+tracks/10/path = NodePath(".:dotted_line_alpha")
+tracks/10/interp = 1
+tracks/10/loop_wrap = true
+tracks/10/keys = {
+"times": PackedFloat32Array(0, 6.7005296, 8.995687),
+"transitions": PackedFloat32Array(1, 1, 1),
+"update": 0,
+"values": [0.0, 0.0, 1.0]
+}
 
 [sub_resource type="Animation" id="Animation_oe0u4"]
 resource_name = "outro"
@@ -474,13 +532,27 @@ _data = {
 
 [node name="PongGameScene" type="Node3D" unique_id=632967591]
 script = ExtResource("1_0ehfm")
-players_distance_from_center = 0.122
 dotted_line_mat = SubResource("StandardMaterial3D_r2ito")
+
+[node name="MeshInstance3D2" type="MeshInstance3D" parent="." unique_id=554493889]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.06012258, -1.861503)
+visible = false
+mesh = SubResource("QuadMesh_fhe3k")
+surface_material_override/0 = SubResource("ShaderMaterial_hwkty")
 
 [node name="CanvasLayer" type="CanvasLayer" parent="." unique_id=1368699316]
 
+[node name="ColorRect" type="ColorRect" parent="CanvasLayer" unique_id=2089517594]
+material = SubResource("ShaderMaterial_fnvpw")
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
 [node name="WinnerText" type="RichTextLabel" parent="CanvasLayer" unique_id=2093150618]
 visible = false
+z_index = -1
 anchors_preset = 10
 anchor_right = 1.0
 offset_top = 40.0
@@ -494,14 +566,83 @@ text = "[wave][color=pink]solomongumbot[/color][/wave]
 fit_content = true
 horizontal_alignment = 1
 
+[node name="MarginContainer" type="MarginContainer" parent="CanvasLayer" unique_id=1658146598]
+z_index = -1
+anchors_preset = 3
+anchor_left = 1.0
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -458.0
+offset_top = -192.0
+grow_horizontal = 0
+grow_vertical = 0
+theme_override_constants/margin_left = 20
+theme_override_constants/margin_top = 20
+theme_override_constants/margin_right = 20
+theme_override_constants/margin_bottom = 20
+
+[node name="VBoxContainer" type="VBoxContainer" parent="CanvasLayer/MarginContainer" unique_id=1570528044]
+layout_mode = 2
+size_flags_vertical = 8
+
+[node name="HBoxContainer2" type="HBoxContainer" parent="CanvasLayer/MarginContainer/VBoxContainer" unique_id=109630884]
+layout_mode = 2
+size_flags_horizontal = 8
+theme_override_constants/separation = 20
+
+[node name="MarginContainer" type="MarginContainer" parent="CanvasLayer/MarginContainer/VBoxContainer/HBoxContainer2" unique_id=788985732]
+layout_mode = 2
+theme_override_constants/margin_left = 0
+theme_override_constants/margin_top = 10
+theme_override_constants/margin_right = 0
+theme_override_constants/margin_bottom = 10
+
+[node name="ControlLabel" type="Label" parent="CanvasLayer/MarginContainer/VBoxContainer/HBoxContainer2/MarginContainer" unique_id=156825017]
+layout_mode = 2
+text = "Move Up"
+label_settings = SubResource("LabelSettings_gfeu2")
+
+[node name="ControlIcon" type="TextureRect" parent="CanvasLayer/MarginContainer/VBoxContainer/HBoxContainer2" unique_id=1094223424]
+layout_mode = 2
+size_flags_horizontal = 2
+texture = ExtResource("4_fnvpw")
+expand_mode = 2
+stretch_mode = 3
+
+[node name="HBoxContainer3" type="HBoxContainer" parent="CanvasLayer/MarginContainer/VBoxContainer" unique_id=1685262352]
+layout_mode = 2
+size_flags_horizontal = 8
+theme_override_constants/separation = 20
+
+[node name="MarginContainer" type="MarginContainer" parent="CanvasLayer/MarginContainer/VBoxContainer/HBoxContainer3" unique_id=868420347]
+layout_mode = 2
+theme_override_constants/margin_left = 0
+theme_override_constants/margin_top = 10
+theme_override_constants/margin_right = 0
+theme_override_constants/margin_bottom = 10
+
+[node name="ControlLabel" type="Label" parent="CanvasLayer/MarginContainer/VBoxContainer/HBoxContainer3/MarginContainer" unique_id=217314216]
+layout_mode = 2
+text = "Move Down"
+label_settings = SubResource("LabelSettings_gfeu2")
+
+[node name="ControlIcon" type="TextureRect" parent="CanvasLayer/MarginContainer/VBoxContainer/HBoxContainer3" unique_id=731402962]
+layout_mode = 2
+size_flags_horizontal = 2
+texture = ExtResource("4_fnvpw")
+expand_mode = 2
+stretch_mode = 3
+
 [node name="DirectionalLight3D" type="DirectionalLight3D" parent="." unique_id=408204329]
 transform = Transform3D(1, 0, 0, 0, 0.6140786, 0.7892449, 0, -0.7892449, 0.6140786, 0, 2.1573846, 1.72217)
+light_energy = 1.5
 
 [node name="PongPaddleL" parent="." unique_id=372987713 instance=ExtResource("2_racd5")]
 unique_name_in_owner = true
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -0.6538)
 
-[node name="PongPaddleR" parent="." unique_id=749521308 instance=ExtResource("2_racd5")]
+[node name="PongPaddleR" parent="." unique_id=85046415 instance=ExtResource("2_racd5")]
 unique_name_in_owner = true
 transform = Transform3D(-1, 0, -1.509958e-07, 0, 1, 0, 1.509958e-07, 0, -1, 0, 0, 0.6538)
 
@@ -529,6 +670,7 @@ transform = Transform3D(-4.371139e-08, 1, 4.371139e-08, 0, -4.371139e-08, 1, 1, 
 text = "5"
 font = ExtResource("3_433xj")
 font_size = 100
+outline_size = 0
 
 [node name="PaddleRScore" type="Label3D" parent="." unique_id=1319774487]
 unique_name_in_owner = true
@@ -536,6 +678,7 @@ transform = Transform3D(-4.371139e-08, 1, 4.371139e-08, 0, -4.371139e-08, 1, 1, 
 text = "5"
 font = ExtResource("3_433xj")
 font_size = 100
+outline_size = 0
 
 [node name="ScoreRegionR" type="Area3D" parent="." unique_id=548170705]
 unique_name_in_owner = true
@@ -558,6 +701,7 @@ transform = Transform3D(-4.371139e-08, 0, 1, 0, 1, 0, -1, 0, -4.371139e-08, 2.24
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="WallTop" unique_id=1843961124]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0.5)
+visible = false
 shape = SubResource("BoxShape3D_433xj")
 
 [node name="CSGBox3D" type="CSGBox3D" parent="WallTop/CollisionShape3D" unique_id=1689618756]

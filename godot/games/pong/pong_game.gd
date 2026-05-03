@@ -61,6 +61,8 @@ func save_paddle_positions() -> void:
   set(new_value):
     dotted_line_alpha = new_value
     dotted_line_mat.albedo_color.a = new_value
+    paddle_l_score.modulate.a = new_value
+    paddle_r_score.modulate.a = new_value
 
 func _ready() -> void:
   super._ready()
@@ -157,7 +159,10 @@ func _send_refresh_state(peer_id: int) -> void:
     MultiplayerPeer.TRANSFER_MODE_RELIABLE,
   )
 
-const NUM_ROUNDS = 3
+func handle_lobby_updated() -> void:
+  pass
+
+const NUM_ROUNDS = 1000
 func _score_area_hit(candidate: Node, winning_peer: int) -> void:
   if candidate != ball:
     return
@@ -186,7 +191,7 @@ func _start_round() -> void:
     },
     MultiplayerPeer.TARGET_PEER_BROADCAST,
     MultiplayerPeer.TRANSFER_MODE_RELIABLE,
-    true
+    MultiplayerClient.PacketSelfMode.SelfIncluded
   )
 
 func _handle_chatter_loaded(chatter: Chatter) -> void:

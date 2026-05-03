@@ -71,7 +71,7 @@ func authority_skip_current_animation() -> void:
       },
       MultiplayerPeer.TARGET_PEER_BROADCAST,
       MultiplayerPeer.TRANSFER_MODE_RELIABLE,
-      true
+      MultiplayerClient.PacketSelfMode.SelfIncluded
     )
 
 func handle_animation_finished(animation_name: String) -> void:
@@ -90,7 +90,7 @@ func authority_play_animation(animation_name: String) -> void:
     },
     MultiplayerPeer.TARGET_PEER_BROADCAST,
     MultiplayerPeer.TRANSFER_MODE_RELIABLE,
-    true
+    MultiplayerClient.PacketSelfMode.SelfIncluded
   )
 
 func _unhandled_input(_event: InputEvent) -> void:

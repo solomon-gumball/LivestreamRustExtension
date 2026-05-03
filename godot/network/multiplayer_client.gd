@@ -24,6 +24,12 @@ enum GlobalNetCommand {
   Ping = 9998, Pong
 }
 
+enum PacketSelfMode {
+  NoSelf,
+  SelfIncluded,
+  SelfOnly,
+}
+
 func _ready() -> void:
   get_tree().multiplayer_poll = false
 
@@ -129,26 +135,27 @@ func send_packet(
   packet: Dictionary,
   target_peer: int = MultiplayerPeer.TARGET_PEER_BROADCAST,
   transfer_mode: int = MultiplayerPeer.TRANSFER_MODE_UNRELIABLE_ORDERED,
-  call_self: bool = false
+  self_mode: PacketSelfMode = PacketSelfMode.NoSelf
 ) -> void:
   # if not current_lobby:
   #   if PRINT_DEBUG: print("Can't send packet, not in lobby")
   #   return
-  
-  var serialized: Variant = BinarySerializer.serialize_var(packet)
-  var payload := var_to_bytes(serialized)
 
-  var magic := PackedByteArray([0, 0, 0, 0])
-  magic.encode_u32(0, PACKET_MAGIC)
-  var packet_data := magic + payload
-  # var packet_data := payload
+  if self_mode != PacketSelfMode.SelfOnly:
+    var serialized: Variant = BinarySerializer.serialize_var(packet)
+    var payload := var_to_bytes(serialized)
 
-  if is_net_connected():
-    rtc_mp.set_target_peer(target_peer)
-    rtc_mp.set_transfer_mode(transfer_mode)
-    rtc_mp.put_packet(packet_data)
+    var magic := PackedByteArray([0, 0, 0, 0])
+    magic.encode_u32(0, PACKET_MAGIC)
+    var packet_data := magic + payload
+    # var packet_data := payload
 
-  if call_self:
+    if is_net_connected():
+      rtc_mp.set_target_peer(target_peer)
+      rtc_mp.set_transfer_mode(transfer_mode)
+      rtc_mp.put_packet(packet_data)
+
+  if self_mode != PacketSelfMode.NoSelf:
     packet_received.emit(my_peer_id(), packet)
 
 func is_net_connected() -> bool:

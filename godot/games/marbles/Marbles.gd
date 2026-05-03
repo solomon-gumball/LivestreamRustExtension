@@ -67,8 +67,8 @@ func _ready() -> void:
   # Get all nodes in a group for the current map
   _bind_inputs()
   if is_game_host:
-    peer_is_ready.connect(_peer_is_ready)
-    all_peers_loaded_in.connect(server_only_start_game)
+    SessionSynchronizer.get_instance().peer_is_ready.connect(_peer_is_ready)
+    SessionSynchronizer.get_instance().all_peers_loaded_in.connect(server_only_start_game)
 
     current_map.finish_area.body_entered.connect(on_finish_area_entered)
     current_map.out_of_bounds_area.body_entered.connect(_authority_handle_marble_out_of_bounds)
@@ -251,7 +251,7 @@ func server_only_start_game() -> void:
       { "type": MarblesMessage.UpdateGamePhase, "phase": MarblesGameState.GameState.Playing },
       MultiplayerPeer.TARGET_PEER_BROADCAST,
       MultiplayerPeer.TRANSFER_MODE_RELIABLE,
-      true
+      MultiplayerClient.PacketSelfMode.SelfIncluded
     )
 
 func _on_loaded_chatter_data(chatter: Chatter) -> void:
@@ -318,7 +318,7 @@ func _handle_peer_packet(sender_id: int, packet: Dictionary) -> void:
     return
 
   match packet.type:
-    GlobalGameMessage.ClientReady:
+    SessionSynchronizer.GlobalGameMessage.ClientReady:
       _send_refresh_state(sender_id)
     MarblesMessage.SetGameWinner:
       var winner_id: String = packet.get("chatter", "")

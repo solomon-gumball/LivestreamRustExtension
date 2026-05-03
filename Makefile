@@ -12,7 +12,8 @@ extension-local:
 	$(GODOT) --headless --path $(GODOT_PROJECT) --export-debug "extension_local"
 
 website-prod:
-	$(GODOT) --headless --path $(GODOT_PROJECT) --export-debug "website_prod"
+	$(GODOT) --headless --path $(GODOT_PROJECT) --export-release "website_prod"
+	gzip -f ../livestream-listener/public/index.wasm
 
 website-local:
 	$(GODOT) --headless --path $(GODOT_PROJECT) --export-debug "website_local"
