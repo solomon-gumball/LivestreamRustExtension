@@ -104,6 +104,8 @@ stretch = true
 own_world_3d = true
 world_3d = SubResource("World3D_hb8fn")
 handle_input_locally = false
+audio_listener_enable_2d = true
+audio_listener_enable_3d = true
 size = Vector2i(1920, 1080)
 render_target_update_mode = 4
 

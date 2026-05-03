@@ -1,6 +1,7 @@
 [gd_scene format=3 uid="uid://tbua2sk7gi2p"]
 
 [ext_resource type="Script" uid="uid://beq5kaqaqnvpq" path="res://games/pong/pong_ball.gd" id="1_c3wl3"]
+[ext_resource type="AudioStream" uid="uid://bexrmxnjyytfj" path="res://games/pong/sounds/ting2.wav" id="2_yj2yu"]
 
 [sub_resource type="SphereShape3D" id="SphereShape3D_c3wl3"]
 radius = 0.05
@@ -63,3 +64,8 @@ amount = 15
 randomness = 0.83
 process_material = SubResource("ParticleProcessMaterial_c3wl3")
 draw_pass_1 = SubResource("BoxMesh_c3wl3")
+
+[node name="BouncePlayer" type="AudioStreamPlayer2D" parent="." unique_id=1489394393]
+unique_name_in_owner = true
+stream = ExtResource("2_yj2yu")
+volume_db = 5.0

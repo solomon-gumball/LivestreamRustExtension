@@ -10,6 +10,7 @@ enum PongGameMessage {
   ClientReady,
   StartRound,
 }
+const NUM_ROUNDS = 5
 
 var pong_state: PongGameState = null:
   set(new_state):
@@ -22,7 +23,7 @@ var nodes_by_peer_id: Dictionary[int, Dictionary] = {}
 
 @onready var pong_paddle_l: PongPaddle = %PongPaddleL
 @onready var pong_paddle_r: PongPaddle = %PongPaddleR
-@onready var camera: Camera3D = %Camera
+@onready var camera: ShakeableCamera = %Camera
 @onready var pong_spawn_location: Marker3D = %PongSpawnLocation
 @onready var score_region_l: Area3D = %ScoreRegionL
 @onready var score_region_r: Area3D = %ScoreRegionR
@@ -30,6 +31,7 @@ var nodes_by_peer_id: Dictionary[int, Dictionary] = {}
 @onready var paddle_r_score: Label3D = %PaddleRScore
 @onready var cam_boom: Node3D = %CamBoom
 @onready var anim_sync: AnimationSynchronizer = %AnimationSynchronizer
+@onready var success_audio_player: AudioStreamPlayer = %SuccessAudioPlayer
 
 var saved_pong_l_position: Vector3 = Vector3.ZERO
 var saved_pong_r_position: Vector3 = Vector3.ZERO
@@ -162,7 +164,17 @@ func _send_refresh_state(peer_id: int) -> void:
 func handle_lobby_updated() -> void:
   pass
 
-const NUM_ROUNDS = 1000
+func spawn_score_fx(spawn_position: Vector3, spawn_normal: Vector3) -> void:
+  var success_fx: GPUParticles3D = pong_score_template.instantiate()
+  add_child(success_fx)
+  success_fx.global_position = spawn_position
+  success_fx.emitting = true
+  success_fx.look_at(success_fx.global_position + spawn_normal, Vector3.UP, true)
+
+  await success_fx.finished
+  success_fx.queue_free()
+
+var pong_score_template: PackedScene = preload("res://games/pong/pong_score_fx.tscn")
 func _score_area_hit(candidate: Node, winning_peer: int) -> void:
   if candidate != ball:
     return
@@ -178,7 +190,10 @@ func _score_area_hit(candidate: Node, winning_peer: int) -> void:
     game_state.paddle_r_state.score >= NUM_ROUNDS:
       anim_sync.authority_play_animation("outro")
   else:
-    await get_tree().create_timer(1.0).timeout
+    await get_tree().create_timer(2.0).timeout
+    # camera.max_x = 3.0
+    # camera.max_z = 3.0
+    # camera.trauma_reduction_rate = 1.0
     _start_round()
 
 func _start_round() -> void:
@@ -233,14 +248,30 @@ func _handle_peer_packet(sender_id: int, packet: Dictionary) -> void:
     PongGameMessage.RoundComplete:
       pong_state.ball_state = null
       pong_state.phase = PongGameState.Phase.RoundComplete
-      var paddle_state := paddle_state_for_peer(packet.get("winning_peer"))
+      var winning_peer = packet.get("winning_peer")
+      var paddle_state := paddle_state_for_peer(winning_peer)
       paddle_state.score += 1
+
+      success_audio_player.play()
+      camera.max_x = 6.0
+      camera.max_z = 6.0
+      camera.trauma_reduction_rate = 0.6
+      camera.add_trauma(1.0)
+
+      var is_left_player: bool = lobby.players[0].peer_id == winning_peer
+
+      if ball:
+        spawn_score_fx(ball.global_position, Vector3(0, 0, -1 if is_left_player else 1))
     PongGameMessage.BallMove:
       pong_state.ball_state = PongGameState.PongEntity.new()
       pong_state.ball_state.position = packet.get("position", Vector3.ZERO)
       pong_state.ball_state.velocity = packet.get("velocity", Vector3.ZERO)
       pong_state.ball_state.sent_at = packet.get("sent_at", 0.0)
     PongGameMessage.StartRound:
+      camera.max_x = 6.0
+      camera.max_z = 6.0
+      camera.trauma_reduction_rate = 0.6
+
       var direction: Vector3 = packet.get("direction", Vector3(1, 0, 0))
       pong_state.ball_state = PongGameState.PongEntity.new()
       pong_state.ball_state.owner = 1
@@ -254,6 +285,9 @@ func _handle_peer_packet(sender_id: int, packet: Dictionary) -> void:
       paddle_state.position = packet.get("position", Vector3.ZERO)
       paddle_state.velocity = packet.get("velocity", Vector3.ZERO)
   _apply_game_state()
+
+func _ball_bounced(did_hit_paddle: bool) -> void:
+  camera.add_trauma(0.6 if did_hit_paddle else 0.2)
 
 func _apply_game_state() -> void:
   if game_state:
@@ -273,6 +307,7 @@ func _apply_game_state() -> void:
       ball = ball_template.instantiate()
       ball.paddle_l = pong_paddle_l
       ball.paddle_r = pong_paddle_r
+      ball.bounced.connect(_ball_bounced)
       add_child(ball)
     ball.sync_state = game_state.ball_state
 

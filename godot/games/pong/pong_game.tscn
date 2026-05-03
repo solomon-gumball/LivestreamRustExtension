@@ -2,11 +2,14 @@
 
 [ext_resource type="Script" uid="uid://cp25ws8vhg2f5" path="res://games/pong/pong_game.gd" id="1_0ehfm"]
 [ext_resource type="Shader" uid="uid://b0ejr8ho7s47" path="res://games/pong/vhs_shader.gdshader" id="2_atkvq"]
+[ext_resource type="AudioStream" uid="uid://siweqf3fuv6x" path="res://games/pong/sounds/success.wav" id="2_hwkty"]
 [ext_resource type="PackedScene" uid="uid://b2ne4k7x0p3jp" path="res://games/pong/pong_paddle.tscn" id="2_racd5"]
 [ext_resource type="FontFile" uid="uid://7uibxoligyvb" path="res://fonts/HomeVideo-BLG6G.ttf" id="3_433xj"]
 [ext_resource type="Script" uid="uid://bb5m0cki1i1a1" path="res://games/pong/pong_cam_boom.gd" id="3_r2ito"]
 [ext_resource type="Texture2D" uid="uid://casmdw1resubx" path="res://icons/w.png" id="4_fnvpw"]
+[ext_resource type="Script" uid="uid://d2r80k72i2mea" path="res://util/shakeable_camera.gd" id="8_fhe3k"]
 [ext_resource type="Shader" uid="uid://bqw622cobg44v" path="res://materials/outline/outline.gdshader" id="8_gfeu2"]
+[ext_resource type="PackedScene" uid="uid://dpnulvco42ucr" path="res://games/pong/pong_score_fx.tscn" id="8_r5k7i"]
 [ext_resource type="Script" uid="uid://txxkpqyixtos" path="res://games/animation_synchronizer.gd" id="anim_sync_script"]
 
 [sub_resource type="Gradient" id="Gradient_racd5"]
@@ -54,7 +57,7 @@ shader_parameter/distort_intensity = 0.002000000095
 shader_parameter/noise_opacity = 0.06000000285
 shader_parameter/noise_speed = 5.0
 shader_parameter/static_noise_intensity = 0.0710000033725
-shader_parameter/aberration = 0.010000047974999982
+shader_parameter/aberration = 0.01000004797499998
 shader_parameter/brightness = 1.4
 shader_parameter/discolor = true
 shader_parameter/warp_amount = 0.0450000021375
@@ -65,6 +68,9 @@ shader_parameter/vignette_opacity = 0.28400001349
 [sub_resource type="LabelSettings" id="LabelSettings_gfeu2"]
 font = ExtResource("3_433xj")
 font_size = 50
+
+[sub_resource type="FastNoiseLite" id="FastNoiseLite_fhe3k"]
+seed = 2
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_racd5"]
 size = Vector3(10, 1, 1)
@@ -78,6 +84,7 @@ background_color = Color(0.13, 0.029444996, 0.011699996, 1)
 ambient_light_source = 2
 ambient_light_color = Color(0.95815676, 0.95815676, 0.95815676, 1)
 ambient_light_energy = 1.5
+ssao_enabled = true
 glow_enabled = true
 glow_intensity = 0.5
 
@@ -532,11 +539,17 @@ _data = {
 
 [node name="PongGameScene" type="Node3D" unique_id=632967591]
 script = ExtResource("1_0ehfm")
+players_distance_from_center = 0.122
 dotted_line_mat = SubResource("StandardMaterial3D_r2ito")
+
+[node name="SuccessAudioPlayer" type="AudioStreamPlayer" parent="." unique_id=149136936]
+unique_name_in_owner = true
+stream = ExtResource("2_hwkty")
 
 [node name="MeshInstance3D2" type="MeshInstance3D" parent="." unique_id=554493889]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.06012258, -1.861503)
 visible = false
+ignore_occlusion_culling = true
 mesh = SubResource("QuadMesh_fhe3k")
 surface_material_override/0 = SubResource("ShaderMaterial_hwkty")
 
@@ -646,6 +659,8 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -0.6538)
 unique_name_in_owner = true
 transform = Transform3D(-1, 0, -1.509958e-07, 0, 1, 0, 1.509958e-07, 0, -1, 0, 0, 0.6538)
 
+[node name="PongScoreFX" parent="." unique_id=1170788964 instance=ExtResource("8_r5k7i")]
+
 [node name="CamBoom" type="Node3D" parent="." unique_id=95433371 node_paths=PackedStringArray("target_player")]
 unique_name_in_owner = true
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.18, 0)
@@ -659,6 +674,10 @@ projection = 1
 current = true
 fov = 45.0
 size = 4.56
+script = ExtResource("8_fhe3k")
+trauma_reduction_rate = 0.6
+noise = SubResource("FastNoiseLite_fhe3k")
+noise_speed = 200.0
 
 [node name="PongSpawnLocation" type="Marker3D" parent="." unique_id=1025138863]
 unique_name_in_owner = true

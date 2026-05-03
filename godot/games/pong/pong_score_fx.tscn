@@ -1,0 +1,38 @@
+[gd_scene format=3 uid="uid://dpnulvco42ucr"]
+
+[sub_resource type="Curve" id="Curve_4g4mn"]
+_data = [Vector2(0, 1), 0.0, 0.0, 0, 0, Vector2(0.60642564, 0), -2.4491432, 0.0, 0, 0]
+point_count = 2
+
+[sub_resource type="CurveTexture" id="CurveTexture_lboyj"]
+curve = SubResource("Curve_4g4mn")
+
+[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_mya7m"]
+emission_shape_scale = Vector3(0.3, 0.05, 0.05)
+emission_shape = 3
+emission_box_extents = Vector3(1, 1, 1)
+direction = Vector3(0, 0, 1)
+spread = 1.0
+initial_velocity_min = 3.0
+initial_velocity_max = 7.0
+gravity = Vector3(0, 0, 0)
+scale_min = 0.01
+scale_max = 0.07
+scale_curve = SubResource("CurveTexture_lboyj")
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_u5md4"]
+emission_enabled = true
+emission = Color(0.13333334, 0.7019608, 0.95686275, 1)
+emission_energy_multiplier = 3.0
+
+[sub_resource type="BoxMesh" id="BoxMesh_c3wl3"]
+material = SubResource("StandardMaterial3D_u5md4")
+
+[node name="PongScoreFX" type="GPUParticles3D" unique_id=1170788964]
+emitting = false
+amount = 60
+one_shot = true
+explosiveness = 0.63
+randomness = 0.42
+process_material = SubResource("ParticleProcessMaterial_mya7m")
+draw_pass_1 = SubResource("BoxMesh_c3wl3")
