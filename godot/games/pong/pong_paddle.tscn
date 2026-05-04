@@ -5,6 +5,7 @@
 [ext_resource type="PackedScene" uid="uid://bn7vuka4ytk5c" path="res://games/pong/pong_gumbot.tscn" id="2_v7xyw"]
 [ext_resource type="Texture2D" uid="uid://cas3gr887xevi" path="res://materials/bot_mat/bot_albedo.png" id="3_v7xyw"]
 [ext_resource type="Texture2D" uid="uid://ba6mac1k3t38a" path="res://materials/bot_mat/bot_normals.png" id="4_51saw"]
+[ext_resource type="FontFile" uid="uid://7uibxoligyvb" path="res://fonts/HomeVideo-BLG6G.ttf" id="6_v7xyw"]
 
 [sub_resource type="BoxMesh" id="BoxMesh_a14gn"]
 size = Vector3(0.7, 0.2, 0.06)
@@ -49,3 +50,11 @@ material = SubResource("StandardMaterial3D_u5md4")
 unique_name_in_owner = true
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.11558321, -0.018149406)
 shape = SubResource("BoxShape3D_a14gn")
+
+[node name="NameLabel" type="Label3D" parent="." unique_id=320130654]
+unique_name_in_owner = true
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, 0, 0, -0.3217547)
+outline_modulate = Color(0, 0, 0, 0.5529412)
+text = "solomongumbal1"
+font = ExtResource("6_v7xyw")
+outline_size = 0

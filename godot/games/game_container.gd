@@ -84,8 +84,8 @@ func load_game_from_lobby(lobby: Lobby) -> void:
     if not loaded:
       return
 
-  # if DebugScreenLayout.window_index == 1:
-  #   await get_tree().create_timer(3.0).timeout
+  if DebugScreenLayout.window_index == 1:
+    await get_tree().create_timer(3.0).timeout
 
   var packed_scene: PackedScene
   if OS.has_feature("threads"):

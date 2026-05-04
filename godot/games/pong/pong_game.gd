@@ -10,7 +10,7 @@ enum PongGameMessage {
   ClientReady,
   StartRound,
 }
-const NUM_ROUNDS = 5
+const NUM_ROUNDS = 1
 
 var pong_state: PongGameState = null:
   set(new_state):
@@ -32,6 +32,7 @@ var nodes_by_peer_id: Dictionary[int, Dictionary] = {}
 @onready var cam_boom: Node3D = %CamBoom
 @onready var anim_sync: AnimationSynchronizer = %AnimationSynchronizer
 @onready var success_audio_player: AudioStreamPlayer = %SuccessAudioPlayer
+@onready var winner_text_block: RichTextLabel = %WinnerText
 
 var saved_pong_l_position: Vector3 = Vector3.ZERO
 var saved_pong_r_position: Vector3 = Vector3.ZERO
@@ -134,10 +135,18 @@ func _exit_tree() -> void:
     MultiplayerClient.rtc_peer_ready.disconnect(_send_refresh_state)
 
 func trigger_ending_character_anims() -> void:
+  var winning_peer: Lobby.PeerData = null
   if game_state.paddle_l_state.score > game_state.paddle_r_state.score:
+    winning_peer = lobby.players.get(0)
     pong_paddle_l.gumbot_animation_state = PongPaddle.GumbotAnimState.Taunt
   else:
+    winning_peer = lobby.players.get(1)
     pong_paddle_r.gumbot_animation_state = PongPaddle.GumbotAnimState.Taunt
+  
+  if winning_peer:
+    var winning_chatter: Chatter = chatters.get(winning_peer.chatter_id, null)
+    if winning_chatter:
+      winner_text_block.text = "[wave][color=pink]%s[/color][/wave]\n[wave][color=green]wins![/color]" % winning_chatter.display_name
 
 # Authority only function
 func _anim_finished(anim_name: String) -> void:

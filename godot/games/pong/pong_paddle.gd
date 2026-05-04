@@ -23,13 +23,14 @@ var chatter: Chatter:
   set(new_chatter):
     gumbot.chatter = new_chatter
     chatter = new_chatter
+    name_label.text = new_chatter.display_name
 
 var chatter_id: String
 var velocity: Vector3 = Vector3.ZERO
 
 @export var paddle_mesh_box: BoxMesh
 @export var paddle_collision_box: BoxShape3D
-
+@onready var name_label: Label3D = %NameLabel
 @onready var paddle_collision_shape: CollisionShape3D = %PaddleCollisionShape
 @onready var paddle_mesh: Node3D = %PaddleMesh
 @onready var gumbot: GumBot = %GumBot
@@ -46,6 +47,7 @@ enum GumbotAnimState { Taunt, Walking, Pong }
     var sm_playback: AnimationNodeStateMachinePlayback = gumbot.anim_tree.get("parameters/StateMachine/playback")
     sm_playback.travel(GumbotAnimState.keys()[gumbot_animation_state])
 
+    name_label.visible = gumbot_animation_state == GumbotAnimState.Pong
     paddle_mesh.visible = gumbot_animation_state == GumbotAnimState.Pong
     gumbot.show_name_label = gumbot_animation_state != GumbotAnimState.Pong
 
