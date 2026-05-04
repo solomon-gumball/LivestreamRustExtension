@@ -55,17 +55,21 @@ script = ExtResource("1_blyjl")
 value = 20
 
 [node name="Mesh" type="MeshInstance3D" parent="." unique_id=1177948650]
+unique_name_in_owner = true
 mesh = ExtResource("2_n8s3s")
 
 [node name="Shape" type="CollisionShape3D" parent="." unique_id=1091270843]
 shape = SubResource("BoxShape3D_hljfl")
 
 [node name="Sparkles" type="GPUParticles3D" parent="." unique_id=1192815145]
+unique_name_in_owner = true
+emitting = false
 amount = 12
 process_material = ExtResource("3_x70dg")
 draw_pass_1 = SubResource("PlaneMesh_ut1tt")
 
 [node name="Explosion" type="GPUParticles3D" parent="." unique_id=1583394395]
+unique_name_in_owner = true
 emitting = false
 amount = 20
 one_shot = true

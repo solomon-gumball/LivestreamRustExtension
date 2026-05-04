@@ -14,8 +14,8 @@ class_name GumCoin
     if is_inside_tree():
       size_scalar = new_value
       mesh.scale = Vector3(size_scalar, size_scalar, size_scalar)
-      collision_shape.radius = base_collision_radius * size_scalar
-      collision_shape.height = base_collision_height * size_scalar
+      # collision_shape.radius = base_collision_radius * size_scalar
+      # collision_shape.height = base_collision_height * size_scalar
       sparkles_fx.scale = Vector3(size_scalar, size_scalar, size_scalar)
       explosion_fx.scale = Vector3(size_scalar, size_scalar, size_scalar)
 

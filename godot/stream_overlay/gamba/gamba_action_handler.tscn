@@ -159,6 +159,29 @@ mesh = SubResource("BoxMesh_4ddi7")
 
 [node name="CanvasLayer" type="CanvasLayer" parent="." unique_id=569027186]
 
+[node name="PullStatusLabel" type="RichTextLabel" parent="CanvasLayer" unique_id=42485234]
+visible = false
+custom_minimum_size = Vector2(450, 0)
+anchors_preset = 6
+anchor_left = 1.0
+anchor_top = 0.5
+anchor_right = 1.0
+anchor_bottom = 0.5
+offset_left = -470.0
+offset_top = -97.0
+offset_right = -20.0
+offset_bottom = 11.0
+grow_horizontal = 0
+grow_vertical = 2
+theme_override_fonts/normal_font = ExtResource("7_4ddi7")
+bbcode_enabled = true
+text = "[font_size=40]
+[color=green]+450 GUM[/color]
+3 PULLS REMAINING
+[/font_size]"
+fit_content = true
+horizontal_alignment = 2
+
 [node name="WinningTextLabel" type="RichTextLabel" parent="CanvasLayer" unique_id=397930392]
 unique_name_in_owner = true
 self_modulate = Color(1, 1, 1, 0)
@@ -181,8 +204,25 @@ theme_override_constants/shadow_offset_x = 4
 theme_override_constants/shadow_offset_y = 4
 theme_override_fonts/normal_font = ExtResource("7_4ddi7")
 bbcode_enabled = true
-text = "[pulse freq=5.0][font_size=80][color=gold]3X Ice Cream[/color][/font_size]
-[font_size=50][color=green]+240 GUMBUCKS[/color][/font_size][/pulse]"
+text = "[shake][font_size=80][color=gold]3X Ice Cream[/color][/font_size]
+[font_size=50][color=green]+240 GUMBUCKS[/color][/font_size][/shake]"
+fit_content = true
+horizontal_alignment = 1
+
+[node name="TotalEarningsLabel" type="RichTextLabel" parent="CanvasLayer" unique_id=769514233]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(500, 0)
+offset_left = 197.0
+offset_top = 853.0
+offset_right = 697.0
+offset_bottom = 943.0
+theme_override_colors/font_shadow_color = Color(0.10438705, 0.18099746, 0.067190275, 0.627451)
+theme_override_constants/shadow_outline_size = 5
+theme_override_constants/shadow_offset_x = 5
+theme_override_constants/shadow_offset_y = 5
+theme_override_fonts/normal_font = ExtResource("7_4ddi7")
+bbcode_enabled = true
+text = "[color=green][font_size=100]+120 GUM[/font_size][/color]"
 fit_content = true
 horizontal_alignment = 1
 

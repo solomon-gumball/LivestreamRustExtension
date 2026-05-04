@@ -135,6 +135,7 @@ func play_winning_sound(result: RowResult) -> void:
   sound_player.volume_db = -30
   $WinningSoundPlayer.play()
 
+const REWARD_WAIT_TIME = 4.0
 func spin(multiplier: int) -> int:
   trigger_pull_animation()
   await get_tree().create_timer(0.6).timeout
@@ -165,7 +166,7 @@ func spin(multiplier: int) -> int:
     await toggle_highlights(true)
     play_winning_sound(top_row)
     slot_reward_triggered.emit(top_row, multiplier)
-    await get_tree().create_timer(2.0).timeout
+    await get_tree().create_timer(REWARD_WAIT_TIME).timeout
 
   await toggle_highlights(false)
   var center_row: RowResult = check_set(center_left, center_mid, center_right)
@@ -174,7 +175,7 @@ func spin(multiplier: int) -> int:
     await toggle_highlights(true)
     play_winning_sound(center_row)
     slot_reward_triggered.emit(center_row, multiplier)
-    await get_tree().create_timer(2.0).timeout
+    await get_tree().create_timer(REWARD_WAIT_TIME).timeout
 
   await toggle_highlights(false)
   var bottom_row: RowResult = check_set(bottom_left, bottom_mid, bottom_right)
@@ -183,7 +184,7 @@ func spin(multiplier: int) -> int:
     await toggle_highlights(true)
     play_winning_sound(bottom_row)
     slot_reward_triggered.emit(bottom_row, multiplier)
-    await get_tree().create_timer(2.0).timeout
+    await get_tree().create_timer(REWARD_WAIT_TIME).timeout
 
   await toggle_highlights(false)
   var top_to_bot_diag: RowResult = check_set(top_left, center_mid, bottom_right)
@@ -192,7 +193,7 @@ func spin(multiplier: int) -> int:
     await toggle_highlights(true)
     play_winning_sound(top_to_bot_diag)
     slot_reward_triggered.emit(top_to_bot_diag, multiplier)
-    await get_tree().create_timer(2.0).timeout
+    await get_tree().create_timer(REWARD_WAIT_TIME).timeout
 
   await toggle_highlights(false)
   var bot_to_top_diag: RowResult = check_set(bottom_left, center_mid, top_right)
@@ -201,7 +202,7 @@ func spin(multiplier: int) -> int:
     await toggle_highlights(true)
     play_winning_sound(bot_to_top_diag)
     slot_reward_triggered.emit(bot_to_top_diag, multiplier)
-    await get_tree().create_timer(2.0).timeout
+    await get_tree().create_timer(REWARD_WAIT_TIME).timeout
 
   if total_gumbucks_won == 0:
     await get_tree().create_timer(1).timeout
@@ -279,16 +280,19 @@ func check_set(key_1: int, key_2: int, key_3: int) -> RowResult:
     slots_to_highlight = [false, true, true]
     matching_val = val_2
   
+  # posmod instead of % because spin_wheel returns large negative indices; GDScript's %
+  # preserves sign (e.g. -15 % 16 == -15) while the shader's mod() is always non-negative,
+  # so using % would produce a mismatch and silently skip the highlight.
   if slots_to_highlight[0]:
-    screen_mat_1.set_shader_parameter("selected_slot", (NumSlots) + key_1 % NumSlots )
+    screen_mat_1.set_shader_parameter("selected_slot", posmod(key_1, NumSlots))
   else:
     screen_mat_1.set_shader_parameter("selected_slot", -1)
   if slots_to_highlight[1]:
-    screen_mat_2.set_shader_parameter("selected_slot", (NumSlots) + key_2 % NumSlots )
+    screen_mat_2.set_shader_parameter("selected_slot", posmod(key_2, NumSlots))
   else:
     screen_mat_2.set_shader_parameter("selected_slot", -1)
   if slots_to_highlight[2]:
-    screen_mat_3.set_shader_parameter("selected_slot", (NumSlots) + key_3 % NumSlots )
+    screen_mat_3.set_shader_parameter("selected_slot", posmod(key_3, NumSlots))
   else:
     screen_mat_3.set_shader_parameter("selected_slot", -1)
 

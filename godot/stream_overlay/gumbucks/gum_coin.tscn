@@ -67,7 +67,7 @@ mesh = ExtResource("2_mgjn0")
 
 [node name="Sparkles" type="GPUParticles3D" parent="." unique_id=862121842]
 unique_name_in_owner = true
-amount = 4
+amount = 1
 process_material = ExtResource("3_np00d")
 draw_pass_1 = SubResource("PlaneMesh_nan82")
 
