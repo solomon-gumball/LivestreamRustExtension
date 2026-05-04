@@ -1,0 +1,7 @@
+[gd_resource type="StandardMaterial3D" format=3 uid="uid://by3osa3ku23uj"]
+
+[ext_resource type="Texture2D" uid="uid://b7hmy76ajpk6m" path="res://stream_overlay/gumbucks/gumbucks_mat_albedo.png" id="1_56l4s"]
+
+[resource]
+shading_mode = 0
+albedo_texture = ExtResource("1_56l4s")

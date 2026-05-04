@@ -1,0 +1,21 @@
+[gd_resource type="ParticleProcessMaterial" format=3 uid="uid://c66octdceb2h3"]
+
+[sub_resource type="Curve" id="Curve_uqfw1"]
+_data = [Vector2(0.00606061, 0.000511408), 0.0, 0.0163736, 0, 0, Vector2(0.327273, 1), -0.0126088, -0.0126088, 0, 0, Vector2(1, 0.0138084), -4.03896, 0.0, 0, 0]
+point_count = 3
+
+[sub_resource type="CurveTexture" id="CurveTexture_0jjha"]
+curve = SubResource("Curve_uqfw1")
+
+[resource]
+particle_flag_rotate_y = true
+emission_shape = 1
+emission_sphere_radius = 0.1
+angle_min = -111.7
+angle_max = 123.6
+gravity = Vector3(0, 0.5, 0)
+radial_accel_min = -0.300002
+radial_accel_max = 0.299998
+scale_min = 0.03
+scale_max = 0.05
+scale_curve = SubResource("CurveTexture_0jjha")

@@ -2,6 +2,7 @@
 
 [ext_resource type="PackedScene" uid="uid://bn7vuka4ytk5c" path="res://games/pong/pong_gumbot.tscn" id="1_nopgx"]
 [ext_resource type="Script" uid="uid://dirfmih3jjasa" path="res://stream_overlay/roaming_bots.gd" id="1_qub5t"]
+[ext_resource type="PackedScene" uid="uid://bv1hsp38p2uis" path="res://stream_overlay/bot_roaming_overlay.tscn" id="2_0umhx"]
 [ext_resource type="Shader" uid="uid://cw1km147x2fwu" path="res://materials/bot_mat/bot_shader.gdshader" id="2_qub5t"]
 [ext_resource type="Script" uid="uid://de7m16kxewii6" path="res://network/action_queue_manager.gd" id="2_xt8k4"]
 [ext_resource type="PackedScene" uid="uid://qyhgu3bbkucx" path="res://stream_overlay/gamba/gamba_action_handler.tscn" id="3_0umhx"]
@@ -17,7 +18,7 @@ cell_size = 0.01
 cell_height = 0.01
 agent_radius = 0.1
 
-[sub_resource type="ShaderMaterial" id="ShaderMaterial_qub5t"]
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_xctpr"]
 resource_local_to_scene = true
 render_priority = 0
 shader = ExtResource("2_qub5t")
@@ -47,6 +48,9 @@ ssao_enabled = true
 [node name="BotRoamingLayout" type="Node3D" unique_id=1134108647]
 script = ExtResource("1_qub5t")
 
+[node name="BotRoamingOverlay" parent="." unique_id=1233659606 instance=ExtResource("2_0umhx")]
+unique_name_in_owner = true
+
 [node name="NavigationRegion3D" type="NavigationRegion3D" parent="." unique_id=929421389]
 transform = Transform3D(-1, 0, 8.742278e-08, 0, 1, 0, -8.742278e-08, 0, -1, 0, 1.6412506, -3.5453691)
 navigation_mesh = SubResource("NavigationMesh_5bn8s")
@@ -72,7 +76,7 @@ transform = Transform3D(-1, 0, 8.742278e-08, 0, 1, 0, -8.742278e-08, 0, -1, 0, 2
 
 [node name="gumbot" parent="BotSpawnLocation" unique_id=2126276004 instance=ExtResource("1_nopgx")]
 transform = Transform3D(-1, 0, -8.742278e-08, 0, 1, 0, 8.742278e-08, 0, -1, 0, 0, 0)
-surface_mat = SubResource("ShaderMaterial_qub5t")
+surface_mat = SubResource("ShaderMaterial_xctpr")
 
 [node name="Floor" type="StaticBody3D" parent="." unique_id=1579219069 groups=["nav"]]
 transform = Transform3D(-1, 0, 8.742278e-08, 0, 1, 0, -8.742278e-08, 0, -1, 0, -0.5, -3.5453691)

@@ -1,7 +1,7 @@
 [gd_scene format=3 uid="uid://c5n1uoo7diw0j"]
 
 [ext_resource type="PackedScene" uid="uid://cgwi2k80q6fjm" path="res://stream_overlay/gamba/gamba_machine.blend" id="1_yrjc3"]
-[ext_resource type="Script" uid="uid://bxv1w76bpxn6w" path="res://stream_overlay/gamba/GambaMachine.gd" id="2_jrtsm"]
+[ext_resource type="Script" uid="uid://bxv1w76bpxn6w" path="res://stream_overlay/gamba/gamba_machine.gd" id="2_jrtsm"]
 [ext_resource type="Shader" uid="uid://veghhhej8yq" path="res://stream_overlay/gamba/gamba_screens.gdshader" id="3_ehhge"]
 [ext_resource type="Texture2D" uid="uid://dx8aebg13weqh" path="res://stream_overlay/gamba/slot_machine_icons.png" id="4_ehhge"]
 [ext_resource type="Texture2D" uid="uid://b8w2hm6vcm4p6" path="res://stream_overlay/gamba/SlotIconHighlight.png" id="5_rbyqp"]

@@ -1,0 +1,91 @@
+[gd_scene format=3 uid="uid://iemaysjftewh"]
+
+[ext_resource type="Script" uid="uid://dgo0wrm7vvnop" path="res://stream_overlay/gumbucks/gum_coin.gd" id="1_cc7xb"]
+[ext_resource type="ArrayMesh" uid="uid://c4wen5yqbpoo2" path="res://stream_overlay/gumbucks/gumcoin.res" id="2_mgjn0"]
+[ext_resource type="Material" uid="uid://c66octdceb2h3" path="res://stream_overlay/gumbucks/coin_sparkles.tres" id="3_np00d"]
+[ext_resource type="Texture2D" uid="uid://s2oalixvle0h" path="res://stream_overlay/gumbucks/sparkle_particles.png" id="4_lamv5"]
+[ext_resource type="FontFile" uid="uid://7uibxoligyvb" path="res://fonts/HomeVideo-BLG6G.ttf" id="5_27vro"]
+
+[sub_resource type="PhysicsMaterial" id="PhysicsMaterial_047o0"]
+bounce = 0.5
+
+[sub_resource type="CylinderShape3D" id="CylinderShape3D_v8f4c"]
+height = 0.192
+radius = 0.242
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_2fhfj"]
+transparency = 1
+cull_mode = 2
+shading_mode = 0
+albedo_texture = ExtResource("4_lamv5")
+billboard_mode = 3
+billboard_keep_scale = true
+particles_anim_h_frames = 1
+particles_anim_v_frames = 1
+particles_anim_loop = false
+use_point_size = true
+
+[sub_resource type="PlaneMesh" id="PlaneMesh_nan82"]
+material = SubResource("StandardMaterial3D_2fhfj")
+orientation = 2
+
+[sub_resource type="Curve" id="Curve_uqfw1"]
+_data = [Vector2(0.00606061, 0.000511408), 0.0, 0.0163736, 0, 0, Vector2(0.327273, 1), -0.0126088, -0.0126088, 0, 0, Vector2(1, 0.0138084), -4.03896, 0.0, 0, 0]
+point_count = 3
+
+[sub_resource type="CurveTexture" id="CurveTexture_2wg2w"]
+curve = SubResource("Curve_uqfw1")
+
+[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_74st2"]
+particle_flag_rotate_y = true
+emission_shape = 1
+emission_sphere_radius = 0.1
+angle_min = -111.7
+angle_max = 123.6
+gravity = Vector3(0, 0, 0)
+radial_accel_min = -5.0
+radial_accel_max = 5.0
+damping_min = 2.0
+damping_max = 3.0
+scale_min = 0.03
+scale_max = 0.05
+scale_curve = SubResource("CurveTexture_2wg2w")
+
+[node name="GumCoin" type="RigidBody3D" unique_id=2072231618]
+collision_mask = 3
+physics_material_override = SubResource("PhysicsMaterial_047o0")
+script = ExtResource("1_cc7xb")
+collision_shape = SubResource("CylinderShape3D_v8f4c")
+
+[node name="Shape" type="CollisionShape3D" parent="." unique_id=472189539]
+transform = Transform3D(0.352641, 0, 0, 0, -1.54144e-08, -0.352641, 0, 0.352641, -1.54144e-08, 0, 0, 0)
+shape = SubResource("CylinderShape3D_v8f4c")
+
+[node name="Mesh" type="MeshInstance3D" parent="." unique_id=1582455957]
+unique_name_in_owner = true
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, -1, 0, 1, -4.371139e-08, 0, 0, 0)
+mesh = ExtResource("2_mgjn0")
+
+[node name="Sparkles" type="GPUParticles3D" parent="." unique_id=862121842]
+unique_name_in_owner = true
+amount = 12
+process_material = ExtResource("3_np00d")
+draw_pass_1 = SubResource("PlaneMesh_nan82")
+
+[node name="Explosion" type="GPUParticles3D" parent="." unique_id=899669528]
+unique_name_in_owner = true
+emitting = false
+amount = 20
+one_shot = true
+explosiveness = 1.0
+process_material = SubResource("ParticleProcessMaterial_74st2")
+draw_pass_1 = SubResource("PlaneMesh_nan82")
+
+[node name="Label3D" type="Label3D" parent="." unique_id=1620480399]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.629866, 0)
+visible = false
+billboard = 1
+modulate = Color(0, 0.803922, 0.121569, 1)
+text = "+10 GUM"
+font = ExtResource("5_27vro")
+outline_size = 0

@@ -261,7 +261,16 @@ class ConnectedState extends WSClientState:
     else:
       print("[WSClient] WARNING: No auth token available — sending authenticate with no credentials")
 
-    var subscribe_method := { "type": "subscribe", "channels": ["LOBBIES"] }
+    var default_channel_subscriptions = ["LOBBIES"]
+
+    # Automatically subscribe to the SIMULATION channel in overlay mode to get action queue
+    if OS.has_feature("overlay"):
+      default_channel_subscriptions.append("SIMULATION")
+
+    var subscribe_method := {
+      "type": "subscribe",
+      "channels": default_channel_subscriptions
+    }
     net.remote_server_socket.send_text(JSON.stringify([auth_msg, subscribe_method]))
   
   func handle_remote_message(message: Variant) -> void:

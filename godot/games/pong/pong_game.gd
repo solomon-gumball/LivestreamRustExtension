@@ -87,8 +87,6 @@ func _ready() -> void:
   for peer in lobby.peers:
     sub_channels.append(peer.chatter_id)
 
-  WSClient.subscribe(sub_channels)
-
   nodes_by_peer_id[lobby.players[0].peer_id] = {
     "paddle": pong_paddle_l,
     "score": paddle_l_score

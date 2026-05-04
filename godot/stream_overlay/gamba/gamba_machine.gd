@@ -123,8 +123,8 @@ func trigger_pull_animation() -> void:
   await base_anim_player.animation_finished
   base_anim_player.play("ArmsIdle")
 
-var minor_win_sound: Resource = load("res://src/gamba/slot-minor-winner.mp3")
-var major_win_sound: Resource = load("res://src/gamba/slot-big-winner.mp3")
+var minor_win_sound: Resource = load("res://stream_overlay/gamba/slot-minor-winner.mp3")
+var major_win_sound: Resource = load("res://stream_overlay/gamba/slot-big-winner.mp3")
 
 func play_winning_sound(result: RowResult) -> void:
   var stream = major_win_sound if result.count == 3 else minor_win_sound

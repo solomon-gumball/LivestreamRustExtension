@@ -1,8 +1,142 @@
 [gd_scene format=3 uid="uid://qyhgu3bbkucx"]
 
 [ext_resource type="PackedScene" uid="uid://c5n1uoo7diw0j" path="res://stream_overlay/gamba/gamba_machine.tscn" id="1_nrsg6"]
+[ext_resource type="PackedScene" uid="uid://8752ixnts4gh" path="res://stream_overlay/gamba/coin_spawn_box.tscn" id="2_4u2l4"]
+[ext_resource type="Script" uid="uid://cmdlb5sfp5oem" path="res://stream_overlay/gamba/gamba_action_handler.gd" id="2_33u5i"]
+[ext_resource type="PackedScene" uid="uid://crkh8hdu5af84" path="res://gumbot/gumbot.tscn" id="2_cgrbr"]
+[ext_resource type="PackedScene" uid="uid://cycfqdd5o0s64" path="res://stream_overlay/gamba/coin_drop_box.blend" id="3_3slm2"]
+[ext_resource type="Shader" uid="uid://cw1km147x2fwu" path="res://materials/bot_mat/bot_shader.gdshader" id="3_33u5i"]
+[ext_resource type="Texture2D" uid="uid://cas3gr887xevi" path="res://materials/bot_mat/bot_albedo.png" id="4_4ddi7"]
+[ext_resource type="Texture2D" uid="uid://ba6mac1k3t38a" path="res://materials/bot_mat/bot_normals.png" id="5_4u2l4"]
+[ext_resource type="FontFile" uid="uid://7uibxoligyvb" path="res://fonts/HomeVideo-BLG6G.ttf" id="7_4ddi7"]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_4u2l4"]
+cull_mode = 1
+
+[sub_resource type="BoxMesh" id="BoxMesh_4ddi7"]
+material = SubResource("StandardMaterial3D_4u2l4")
+size = Vector3(1.158, 2.249, 0.41)
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_4u2l4"]
+resource_local_to_scene = true
+render_priority = 0
+shader = ExtResource("3_33u5i")
+shader_parameter/albedo_texture = ExtResource("4_4ddi7")
+shader_parameter/normal_map = ExtResource("5_4u2l4")
+shader_parameter/bot_color = Color(1, 0, 0, 1)
+
+[sub_resource type="Animation" id="Animation_4ddi7"]
+length = 0.001
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("CanvasLayer/RichTextLabel:rotation")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [0.0]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("CanvasLayer/RichTextLabel:scale")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector2(1, 1)]
+}
+tracks/2/type = "value"
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/path = NodePath("CanvasLayer/RichTextLabel:position")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector2(1114, 641.5)]
+}
+tracks/3/type = "value"
+tracks/3/imported = false
+tracks/3/enabled = true
+tracks/3/path = NodePath("CanvasLayer/RichTextLabel:self_modulate")
+tracks/3/interp = 1
+tracks/3/loop_wrap = true
+tracks/3/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Color(1, 1, 1, 0)]
+}
+
+[sub_resource type="Animation" id="Animation_rs8b0"]
+resource_name = "show_rewards_text"
+length = 0.4
+step = 0.1
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = false
+tracks/0/path = NodePath("CanvasLayer/RichTextLabel:rotation")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.4),
+"transitions": PackedFloat32Array(0.7578584, 1),
+"update": 0,
+"values": [-12.566371, 0.0]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = false
+tracks/1/path = NodePath("CanvasLayer/RichTextLabel:scale")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0, 0.4),
+"transitions": PackedFloat32Array(0.6830202, 1),
+"update": 0,
+"values": [Vector2(0.01, 0.01), Vector2(1, 1)]
+}
+tracks/2/type = "value"
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/path = NodePath("CanvasLayer/RichTextLabel:position")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/keys = {
+"times": PackedFloat32Array(0, 0.4),
+"transitions": PackedFloat32Array(0.18946461, 1),
+"update": 0,
+"values": [Vector2(1114, 850), Vector2(1114, 641.5)]
+}
+tracks/3/type = "value"
+tracks/3/imported = false
+tracks/3/enabled = true
+tracks/3/path = NodePath("CanvasLayer/RichTextLabel:self_modulate")
+tracks/3/interp = 2
+tracks/3/loop_wrap = true
+tracks/3/keys = {
+"times": PackedFloat32Array(0, 0.4),
+"transitions": PackedFloat32Array(0.2588162, 1),
+"update": 0,
+"values": [Color(1, 1, 1, 0), Color(1, 1, 1, 1)]
+}
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_4u2l4"]
+_data = {
+&"RESET": SubResource("Animation_4ddi7"),
+&"show_rewards_text": SubResource("Animation_rs8b0")
+}
 
 [node name="GambaActionHandler" type="Node3D" unique_id=676642780]
+script = ExtResource("2_33u5i")
 
 [node name="Camera" type="Camera3D" parent="." unique_id=1085651007]
 unique_name_in_owner = true
@@ -10,5 +144,68 @@ current = true
 fov = 20.0
 size = 2.0
 
-[node name="GambaMachine" parent="." unique_id=1269194837 instance=ExtResource("1_nrsg6")]
+[node name="CoinSpawnBox" parent="." unique_id=461124272 instance=ExtResource("2_4u2l4")]
 unique_name_in_owner = true
+transform = Transform3D(0.99051905, -1.8626451e-09, 0.1373754, -0.02143578, 0.987751, 0.1545586, -0.1356927, -0.15603799, 0.9783863, -0.64355814, 0.33936024, -4.5880375)
+spawn_size_range = 0.05
+spawn_position_offset = Vector3(0, 0.89, 0)
+
+[node name="coin_drop_box" parent="CoinSpawnBox" unique_id=1202423896 instance=ExtResource("3_3slm2")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 0.99999994, 0, 0, 0)
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="CoinSpawnBox" unique_id=817401908]
+transform = Transform3D(1, 0, 0, 0, 1, -2.9802322e-08, 0, 2.9802322e-08, 1, 0, 0, 0)
+visible = false
+mesh = SubResource("BoxMesh_4ddi7")
+
+[node name="CanvasLayer" type="CanvasLayer" parent="." unique_id=569027186]
+
+[node name="RichTextLabel" type="RichTextLabel" parent="CanvasLayer" unique_id=397930392]
+self_modulate = Color(1, 1, 1, 0)
+custom_minimum_size = Vector2(800, 0)
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = 154.0
+offset_top = 101.5
+offset_right = 954.0
+offset_bottom = 218.5
+grow_horizontal = 2
+grow_vertical = 2
+pivot_offset_ratio = Vector2(0.5, 0.5)
+theme_override_colors/font_shadow_color = Color(0, 0, 0, 0.2784314)
+theme_override_constants/shadow_outline_size = 4
+theme_override_constants/shadow_offset_x = 4
+theme_override_constants/shadow_offset_y = 4
+theme_override_fonts/normal_font = ExtResource("7_4ddi7")
+bbcode_enabled = true
+text = "[pulse freq=5.0][font_size=80][color=gold]3X Ice Cream[/color][/font_size]
+[font_size=50][color=green]+240 GUMBUCKS[/color][/font_size][/pulse]"
+fit_content = true
+horizontal_alignment = 1
+
+[node name="GambaStartPos" type="Marker3D" parent="." unique_id=1811337231]
+unique_name_in_owner = true
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.3036046, -0.3326689, -2.0609202)
+
+[node name="GambaEndPos" type="Marker3D" parent="GambaStartPos" unique_id=1351015962]
+unique_name_in_owner = true
+
+[node name="Platform" type="Node3D" parent="." unique_id=1881223480]
+unique_name_in_owner = true
+transform = Transform3D(0.96290886, -0.0202838, -0.2690633, 0.014280562, 0.9996039, -0.024250371, 0.2694486, 0.019508522, 0.96281713, 0.6359137, -0.4934884, -3.0685296)
+
+[node name="Gumbot" parent="Platform" unique_id=2126276004 instance=ExtResource("2_cgrbr")]
+unique_name_in_owner = true
+transform = Transform3D(0.990543, 6.0535967e-09, 0.1372025, -4.4237822e-09, 1.0000001, 1.8626451e-09, -0.1372025, 1.8626451e-09, 0.99054307, -0.4771151, -0.05031377, 0.022384405)
+surface_mat = SubResource("ShaderMaterial_4u2l4")
+
+[node name="GambaMachine" parent="Platform" unique_id=1269194837 instance=ExtResource("1_nrsg6")]
+unique_name_in_owner = true
+transform = Transform3D(0.107, 3.4924597e-10, -1.8626451e-09, -1.7462298e-10, 0.107, 2.3283064e-10, 0, 2.3283064e-10, 0.107, 0, 0, 0)
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="." unique_id=1075874506]
+unique_name_in_owner = true
+libraries/ = SubResource("AnimationLibrary_4u2l4")

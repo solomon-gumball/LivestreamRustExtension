@@ -1,0 +1,13 @@
+[gd_scene format=3 uid="uid://8752ixnts4gh"]
+
+[ext_resource type="Script" uid="uid://cvl26q8tttfka" path="res://stream_overlay/gamba/coin_spawn_box.gd" id="1_n2wuq"]
+[ext_resource type="PackedScene" uid="uid://iemaysjftewh" path="res://stream_overlay/gumbucks/gum_coin.tscn" id="2_7owb2"]
+
+[node name="CoinSpawnBox" type="StaticBody3D" unique_id=461124272]
+script = ExtResource("1_n2wuq")
+coin_scene = ExtResource("2_7owb2")
+
+[node name="CoinSpawnLocation" type="Marker3D" parent="." unique_id=1669645344]
+unique_name_in_owner = true
+
+[node name="GumCoin" parent="CoinSpawnLocation" unique_id=2072231618 instance=ExtResource("2_7owb2")]

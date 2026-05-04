@@ -11,8 +11,14 @@ func _on_store_data_received() -> void:
 	_queue = WSClient.authenticated_state.action_queue.duplicate()
 
 func _on_message_received(message: Variant) -> void:
-	if message.type == "action-queue-updated":
-		_queue = Message.StoreData.CreateActionQueue(message.action_queue)
+	match message.type:
+		"action-queue-updated":
+			print("updated", message.action_queue)
+			_queue = Message.StoreData.CreateActionQueue(message.action_queue)
+		"store-data":
+			_queue = Message.StoreData.CreateActionQueue(message.get("action_queue", []))
+	
+	print("Updated action queue: ", message.type, " ", _queue)
 
 func get_next_valid_action() -> Message.QueueAction:
 	for action in _queue:

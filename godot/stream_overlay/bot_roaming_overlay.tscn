@@ -1,0 +1,6 @@
+[gd_scene format=3 uid="uid://bv1hsp38p2uis"]
+
+[ext_resource type="Script" uid="uid://bkphu5cf1iw1l" path="res://stream_overlay/bot_roaming_overlay.gd" id="1_kccfv"]
+
+[node name="BotRoamingOverlay" type="CanvasLayer" unique_id=1233659606]
+script = ExtResource("1_kccfv")
