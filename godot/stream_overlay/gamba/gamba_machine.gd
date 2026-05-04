@@ -2,6 +2,8 @@
 extends Node3D
 class_name GambaMachine
 
+signal slot_reward_triggered(row: RowResult, multiplier: int)
+
 @export var screen_1: MeshInstance3D
 @export var screen_2: MeshInstance3D
 @export var screen_3: MeshInstance3D
@@ -162,7 +164,8 @@ func spin(multiplier: int) -> int:
     total_gumbucks_won += (top_row.gumbucks() * multiplier)
     await toggle_highlights(true)
     play_winning_sound(top_row)
-    # await Overlay.show_slots_reward(top_row, multiplier)
+    slot_reward_triggered.emit(top_row, multiplier)
+    await get_tree().create_timer(2.0).timeout
 
   await toggle_highlights(false)
   var center_row: RowResult = check_set(center_left, center_mid, center_right)
@@ -170,7 +173,8 @@ func spin(multiplier: int) -> int:
     total_gumbucks_won += center_row.gumbucks() * multiplier
     await toggle_highlights(true)
     play_winning_sound(center_row)
-    # await Overlay.show_slots_reward(center_row, multiplier)
+    slot_reward_triggered.emit(center_row, multiplier)
+    await get_tree().create_timer(2.0).timeout
 
   await toggle_highlights(false)
   var bottom_row: RowResult = check_set(bottom_left, bottom_mid, bottom_right)
@@ -178,7 +182,8 @@ func spin(multiplier: int) -> int:
     total_gumbucks_won += bottom_row.gumbucks() * multiplier
     await toggle_highlights(true)
     play_winning_sound(bottom_row)
-    # await Overlay.show_slots_reward(bottom_row, multiplier)
+    slot_reward_triggered.emit(bottom_row, multiplier)
+    await get_tree().create_timer(2.0).timeout
 
   await toggle_highlights(false)
   var top_to_bot_diag: RowResult = check_set(top_left, center_mid, bottom_right)
@@ -186,7 +191,8 @@ func spin(multiplier: int) -> int:
     total_gumbucks_won += top_to_bot_diag.gumbucks() * multiplier
     await toggle_highlights(true)
     play_winning_sound(top_to_bot_diag)
-    # await Overlay.show_slots_reward(top_to_bot_diag, multiplier)
+    slot_reward_triggered.emit(top_to_bot_diag, multiplier)
+    await get_tree().create_timer(2.0).timeout
 
   await toggle_highlights(false)
   var bot_to_top_diag: RowResult = check_set(bottom_left, center_mid, top_right)
@@ -194,7 +200,8 @@ func spin(multiplier: int) -> int:
     total_gumbucks_won += bot_to_top_diag.gumbucks() * multiplier
     await toggle_highlights(true)
     play_winning_sound(bot_to_top_diag)
-    # await Overlay.show_slots_reward(bot_to_top_diag, multiplier)
+    slot_reward_triggered.emit(bot_to_top_diag, multiplier)
+    await get_tree().create_timer(2.0).timeout
 
   if total_gumbucks_won == 0:
     await get_tree().create_timer(1).timeout

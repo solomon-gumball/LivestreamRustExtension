@@ -6,6 +6,7 @@
 [ext_resource type="Shader" uid="uid://cw1km147x2fwu" path="res://materials/bot_mat/bot_shader.gdshader" id="2_qub5t"]
 [ext_resource type="Script" uid="uid://de7m16kxewii6" path="res://network/action_queue_manager.gd" id="2_xt8k4"]
 [ext_resource type="PackedScene" uid="uid://qyhgu3bbkucx" path="res://stream_overlay/gamba/gamba_action_handler.tscn" id="3_0umhx"]
+[ext_resource type="PackedScene" uid="uid://44btzq4rdx58v0" path="res://stream_overlay/tts/tts_action_handler.tscn" id="4_ttshandler"]
 [ext_resource type="Texture2D" uid="uid://cas3gr887xevi" path="res://materials/bot_mat/bot_albedo.png" id="3_ciw3m"]
 [ext_resource type="Texture2D" uid="uid://ba6mac1k3t38a" path="res://materials/bot_mat/bot_normals.png" id="4_xt8k4"]
 
@@ -18,7 +19,7 @@ cell_size = 0.01
 cell_height = 0.01
 agent_radius = 0.1
 
-[sub_resource type="ShaderMaterial" id="ShaderMaterial_xctpr"]
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_0umhx"]
 resource_local_to_scene = true
 render_priority = 0
 shader = ExtResource("2_qub5t")
@@ -70,13 +71,16 @@ size = 2.0
 [node name="GambaActionHandler" parent="Camera" unique_id=676642780 instance=ExtResource("3_0umhx")]
 unique_name_in_owner = true
 
+[node name="TTSActionHandler" parent="Camera" unique_id=776642781 instance=ExtResource("4_ttshandler")]
+unique_name_in_owner = true
+
 [node name="BotSpawnLocation" type="Marker3D" parent="." unique_id=1213857580]
 unique_name_in_owner = true
 transform = Transform3D(-1, 0, 8.742278e-08, 0, 1, 0, -8.742278e-08, 0, -1, 0, 2.6813412, -3.5453691)
 
 [node name="gumbot" parent="BotSpawnLocation" unique_id=2126276004 instance=ExtResource("1_nopgx")]
 transform = Transform3D(-1, 0, -8.742278e-08, 0, 1, 0, 8.742278e-08, 0, -1, 0, 0, 0)
-surface_mat = SubResource("ShaderMaterial_xctpr")
+surface_mat = SubResource("ShaderMaterial_0umhx")
 
 [node name="Floor" type="StaticBody3D" parent="." unique_id=1579219069 groups=["nav"]]
 transform = Transform3D(-1, 0, 8.742278e-08, 0, 1, 0, -8.742278e-08, 0, -1, 0, -0.5, -3.5453691)

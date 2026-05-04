@@ -1,0 +1,42 @@
+[gd_scene format=3 uid="uid://coxy7cxdy6xdn"]
+
+[ext_resource type="Script" uid="uid://cei1vroiugme3" path="res://stream_overlay/tts/tts_action_handler.gd" id="1_handler"]
+[ext_resource type="Script" uid="uid://m4q1202tb1wr" path="res://stream_overlay/tts/tts_service.gd" id="2_service"]
+[ext_resource type="Shader" uid="uid://cw1km147x2fwu" path="res://materials/bot_mat/bot_shader.gdshader" id="3_2w3js"]
+[ext_resource type="PackedScene" uid="uid://crkh8hdu5af84" path="res://gumbot/gumbot.tscn" id="3_gumbot"]
+[ext_resource type="Texture2D" uid="uid://cas3gr887xevi" path="res://materials/bot_mat/bot_albedo.png" id="4_fvh8y"]
+[ext_resource type="Texture2D" uid="uid://ba6mac1k3t38a" path="res://materials/bot_mat/bot_normals.png" id="5_met8k"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_sepfw"]
+resource_local_to_scene = true
+render_priority = 0
+shader = ExtResource("3_2w3js")
+shader_parameter/albedo_texture = ExtResource("4_fvh8y")
+shader_parameter/normal_map = ExtResource("5_met8k")
+shader_parameter/bot_color = Color(1, 0, 0, 1)
+
+[node name="TTSActionHandler" type="Node3D" unique_id=100000001]
+script = ExtResource("1_handler")
+
+[node name="TTSEndPos" type="Marker3D" parent="." unique_id=100000002]
+unique_name_in_owner = true
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.6, -0.5, -3)
+
+[node name="Gumbot" parent="TTSEndPos" unique_id=100000005 instance=ExtResource("3_gumbot")]
+unique_name_in_owner = true
+transform = Transform3D(0.9659258, 0, -0.25881904, 0, 1, 0, 0.25881904, 0, 0.9659258, 0, 0, 0)
+surface_mat = SubResource("ShaderMaterial_sepfw")
+show_name_label = true
+
+[node name="TTSStartPos" type="Marker3D" parent="." unique_id=100000003]
+unique_name_in_owner = true
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.6, -1.5, -3)
+
+[node name="TTSService" type="Node" parent="." unique_id=100000006]
+unique_name_in_owner = true
+script = ExtResource("2_service")
+
+[node name="Camera" type="Camera3D" parent="." unique_id=1729306797]
+unique_name_in_owner = true
+fov = 20.0
+size = 2.0

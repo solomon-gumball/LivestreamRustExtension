@@ -1,12 +1,12 @@
 [gd_scene format=3 uid="uid://c5n1uoo7diw0j"]
 
-[ext_resource type="PackedScene" uid="uid://cgwi2k80q6fjm" path="res://stream_overlay/gamba/gamba_machine.blend" id="1_yrjc3"]
-[ext_resource type="Script" uid="uid://bxv1w76bpxn6w" path="res://stream_overlay/gamba/gamba_machine.gd" id="2_jrtsm"]
+[ext_resource type="PackedScene" uid="uid://c7ythxsve7i2e" path="res://stream_overlay/gamba/gamba_machine.blend" id="1_yrjc3"]
+[ext_resource type="Script" uid="uid://botwjk8ag37el" path="res://stream_overlay/gamba/gamba_machine.gd" id="2_ylbmj"]
 [ext_resource type="Shader" uid="uid://veghhhej8yq" path="res://stream_overlay/gamba/gamba_screens.gdshader" id="3_ehhge"]
 [ext_resource type="Texture2D" uid="uid://dx8aebg13weqh" path="res://stream_overlay/gamba/slot_machine_icons.png" id="4_ehhge"]
 [ext_resource type="Texture2D" uid="uid://b8w2hm6vcm4p6" path="res://stream_overlay/gamba/SlotIconHighlight.png" id="5_rbyqp"]
 
-[sub_resource type="ShaderMaterial" id="ShaderMaterial_4dg71"]
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_ylbmj"]
 render_priority = 0
 shader = ExtResource("3_ehhge")
 shader_parameter/albedo_texture = ExtResource("4_ehhge")
@@ -17,7 +17,7 @@ shader_parameter/slots_order = Array[int]([1, 5, 10, 3, 0, 4, 15, 14, 13, 2, 12,
 shader_parameter/slot_offset = 0.0
 shader_parameter/highlight_strength = 0.0
 
-[sub_resource type="ShaderMaterial" id="ShaderMaterial_ylbmj"]
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_6t5eg"]
 render_priority = 0
 shader = ExtResource("3_ehhge")
 shader_parameter/albedo_texture = ExtResource("4_ehhge")
@@ -28,7 +28,7 @@ shader_parameter/slots_order = Array[int]([14, 3, 10, 12, 5, 4, 8, 2, 11, 6, 1, 
 shader_parameter/slot_offset = 0.0
 shader_parameter/highlight_strength = 0.0
 
-[sub_resource type="ShaderMaterial" id="ShaderMaterial_6t5eg"]
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_xxhs4"]
 render_priority = 0
 shader = ExtResource("3_ehhge")
 shader_parameter/albedo_texture = ExtResource("4_ehhge")
@@ -115,36 +115,36 @@ _data = {
 }
 
 [node name="gamba_machine" unique_id=1269194837 node_paths=PackedStringArray("screen_1", "screen_2", "screen_3") instance=ExtResource("1_yrjc3")]
-script = ExtResource("2_jrtsm")
+script = ExtResource("2_ylbmj")
 screen_1 = NodePath("Armature/Skeleton3D/Screen")
 screen_2 = NodePath("Armature/Skeleton3D/Screen2")
 screen_3 = NodePath("Armature/Skeleton3D/Screen3")
 
-[node name="Cog" parent="." index="0" unique_id=231981306]
+[node name="Cog" parent="." index="0" unique_id=1147529652]
 transform = Transform3D(-1.6335568e-09, -0.0100267, 3.6296555e-08, 0, -3.6296555e-08, -0.0100267, 0.0100267, -1.6335568e-09, 5.9134597e-15, -2.19233, 3.52545, -1.2733)
 
-[node name="Crank" parent="." index="1" unique_id=373016282]
+[node name="Crank" parent="." index="1" unique_id=52294306]
 transform = Transform3D(0.00639711, 0, 0, 0, 0.0015018197, -0.00621833, 0, 0.00621833, 0.0015018197, -2.53316, 0.495623, 0.643017)
 
-[node name="Skeleton3D" parent="Armature" parent_id_path=PackedInt32Array(191132789) index="0" unique_id=154765531]
-bones/1/rotation = Quaternion(0.4091991, 0.007226097, 0.0022505696, 0.9124137)
+[node name="Skeleton3D" parent="Armature" parent_id_path=PackedInt32Array(2037501471) index="0" unique_id=1202520942]
+bones/1/rotation = Quaternion(0.40918133, -0.0016443478, -0.0005124771, 0.91245157)
 bones/2/rotation = Quaternion(0.344105, 0.011762758, 0.004311874, 0.93884766)
-bones/4/position = Vector3(0.82308275, 2.7559433, 1.0722727)
-bones/6/rotation = Quaternion(0.40920573, -0.008388507, -0.0026129824, 0.91239995)
+bones/4/position = Vector3(0.81575525, 2.7559433, 1.0722727)
+bones/6/rotation = Quaternion(0.40918267, 0.0023716316, 0.0007385764, 0.9124491)
 bones/7/rotation = Quaternion(0.34410205, 0.01176278, 0.004311843, 0.93884873)
-bones/9/position = Vector3(-0.18990843, 2.755943, 1.0722727)
-bones/11/rotation = Quaternion(0.40918493, -0.0036875438, -0.001148994, 0.91244334)
+bones/9/position = Vector3(-0.18023369, 2.755943, 1.0722727)
+bones/11/rotation = Quaternion(0.40919632, -0.0067015663, -0.0020877442, 0.9124195)
 bones/12/rotation = Quaternion(0.3440583, 0.011762972, 0.00431143, 0.9388647)
-bones/14/position = Vector3(-1.1803652, 2.755943, 1.0722727)
+bones/14/position = Vector3(-1.1830385, 2.755943, 1.0722727)
 
-[node name="Screen" parent="Armature/Skeleton3D" index="2" unique_id=698059422]
-surface_material_override/0 = SubResource("ShaderMaterial_4dg71")
-
-[node name="Screen2" parent="Armature/Skeleton3D" index="3" unique_id=374755863]
+[node name="Screen" parent="Armature/Skeleton3D" index="2" unique_id=263095308]
 surface_material_override/0 = SubResource("ShaderMaterial_ylbmj")
 
-[node name="Screen3" parent="Armature/Skeleton3D" index="4" unique_id=1246662873]
+[node name="Screen2" parent="Armature/Skeleton3D" index="3" unique_id=739918648]
 surface_material_override/0 = SubResource("ShaderMaterial_6t5eg")
+
+[node name="Screen3" parent="Armature/Skeleton3D" index="4" unique_id=1029464310]
+surface_material_override/0 = SubResource("ShaderMaterial_xxhs4")
 
 [node name="SlotAnimationPlayer" type="AnimationPlayer" parent="." index="4" unique_id=1094470957]
 libraries/ = SubResource("AnimationLibrary_rbyqp")

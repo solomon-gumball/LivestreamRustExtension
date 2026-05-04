@@ -9,5 +9,3 @@ coin_scene = ExtResource("2_7owb2")
 
 [node name="CoinSpawnLocation" type="Marker3D" parent="." unique_id=1669645344]
 unique_name_in_owner = true
-
-[node name="GumCoin" parent="CoinSpawnLocation" unique_id=2072231618 instance=ExtResource("2_7owb2")]

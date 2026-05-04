@@ -12,6 +12,12 @@ class_name GumBot
 @export var scrolling_screen_label: Label
 @export var surface_mat: ShaderMaterial
 
+@export var show_name_label: bool = false:
+  set(new_value):
+    show_name_label = new_value
+    if is_inside_tree():
+      name_label.visible = show_name_label
+
 var base_meshes = [
   "Arm",
   "Body",
@@ -175,11 +181,6 @@ var emote: String = "":
 
 var shader_mat_template: ShaderMaterial = preload("res://materials/bot_mat/bot_shader_mat.tres")
 var screen_mat: StandardMaterial3D = null
-
-var show_name_label: bool = false:
-  set(new_value):
-    show_name_label = new_value
-    name_label.visible = show_name_label
 
 var is_emoting: bool = false:
   set(new_value):
