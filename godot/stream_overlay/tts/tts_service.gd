@@ -1,7 +1,7 @@
 extends Node
 class_name TTSService
 
-const AZURE_API_KEY = "EJg66TCRxqbYMyLiKwZOKiZrdu45ilp6LqkVgacjhxt7CLG1DnB9JQQJ99BCACYeBjFXJ3w3AAAYACOGHGuK"
+const AZURE_API_KEY = ""
 const AZURE_REGION = "eastus"
 
 const AZURE_TTS_URL = "https://%s.tts.speech.microsoft.com/cognitiveservices/v1" % AZURE_REGION
