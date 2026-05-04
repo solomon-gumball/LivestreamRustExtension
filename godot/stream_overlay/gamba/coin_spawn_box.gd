@@ -21,10 +21,25 @@ func _ready() -> void:
   spawn_position_offset = spawn_position_offset
 
 func clear_coins() -> void:
+  var container := Node3D.new()
+  get_parent().add_child(container)
+
   for coin in spawned_coins:
-    if !coin.is_queued_for_deletion():
-      coin.queue_free()
+    if coin.is_queued_for_deletion():
+      continue
+    coin.freeze = true
+    var global_pos := coin.global_position
+    coin.reparent(container)
+    coin.global_position = global_pos
+
   spawned_coins = []
+
+  var tween := get_tree().create_tween()
+  tween.tween_property(container, "position:y", container.position.y - 3.0, 1.5)\
+    .set_trans(Tween.TRANS_QUAD)\
+    .set_ease(Tween.EASE_IN)
+  await tween.finished
+  container.queue_free()
 
 func spawn_coins(amount: int) -> void:
   var coins_to_spawn := mini(amount, 10)

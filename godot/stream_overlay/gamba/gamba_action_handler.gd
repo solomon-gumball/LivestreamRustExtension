@@ -11,19 +11,34 @@ extends Node3D
 @onready var winning_text_label: RichTextLabel = %WinningTextLabel
 @onready var total_earnings_label: RichTextLabel = %TotalEarningsLabel
 
+const PULLS_PER_REDEEM := 3
+
 var _is_busy: bool = false
+var _earnings_tween: Tween
 var total_earnings: int = 0:
   set(new_value):
-    total_earnings = new_value
-    var should_show_label := total_earnings > 0
-    total_earnings_label.visible = should_show_label
-    if should_show_label:
+    if new_value > 0:
       total_earnings_label.text = "[color=green][font_size=100]+%d GUM[/font_size][/color]" % new_value
+
+    var new_should_show := new_value > 0
+    var old_should_show := total_earnings > 0
+
+    if new_should_show != old_should_show:
+      if _earnings_tween:
+        _earnings_tween.kill()
+      _earnings_tween = create_tween()
+
+      if new_should_show:
+        _earnings_tween.tween_property(total_earnings_label, "self_modulate:a", 1.0, 0.3)
+      else:
+        _earnings_tween.tween_property(total_earnings_label, "self_modulate:a", 0.0, 0.3)
+
+    total_earnings = new_value
 
 func _ready() -> void:
   gamba_machine.visible = false
   gumbot.visible = false
-  total_earnings_label.visible = false
+  total_earnings_label.self_modulate.a = 0.0
   gamba_machine.slot_reward_triggered.connect(_handle_show_slot_reward)
   coin_spawn_box.value_spawned.connect(_handle_value_added)
 
@@ -75,17 +90,10 @@ func handle_action(action: Message.SlotsRequest, queue_manager: ActionQueueManag
 
   var total_gumbucks_won: int = 0
   for slot_request in batch:
-    total_gumbucks_won += await trigger_slot_spin(slot_request)
-    total_gumbucks_won += await trigger_slot_spin(slot_request)
-    total_gumbucks_won += await trigger_slot_spin(slot_request)
-    total_gumbucks_won += await trigger_slot_spin(slot_request)
-    total_gumbucks_won += await trigger_slot_spin(slot_request)
-    total_gumbucks_won += await trigger_slot_spin(slot_request)
-    total_gumbucks_won += await trigger_slot_spin(slot_request)
-    total_gumbucks_won += await trigger_slot_spin(slot_request)
-    WSClient.slots_activated(slot_request.uuid, total_gumbucks_won)
 
-  gumbot.bot_state = GumBot.BotState.StandIdle
+    for i in PULLS_PER_REDEEM:
+      total_gumbucks_won += await trigger_slot_spin(slot_request)
+    WSClient.slots_activated(slot_request.uuid, total_gumbucks_won)
 
   await get_tree().create_timer(3.0).timeout
   coin_spawn_box.clear_coins()
