@@ -51,6 +51,15 @@ class OnScreenNotification:
     inst.messageText = data["messageText"]
     return inst
 
+class RewardChatter:
+  var type: String
+  var gumbucks: int
+  static func FromData(data: Dictionary) -> RewardChatter:
+    var inst = RewardChatter.new()
+    inst.type = data["type"]
+    inst.gumbucks = data["gumbucks"]
+    return inst
+
 class ShowMailRequest extends QueueAction:
   var mail: Mail
   var chatter: Chatter
