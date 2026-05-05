@@ -28,11 +28,13 @@ func _ready():
   game_state.game_finished.connect(_handle_game_finished)
 
 func _handle_game_finished() -> void:
+  lobby_list = []
   MultiplayerClient.leave_lobby()
   _handle_updates()
 
 func _handle_multiplayer_connection_changed(_connection_state: MultiplayerClient.MultiplayerClientState) -> void:
-  print("Multiplayer connection state changed: %s" % MultiplayerClient.state.current)
+  if _connection_state is MultiplayerClient.Disconnected:
+    lobby_list = []
   _handle_updates()
 
 func _handle_websocket_connection_changed(connection_state: WSClient.WSClientState) -> void:

@@ -1,7 +1,7 @@
 extends CharacterBody3D
 class_name PongBall
 
-const BASE_SPEED: float = 3.0
+const BASE_SPEED: float = 1.5
 const SPEED_INCREASE_PER_SECOND: float = 0.1
 
 signal bounced(did_hit_paddle: bool)

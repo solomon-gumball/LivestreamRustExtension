@@ -69,6 +69,11 @@ shader_parameter/vignette_opacity = 0.28400001349
 font = ExtResource("3_433xj")
 font_size = 50
 
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_r5k7i"]
+cull_mode = 1
+shading_mode = 0
+albedo_color = Color(0.52, 0.12566666, 0.046799984, 1)
+
 [sub_resource type="FastNoiseLite" id="FastNoiseLite_fhe3k"]
 seed = 2
 
@@ -239,7 +244,7 @@ tracks/0/keys = {
 "times": PackedFloat32Array(4.2, 5.5, 6.7000003, 10.500002, 10.9000025),
 "transitions": PackedFloat32Array(1, 1, 1, 1, 1),
 "update": 0,
-"values": [0.8, 0.8, 0.8, 4.56, 4.56]
+"values": [0.8, 0.8, 0.8, 4.1000000000000005, 4.1000000000000005]
 }
 tracks/1/type = "value"
 tracks/1/imported = false
@@ -378,7 +383,7 @@ tracks/0/keys = {
 "times": PackedFloat32Array(1, 5.8),
 "transitions": PackedFloat32Array(0.4999997, 1),
 "update": 0,
-"values": [4.56, 1.0]
+"values": [4.1, 1.0]
 }
 tracks/1/type = "method"
 tracks/1/imported = false
@@ -556,7 +561,6 @@ surface_material_override/0 = SubResource("ShaderMaterial_hwkty")
 [node name="CanvasLayer" type="CanvasLayer" parent="." unique_id=1368699316]
 
 [node name="ColorRect" type="ColorRect" parent="CanvasLayer" unique_id=2089517594]
-visible = false
 material = SubResource("ShaderMaterial_fnvpw")
 anchors_preset = 15
 anchor_right = 1.0
@@ -663,6 +667,11 @@ transform = Transform3D(-1, 0, -1.509958e-07, 0, 1, 0, 1.509958e-07, 0, -1, 0, 0
 
 [node name="PongScoreFX" parent="." unique_id=1170788964 instance=ExtResource("8_r5k7i")]
 
+[node name="CSGSphere3D" type="CSGSphere3D" parent="." unique_id=605198705]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.010496095, -1.9073486e-05, 0.021273375)
+radius = 100.0
+material = SubResource("StandardMaterial3D_r5k7i")
+
 [node name="CamBoom" type="Node3D" parent="." unique_id=95433371 node_paths=PackedStringArray("target_player")]
 unique_name_in_owner = true
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.18, 0)
@@ -687,7 +696,7 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.17301774, 0)
 
 [node name="PaddleLScore" type="Label3D" parent="." unique_id=1140829829]
 unique_name_in_owner = true
-transform = Transform3D(-4.371139e-08, 1, 4.371139e-08, 0, -4.371139e-08, 1, 1, 4.371139e-08, 1.9106855e-15, 1.9145699, 0.399, -0.34665406)
+transform = Transform3D(-4.371139e-08, 1, 4.371139e-08, 0, -4.371139e-08, 1, 1, 4.371139e-08, 1.9106855e-15, 1.6599882, 0.399, -0.34665406)
 text = "5"
 font = ExtResource("3_433xj")
 font_size = 100
@@ -695,7 +704,7 @@ outline_size = 0
 
 [node name="PaddleRScore" type="Label3D" parent="." unique_id=1319774487]
 unique_name_in_owner = true
-transform = Transform3D(-4.371139e-08, 1, 4.371139e-08, 0, -4.371139e-08, 1, 1, 4.371139e-08, 1.9106855e-15, 1.915, 0.399, 0.347)
+transform = Transform3D(-4.371139e-08, 1, 4.371139e-08, 0, -4.371139e-08, 1, 1, 4.371139e-08, 1.9106855e-15, 1.6604183, 0.399, 0.347)
 text = "5"
 font = ExtResource("3_433xj")
 font_size = 100

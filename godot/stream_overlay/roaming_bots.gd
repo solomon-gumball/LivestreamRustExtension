@@ -9,13 +9,9 @@ class_name RoamingBots
 
 @onready var change_role_button: Button = %ChangeRoleButton
 @onready var close_lobby_button: Button = %CloseLobbyButton
+@onready var start_game_button: Button = %StartGameButton
 
 var spawned_bots = {}
-
-var lobby: Lobby = null:
-  set(new_lobby):
-    lobby = new_lobby
-    _handle_update()
 
 func _ready():
   WSClient.authenticated_state.chat_message_received.connect(chat_message_received)
@@ -23,15 +19,64 @@ func _ready():
   WSClient.authenticated_state.chatter_updated.connect(chatter_updated)
   WSClient.authenticated_state.emote_triggered.connect(emote_triggered)
 
+  MultiplayerClient.connected_state.lobby_updated.connect(_lobby_updated)
+  MultiplayerClient.state.changed.connect(_multiplayer_state_changed)
+
+  start_game_button.pressed.connect(_handle_start_game)
+
+  _handle_update()
   store_data_received()
   _poll_action_queue()
 
+  close_lobby_button.pressed.connect(_close_lobby)
+
+func _handle_start_game() -> void:
+  MultiplayerClient.start_lobby()
+
+func _close_lobby() -> void:
+  MultiplayerClient.leave_lobby()
+
+func _change_role(is_player: bool) -> void:
+  MultiplayerClient.set_role(is_player)
+
+func _lobby_updated() -> void:
+  _handle_update()
+
+func _multiplayer_state_changed(_state: MultiplayerClient.MultiplayerClientState) -> void:
+  _handle_update()
+
 func _handle_update():
-  if lobby == null:
+  var lobby = MultiplayerClient.current_lobby
+  if MultiplayerClient.state.current is MultiplayerClient.Disconnected or lobby == null:
+    change_role_button.visible = false
+    close_lobby_button.visible = false
+    start_game_button.visible = false
     return
-  
-  change_role_button.visible = lobby.is_host
-  close_lobby_button.visible = lobby.is_host
+
+  var my_peer := _find_my_peer()
+  if !lobby.started and my_peer:
+    change_role_button.visible = true
+    for c in change_role_button.pressed.get_connections():
+        change_role_button.pressed.disconnect(c.callable)
+    
+    start_game_button.visible = true
+    start_game_button.disabled = !lobby.can_be_started(my_peer.peer_id)
+    change_role_button.pressed.connect(_change_role.bind(!my_peer.is_player))
+    change_role_button.text = "PLAYING" if my_peer.is_player else "SPECTATING"
+    close_lobby_button.visible = MultiplayerClient.is_lobby_host()
+  else:
+    start_game_button.visible = false
+    change_role_button.visible = false
+    close_lobby_button.visible = false
+
+func _find_my_peer() -> Lobby.PeerData:
+  var my_chatter_id := WSClient.my_chatter().id
+  var lobby := MultiplayerClient.current_lobby
+  if lobby == null: return
+  for peer in lobby.peers:
+    if peer.chatter_id == my_chatter_id:
+      return peer
+  return null
 
 func _poll_action_queue() -> void:
   while is_inside_tree():

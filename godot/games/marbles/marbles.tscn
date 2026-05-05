@@ -1,4 +1,4 @@
-[gd_scene format=3 uid="uid://iw1sikosn0si"]
+[gd_scene format=3 uid="uid://ckk7abbam3f1y"]
 
 [ext_resource type="Script" uid="uid://8chuo3gbyvyk" path="res://games/marbles/marbles.gd" id="1_l8w5m"]
 [ext_resource type="PackedScene" uid="uid://dhxkdd3lw5n20" path="res://games/marbles/ui/marbles_overlay.tscn" id="2_hf13n"]

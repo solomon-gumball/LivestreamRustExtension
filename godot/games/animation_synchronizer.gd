@@ -94,6 +94,6 @@ func authority_play_animation(animation_name: String) -> void:
   )
 
 func _unhandled_input(_event: InputEvent) -> void:
-  if MultiplayerClient.is_authority():
+  if MultiplayerClient.is_lobby_host():
     if Input.is_key_pressed(KEY_ENTER):
       authority_skip_current_animation()

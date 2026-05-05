@@ -122,7 +122,6 @@ var focused_marble: MarbleBot = null:
     focused_marble = new_value
 
 func _peer_is_ready(peer_id: int) -> void:
-  print("Sending refresh state to new peer %d" % peer_id  )
   _send_refresh_state(peer_id)
 
 func _exit_tree() -> void:
@@ -134,8 +133,6 @@ func _exit_tree() -> void:
   if MultiplayerClient.connected_state:
     MultiplayerClient.connected_state.left_lobby.disconnect(_left_lobby)
   MultiplayerClient.packet_received.disconnect(_handle_peer_packet)
-  if is_game_host:
-    MultiplayerClient.rtc_peer_ready.disconnect(_send_refresh_state)
 
 func _left_lobby() -> void:
   game_finished.emit()

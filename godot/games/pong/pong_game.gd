@@ -10,7 +10,7 @@ enum PongGameMessage {
   ClientReady,
   StartRound,
 }
-const NUM_ROUNDS = 1
+const NUM_ROUNDS = 5
 
 var pong_state: PongGameState = null:
   set(new_state):
@@ -122,7 +122,7 @@ func start_game() -> void:
   })
   anim_sync.authority_play_animation("intro")
   _send_refresh_state(MultiplayerPeer.TARGET_PEER_BROADCAST)
-  MultiplayerClient.rtc_peer_ready.connect(_send_refresh_state)
+  SessionSynchronizer.get_instance().peer_is_ready.connect(_send_refresh_state)
 
 func _exit_tree() -> void:
   if Engine.is_editor_hint():
@@ -130,11 +130,9 @@ func _exit_tree() -> void:
   if MultiplayerClient.connected_state:
     MultiplayerClient.connected_state.left_lobby.disconnect(_left_lobby)
   MultiplayerClient.packet_received.disconnect(_handle_peer_packet)
-  WSClient.authenticated_state.chatter_updated.disconnect(_handle_chatter_loaded)
-  if MultiplayerClient.is_authority():
-    MultiplayerClient.rtc_peer_ready.disconnect(_send_refresh_state)
 
 func trigger_ending_character_anims() -> void:
+  if lobby == null: return
   var winning_peer: Lobby.PeerData = null
   if game_state.paddle_l_state.score > game_state.paddle_r_state.score:
     winning_peer = lobby.players.get(0)
@@ -156,7 +154,8 @@ func _anim_finished(anim_name: String) -> void:
     game_finished.emit()
 
 func _left_lobby() -> void:
-  game_finished.emit()
+  return
+  # game_finished.emit()
 
 func _send_refresh_state(peer_id: int) -> void:
   MultiplayerClient.send_packet(

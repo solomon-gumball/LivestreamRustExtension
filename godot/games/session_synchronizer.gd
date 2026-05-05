@@ -28,13 +28,13 @@ var _all_peers_ready_fired: bool = false
 
 func _ready() -> void:
   MultiplayerClient.packet_received.connect(_handle_peer_packet)
-  MultiplayerClient.rtc_peer_ready.connect(_new_peer_ready)
+  # MultiplayerClient.rtc_peer_ready.connect(_new_peer_ready)
 
 func _exit_tree() -> void:
   if _instance == self:
     _instance = null
   MultiplayerClient.packet_received.disconnect(_handle_peer_packet)
-  MultiplayerClient.rtc_peer_ready.disconnect(_new_peer_ready)
+  # MultiplayerClient.rtc_peer_ready.disconnect(_new_peer_ready)
 
 func setup(lobby: Lobby) -> void:
   _lobby = lobby
@@ -51,6 +51,7 @@ func notify_ready() -> void:
     all_peers_ready.emit()
     return
   state[MultiplayerClient.my_peer_id()] = true
+  print(MultiplayerClient.my_peer_id(), ' local ready state -> ', JSON.stringify(state))
   MultiplayerClient.send_packet(
     { "type": GlobalGameMessage.ClientReady },
     MultiplayerPeer.TARGET_PEER_BROADCAST,
@@ -62,6 +63,7 @@ func _handle_peer_packet(sender_id: int, packet: Dictionary) -> void:
   match packet.type:
     GlobalGameMessage.ClientReady:
       state[sender_id] = true
+      _new_peer_ready(sender_id)
       peer_is_ready.emit(sender_id)
       _check_all_peers_ready()
     GlobalGameMessage.SessionStateRefresh:

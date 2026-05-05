@@ -30,6 +30,12 @@ var connected_peers: Array[PeerData] = []
 var players: Array[PeerData] = []
 var spectators: Array[PeerData] = []
 
+func can_be_started(by_peer_id: int) -> bool:
+  if started: return false
+  var is_host := host_id == by_peer_id
+  var player_count_valid := players.size() >= game.min_players
+  return player_count_valid and is_host
+
 static func from_data(d: Dictionary) -> Lobby:
   var lobby := Lobby.new()
   lobby.started = d.get("started", false)

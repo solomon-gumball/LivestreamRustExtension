@@ -33,6 +33,8 @@ var looking_for_lobby_state := LookingForLobbyState.new(self)
 var lobby_detail_state := LobbyDetailState.new(self)
 var game_active_state := GameActiveState.new(self)
 
+var game_container: GameContainer = null
+
 func _ready() -> void:
   add_child(state)
   state.add_child(disconnected_state)
@@ -97,7 +99,9 @@ func _update_ping_label(msec_ping: float) -> void:
 func _handle_ws_state_changed(_s) -> void:
   _handle_updates()
 
-func _handle_mp_state_changed(_s) -> void:
+func _handle_mp_state_changed(mp_state: MultiplayerClient.MultiplayerClientState) -> void:
+  if mp_state is MultiplayerClient.Disconnected:
+    lobby_list = []
   _handle_updates()
 
 func _handle_game_ended() -> void:
@@ -169,6 +173,14 @@ class DisconnectedState extends GamePageState:
 
 class LookingForLobbyState extends GamePageState:
   func enter_state(_prev: State) -> void:
+    print("prev state => ", _prev is GameActiveState)
+
+    if _prev is GameActiveState:
+      await page.loading.transition_in()
+      if page.game_container:
+        page.game_container.queue_free()
+
+    page.join_lobby_tab.visible = true
     page.start_game_button.visible = false
     page.close_lobby_button.visible = false
     page.center_info_label.visible = true
@@ -180,8 +192,8 @@ class LookingForLobbyState extends GamePageState:
     page.game_subviewport_container.visible = false
     page._type_text(GamePage.LOOKING_TEXT, 0.1, true)
 
-    if page.loading.progress > 0:
-      page.loading.transition_out()
+    if _prev is GameActiveState:
+      await page.loading.transition_out()
 
 class LobbyDetailState extends GamePageState:
   var lobby: Lobby = null:
@@ -191,6 +203,7 @@ class LobbyDetailState extends GamePageState:
         _refresh_buttons()
 
   func enter_state(_prev: State) -> void:
+    page.join_lobby_tab.visible = true
     page.game_subviewport_container.visible = false
     page.center_info_label.visible = true
     page.lobby_info_panel.visible = true
@@ -274,7 +287,6 @@ class LobbyDetailState extends GamePageState:
 
 class GameActiveState extends GamePageState:
   signal game_ended
-  var game_container: GameContainer = null
 
   func enter_state(_prev: State) -> void:
     if _prev is LobbyDetailState:
@@ -289,22 +301,18 @@ class GameActiveState extends GamePageState:
     page.rejoin_lobby_button.visible = false
     page.change_role_button.visible = false
 
-    game_container = GameContainer.new()
-    page.game_root_node.add_child(game_container)
-    game_container.game_finished.connect(_on_game_finished)
-    await game_container.load_game_from_lobby(MultiplayerClient.current_lobby)
+    page.game_container = GameContainer.new()
+    page.game_root_node.add_child(page.game_container)
+    page.game_container.game_finished.connect(_on_game_finished)
+    await page.game_container.load_game_from_lobby(MultiplayerClient.current_lobby)
 
     if _prev is LobbyDetailState:
       await page.loading.transition_out()
 
   func _on_game_finished() -> void:
-    await page.loading.transition_in()
     game_ended.emit()
 
   func exit_state() -> void:
-    page.join_lobby_tab.visible = true
-    page.overlay_subviewport_container.visible = true
-    page.game_subviewport_container.visible = false
-    if game_container:
-      game_container.queue_free()
-      game_container = null
+    return
+    # page.join_lobby_tab.visible = true
+    # page.game_subviewport_container.visible = false
