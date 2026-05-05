@@ -147,7 +147,6 @@ size = 2.0
 unique_name_in_owner = true
 transform = Transform3D(0.99005085, 0.020738607, 0.1391731, -0.02094242, 0.9997806, 0, -0.13914257, -0.0029146213, 0.99026805, -0.644, 0.299, -4.588)
 spawn_size_range = 0.05
-spawn_position_offset = Vector3(0, 1, 0)
 
 [node name="coin_drop_box" parent="CoinSpawnBox" unique_id=1888230400 instance=ExtResource("3_3slm2")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 0.99999994, 0, 0, 0)

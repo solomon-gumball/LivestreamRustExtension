@@ -73,6 +73,7 @@ func load_game_from_lobby(lobby: Lobby) -> void:
     _session_sync.queue_free()
     _session_sync = null
 
+  print("Loading game from lobby with id %d" % lobby.name)
   _session_sync = SessionSynchronizer.new()
   add_child(_session_sync)
   _session_sync.setup(lobby)
@@ -100,7 +101,8 @@ func load_game_from_lobby(lobby: Lobby) -> void:
     packed_scene = ResourceLoader.load_threaded_get(game.entry) as PackedScene
   else:
     packed_scene = ResourceLoader.load(game.entry) as PackedScene
-
+  
+  
   if packed_scene == null:
     push_error("GameContainer: could not load scene at entry path '%s'" % game.entry)
     return

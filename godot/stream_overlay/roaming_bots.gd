@@ -7,7 +7,15 @@ class_name RoamingBots
 @onready var tts_action_handler: TTSActionHandler = %TTSActionHandler
 @onready var action_queue_manager: ActionQueueManager = %ActionQueueManager
 
+@onready var change_role_button: Button = %ChangeRoleButton
+@onready var close_lobby_button: Button = %CloseLobbyButton
+
 var spawned_bots = {}
+
+var lobby: Lobby = null:
+  set(new_lobby):
+    lobby = new_lobby
+    _handle_update()
 
 func _ready():
   WSClient.authenticated_state.chat_message_received.connect(chat_message_received)
@@ -18,11 +26,16 @@ func _ready():
   store_data_received()
   _poll_action_queue()
 
+func _handle_update():
+  if lobby == null:
+    return
+  
+  change_role_button.visible = lobby.is_host
+  close_lobby_button.visible = lobby.is_host
+
 func _poll_action_queue() -> void:
   while is_inside_tree():
     await get_tree().create_timer(1.0).timeout
-    # if gamba_action_handler.is_busy() or tts_action_handler.is_busy():
-    #   continue
     var action = action_queue_manager.get_next_valid_action()
     if action == null:
       continue
@@ -30,7 +43,6 @@ func _poll_action_queue() -> void:
       action_queue_manager.complete_action(action)
       await gamba_action_handler.handle_action(action, action_queue_manager)
     elif action is Message.TTSRequest:
-      print('TTS REQUEST!!!')
       action_queue_manager.complete_action(action)
       await tts_action_handler.handle_action(action)
 

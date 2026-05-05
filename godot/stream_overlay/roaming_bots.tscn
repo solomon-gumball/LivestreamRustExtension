@@ -6,8 +6,9 @@
 [ext_resource type="Shader" uid="uid://cw1km147x2fwu" path="res://materials/bot_mat/bot_shader.gdshader" id="2_qub5t"]
 [ext_resource type="Script" uid="uid://de7m16kxewii6" path="res://network/action_queue_manager.gd" id="2_xt8k4"]
 [ext_resource type="PackedScene" uid="uid://qyhgu3bbkucx" path="res://stream_overlay/gamba/gamba_action_handler.tscn" id="3_0umhx"]
-[ext_resource type="PackedScene" uid="uid://44btzq4rdx58v0" path="res://stream_overlay/tts/tts_action_handler.tscn" id="4_ttshandler"]
 [ext_resource type="Texture2D" uid="uid://cas3gr887xevi" path="res://materials/bot_mat/bot_albedo.png" id="3_ciw3m"]
+[ext_resource type="Theme" uid="uid://bc7am0i2wif6u" path="res://ui/themes/default_button.tres" id="3_lcyaq"]
+[ext_resource type="PackedScene" uid="uid://coxy7cxdy6xdn" path="res://stream_overlay/tts/tts_action_handler.tscn" id="4_ttshandler"]
 [ext_resource type="Texture2D" uid="uid://ba6mac1k3t38a" path="res://materials/bot_mat/bot_normals.png" id="4_xt8k4"]
 
 [sub_resource type="NavigationMesh" id="NavigationMesh_5bn8s"]
@@ -19,7 +20,7 @@ cell_size = 0.01
 cell_height = 0.01
 agent_radius = 0.1
 
-[sub_resource type="ShaderMaterial" id="ShaderMaterial_0umhx"]
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_xctpr"]
 resource_local_to_scene = true
 render_priority = 0
 shader = ExtResource("2_qub5t")
@@ -52,6 +53,29 @@ script = ExtResource("1_qub5t")
 [node name="BotRoamingOverlay" parent="." unique_id=1233659606 instance=ExtResource("2_0umhx")]
 unique_name_in_owner = true
 
+[node name="VBoxContainer" type="VBoxContainer" parent="BotRoamingOverlay" unique_id=235357734]
+anchors_preset = 3
+anchor_left = 1.0
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -40.0
+offset_top = -40.0
+grow_horizontal = 0
+grow_vertical = 0
+
+[node name="CloseLobbyButton" type="Button" parent="BotRoamingOverlay/VBoxContainer" unique_id=711415519]
+unique_name_in_owner = true
+layout_mode = 2
+theme = ExtResource("3_lcyaq")
+text = "CLOSE LOBBY"
+
+[node name="ChangeRoleButton" type="Button" parent="BotRoamingOverlay/VBoxContainer" unique_id=1945596850]
+unique_name_in_owner = true
+layout_mode = 2
+theme = ExtResource("3_lcyaq")
+text = "CHANGE TO SPECTATOR"
+
 [node name="NavigationRegion3D" type="NavigationRegion3D" parent="." unique_id=929421389]
 transform = Transform3D(-1, 0, 8.742278e-08, 0, 1, 0, -8.742278e-08, 0, -1, 0, 1.6412506, -3.5453691)
 navigation_mesh = SubResource("NavigationMesh_5bn8s")
@@ -80,7 +104,7 @@ transform = Transform3D(-1, 0, 8.742278e-08, 0, 1, 0, -8.742278e-08, 0, -1, 0, 2
 
 [node name="gumbot" parent="BotSpawnLocation" unique_id=2126276004 instance=ExtResource("1_nopgx")]
 transform = Transform3D(-1, 0, -8.742278e-08, 0, 1, 0, 8.742278e-08, 0, -1, 0, 0, 0)
-surface_mat = SubResource("ShaderMaterial_0umhx")
+surface_mat = SubResource("ShaderMaterial_xctpr")
 
 [node name="Floor" type="StaticBody3D" parent="." unique_id=1579219069 groups=["nav"]]
 transform = Transform3D(-1, 0, 8.742278e-08, 0, 1, 0, -8.742278e-08, 0, -1, 0, -0.5, -3.5453691)
@@ -89,6 +113,7 @@ transform = Transform3D(-1, 0, 8.742278e-08, 0, 1, 0, -8.742278e-08, 0, -1, 0, -
 shape = SubResource("BoxShape3D_px3ik")
 
 [node name="CSGBox3D" type="CSGBox3D" parent="Floor" unique_id=934565305]
+visible = false
 size = Vector3(4, 1, 2)
 
 [node name="Walls" type="StaticBody3D" parent="." unique_id=887224235]

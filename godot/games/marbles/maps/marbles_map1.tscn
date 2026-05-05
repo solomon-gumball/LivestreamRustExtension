@@ -5,8 +5,6 @@
 [ext_resource type="PackedScene" uid="uid://diyvoye7vs7ks" path="res://games/debug_camera.tscn" id="3_4cld7"]
 [ext_resource type="PackedScene" uid="uid://dgll8fvuxvlum" path="res://games/marbles/props/marbles_spinner.tscn" id="3_4nog8"]
 [ext_resource type="PackedScene" uid="uid://eki78xsf4ibe" path="res://games/marbles/props/marbles_bumper.tscn" id="4_sevp3"]
-[ext_resource type="Shader" uid="uid://5hci2mcg6lv0" path="res://shaders/galaxy_sky.gdshader" id="6_fxgnb"]
-[ext_resource type="Texture2D" uid="uid://ddovor3jdfvj4" path="res://textures/noise1.jpg" id="7_1um5w"]
 [ext_resource type="Texture2D" uid="uid://6om2hiwmkli" path="res://textures/panorama6.jpg" id="8_kvqxd"]
 [ext_resource type="PackedScene" uid="uid://c6ybf4jojq1uj" path="res://games/marbles/props/marbles_shattering_glass.tscn" id="9_1um5w"]
 
@@ -29,20 +27,16 @@ _data = {
 }
 point_count = 2
 
-[sub_resource type="ShaderMaterial" id="ShaderMaterial_rcfe2"]
-shader = ExtResource("6_fxgnb")
-shader_parameter/source_panorama = ExtResource("8_kvqxd")
-shader_parameter/noise_panorama = ExtResource("7_1um5w")
-shader_parameter/exposure = 1.0
-
-[sub_resource type="Sky" id="Sky_gp6tp"]
-sky_material = SubResource("ShaderMaterial_rcfe2")
-
 [sub_resource type="Environment" id="Environment_8bl5g"]
 background_mode = 2
-sky = SubResource("Sky_gp6tp")
 ambient_light_color = Color(0.5102944, 0.26274186, 0.71350974, 1)
 ambient_light_sky_contribution = 0.0
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_1um5w"]
+cull_mode = 2
+shading_mode = 0
+albedo_texture = ExtResource("8_kvqxd")
+disable_receive_shadows = true
 
 [sub_resource type="SphereShape3D" id="SphereShape3D_kvqxd"]
 radius = 0.20016275
@@ -162,12 +156,19 @@ transform = Transform3D(0.66785985, 0, 0, 0, 0.6653849, 0.05744333, 0, -0.057443
 [node name="Cube" parent="." index="39" unique_id=387175557]
 visible = false
 
-[node name="Camera" parent="." index="40" unique_id=1104200011]
+[node name="SkySphere" type="CSGSphere3D" parent="." index="40" unique_id=2049814171]
+transform = Transform3D(1, 5.9604645e-08, 0, 0, 0.9999999, 0, -2.9802322e-08, -2.9802322e-08, 0.99999994, -2.2888184e-05, 0, 4.887581e-06)
+radius = 550.13477
+radial_segments = 32
+rings = 32
+material = SubResource("StandardMaterial3D_1um5w")
+
+[node name="Camera" parent="." index="41" unique_id=1104200011]
 transform = Transform3D(-0.33689916, -0.6081267, 0.7188051, 3.3169985e-05, 0.76342714, 0.6458938, -0.9415407, 0.21762489, -0.25717783, 122.04688, 93.43829, -1.9442319)
 current = true
 fov = 75.0
 
-[node name="RigidBody3D" type="RigidBody3D" parent="." index="44" unique_id=857522275]
+[node name="RigidBody3D" type="RigidBody3D" parent="." index="45" unique_id=857522275]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -14.875166, -17.274761)
 visible = false
 

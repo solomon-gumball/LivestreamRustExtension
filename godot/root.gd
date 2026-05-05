@@ -14,16 +14,6 @@ func _ready() -> void:
   ObjectSerializer.register_script(BaseGameState)
   ObjectSerializer.register_script(PongGameState)
   ObjectSerializer.register_script(MarblesGameState)
-  print(OS.has_feature("overlay"))
-
-  var debug_ids: Dictionary[int, String] = {
-    0: '22445910', # Gumball
-    1: '1273990990', # GumBOT
-    2: '892082742', # Slowed,
-    3: '126430714', # Joony
-  }
-  
-  WSClient.debug_chatter_id = debug_ids.get(DebugScreenLayout.window_index, "")
 
   child_scene = get_main_scene().instantiate()
   add_child(child_scene)

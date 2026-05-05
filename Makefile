@@ -21,8 +21,8 @@ website-local:
 overlay:
 	$(GODOT) --headless --path $(GODOT_PROJECT) --export-debug "overlay"
 
-minigame:
-	$(GODOT) --headless --path $(GODOT_PROJECT) --export-debug "minigame" "../../livestream-listener/public/games/pong.html"
+# minigame:
+# 	$(GODOT) --headless --path $(GODOT_PROJECT) --export-debug "minigame" "../../livestream-listener/public/games/pong.html"
 
 export-games:
 	bash export_games.sh $(GAME)

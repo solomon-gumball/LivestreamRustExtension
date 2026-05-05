@@ -15,6 +15,7 @@ class SlotsRequest extends QueueAction:
   var message: String
   var chatter: Chatter
   var multiplier: int
+  var reward_id: String
 
   static func FromData(data: Dictionary) -> SlotsRequest:
     var inst = SlotsRequest.new()
@@ -22,6 +23,7 @@ class SlotsRequest extends QueueAction:
     inst.message = data["message"]
     inst.multiplier = data["multiplier"]
     inst.chatter = Chatter.FromData(data["chatter"])
+    inst.reward_id = data.get("reward_id", "")
     return inst
 
 class QueueAction:

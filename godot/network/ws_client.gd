@@ -31,11 +31,6 @@ func is_moderator() -> bool:
 
 var inbox_size = 10
 func _ready() -> void:
-  if DebugScreenLayout.window_index == 0:
-    WSClient.debug_chatter_id = '22445910' # Gumball
-  else:
-    WSClient.debug_chatter_id = '1273990990' # GumBOT
-
   remote_server_socket = WebSocketPeer.new()
 
   add_child(state)
@@ -104,8 +99,8 @@ func mail_shown(uuid: String) -> void:
 func tts_activated(uuid: String) -> void:
   send_socket_message({ "type": "tts-activated", "uuid": uuid })
 
-func slots_activated(uuid: String, gumbucksWon: float) -> void:
-  send_socket_message({ "type": "slots-activated", "uuid": uuid, "gumbucksWon": gumbucksWon })
+func slots_activated(uuid: String, gumbucksWon: float, reward_id: String) -> void:
+  send_socket_message({ "type": "slots-activated", "uuid": uuid, "gumbucksWon": gumbucksWon, "reward_id": reward_id })
 
 func subscribe(channels: Array[String]) -> void:
   send_socket_message({ "type": "subscribe", "channels": channels })

@@ -68,7 +68,7 @@ func _ready() -> void:
   _bind_inputs()
   if is_game_host:
     SessionSynchronizer.get_instance().peer_is_ready.connect(_peer_is_ready)
-    SessionSynchronizer.get_instance().all_peers_loaded_in.connect(server_only_start_game)
+    SessionSynchronizer.get_instance().all_peers_ready.connect(server_only_start_game)
 
     current_map.finish_area.body_entered.connect(on_finish_area_entered)
     current_map.out_of_bounds_area.body_entered.connect(_authority_handle_marble_out_of_bounds)
@@ -294,21 +294,21 @@ func on_finish_area_entered(body: PhysicsBody3D) -> void:
         { "type": MarblesMessage.UpdateGamePhase, "phase": MarblesGameState.GameState.Slowmo },
         MultiplayerPeer.TARGET_PEER_BROADCAST,
         MultiplayerPeer.TRANSFER_MODE_RELIABLE,
-        true
+        MultiplayerClient.PacketSelfMode.SelfIncluded
       )
       await get_tree().create_timer(.15).timeout
       MultiplayerClient.send_packet(
         { "type": MarblesMessage.SetGameWinner, "chatter": body.chatter.id if body.chatter != null else -1 },
         MultiplayerPeer.TARGET_PEER_BROADCAST,
         MultiplayerPeer.TRANSFER_MODE_RELIABLE,
-        true
+        MultiplayerClient.PacketSelfMode.SelfIncluded
       )
       await get_tree().create_timer(.15).timeout
       MultiplayerClient.send_packet(
         { "type": MarblesMessage.UpdateGamePhase, "phase": MarblesGameState.GameState.Ended },
         MultiplayerPeer.TARGET_PEER_BROADCAST,
         MultiplayerPeer.TRANSFER_MODE_RELIABLE,
-        true
+        MultiplayerClient.PacketSelfMode.SelfIncluded
       )
       await get_tree().create_timer(5.0).timeout
       game_finished.emit()

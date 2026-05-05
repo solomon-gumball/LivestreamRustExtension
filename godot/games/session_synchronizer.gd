@@ -7,6 +7,8 @@ func _init() -> void:
   _instance = self
 
 static func get_instance() -> SessionSynchronizer:
+  if _instance == null:
+    assert(false, "SessionSynchronizer instance not found! Make sure to add it to the scene tree!")
   return _instance
 
 enum GlobalGameMessage {

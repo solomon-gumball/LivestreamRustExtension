@@ -93,7 +93,7 @@ func handle_action(action: Message.SlotsRequest, queue_manager: ActionQueueManag
 
     for i in PULLS_PER_REDEEM:
       total_gumbucks_won += await trigger_slot_spin(slot_request)
-    WSClient.slots_activated(slot_request.uuid, total_gumbucks_won)
+    WSClient.slots_activated(slot_request.uuid, total_gumbucks_won, slot_request.reward_id)
 
   await get_tree().create_timer(3.0).timeout
   coin_spawn_box.clear_coins()

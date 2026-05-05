@@ -20,6 +20,14 @@
         aspect-ratio: 1920 / 1080;
         width: min(100vw, calc(100vh * 1920 / 1080));
         height: auto;
+        -webkit-touch-callout: none;
+        -webkit-user-select: none;
+        -khtml-user-select: none;
+        -moz-user-select: none;
+        -ms-user-select: none;
+        user-select: none;
+        outline: none;
+        -webkit-tap-highlight-color: rgba(255, 255, 255, 0); /* mobile webkit */
       }
     </style>
     <script>
@@ -72,11 +80,11 @@
         console.log("[startGodot] called, Engine defined:", typeof Engine !== "undefined");
         console.log("[startGodot] crossOriginIsolated:", window.crossOriginIsolated);
         console.log("[startGodot] SharedArrayBuffer available:", typeof SharedArrayBuffer !== "undefined");
-        // In production, point the engine executable and index.pck at GCS directly
-        // so the engine's initial wasm fetch and pack file bypass Cloud Run.
-        // index.wasm is still proxied through Cloud Run (gzip) for pthread workers.
+        // In production, fetch index.pck directly from GCS (large, no special headers needed).
+        // index.wasm must go through Cloud Run (/index.wasm route) because only index.wasm.gz
+        // exists in GCS; Cloud Run fetches it and re-serves it with Content-Encoding: gzip.
+        // pthread workers also fetch index.wasm as a relative URL, so same-origin is required.
         var config = IS_LOCAL ? $GODOT_CONFIG : Object.assign({}, $GODOT_CONFIG, {
-          executable: GCS_BASE + '/index',
           mainPack: GCS_BASE + '/index.pck',
         });
         console.log("[startGodot] config.executable:", config.executable);
