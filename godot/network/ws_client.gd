@@ -205,8 +205,11 @@ class DisconnectedState extends WSClientState:
   
   func _try_connect_to_remote_server() -> void:
     if debug_force_disconnected: return
+    var ready_state = net.remote_server_socket.get_ready_state()
+    if ready_state == WebSocketPeer.STATE_CONNECTING or ready_state == WebSocketPeer.STATE_OPEN:
+      return
     var url = net.getWsServerUrl()
-    print("[WSClient] Connecting to: ", url)
+    print("[WSClient] Connecting to: ", url, " | ", Time.get_datetime_string_from_system())
     var err = net.remote_server_socket.connect_to_url(url, TLSOptions.client_unsafe() if net.use_local_server else null)
     if err != OK:
       print("[WSClient] Error connecting to remote server: %d" % err)

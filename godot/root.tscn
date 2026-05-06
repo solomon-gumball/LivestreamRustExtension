@@ -4,3 +4,15 @@
 
 [node name="Root" type="Node" unique_id=226513858]
 script = ExtResource("1_pq8q7")
+
+[node name="CanvasLayer" type="CanvasLayer" parent="." unique_id=1375145684]
+layer = 6
+
+[node name="VersionLabel" type="Label" parent="CanvasLayer" unique_id=1159845941]
+unique_name_in_owner = true
+anchors_preset = 2
+anchor_top = 1.0
+anchor_bottom = 1.0
+offset_top = -23.0
+offset_right = 40.0
+grow_vertical = 0
