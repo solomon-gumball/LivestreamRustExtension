@@ -30,11 +30,11 @@ func _my_paddle() -> PongPaddle:
   return null
 
 func _projected_position() -> Vector3:
-  var elapsed := Time.get_unix_time_from_system() - sync_state.sent_at
+  var elapsed: float = MultiplayerClient.get_host_time() - sync_state.sent_at
   return sync_state.position + sync_state.velocity * elapsed
 
 func _send_bounce(bounce_position: Vector3, bounce_velocity: Vector3, local_only: bool = false) -> void:
-  var now := Time.get_unix_time_from_system()
+  var now: float = MultiplayerClient.get_host_time()
   sync_state.position = bounce_position
   sync_state.velocity = bounce_velocity
   sync_state.sent_at = now
@@ -108,7 +108,7 @@ func _check_bounces(proj: Vector3) -> bool:
   spawn_explosion(collision_point, normal)
   bounced.emit(paddle != null)
 
-  var time_since_last_bounce := Time.get_unix_time_from_system() - sync_state.sent_at
+  var time_since_last_bounce: float = MultiplayerClient.get_host_time() - sync_state.sent_at
   var new_speed: float = sync_state.velocity.length() + SPEED_INCREASE_PER_SECOND * time_since_last_bounce
 
   if paddle:

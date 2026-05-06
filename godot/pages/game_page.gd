@@ -16,6 +16,7 @@ extends Control
 @onready var close_lobby_button: Button = %CloseLobbyButton
 @onready var game_root_node: Node3D = %GameRootNode
 @onready var ping_label: Label = %PingLabel
+@onready var clock_offset_label: Label = %ClockOffsetLabel
 @onready var game_subviewport_container: SubViewportContainer = %GameSubviewportContainer
 @onready var overlay_subviewport_container: SubViewportContainer = %OverlaySubviewportContainer
 @onready var loading: Loading = %Loading
@@ -47,6 +48,7 @@ func _ready() -> void:
   WSClient.authenticated_state.message_received.connect(_handle_ws_message)
   MultiplayerClient.state.changed.connect(_handle_mp_state_changed)
   MultiplayerClient.connected_state.ping_check_completed.connect(_update_ping_label)
+  MultiplayerClient.connected_state.clock_sync_updated.connect(_update_clock_offset_label)
 
   close_lobby_button.pressed.connect(_close_lobby)
   start_game_button.pressed.connect(_start_game)
@@ -96,6 +98,9 @@ func _handle_updates() -> void:
 func _update_ping_label(msec_ping: float) -> void:
   ping_label.text = "PING: %sms" % int(msec_ping)
 
+func _update_clock_offset_label(offset_ms: float) -> void:
+  clock_offset_label.text = "CLK: %+dms" % int(offset_ms)
+
 func _handle_ws_state_changed(_s) -> void:
   _handle_updates()
 
@@ -114,6 +119,7 @@ func _exit_tree() -> void:
   WSClient.authenticated_state.message_received.disconnect(_handle_ws_message)
   MultiplayerClient.state.changed.disconnect(_handle_mp_state_changed)
   MultiplayerClient.connected_state.ping_check_completed.disconnect(_update_ping_label)
+  MultiplayerClient.connected_state.clock_sync_updated.disconnect(_update_clock_offset_label)
   WSClient.state.changed.disconnect(_handle_websocket_connection_changed)
 
 func _close_lobby() -> void:

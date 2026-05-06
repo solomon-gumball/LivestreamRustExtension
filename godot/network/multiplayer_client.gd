@@ -21,8 +21,16 @@ const RELAY_ONLY_CANDIDATES: bool = true
 const PACKET_MAGIC: int = 0x474D4254 # "GMBT"
 
 enum GlobalNetCommand {
-  Ping = 9998, Pong
+  Ping = 9997, Pong
 }
+
+# Positive means the host clock is ahead of mine by this many seconds.
+# Host always keeps this at 0.0 (it IS the reference clock).
+# Non-authority client updates this each ping cycle via NTP formula.
+# NAN means no measurement has been taken yet — set directly on first sample.
+var clock_offset_s: float = NAN
+const CLOCK_OFFSET_SMOOTHING: float = 0.3
+const PING_TIME_SEC: float = 5.0
 
 enum PacketSelfMode {
   NoSelf,
@@ -177,6 +185,11 @@ func is_authority() -> bool:
 func is_initialized() -> bool:
   return rtc_mp.get_connection_status() != MultiplayerPeer.CONNECTION_DISCONNECTED
 
+# Returns current time normalized to the host's clock space.
+# Use this instead of Time.get_unix_time_from_system() wherever sent_at is compared.
+func get_host_time() -> float:
+  return Time.get_unix_time_from_system() + (clock_offset_s if not is_nan(clock_offset_s) else 0.0)
+
 func _process(_delta: float) -> void:
   rtc_mp.poll()
   # Only read packets once the connection is fully established. During WebRTC
@@ -247,6 +260,7 @@ class Connected extends MultiplayerClientState:
   signal left_lobby
   signal lobby_updated
   signal ping_check_completed(new_ping_ms: float)
+  signal clock_sync_updated(offset_ms: float)
 
   func _ready() -> void:
     ping_timer = Timer.new()
@@ -265,6 +279,10 @@ class Connected extends MultiplayerClientState:
     else:
       mc.rtc_mp.create_client(id)
     mc.rtc_mp.peer_connected.connect(func(peer):
+      if peer == 1:
+        _check_ping()
+        ping_timer.start(mc.PING_TIME_SEC)
+
       mc.rtc_peer_ready.emit(peer)
     )
     mc.rtc_mp.peer_disconnected.connect(func(peer):
@@ -282,19 +300,12 @@ class Connected extends MultiplayerClientState:
       _close_rtc()
       _init_client(_previous_state.peer_id, _previous_state.mesh_mode)
       mc.current_lobby = _previous_state.lobby_to_join
-
-    _check_ping()
-    ping_timer.start(5.0)
   
   func exit_state() -> void:
+    ping_timer.stop()
+    mc.clock_offset_s = 0.0
+    clock_sync_updated.emit(mc.clock_offset_s)
     _close_rtc()
-
-  func _check_ping() -> void:
-    if not mc.is_authority() and mc.rtc_mp.has_peer(1):
-      mc.send_packet({
-        "type": MultiplayerClient.GlobalNetCommand.Ping,
-        "sent_at": Time.get_ticks_msec()
-      }, MultiplayerPeer.TARGET_PEER_SERVER)
 
   func _create_peer(id: int) -> WebRTCPeerConnection:
     var peer: WebRTCPeerConnection = WebRTCPeerConnection.new()
@@ -374,7 +385,8 @@ class Connected extends MultiplayerClientState:
     mc.sealed = true
   
   func _close_rtc() -> void:
-    mc.connected_state.ping_timer.stop()
+    ping_timer.stop()
+    mc.clock_offset_s = NAN
     mc.rtc_mp.close()
     # In Godot, close() on a WebRTCMultiplayerPeer doesn't fully reset
     # it for reuse — create_client() has an internal guard
@@ -406,16 +418,37 @@ class Connected extends MultiplayerClientState:
       if !mc.rtc_mp.has_peer(peer):
         print(mc.my_peer_id(), " IS ADDING PEER ", peer)
         _create_peer(peer)
+  
+  func _check_ping() -> void:
+    print("try check ping")
+    if not mc.is_authority() and mc.rtc_mp.has_peer(1):
+      print("SEND PING!!")
+      mc.send_packet({
+        "type": MultiplayerClient.GlobalNetCommand.Ping,
+        "t1_unix": Time.get_unix_time_from_system()
+      }, MultiplayerPeer.TARGET_PEER_SERVER)
 
   func handle_rtc_message(message: Variant, sender_id: int) -> void:
     match message.type:
       MultiplayerClient.GlobalNetCommand.Ping:
         mc.send_packet({
           "type": MultiplayerClient.GlobalNetCommand.Pong,
-          "sent_at": message.get("sent_at", 0)
+          "t1_unix": message.get("t1_unix", 0.0),
+          "t2_unix": Time.get_unix_time_from_system()
         }, sender_id)
+        print("SEND PONG!!")
       MultiplayerClient.GlobalNetCommand.Pong:
-        ping_check_completed.emit(Time.get_ticks_msec() - message.get("sent_at", 0))
+        var t1: float = message.get("t1_unix", 0.0)
+        var t2: float = message.get("t2_unix", 0.0)
+        if t1 > 0.0 and t2 > 0.0:
+          var t4 := Time.get_unix_time_from_system()
+          ping_check_completed.emit((t4 - t1) * 1000.0)
+          # NTP offset formula (T3 ≈ T2 since host processes instantly):
+          # positive = host clock is ahead of mine
+          var sample := ((t2 - t1) + (t2 - t4)) / 2.0
+          mc.clock_offset_s = sample if is_nan(mc.clock_offset_s) \
+            else lerp(mc.clock_offset_s, sample, CLOCK_OFFSET_SMOOTHING)
+          clock_sync_updated.emit(mc.clock_offset_s * 1000.0)
 
   func handle_ws_message(type: String, msg: Dictionary) -> void:
     match type:
