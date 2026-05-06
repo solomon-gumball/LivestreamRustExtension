@@ -43,6 +43,11 @@ func _send_bounce(bounce_position: Vector3, bounce_velocity: Vector3, local_only
 
   var self_mode := MultiplayerClient.PacketSelfMode.SelfOnly if local_only \
     else MultiplayerClient.PacketSelfMode.SelfIncluded
+  
+  if not local_only:
+    var date_string := Time.get_datetime_string_from_unix_time(now)
+    print("(%s) SENDING BALL MOVE pos=%s vel=%s" % [date_string, bounce_position, bounce_velocity])
+
   MultiplayerClient.send_packet(
     {
       "type": PongGame.PongGameMessage.BallMove,

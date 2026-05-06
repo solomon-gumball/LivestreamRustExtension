@@ -273,6 +273,10 @@ func _handle_peer_packet(sender_id: int, packet: Dictionary) -> void:
       pong_state.ball_state.position = packet.get("position", Vector3.ZERO)
       pong_state.ball_state.velocity = packet.get("velocity", Vector3.ZERO)
       pong_state.ball_state.sent_at = packet.get("sent_at", 0.0)
+      if MultiplayerClient.my_peer_id() != sender_id:
+        var date_string := Time.get_datetime_string_from_unix_time(pong_state.ball_state.sent_at)
+        print("(%s) RECIEVED BALL MOVE FROM PEER=%d pos=%s vel=%s" % [date_string, sender_id, pong_state.ball_state.position, pong_state.ball_state.velocity])
+
     PongGameMessage.StartRound:
       camera.max_x = 6.0
       camera.max_z = 6.0
