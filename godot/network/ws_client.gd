@@ -52,8 +52,6 @@ func _ready() -> void:
     else:
       browser = Browser.Other
     
-    print("is ios -> ", is_ios)
-    
   add_child(state)
 
   state.add_child(disconnected_state)

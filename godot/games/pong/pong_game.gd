@@ -20,6 +20,7 @@ var pong_state: PongGameState = null:
 var ball: PongBall = null
 var ball_template: PackedScene = preload("res://games/pong/pong_ball.tscn")
 var nodes_by_peer_id: Dictionary[int, Dictionary] = {}
+var outfit_loaded_timer: Timer = null
 
 @onready var pong_paddle_l: PongPaddle = %PongPaddleL
 @onready var pong_paddle_r: PongPaddle = %PongPaddleR
@@ -83,11 +84,11 @@ func _ready() -> void:
   MultiplayerClient.connected_state.left_lobby.connect(_left_lobby)
   MultiplayerClient.packet_received.connect(_handle_peer_packet)
   chatter_loaded.connect(_handle_chatter_loaded)
-  all_chatters_loaded_locally.connect(func () -> void:
-    # TODO: Do this better
-    await get_tree().create_timer(3.0).timeout
-    SessionSynchronizer.get_instance().notify_ready()
-  )
+  # all_chatters_loaded_locally.connect(func () -> void:
+  #   # TODO: Do this better
+  #   await get_tree().create_timer(3.0).timeout
+  #   SessionSynchronizer.get_instance().notify_ready()
+  # )
 
   var sub_channels: Array[String] = []
   for peer in lobby.peers:
@@ -104,6 +105,19 @@ func _ready() -> void:
 
   # This must be at the end so the paddle by id is ready
   _handle_chatter_loaded(WSClient.my_chatter())
+
+  outfit_loaded_timer = Timer.new()
+  add_child(outfit_loaded_timer)
+  outfit_loaded_timer.timeout.connect(_check_bots_loaded)
+  outfit_loaded_timer.one_shot = false
+  outfit_loaded_timer.start(1.0)
+
+func _check_bots_loaded() -> void:
+  if !pong_paddle_l.gumbot.is_outfit_loaded: return
+  if !pong_paddle_r.gumbot.is_outfit_loaded: return
+
+  outfit_loaded_timer.stop()
+  SessionSynchronizer.get_instance().notify_ready()
 
 func start_game() -> void:
   if not MultiplayerClient.is_lobby_host():

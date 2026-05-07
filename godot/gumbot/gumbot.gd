@@ -18,6 +18,9 @@ class_name GumBot
     if is_inside_tree():
       name_label.visible = show_name_label
 
+signal outfit_loaded
+var is_outfit_loaded := false
+
 var base_meshes = [
   "Arm",
   "Body",
@@ -48,6 +51,8 @@ var chatter: Chatter = null:
     chatter = new_value
     if chatter == null: return
 
+    is_outfit_loaded = false
+
     emote = chatter.emote
     name_label.text = chatter.display_name
 
@@ -69,6 +74,8 @@ var chatter: Chatter = null:
         if prev_chatter.equipped.get(slot_name, "") != chatter.equipped.get(slot_name, ""):
           should_skip_outfit_update = false
       if should_skip_outfit_update:
+        is_outfit_loaded = true
+        # Emit signal here?
         return
 
     # Collect unique asset names to load
@@ -97,7 +104,6 @@ var chatter: Chatter = null:
         remaining[0] -= 1
         if remaining[0] == 0:
           _apply_outfit(loaded_mesh_files, captured_equipped, sockets)
-          print("APPLY OUTFIT")
       )
       if cached != null and !loaded_mesh_files.has(name_lowered):
         loaded_mesh_files[name_lowered] = cached.duplicate()
@@ -164,6 +170,12 @@ func _apply_outfit(loaded_mesh_files: Dictionary, equipped: Dictionary, sockets:
           mesh_to_add.rotation = wearable_metadata.get("rotation")
       else:
         print("ERROR: NO ITEM DATA FOR %s" % item_name)
+
+  # await get_tree().create_timer(randf_range(3.0, 6.0)).timeout
+  is_outfit_loaded = true
+  print("SETTING OUTFIT LOADED = true")
+  await get_tree().process_frame
+  outfit_loaded.emit()
 
 var color: Color = Color(0.5, 0.5, 0.5, 1.0):
   set(new_value):
