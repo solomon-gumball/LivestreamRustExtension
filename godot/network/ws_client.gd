@@ -11,6 +11,9 @@ var connected_state: ConnectedState = ConnectedState.new(self)
 var authenticated_state: AuthenticatedState = AuthenticatedState.new(self)
 
 var use_local_server: bool = !OS.has_feature("prod_server")
+var is_ios: bool = false
+var browser: Browser = Browser.Unknown
+enum Browser { Unknown, Chrome, Firefox, Safari, Other }
 
 signal authenticated
 
@@ -33,6 +36,24 @@ var inbox_size = 10
 func _ready() -> void:
   remote_server_socket = WebSocketPeer.new()
 
+  if OS.has_feature("web"):
+    var ua: String = str(JavaScriptBridge.eval("navigator.userAgent", true))
+    is_ios = bool(JavaScriptBridge.eval("/iPad|iPhone|iPod/.test(navigator.userAgent)", true))
+
+    # Chrome's UA string also contains "Safari/", so checking Chrome/ first
+    # ensures Chrome is correctly identified rather than falling through
+    # to Safari.
+    if ua.contains("Chrome/") or ua.contains("Chromium/"):
+      browser = Browser.Chrome
+    elif ua.contains("Firefox/"):
+      browser = Browser.Firefox
+    elif ua.contains("Safari/"):
+      browser = Browser.Safari
+    else:
+      browser = Browser.Other
+    
+    print("is ios -> ", is_ios)
+    
   add_child(state)
 
   state.add_child(disconnected_state)
@@ -41,6 +62,9 @@ func _ready() -> void:
 
   connected_state.authenticated_successfully.connect(_handle_authenticated)
   state.change_state(disconnected_state)
+
+func threads_enabled() -> bool:
+   return OS.has_feature("threads") and not WSClient.is_ios
 
 func create_lobby(game_title: String) -> String:
   var response: HTTPResult = await create_authorized_request(

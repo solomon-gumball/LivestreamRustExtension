@@ -83,6 +83,11 @@ func _ready() -> void:
   MultiplayerClient.connected_state.left_lobby.connect(_left_lobby)
   MultiplayerClient.packet_received.connect(_handle_peer_packet)
   chatter_loaded.connect(_handle_chatter_loaded)
+  all_chatters_loaded_locally.connect(func () -> void:
+    # TODO: Do this better
+    await get_tree().create_timer(3.0).timeout
+    SessionSynchronizer.get_instance().notify_ready()
+  )
 
   var sub_channels: Array[String] = []
   for peer in lobby.peers:

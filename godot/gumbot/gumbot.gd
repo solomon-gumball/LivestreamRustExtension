@@ -96,7 +96,9 @@ var chatter: Chatter = null:
           loaded_mesh_files[captured_name] = node.duplicate()
         remaining[0] -= 1
         if remaining[0] == 0:
-          _apply_outfit(loaded_mesh_files, captured_equipped, sockets))
+          _apply_outfit(loaded_mesh_files, captured_equipped, sockets)
+          print("APPLY OUTFIT")
+      )
       if cached != null and !loaded_mesh_files.has(name_lowered):
         loaded_mesh_files[name_lowered] = cached.duplicate()
 

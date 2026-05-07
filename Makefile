@@ -17,13 +17,13 @@ website-prod:
 	printf "%s" "$(BUILD_TIME)" > $(GODOT_PROJECT)/version.txt
 	$(GODOT) --headless --path $(GODOT_PROJECT) --export-release "website_prod"
 	gzip -f ../livestream-listener/public/index.wasm
-	sed -i "s|/index.pck'|/index.pck?v=$(BUILD_VERSION)'|g" ../livestream-listener/public/index.html
+	sed -i '' "s|/index.pck'|/index.pck?v=$(BUILD_VERSION)'|g" ../livestream-listener/public/index.html
 
 website-local:
 	printf "%s" "$(BUILD_TIME)" > $(GODOT_PROJECT)/version.txt
 	$(GODOT) --headless --path $(GODOT_PROJECT) --export-debug "website_local"
 	gzip -f ../livestream-listener/public/index.wasm
-	sed -i "s|/index.pck'|/index.pck?v=$(BUILD_VERSION)'|g" ../livestream-listener/public/index.html
+	sed -i '' "s|/index.pck'|/index.pck?v=$(BUILD_VERSION)'|g" ../livestream-listener/public/index.html
 
 overlay:
 	$(GODOT) --headless --path $(GODOT_PROJECT) --export-debug "overlay"

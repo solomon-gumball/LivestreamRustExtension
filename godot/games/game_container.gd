@@ -88,7 +88,7 @@ func load_game_from_lobby(lobby: Lobby) -> void:
   #   await get_tree().create_timer(3.0).timeout
 
   var packed_scene: PackedScene
-  if OS.has_feature("threads"):
+  if OS.has_feature("threads") and not WSClient.is_ios:
     ResourceLoader.load_threaded_request(game.entry)
     var status := ResourceLoader.THREAD_LOAD_IN_PROGRESS
     while status == ResourceLoader.THREAD_LOAD_IN_PROGRESS:
@@ -112,7 +112,7 @@ func load_game_from_lobby(lobby: Lobby) -> void:
   _game_scene.game_finished.connect(_session_sync.queue_free)
   add_child.call_deferred(_game_scene)
 
-  await _game_scene.ready
-  _session_sync.notify_ready.call_deferred()
+  # await _game_scene.ready
+  # _session_sync.notify_ready.call_deferred()
   await _session_sync.all_peers_ready
   _game_scene.start_game()

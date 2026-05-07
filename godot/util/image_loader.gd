@@ -5,7 +5,7 @@
 #   2. Disk cache (user://image_cache/ or user://glb_cache/) — see loading path below.
 #   3. Network fetch via AwaitableHTTPRequest — non-blocking, uses await each frame.
 #
-# LOADING PATH (when threads are available, OS.has_feature("threads")):
+# LOADING PATH (when threads are available, WSClient.threads_enabled()):
 #   Images (disk cache hit):
 #     Worker thread  — img.load() reads and decodes PNG from disk.
 #     Main thread    — ImageTexture.create_from_image() uploads to GPU, callback fires.
@@ -79,7 +79,7 @@ func _cleanup_finished_threads() -> void:
 			_threads.remove_at(i)
 
 func _process(_delta: float) -> void:
-	if OS.has_feature("threads"):
+	if WSClient.threads_enabled():
 		_cleanup_finished_threads()
 
 # Load an image. Returns cached texture immediately if available, otherwise null.
@@ -97,7 +97,7 @@ func load_image(url: String, callback: Callable = Callable(), save_to_disk: bool
 
 		if FileAccess.file_exists(filename):
 			if debug_logging: print("LOADER: Cached from FILE: ", url)
-			if OS.has_feature("threads"):
+			if WSClient.threads_enabled():
 				if callback.is_valid():
 					_start_thread(_load_image_from_disk.bind(filename, url, callback))
 				return null
@@ -152,7 +152,7 @@ func _fetch_image(url: String, filename: String, save_to_disk: bool) -> void:
 	var callbacks: Array = _pending_image_callbacks.get(filename, [])
 	_pending_image_callbacks.erase(filename)
 
-	if OS.has_feature("threads"):
+	if WSClient.threads_enabled():
 		_start_thread(_decode_image_bytes.bind(bytes, filename, url, save_to_disk, callbacks))
 	else:
 		var img = Image.new()
@@ -208,7 +208,7 @@ func load_glb(url: String, callback: Callable = Callable(), no_cached: bool = fa
 		if FileAccess.file_exists(filename):
 			if debug_logging: print("LOADER: Cached from FILE: ", url)
 			if callback.is_valid():
-				if OS.has_feature("threads"):
+				if WSClient.threads_enabled():
 					_start_thread(_load_glb_from_disk_threaded.bind(filename, url, callback))
 				else:
 					call_deferred("_load_glb_from_disk", filename, url, callback)
@@ -275,7 +275,7 @@ func _fetch_glb(url: String, filename: String) -> void:
 
 	var glb_data: PackedByteArray = response.bytes
 
-	if OS.has_feature("threads"):
+	if WSClient.threads_enabled():
 		_start_thread(_parse_glb_bytes_threaded.bind(glb_data, filename, url, callbacks))
 	else:
 		call_deferred("_save_glb_to_disk", glb_data, filename)
