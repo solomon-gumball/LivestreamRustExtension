@@ -5,7 +5,6 @@ class_name MultiplayerTestContainer
 @export var num_players: int = 2
 
 var is_host := false
-var timer: Timer = null
 var ready_peers: Array[int]
 
 func _ready() -> void:
@@ -16,13 +15,6 @@ func _ready() -> void:
   MultiplayerClient.rtc_peer_ready.connect(_peer_ready)
   WSClient.authenticated_state.message_received.connect(_handle_ws_message)
   MultiplayerClient.connected_state.lobby_updated.connect(try_start)
-
-  # timer = Timer.new()
-  # timer.one_shot = false
-  # timer.autostart = false
-  # add_child(timer)
-  # timer.timeout.connect(_host_check_ready)
-  # timer.start(0.1)
 
   is_host = DebugScreenLayout.window_index == 0
   if is_host:
@@ -53,7 +45,6 @@ func _handle_ws_message(parsed: Variant) -> void:
 var did_start := false
 func _host_check_ready() -> void:
   if !is_host or did_start: return
-  print("Trying")
 
   if MultiplayerClient.state.current is MultiplayerClient.Connected:
     var lobby: Lobby = MultiplayerClient.current_lobby
@@ -64,10 +55,7 @@ func _host_check_ready() -> void:
 
 func try_start():
   var lobby := MultiplayerClient.current_lobby
-  # if lobby:
-  #   print("lobby.started ", lobby.started)
   if lobby and lobby.started:
-    # print("MultiplayerClient.current_lobby ", MultiplayerClient.current_lobby)
     var game_container := GameContainer.new()
     add_child(game_container)
     await game_container.load_game_from_lobby(MultiplayerClient.current_lobby)

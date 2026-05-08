@@ -2,6 +2,13 @@
 extends GameBase
 class_name Carnage
 
+enum CarnageGameMessage {
+  ClientKartInputs,
+  ServerKartState,
+  PingNetTick,
+  PongNetTick
+}
+
 func _ready() -> void:
   super._ready()
   SessionSynchronizer.get_instance().notify_ready()
@@ -19,6 +26,8 @@ func spawn_cars() -> void:
     var kart_inst := car_template.instantiate() as KartBot
     add_child(kart_inst)
     kart_inst.global_position = location
+    kart_inst.look_at(Vector3.ZERO, Vector3.UP, true)
+    i += 1
 
 func start_game() -> void:
   pass

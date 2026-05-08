@@ -11,6 +11,7 @@ var connected_state: Connected
 
 var current_lobby: Lobby = null
 var rtc_mp := WebRTCMultiplayerPeer.new()
+var current_ping: float = 0.0
 
 const PRINT_DEBUG: bool = false
 const RELAY_ONLY_CANDIDATES: bool = true
@@ -296,12 +297,14 @@ class Connected extends MultiplayerClientState:
     # mc.multiplayer.multiplayer_peer = mc.rtc_mp
 
   func enter_state(_previous_state: State) -> void:
+    mc.current_ping = 0.0
     if _previous_state is Disconnected:
       _close_rtc()
       _init_client(_previous_state.peer_id, _previous_state.mesh_mode)
       mc.current_lobby = _previous_state.lobby_to_join
   
   func exit_state() -> void:
+    mc.current_ping = 0.0
     ping_timer.stop()
     mc.clock_offset_s = 0.0
     clock_sync_updated.emit(mc.clock_offset_s)
@@ -403,7 +406,7 @@ class Connected extends MultiplayerClientState:
     for peer in lobby.connected_peers:
       lobby_connected_peer_ids.append(peer.peer_id)
 
-    var existing_peers := mc.rtc_mp.get_peers()
+    var existing_peers = mc.rtc_mp.get_peers()
     for existing_peer: int in existing_peers.keys():
       if existing_peer == my_peer_id: continue
       if !lobby_connected_peer_ids.has(existing_peer):
@@ -418,18 +421,6 @@ class Connected extends MultiplayerClientState:
       if !mc.rtc_mp.has_peer(peer):
         print(mc.my_peer_id(), " IS ADDING PEER ", peer)
         _create_peer(peer)
-  
-  func all_peers_connected() -> bool:
-    if mc.current_lobby == null:
-      assert(false, "current lobby is false when calling all_peers_connected")
-
-    var my_peer_id := mc.my_peer_id()
-    for peer in mc.current_lobby.peers:
-      if my_peer_id == peer.peer_id: continue
-      print("checking other peer")
-      if peer.connected and !mc.rtc_mp.has_peer(peer.peer_id):
-        return false
-    return true
       
   func _check_ping() -> void:
     if not mc.is_authority() and mc.rtc_mp.has_peer(1):
@@ -451,7 +442,8 @@ class Connected extends MultiplayerClientState:
         var t2: float = message.get("t2_unix", 0.0)
         if t1 > 0.0 and t2 > 0.0:
           var t4 := Time.get_unix_time_from_system()
-          ping_check_completed.emit((t4 - t1) * 1000.0)
+          mc.current_ping = (t4 - t1) * 1000.0
+          ping_check_completed.emit(mc.current_ping)
           # NTP offset formula (T3 ≈ T2 since host processes instantly):
           # positive = host clock is ahead of mine
           var sample := ((t2 - t1) + (t2 - t4)) / 2.0

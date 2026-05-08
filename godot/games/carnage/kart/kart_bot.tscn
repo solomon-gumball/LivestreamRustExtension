@@ -2,20 +2,39 @@
 
 [ext_resource type="Script" uid="uid://bqyfthnkkbiiq" path="res://games/carnage/kart/kart_bot.gd" id="1_5x8vd"]
 [ext_resource type="ArrayMesh" uid="uid://dwyhikmomuqwu" path="res://games/carnage/kart/kart.res" id="1_itbdw"]
+[ext_resource type="PackedScene" uid="uid://crkh8hdu5af84" path="res://gumbot/gumbot.tscn" id="3_6xwj1"]
+[ext_resource type="Shader" uid="uid://cw1km147x2fwu" path="res://materials/bot_mat/bot_shader.gdshader" id="4_3xp8h"]
+[ext_resource type="Texture2D" uid="uid://cas3gr887xevi" path="res://materials/bot_mat/bot_albedo.png" id="5_8q7wk"]
+[ext_resource type="Texture2D" uid="uid://ba6mac1k3t38a" path="res://materials/bot_mat/bot_normals.png" id="6_540i1"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_66xnu"]
+resource_local_to_scene = true
+render_priority = 0
+shader = ExtResource("4_3xp8h")
+shader_parameter/albedo_texture = ExtResource("5_8q7wk")
+shader_parameter/normal_map = ExtResource("6_540i1")
+shader_parameter/bot_color = Color(1, 0, 0, 1)
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_itbdw"]
 albedo_color = Color(0.5443761, 0.07021258, 0.42388278, 1)
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_itbdw"]
-size = Vector3(2.4, 2.2132263, 4.401)
+size = Vector3(2.4, 1.1762314, 1.3106992)
 
 [node name="KartBot" type="CharacterBody3D" unique_id=728622550]
 script = ExtResource("1_5x8vd")
 
+[node name="gumbot" parent="." unique_id=2126276004 instance=ExtResource("3_6xwj1")]
+transform = Transform3D(3.600779, 0, 0, 0, 3.600779, 0, 0, 0, 3.600779, 0, -0.057376325, -0.18143319)
+surface_mat = SubResource("ShaderMaterial_66xnu")
+
 [node name="Kart" type="MeshInstance3D" parent="." unique_id=416408719]
+transform = Transform3D(0.29999998, 0, 0, 0, 0.29999998, 0, 0, 0, 0.29999998, 0, 0.042976737, 0)
 mesh = ExtResource("1_itbdw")
 surface_material_override/0 = SubResource("StandardMaterial3D_itbdw")
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="." unique_id=1152960397]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.99625885, -0.16078472)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.5887691, -0.050356984)
 shape = SubResource("BoxShape3D_itbdw")
+
+[node name="Node" type="Node" parent="." unique_id=1188391205]
