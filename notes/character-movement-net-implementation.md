@@ -1,0 +1,8 @@
+<svg src="./kart_movement_networking_plan.svg">
+
+Here's the full plan in one place. The three phases are:
+Phase 1 — Connect. Do a ping/pong handshake to measure RTT. Use that to set the client's starting tick so it runs ahead of the server's simulate tick by buffer_depth + one_way_latency + a small margin. Repeat this every ~8 seconds during play and nudge the tick ±1 at a time to correct drift — never hard-set it mid-game.
+Phase 2 — Per frame. The client samples input, saves it to a ring buffer entry alongside the resulting predicted state, applies the input locally for instant feel, and sends the packet unreliably. The server stores incoming inputs in a per-client queue indexed by tick, then simulates INPUT_BUFFER_DEPTH ticks behind current — using the last known input for any dropped packet. It broadcasts a state snapshot at ~20Hz.
+Phase 3 — Reconciliation. When a snapshot arrives, discard it if it's older than the last one processed. Otherwise, look up your predicted state at that tick in the ring buffer, re-simulate forward tick-by-tick to current_tick using your saved inputs, and lerp toward that projected position if the error exceeds your threshold. For remote karts, buffer 2–3 snapshots and interpolate between them rather than snapping.
+The one critical requirement underpinning all of this: simulate_one_frame() must be a pure function — deterministic, no side effects on your actual scene nodes. It's called both during normal prediction and during re-simulation, so it has to be identical math both times.
+You can click any node in the diagram to ask a follow-up about that specific part. Want to move on to packet serialization, or dive deeper into any of these phases?
