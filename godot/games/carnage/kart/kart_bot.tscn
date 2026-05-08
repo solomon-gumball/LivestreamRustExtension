@@ -1,0 +1,21 @@
+[gd_scene format=3 uid="uid://b6f4705i0fa0g"]
+
+[ext_resource type="Script" uid="uid://bqyfthnkkbiiq" path="res://games/carnage/kart/kart_bot.gd" id="1_5x8vd"]
+[ext_resource type="ArrayMesh" uid="uid://dwyhikmomuqwu" path="res://games/carnage/kart/kart.res" id="1_itbdw"]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_itbdw"]
+albedo_color = Color(0.5443761, 0.07021258, 0.42388278, 1)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_itbdw"]
+size = Vector3(2.4, 2.2132263, 4.401)
+
+[node name="KartBot" type="CharacterBody3D" unique_id=728622550]
+script = ExtResource("1_5x8vd")
+
+[node name="Kart" type="MeshInstance3D" parent="." unique_id=416408719]
+mesh = ExtResource("1_itbdw")
+surface_material_override/0 = SubResource("StandardMaterial3D_itbdw")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="." unique_id=1152960397]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.99625885, -0.16078472)
+shape = SubResource("BoxShape3D_itbdw")

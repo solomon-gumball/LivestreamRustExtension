@@ -1,0 +1,17 @@
+[gd_scene format=3 uid="uid://bkmowekhw6sh0"]
+
+[ext_resource type="Script" uid="uid://yeqom0bunyel" path="res://games/_testing/multiplayer_test_container.gd" id="1_2dhvg"]
+
+[node name="MultiplayerTestContainer" type="Node" unique_id=1577533979]
+script = ExtResource("1_2dhvg")
+
+[node name="CanvasLayer" type="CanvasLayer" parent="." unique_id=1242978891]
+
+[node name="ColorRect" type="ColorRect" parent="CanvasLayer" unique_id=517168973]
+visible = false
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0.72845286, 0.04175993, 0.15676036, 1)

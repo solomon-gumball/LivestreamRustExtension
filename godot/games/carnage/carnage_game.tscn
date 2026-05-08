@@ -1,0 +1,37 @@
+[gd_scene format=3 uid="uid://d4jkfq0s2r3x7"]
+
+[ext_resource type="PackedScene" uid="uid://cjoyyhxf1to18" path="res://games/carnage/blender/boxing_ring.blend" id="1_q63vr"]
+[ext_resource type="Script" uid="uid://c27qhdb12hl0x" path="res://games/carnage/carnage_game.gd" id="1_rhos2"]
+
+[sub_resource type="Environment" id="Environment_q63vr"]
+background_mode = 3
+ambient_light_source = 2
+ambient_light_color = Color(1, 1, 1, 1)
+ambient_light_energy = 0.16
+tonemap_mode = 2
+ssao_enabled = true
+
+[node name="CarnageGame" type="Node3D" unique_id=1863440489]
+script = ExtResource("1_rhos2")
+
+[node name="Marker3D" type="Marker3D" parent="." unique_id=1167048723]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.5612557, 0)
+
+[node name="boxing_ring" parent="." unique_id=543761004 instance=ExtResource("1_q63vr")]
+
+[node name="DirectionalLight3D" type="DirectionalLight3D" parent="." unique_id=1486856216]
+transform = Transform3D(0.18701153, 0.62628746, 0.7568294, 0.06279059, -0.77646667, 0.6270222, 0.98034894, -0.069738604, -0.18453318, 1.137617, 0.9017843, -0.071688496)
+light_color = Color(0.99646264, 0.82775444, 0.63832206, 1)
+light_energy = 0.0
+
+[node name="SpotLight3D" type="SpotLight3D" parent="." unique_id=494591315]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, 0, 5.456707, 0)
+spot_range = 13.224709
+spot_angle = 53.16479
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="." unique_id=1243038836]
+environment = SubResource("Environment_q63vr")
+
+[node name="Camera3D" type="Camera3D" parent="." unique_id=1785970488]
+transform = Transform3D(1, 0, 0, 0, 0.6344473, 0.7729662, 0, -0.7729662, 0.6344473, -1.9073486e-06, 19.74187, 16.105719)
+fov = 20.0

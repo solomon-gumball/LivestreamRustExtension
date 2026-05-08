@@ -64,11 +64,11 @@ func _ready() -> void:
 func threads_enabled() -> bool:
    return OS.has_feature("threads") and not WSClient.is_ios
 
-func create_lobby(game_title: String) -> String:
+func create_lobby(game_title: String, close_existing: bool = false) -> String:
   var response: HTTPResult = await create_authorized_request(
     get_database_server_url("game-lobby"),
     HTTPClient.METHOD_POST,
-    { "game": game_title, "is_player": true }
+    { "game": game_title, "is_player": true, "close_existing": close_existing }
   )
   if not response.success() or not response.status_ok():
     return "Request failed"

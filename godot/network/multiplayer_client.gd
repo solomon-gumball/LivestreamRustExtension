@@ -419,10 +419,20 @@ class Connected extends MultiplayerClientState:
         print(mc.my_peer_id(), " IS ADDING PEER ", peer)
         _create_peer(peer)
   
+  func all_peers_connected() -> bool:
+    if mc.current_lobby == null:
+      assert(false, "current lobby is false when calling all_peers_connected")
+
+    var my_peer_id := mc.my_peer_id()
+    for peer in mc.current_lobby.peers:
+      if my_peer_id == peer.peer_id: continue
+      print("checking other peer")
+      if peer.connected and !mc.rtc_mp.has_peer(peer.peer_id):
+        return false
+    return true
+      
   func _check_ping() -> void:
-    print("try check ping")
     if not mc.is_authority() and mc.rtc_mp.has_peer(1):
-      print("SEND PING!!")
       mc.send_packet({
         "type": MultiplayerClient.GlobalNetCommand.Ping,
         "t1_unix": Time.get_unix_time_from_system()
@@ -436,7 +446,6 @@ class Connected extends MultiplayerClientState:
           "t1_unix": message.get("t1_unix", 0.0),
           "t2_unix": Time.get_unix_time_from_system()
         }, sender_id)
-        print("SEND PONG!!")
       MultiplayerClient.GlobalNetCommand.Pong:
         var t1: float = message.get("t1_unix", 0.0)
         var t2: float = message.get("t2_unix", 0.0)

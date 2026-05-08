@@ -31,7 +31,7 @@ overlay:
 # minigame:
 # 	$(GODOT) --headless --path $(GODOT_PROJECT) --export-debug "minigame" "../../livestream-listener/public/games/pong.html"
 
-export-games:
+minigames:
 	bash export_games.sh $(GAME)
 
 EMSDK_SYSROOT = $(HOME)/emsdk/upstream/emscripten/cache/sysroot

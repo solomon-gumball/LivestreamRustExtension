@@ -86,7 +86,7 @@ func load_game_from_lobby(lobby: Lobby) -> void:
 
   # if DebugScreenLayout.window_index == 1:
   #   await get_tree().create_timer(3.0).timeout
-
+  print("game.entry -> ", game.entry)
   var packed_scene: PackedScene
   if OS.has_feature("threads") and not WSClient.is_ios:
     ResourceLoader.load_threaded_request(game.entry)

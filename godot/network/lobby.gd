@@ -30,6 +30,11 @@ var connected_peers: Array[PeerData] = []
 var players: Array[PeerData] = []
 var spectators: Array[PeerData] = []
 
+func has_chatter(chatter_id: String) -> bool:
+  return peers.any(func (peer_data: PeerData) -> bool:
+    return peer_data.chatter_id == chatter_id
+  )
+
 func can_be_started(by_peer_id: int) -> bool:
   if started: return false
   var is_host := host_id == by_peer_id
