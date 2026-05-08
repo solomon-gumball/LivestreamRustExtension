@@ -98,6 +98,7 @@ float vignette(vec2 uv){
 void fragment()
 {
 	vec2 uv = overlay ? warp(SCREEN_UV) : warp(UV); // Warp the uv. uv will be used in most cases instead of UV to keep the warping
+	vec2 raw_uv = uv; // Unpixelated UV — used for scanlines/grille so their frequency isn't snapped to the pixelate grid
 	vec2 text_uv = uv;
 	vec2 roll_uv = vec2(0.0);
 	float time = roll ? TIME : 0.0;
@@ -148,35 +149,33 @@ void fragment()
 	float b = text.b;
 	
 	uv = warp(UV);
-	
-	// CRT monitors don't have pixels but groups of red, green and blue dots or lines, called grille. We isolate the texture's color channels 
+
+	// CRT monitors don't have pixels but groups of red, green and blue dots or lines, called grille. We isolate the texture's color channels
 	// and divide it up in 3 offsetted lines to show the red, green and blue colors next to each other, with a small black gap between.
+	// raw_uv is used here (not the pixelated text_uv) so grille frequency isn't snapped to pixelate block boundaries.
 	if (grille_opacity > 0.0){
-		
-		float g_r = smoothstep(0.85, 0.95, abs(sin(uv.x * (resolution.x * 3.14159265))));
+		float g_r = smoothstep(0.85, 0.95, abs(sin(raw_uv.x * (resolution.x * 3.14159265))));
 		r = mix(r, r * g_r, grille_opacity);
-		
-		float g_g = smoothstep(0.85, 0.95, abs(sin(1.05 + uv.x * (resolution.x * 3.14159265))));
+
+		float g_g = smoothstep(0.85, 0.95, abs(sin(1.05 + raw_uv.x * (resolution.x * 3.14159265))));
 		g = mix(g, g * g_g, grille_opacity);
-		
-		float b_b = smoothstep(0.85, 0.95, abs(sin(2.1 + uv.x * (resolution.x * 3.14159265))));
+
+		float b_b = smoothstep(0.85, 0.95, abs(sin(2.1 + raw_uv.x * (resolution.x * 3.14159265))));
 		b = mix(b, b * b_b, grille_opacity);
-		
 	}
-	
+
 	// Apply the grille to the texture's color channels and apply Brightness. Since the grille and the scanlines (below) make the image very dark you
 	// can compensate by increasing the brightness.
 	text.r = clamp(r * brightness, 0.0, 1.0);
 	text.g = clamp(g * brightness, 0.0, 1.0);
 	text.b = clamp(b * brightness, 0.0, 1.0);
-	
-	// Scanlines are the horizontal lines that make up the image on a CRT monitor. 
-	// Here we are actual setting the black gap between each line, which I guess is not the right definition of the word, but you get the idea  
+
+	// Scanlines are the horizontal lines that make up the image on a CRT monitor.
+	// raw_uv is used here so scanline frequency isn't snapped to pixelate block boundaries.
 	float scanlines = 0.5;
 	if (scanlines_opacity > 0.0)
 	{
-		// Same technique as above, create lines with sine and applying it to the texture. Smoothstep to allow setting the line size.
-		scanlines = smoothstep(scanlines_width, scanlines_width + 0.5, abs(sin(uv.y * (resolution.y * 3.14159265))));
+		scanlines = smoothstep(scanlines_width, scanlines_width + 0.5, abs(sin(raw_uv.y * (resolution.y * 3.14159265))));
 		text.rgb = mix(text.rgb, text.rgb * vec3(scanlines), scanlines_opacity);
 	}
 	
