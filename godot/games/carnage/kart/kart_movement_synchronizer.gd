@@ -1,6 +1,8 @@
 class_name KartMovementSynchronizer
 extends Node
 
+@export var kart: KartBot
+
 var local_input_buffer: CircularBuffer = CircularBuffer.new()
 
 const TICK_RATE := 60
@@ -10,19 +12,40 @@ const SERVER_SYNC_RATE: float = 1.0 / 20.0
 
 var net_sim_tick := 0
 var net_tick_update_timer: Timer = null
-var initial_tick_set := false
+var _initial_tick_set := false
 var _sync_accumulator: float = 0.0
 
 var owner_peer_id: int = -1
-var kart: KartBot = null
 var is_host: bool = false
+var is_owning_peer := false
 
 var _server_input_store: Dictionary = {}
 var _last_consumed_input: Vector2 = Vector2.ZERO
 var physics_state: Dictionary = { "position": Vector3.ZERO, "velocity": Vector3.ZERO, "rotation_y": 0.0 }
 
+var mappings := {
+  "move_forward": KEY_W,
+  "move_back": KEY_S,
+  "turn_left": KEY_A,
+  "turn_right": KEY_D,
+}
+
+func _bind_inputs() -> void:
+  for action in mappings:
+    if not InputMap.has_action(action):
+      InputMap.add_action(action)
+    var event := InputEventKey.new()
+    event.keycode = mappings[action]
+    InputMap.action_add_event(action, event)
+
+func _unbind_inputs() -> void:
+  for action in mappings.keys():
+    if InputMap.has_action(action):
+      InputMap.erase_action(action)
+
 func _ready() -> void:
-  MultiplayerClient.connected_state.packet_received.connect(_handle_incoming_peer_packet)
+  _bind_inputs()
+  MultiplayerClient.packet_received.connect(_handle_incoming_peer_packet)
   is_host = MultiplayerClient.is_lobby_host()
 
   net_tick_update_timer = Timer.new()
@@ -32,7 +55,23 @@ func _ready() -> void:
   net_tick_update_timer.timeout.connect(_request_net_tick_update)
   net_tick_update_timer.start(8.0)
 
+  _initial_tick_set = is_host
+
   net_sim_tick = INPUT_BUFFER_DEPTH
+  await get_tree().process_frame
+  physics_state = {
+    "position": kart.global_position,
+    "rotation_y": kart.rotation.y,
+    "velocity": Vector3.ZERO,
+  }
+  _request_net_tick_update()
+  is_owning_peer = owner_peer_id == MultiplayerClient.my_peer_id()
+
+func _enter_tree() -> void:
+  if is_owning_peer: _bind_inputs()
+
+func _exit_tree() -> void:
+  if is_owning_peer: _unbind_inputs()
 
 func _request_net_tick_update() -> void:
   if !is_host:
@@ -50,15 +89,16 @@ func _handle_incoming_peer_packet(sender_id: int, packet: Dictionary) -> void:
     Carnage.CarnageGameMessage.PingNetTick:
       MultiplayerClient.send_packet({
         "type": Carnage.CarnageGameMessage.PongNetTick,
-        "client_time": Time.get_ticks_msec(),
+        "client_time": packet.get("client_time", 0),
         "owner_peer_id": owner_peer_id
       })
     Carnage.CarnageGameMessage.PongNetTick:
       var rtt_msec := Time.get_ticks_msec() - (packet.get("client_time", -1) as int)
+      print("rtt_msec ", rtt_msec)
       @warning_ignore("INTEGER_DIVISION")
       var new_target_tick := INPUT_BUFFER_DEPTH + (rtt_msec / 2) + MARGIN_TICKS
 
-      if !initial_tick_set:
+      if !_initial_tick_set:
         net_sim_tick = new_target_tick
       else:
         if new_target_tick > net_sim_tick:
@@ -66,9 +106,11 @@ func _handle_incoming_peer_packet(sender_id: int, packet: Dictionary) -> void:
         elif new_target_tick < net_sim_tick:
           net_sim_tick -= 1
 
-      initial_tick_set = true
+      _initial_tick_set = true
     Carnage.CarnageGameMessage.ServerKartState:
       if is_host: return
+      return
+
       var server_physics_state: Dictionary = packet.get("state")
       var server_tick: int = packet.get("net_sim_tick")
       reconcile_server_update(server_tick, server_physics_state)
@@ -107,24 +149,45 @@ func consume_input_for_tick(tick: int) -> Vector2:
     _server_input_store.erase(tick)
   return _last_consumed_input
 
-func simulate_one_frame(_input_vec: Vector2, state: Dictionary) -> Dictionary:
-  return state
+func simulate_one_frame(input_vec: Vector2, state: Dictionary) -> Dictionary:
+  var delta := 1.0 / 60.0 # 60hz physics
+  var acceleration := input_vec[0]
+  kart.global_position = state.position
+  kart.rotation.y = state.rotation_y
+  kart.velocity = state.velocity
+
+  if abs(acceleration) > 0.0:
+    kart.velocity += kart.global_basis.z * acceleration * 0.05
+    kart.velocity = kart.velocity.limit_length(1.0)
+  else:
+    kart.velocity = kart.velocity.lerp(Vector3.ZERO, delta * 5.0)
+
+  kart.move_and_slide()
+
+  return {
+    "position": kart.global_position,
+    "rotation_y": kart.rotation.y,
+    "velocity": kart.velocity,
+  }
 
 func _physics_process(delta: float) -> void:
-  if !initial_tick_set: return
+  if !_initial_tick_set: return
 
-  if !is_host:
-    var input_vector := Input.get_vector("move_forward", "move_back", "move_right", "move_left")
+  if is_owning_peer:
+    print(MultiplayerClient.my_peer_id(), " is owning peer")
+    var input_vector := Input.get_vector("move_back", "move_forward", "turn_right", "turn_left")
     physics_state = simulate_one_frame(input_vector, physics_state)
     local_input_buffer.store(net_sim_tick, input_vector, physics_state)
 
-    MultiplayerClient.send_packet({
-      "type": Carnage.CarnageGameMessage.ClientKartInputs,
-      "input": input_vector,
-      "net_sim_tick": net_sim_tick,
-      "owner_peer_id": owner_peer_id
-    })
-  else:
+    if !is_host:
+      MultiplayerClient.send_packet({
+        "type": Carnage.CarnageGameMessage.ClientKartInputs,
+        "input": input_vector,
+        "net_sim_tick": net_sim_tick,
+        "owner_peer_id": owner_peer_id
+      })
+  elif is_host:
+    return
     var host_input := consume_input_for_tick(net_sim_tick)
     physics_state = simulate_one_frame(host_input, physics_state)
 
@@ -145,23 +208,20 @@ func _physics_process(delta: float) -> void:
 
   net_sim_tick += 1
 
-func _input(event: InputEvent) -> void:
-  pass
-
 class CircularBuffer:
   const BUFFER_SIZE := 128  # must be power of 2 for fast modulo
   var input_buffer := []
 
-  func _ready():
-      input_buffer.resize(BUFFER_SIZE)
+  func _init() -> void:
+    input_buffer.resize(BUFFER_SIZE)
 
   func store(tick: int, input: Vector2, state: Variant):
-      var slot = tick % BUFFER_SIZE
-      input_buffer[slot] = { "tick": tick, "input": input, "state": state }
+    var slot = tick % BUFFER_SIZE
+    input_buffer[slot] = { "tick": tick, "input": input, "state": state }
 
   func get_entry(tick: int) -> Dictionary:
-      var slot = tick % BUFFER_SIZE
-      var entry = input_buffer[slot]
-      if entry == null or entry.tick != tick:
-          return {} # was overwritten by a newer tick
-      return entry
+    var slot = tick % BUFFER_SIZE
+    var entry = input_buffer[slot]
+    if entry == null or entry.tick != tick:
+      return {} # was overwritten by a newer tick
+    return entry
