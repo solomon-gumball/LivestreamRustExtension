@@ -22,6 +22,7 @@ var is_owning_peer := false
 var _server_input_store: Dictionary = {}
 var _last_consumed_input: Vector2 = Vector2.ZERO
 var _has_initial_state := false
+var _remote_state_target: Dictionary = {}
 var physics_state: Dictionary = {
   "position": Vector3.ZERO,
   "velocity": Vector3.ZERO,
@@ -52,6 +53,7 @@ func _ready() -> void:
   _bind_inputs()
   MultiplayerClient.packet_received.connect(_handle_incoming_peer_packet)
   is_host = MultiplayerClient.is_lobby_host()
+  # is_host = peer
 
   net_tick_update_timer = Timer.new()
   net_tick_update_timer.one_shot = false
@@ -118,11 +120,16 @@ func _handle_incoming_peer_packet(_sender_id: int, packet: Dictionary) -> void:
       if is_host: return
       var server_physics_state: Dictionary = packet.get("state")
       var server_tick: int = packet.get("net_sim_tick")
+      print("[client] received snapshot server_tick=", server_tick, " my net_sim_tick=", net_sim_tick, " is_owning_peer=", is_owning_peer)
       if !_has_initial_state:
         physics_state = server_physics_state
+        _remote_state_target = server_physics_state
         _has_initial_state = true
         return
-      reconcile_server_update(server_tick, server_physics_state)
+      if is_owning_peer:
+        reconcile_server_update(server_tick, server_physics_state)
+      else:
+        _remote_state_target = server_physics_state
     Carnage.CarnageGameMessage.ClientKartInputs:
       if !is_host: return
       var tick: int = packet.get("net_sim_tick", -1)
@@ -136,13 +143,14 @@ func reconcile_server_update(server_tick: int, server_state: Dictionary) -> void
 
   # if no local state, resimulate
   if local_predicted_state.keys().size() == 0:
+    print("no buffer entry for server_tick=", server_tick, " current_tick=", net_sim_tick, " gap=", net_sim_tick - server_tick)
     resimulate(server_tick, server_state)
     return
   
   var local_pos: Vector3 = local_predicted_state.get("state", {}).get("position", Vector3.ZERO)
   var server_pos: Vector3 = server_state.get("position", Vector3.ZERO)
   if local_pos.distance_to(server_pos) > POS_CORRECTION_THRESHOLD:
-    print("correction!")
+    print("correction at server_tick=", server_tick, " error=", local_pos.distance_to(server_pos), " local=", local_pos, " server=", server_pos)
     resimulate(server_tick, server_state)
 
 func resimulate(from_tick: int, authoritative_state: Dictionary) -> void:
@@ -159,18 +167,33 @@ func consume_input_for_tick(tick: int) -> Vector2:
     _server_input_store.erase(tick)
   return _last_consumed_input
 
+const MAX_SPEED := 4.0
+const ACCELERATION := 0.1
+const DRAG := 5.0
+const MAX_TURN_SPEED := 3.0   # radians/sec cap — exceed this and you drift
+const TURN_RAMP := 3.0        # how quickly turn speed scales with velocity
+
 func simulate_one_frame(input_vec: Vector2, state: Dictionary) -> Dictionary:
-  var delta := 1.0 / 60.0 # 60hz physics
-  var acceleration := input_vec[0]
+  var delta := 1.0 / 60.0
+  var throttle := input_vec[0]
+  var steer := input_vec[1]
+
   kart.global_position = state.position
   kart.rotation.y = state.rotation_y
   kart.velocity = state.velocity
 
-  if abs(acceleration) > 0.0:
-    kart.velocity += kart.global_basis.z * acceleration * 0.05
-    kart.velocity = kart.velocity.limit_length(1.0)
+  # Acceleration / drag
+  if abs(throttle) > 0.0:
+    kart.velocity += kart.global_basis.z * throttle * ACCELERATION
+    kart.velocity = kart.velocity.limit_length(MAX_SPEED)
   else:
-    kart.velocity = kart.velocity.lerp(Vector3.ZERO, delta * 5.0)
+    kart.velocity = kart.velocity.lerp(Vector3.ZERO, delta * DRAG)
+
+  # Turning — scales with speed, capped to MAX_TURN_SPEED to allow drifting
+  var speed := kart.velocity.length()
+  if speed > 0.01 and abs(steer) > 0.0:
+    var turn_speed := minf(speed * TURN_RAMP, MAX_TURN_SPEED)
+    kart.rotation.y += steer * turn_speed * delta
 
   kart.move_and_slide()
 
@@ -184,6 +207,7 @@ func _physics_process(delta: float) -> void:
   if !_initial_tick_set: return
   if !is_host and !_has_initial_state: return
 
+  # Authority or autonomous proxy
   if is_owning_peer:
     var input_vector := Input.get_vector("move_back", "move_forward", "turn_right", "turn_left")
     physics_state = simulate_one_frame(input_vector, physics_state)
@@ -196,6 +220,31 @@ func _physics_process(delta: float) -> void:
         "net_sim_tick": net_sim_tick,
         "owner_peer_id": owner_peer_id
       })
+    else:
+      _sync_accumulator += delta / Engine.time_scale
+      if _sync_accumulator >= SERVER_SYNC_RATE:
+        _sync_accumulator -= SERVER_SYNC_RATE
+        print("[host] sending snapshot at net_sim_tick=", net_sim_tick, " owner_peer_id=", owner_peer_id)
+        MultiplayerClient.send_packet({
+          "type": Carnage.CarnageGameMessage.ServerKartState,
+          "net_sim_tick": net_sim_tick,
+          "owner_peer_id": owner_peer_id,
+          "state": physics_state,
+        })
+
+  # Simulated Proxy
+  elif !is_owning_peer and !is_host:
+    if _remote_state_target.is_empty(): return
+    var weight := (1.0 / SERVER_SYNC_RATE) * delta
+    physics_state = {
+      "position": physics_state.position.lerp(_remote_state_target.position, weight),
+      "rotation_y": lerp(physics_state.rotation_y, _remote_state_target.rotation_y, weight),
+      "velocity": _remote_state_target.get("velocity", Vector3.ZERO),
+    }
+    kart.global_position = physics_state.position
+    kart.rotation.y = physics_state.rotation_y
+  
+  # Authority for remote autonomous
   elif is_host:
     var host_input := consume_input_for_tick(net_sim_tick)
     physics_state = simulate_one_frame(host_input, physics_state)
