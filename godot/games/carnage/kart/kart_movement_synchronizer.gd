@@ -5,7 +5,7 @@ extends Node
 
 var local_input_buffer: CircularBuffer = CircularBuffer.new()
 
-const TICK_RATE := 60
+const TICK_RATE_HZ := 60
 const INPUT_BUFFER_DEPTH := 8 # ticks  (~133ms)
 const MARGIN_TICKS := 3
 const SERVER_SYNC_RATE: float = 1.0 / 20.0
@@ -21,7 +21,12 @@ var is_owning_peer := false
 
 var _server_input_store: Dictionary = {}
 var _last_consumed_input: Vector2 = Vector2.ZERO
-var physics_state: Dictionary = { "position": Vector3.ZERO, "velocity": Vector3.ZERO, "rotation_y": 0.0 }
+var _has_initial_state := false
+var physics_state: Dictionary = {
+  "position": Vector3.ZERO,
+  "velocity": Vector3.ZERO,
+  "rotation_y": 0.0
+}
 
 var mappings := {
   "move_forward": KEY_W,
@@ -55,15 +60,15 @@ func _ready() -> void:
   net_tick_update_timer.timeout.connect(_request_net_tick_update)
   net_tick_update_timer.start(8.0)
 
-  _initial_tick_set = is_host
+  net_sim_tick = 0
 
-  net_sim_tick = INPUT_BUFFER_DEPTH
   await get_tree().process_frame
   physics_state = {
     "position": kart.global_position,
     "rotation_y": kart.rotation.y,
     "velocity": Vector3.ZERO,
   }
+  _initial_tick_set = is_host
   _request_net_tick_update()
   is_owning_peer = owner_peer_id == MultiplayerClient.my_peer_id()
 
@@ -81,7 +86,7 @@ func _request_net_tick_update() -> void:
       "owner_peer_id": owner_peer_id
     })
 
-func _handle_incoming_peer_packet(sender_id: int, packet: Dictionary) -> void:
+func _handle_incoming_peer_packet(_sender_id: int, packet: Dictionary) -> void:
   # Only listen to packets directed to this peer
   if owner_peer_id != packet.get("owner_peer_id", 0): return
 
@@ -90,13 +95,15 @@ func _handle_incoming_peer_packet(sender_id: int, packet: Dictionary) -> void:
       MultiplayerClient.send_packet({
         "type": Carnage.CarnageGameMessage.PongNetTick,
         "client_time": packet.get("client_time", 0),
-        "owner_peer_id": owner_peer_id
+        "owner_peer_id": owner_peer_id,
+        "net_sim_tick": net_sim_tick
       })
     Carnage.CarnageGameMessage.PongNetTick:
-      var rtt_msec := Time.get_ticks_msec() - (packet.get("client_time", -1) as int)
-      print("rtt_msec ", rtt_msec)
-      @warning_ignore("INTEGER_DIVISION")
-      var new_target_tick := INPUT_BUFFER_DEPTH + (rtt_msec / 2) + MARGIN_TICKS
+      var client_time_ms := packet.get("client_time", -1) as int
+      var rtt_msec := Time.get_ticks_msec() - client_time_ms
+      var server_net_tick := packet.get("net_sim_tick", 0) as int
+      var one_way_ticks := int(round((rtt_msec / 2.0) / 1000.0 * TICK_RATE_HZ))
+      var new_target_tick := server_net_tick + INPUT_BUFFER_DEPTH + one_way_ticks + MARGIN_TICKS
 
       if !_initial_tick_set:
         net_sim_tick = new_target_tick
@@ -109,10 +116,12 @@ func _handle_incoming_peer_packet(sender_id: int, packet: Dictionary) -> void:
       _initial_tick_set = true
     Carnage.CarnageGameMessage.ServerKartState:
       if is_host: return
-      return
-
       var server_physics_state: Dictionary = packet.get("state")
       var server_tick: int = packet.get("net_sim_tick")
+      if !_has_initial_state:
+        physics_state = server_physics_state
+        _has_initial_state = true
+        return
       reconcile_server_update(server_tick, server_physics_state)
     Carnage.CarnageGameMessage.ClientKartInputs:
       if !is_host: return
@@ -133,6 +142,7 @@ func reconcile_server_update(server_tick: int, server_state: Dictionary) -> void
   var local_pos: Vector3 = local_predicted_state.get("state", {}).get("position", Vector3.ZERO)
   var server_pos: Vector3 = server_state.get("position", Vector3.ZERO)
   if local_pos.distance_to(server_pos) > POS_CORRECTION_THRESHOLD:
+    print("correction!")
     resimulate(server_tick, server_state)
 
 func resimulate(from_tick: int, authoritative_state: Dictionary) -> void:
@@ -172,9 +182,9 @@ func simulate_one_frame(input_vec: Vector2, state: Dictionary) -> Dictionary:
 
 func _physics_process(delta: float) -> void:
   if !_initial_tick_set: return
+  if !is_host and !_has_initial_state: return
 
   if is_owning_peer:
-    print(MultiplayerClient.my_peer_id(), " is owning peer")
     var input_vector := Input.get_vector("move_back", "move_forward", "turn_right", "turn_left")
     physics_state = simulate_one_frame(input_vector, physics_state)
     local_input_buffer.store(net_sim_tick, input_vector, physics_state)
@@ -187,7 +197,6 @@ func _physics_process(delta: float) -> void:
         "owner_peer_id": owner_peer_id
       })
   elif is_host:
-    return
     var host_input := consume_input_for_tick(net_sim_tick)
     physics_state = simulate_one_frame(host_input, physics_state)
 

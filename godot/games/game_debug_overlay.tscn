@@ -1,0 +1,58 @@
+[gd_scene format=3 uid="uid://djd0d5apiwdvg"]
+
+[ext_resource type="Script" uid="uid://cm7g2s5ka6e" path="res://games/game_debug_overlay.gd" id="1_yeiy2"]
+[ext_resource type="FontFile" uid="uid://7uibxoligyvb" path="res://fonts/HomeVideo-BLG6G.ttf" id="2_uo0ie"]
+
+[node name="GameDebugOverlay" type="CanvasLayer" unique_id=885828745]
+script = ExtResource("1_yeiy2")
+
+[node name="MarginContainer" type="MarginContainer" parent="." unique_id=438563992]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/margin_left = 10
+theme_override_constants/margin_top = 10
+theme_override_constants/margin_right = 10
+theme_override_constants/margin_bottom = 10
+
+[node name="VBoxContainer" type="VBoxContainer" parent="MarginContainer" unique_id=1268837003]
+layout_mode = 2
+alignment = 2
+
+[node name="ChatterNameLabel" type="RichTextLabel" parent="MarginContainer/VBoxContainer" unique_id=137234965]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_fonts/normal_font = ExtResource("2_uo0ie")
+theme_override_font_sizes/normal_font_size = 40
+bbcode_enabled = true
+text = "solomongumbal1"
+fit_content = true
+
+[node name="ClientIdLabel" type="RichTextLabel" parent="MarginContainer/VBoxContainer" unique_id=1468440715]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_fonts/normal_font = ExtResource("2_uo0ie")
+theme_override_font_sizes/normal_font_size = 40
+bbcode_enabled = true
+text = "PEER ID: 1290328"
+fit_content = true
+
+[node name="PingLabel" type="RichTextLabel" parent="MarginContainer/VBoxContainer" unique_id=704304704]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_fonts/normal_font = ExtResource("2_uo0ie")
+theme_override_font_sizes/normal_font_size = 40
+bbcode_enabled = true
+text = "PING: 48ms"
+fit_content = true
+
+[node name="PeerRoleLabel" type="RichTextLabel" parent="MarginContainer/VBoxContainer" unique_id=1683959056]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_fonts/normal_font = ExtResource("2_uo0ie")
+theme_override_font_sizes/normal_font_size = 40
+bbcode_enabled = true
+text = "SPECTATING"
+fit_content = true

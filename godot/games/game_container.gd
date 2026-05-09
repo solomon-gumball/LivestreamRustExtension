@@ -8,9 +8,12 @@ const PCK_CACHE_PATH := "user://games/pck_cache.json"
 var _game_scene: GameBase = null
 var _pck_cache: Dictionary = {}
 var _session_sync: SessionSynchronizer = null
+var debug_overlay_template: PackedScene = preload("res://games/game_debug_overlay.tscn")
 
 func _ready() -> void:
   _load_pck_cache()
+  var overlay := debug_overlay_template.instantiate()
+  add_child(overlay)
 
 func _load_pck_cache() -> void:
   var file := FileAccess.open(PCK_CACHE_PATH, FileAccess.READ)
@@ -86,7 +89,7 @@ func load_game_from_lobby(lobby: Lobby) -> void:
 
   # if DebugScreenLayout.window_index == 1:
   #   await get_tree().create_timer(3.0).timeout
-  print("game.entry -> ", game.entry)
+
   var packed_scene: PackedScene
   if OS.has_feature("threads") and not WSClient.is_ios:
     ResourceLoader.load_threaded_request(game.entry)

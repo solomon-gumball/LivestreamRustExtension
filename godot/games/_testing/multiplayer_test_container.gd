@@ -50,8 +50,8 @@ func _host_check_ready() -> void:
     var lobby: Lobby = MultiplayerClient.current_lobby
     var all_players_ready := ready_peers.size() >= num_players - 1
     if !lobby.started and all_players_ready:
-      MultiplayerClient.start_lobby()
       did_start = true
+      MultiplayerClient.start_lobby()
 
 func try_start():
   var lobby := MultiplayerClient.current_lobby
