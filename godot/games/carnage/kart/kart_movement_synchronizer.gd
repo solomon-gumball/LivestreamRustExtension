@@ -1,7 +1,7 @@
 class_name KartMovementSynchronizer
 extends Node
 
-var inputs: Array[Dictionary] = []
+var local_input_buffer: CircularBuffer = CircularBuffer.new()
 
 const TICK_RATE := 60
 const INPUT_BUFFER_DEPTH := 8 # ticks  (~133ms)
@@ -63,6 +63,10 @@ func _handle_incoming_peer_packet(sender_id: int, packet: Dictionary) -> void:
           net_sim_tick -= 1
 
       initial_tick_set = true
+    Carnage.CarnageGameMessage.ServerKartState:
+      pass
+    Carnage.CarnageGameMessage.ClientKartInputs:
+      pass
 
 func simulate_one_frame() -> void:
   pass
@@ -72,6 +76,9 @@ func _physics_process(delta: float) -> void:
 
   var input_vector := Input.get_vector("move_forward", "move_back", "move_right", "move_left")
 
+  # TODO: Run simulation here
+  simulate_one_frame()
+
   if !is_host:
     # Client sends input
     MultiplayerClient.send_packet({
@@ -80,12 +87,7 @@ func _physics_process(delta: float) -> void:
       "net_sim_tick": net_sim_tick,
       "owner_peer_id": owner_peer_id
     })
-    inputs.append({ "input": input_vector, "net_sim_tick": net_sim_tick })
-    while inputs.size() > INPUT_BUFFER_DEPTH:
-      inputs.remove_at(0)
-
-  # TODO: Run simulation here
-  simulate_one_frame()
+    local_input_buffer.store(net_sim_tick, input_vector, { "pos": kart.global_position, "rot": kart.global_rotation })
 
   if is_host:
     _sync_accumulator += delta / Engine.time_scale
@@ -103,3 +105,21 @@ func _physics_process(delta: float) -> void:
 
 func _input(event: InputEvent) -> void:
   pass
+
+class CircularBuffer:
+  const BUFFER_SIZE := 128  # must be power of 2 for fast modulo
+  var input_buffer := []
+
+  func _ready():
+      input_buffer.resize(BUFFER_SIZE)
+
+  func store(tick: int, input: Vector2, state: Variant):
+      var slot = tick % BUFFER_SIZE
+      input_buffer[slot] = { "tick": tick, "input": input, "state": state }
+
+  func get_entry(tick: int) -> Dictionary:
+      var slot = tick % BUFFER_SIZE
+      var entry = input_buffer[slot]
+      if entry == null or entry.tick != tick:
+          return {}  # was overwritten by a newer tick
+      return entry
