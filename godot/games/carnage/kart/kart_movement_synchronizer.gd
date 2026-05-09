@@ -17,6 +17,10 @@ var owner_peer_id: int = -1
 var kart: KartBot = null
 var is_host: bool = false
 
+var _server_input_store: Dictionary = {}
+var _last_consumed_input: Vector2 = Vector2.ZERO
+var physics_state: Dictionary = { "position": Vector3.ZERO, "velocity": Vector3.ZERO, "rotation_y": 0.0 }
+
 func _ready() -> void:
   MultiplayerClient.connected_state.packet_received.connect(_handle_incoming_peer_packet)
   is_host = MultiplayerClient.is_lobby_host()
@@ -64,32 +68,66 @@ func _handle_incoming_peer_packet(sender_id: int, packet: Dictionary) -> void:
 
       initial_tick_set = true
     Carnage.CarnageGameMessage.ServerKartState:
-      pass
+      if is_host: return
+      var server_physics_state: Dictionary = packet.get("state")
+      var server_tick: int = packet.get("net_sim_tick")
+      reconcile_server_update(server_tick, server_physics_state)
     Carnage.CarnageGameMessage.ClientKartInputs:
-      pass
+      if !is_host: return
+      var tick: int = packet.get("net_sim_tick", -1)
+      var input: Vector2 = packet.get("input", Vector2.ZERO)
+      if tick >= 0 and not _server_input_store.has(tick):
+        _server_input_store[tick] = input
 
-func simulate_one_frame() -> void:
-  pass
+const POS_CORRECTION_THRESHOLD := 0.1
+func reconcile_server_update(server_tick: int, server_state: Dictionary) -> void:
+  var local_predicted_state: Dictionary = local_input_buffer.get_entry(server_tick)
+
+  # if no local state, resimulate
+  if local_predicted_state.keys().size() == 0:
+    resimulate(server_tick, server_state)
+    return
+  
+  var local_pos: Vector3 = local_predicted_state.get("state", {}).get("position", Vector3.ZERO)
+  var server_pos: Vector3 = server_state.get("position", Vector3.ZERO)
+  if local_pos.distance_to(server_pos) > POS_CORRECTION_THRESHOLD:
+    resimulate(server_tick, server_state)
+
+func resimulate(from_tick: int, authoritative_state: Dictionary) -> void:
+  var state := authoritative_state
+  for tick in range(from_tick, net_sim_tick):
+    var entry := local_input_buffer.get_entry(tick)
+    var input := entry.get("input", Vector2.ZERO) as Vector2
+    state = simulate_one_frame(input, state)
+  physics_state = state
+
+func consume_input_for_tick(tick: int) -> Vector2:
+  if _server_input_store.has(tick):
+    _last_consumed_input = _server_input_store[tick]
+    _server_input_store.erase(tick)
+  return _last_consumed_input
+
+func simulate_one_frame(_input_vec: Vector2, state: Dictionary) -> Dictionary:
+  return state
 
 func _physics_process(delta: float) -> void:
   if !initial_tick_set: return
 
-  var input_vector := Input.get_vector("move_forward", "move_back", "move_right", "move_left")
-
-  # TODO: Run simulation here
-  simulate_one_frame()
-
   if !is_host:
-    # Client sends input
+    var input_vector := Input.get_vector("move_forward", "move_back", "move_right", "move_left")
+    physics_state = simulate_one_frame(input_vector, physics_state)
+    local_input_buffer.store(net_sim_tick, input_vector, physics_state)
+
     MultiplayerClient.send_packet({
       "type": Carnage.CarnageGameMessage.ClientKartInputs,
       "input": input_vector,
       "net_sim_tick": net_sim_tick,
       "owner_peer_id": owner_peer_id
     })
-    local_input_buffer.store(net_sim_tick, input_vector, { "pos": kart.global_position, "rot": kart.global_rotation })
+  else:
+    var host_input := consume_input_for_tick(net_sim_tick)
+    physics_state = simulate_one_frame(host_input, physics_state)
 
-  if is_host:
     _sync_accumulator += delta / Engine.time_scale
     if _sync_accumulator >= SERVER_SYNC_RATE:
       _sync_accumulator -= SERVER_SYNC_RATE
@@ -97,10 +135,14 @@ func _physics_process(delta: float) -> void:
         "type": Carnage.CarnageGameMessage.ServerKartState,
         "net_sim_tick": net_sim_tick,
         "owner_peer_id": owner_peer_id,
-        "position": kart.global_position,
-        "rotation": kart.global_rotation,
+        "state": physics_state,
       })
-  
+
+    var cutoff := net_sim_tick - INPUT_BUFFER_DEPTH
+    for tick in _server_input_store.keys():
+      if tick < cutoff:
+        _server_input_store.erase(tick)
+
   net_sim_tick += 1
 
 func _input(event: InputEvent) -> void:
@@ -121,5 +163,5 @@ class CircularBuffer:
       var slot = tick % BUFFER_SIZE
       var entry = input_buffer[slot]
       if entry == null or entry.tick != tick:
-          return {}  # was overwritten by a newer tick
+          return {} # was overwritten by a newer tick
       return entry
