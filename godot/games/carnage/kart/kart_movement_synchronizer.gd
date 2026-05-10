@@ -107,11 +107,14 @@ func _handle_incoming_peer_packet(_sender_id: int, packet: Dictionary) -> void:
       var one_way_ticks := int(round((rtt_msec / 2.0) / 1000.0 * TICK_RATE_HZ))
       var new_target_tick := server_net_tick + INPUT_BUFFER_DEPTH + one_way_ticks + MARGIN_TICKS
 
+      if is_host: return
       if !_initial_tick_set:
         net_sim_tick = new_target_tick
-      else:
+      elif abs(net_sim_tick - new_target_tick) > 2:
         if new_target_tick > net_sim_tick:
+          _physics_process(1.0 / 60.0)
           net_sim_tick += 1
+
         elif new_target_tick < net_sim_tick:
           net_sim_tick -= 1
 
@@ -224,13 +227,16 @@ func simulate_one_frame(input_vec: Vector2, state: Dictionary) -> Dictionary:
     "velocity": velocity,
   }
 
+func _sample_input() -> Vector2:
+  return Input.get_vector("move_back", "move_forward", "turn_right", "turn_left")
+
 func _physics_process(delta: float) -> void:
   if !_initial_tick_set: return
   if !is_host and !_has_initial_state: return
 
   # Authority or autonomous proxy
   if is_owning_peer:
-    var input_vector := Input.get_vector("move_back", "move_forward", "turn_right", "turn_left")
+    var input_vector := _sample_input()
     physics_state = simulate_one_frame(input_vector, physics_state)
     local_input_buffer.store(net_sim_tick, input_vector, physics_state)
 
