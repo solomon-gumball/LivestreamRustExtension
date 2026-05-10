@@ -15,8 +15,19 @@ func _ready() -> void:
   super._ready()
   SessionSynchronizer.get_instance().notify_ready()
 
+  chatter_loaded.connect(_handle_chatter_loaded)
+
   await get_tree().create_timer(2.0).timeout
   spawn_cars()
+
+func _handle_chatter_loaded(chatter: Chatter) -> void:
+  if MultiplayerClient.current_lobby == null: return
+  var chatter_peer_id: int = MultiplayerClient.current_lobby.peer_from_chatter.get(chatter.id, -1)
+  var owning_kart: KartBot = karts_by_peer_id.get(chatter_peer_id, null)
+  if owning_kart:
+    owning_kart.gumbot.chatter = chatter
+    
+var karts_by_peer_id: Dictionary[int, KartBot] = {}
 
 const spawn_ring_size := 3.0
 const car_template: PackedScene = preload("res://games/carnage/kart/kart_bot.tscn")
@@ -33,6 +44,10 @@ func spawn_cars() -> void:
     kart_inst.kart_movement.owner_peer_id = peer.peer_id
     kart_inst.global_position = location
     kart_inst.look_at(Vector3.ZERO, Vector3.UP, true)
+    var chatter: Chatter = chatters.get(peer.chatter_id, null)
+    if chatter:
+      kart_inst.gumbot.chatter = chatter
+    karts_by_peer_id.set(peer.peer_id, kart_inst)
 
     i += 1
 

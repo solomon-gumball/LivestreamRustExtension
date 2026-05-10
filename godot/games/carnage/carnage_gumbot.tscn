@@ -1,0 +1,193 @@
+[gd_scene format=3 uid="uid://d2c704lgm76kh"]
+
+[ext_resource type="PackedScene" uid="uid://crkh8hdu5af84" path="res://gumbot/gumbot.tscn" id="1_7kn7g"]
+[ext_resource type="Shader" uid="uid://cw1km147x2fwu" path="res://materials/bot_mat/bot_shader.gdshader" id="2_dn58o"]
+[ext_resource type="Texture2D" uid="uid://cas3gr887xevi" path="res://materials/bot_mat/bot_albedo.png" id="3_qqirw"]
+[ext_resource type="Texture2D" uid="uid://ba6mac1k3t38a" path="res://materials/bot_mat/bot_normals.png" id="4_crujt"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_7kn7g"]
+resource_local_to_scene = true
+render_priority = 0
+shader = ExtResource("2_dn58o")
+shader_parameter/albedo_texture = ExtResource("3_qqirw")
+shader_parameter/normal_map = ExtResource("4_crujt")
+shader_parameter/bot_color = Color(1, 0, 0, 1)
+
+[sub_resource type="AnimationNodeAdd2" id="AnimationNodeAdd2_o2iqh"]
+filters = ["Armature/Skeleton3D:Windup"]
+
+[sub_resource type="AnimationNodeAnimation" id="AnimationNodeAnimation_x5r14"]
+animation = &"Windup"
+
+[sub_resource type="AnimationNodeAnimation" id="AnimationNodeAnimation_epnf4"]
+animation = &"DuelFire"
+
+[sub_resource type="AnimationNodeBlendTree" id="AnimationNodeBlendTree_dn58o"]
+resource_local_to_scene = true
+graph_offset = Vector2(-420.55078, -128.8943)
+nodes/Add2/node = SubResource("AnimationNodeAdd2_o2iqh")
+nodes/Add2/position = Vector2(0, 80)
+"nodes/Animation 2/node" = SubResource("AnimationNodeAnimation_x5r14")
+"nodes/Animation 2/position" = Vector2(-240, 306.667)
+nodes/Animation/node = SubResource("AnimationNodeAnimation_epnf4")
+nodes/Animation/position = Vector2(-250, 120)
+node_connections = [&"output", 0, &"Add2", &"Add2", 0, &"Animation", &"Add2", 1, &"Animation 2"]
+
+[node name="gumbot" unique_id=2126276004 instance=ExtResource("1_7kn7g")]
+surface_mat = SubResource("ShaderMaterial_7kn7g")
+
+[node name="Armature" parent="." index="2" unique_id=731746772]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.008804508, 0, 0)
+
+[node name="Skeleton3D" parent="Armature" index="0" unique_id=1872200233]
+bones/1/position = Vector3(4.5653196e-05, 0.11173596, 0.0010892344)
+bones/1/rotation = Quaternion(-0.041545, 0, 0, 0.9991367)
+bones/2/rotation = Quaternion(0.30608764, 0.11480534, 0.9300062, -0.16798367)
+bones/3/rotation = Quaternion(-0.21255998, 2.2399107e-07, -1.2002155e-07, 0.9771481)
+bones/4/rotation = Quaternion(0.6947763, 0.17927292, -0.29961538, 0.62879074)
+bones/5/rotation = Quaternion(-0.090407245, 0.11585523, 0.9823397, 0.1158138)
+bones/6/rotation = Quaternion(-0.25276753, -2.4134874e-07, 1.5402652e-07, 0.96752703)
+bones/7/rotation = Quaternion(0.7636246, -0.02550698, 0.14469117, 0.62872213)
+bones/10/rotation = Quaternion(0.06230914, 0.7043562, -0.06230913, 0.7043562)
+bones/11/rotation = Quaternion(0.30437377, 0.57320064, 0.65629625, 0.3848025)
+bones/12/rotation = Quaternion(0.03857966, 7.008595e-10, -1.0417433e-08, 0.99925554)
+bones/13/rotation = Quaternion(0.017640596, 0.47708213, 0.04800043, 0.87736964)
+bones/14/rotation = Quaternion(0.0030572594, -0.27793124, 0.8965481, -0.3448862)
+bones/15/rotation = Quaternion(0.45845893, -1.5840929e-09, 2.2323731e-07, 0.8887156)
+bones/16/rotation = Quaternion(0.33474424, -0.23178616, -0.0529426, 0.91182154)
+bones/17/position = Vector3(0.08521555, 0.0703327, 0.06432338)
+bones/18/position = Vector3(-0.09290287, 0.21503907, 0.11102112)
+bones/18/rotation = Quaternion(0.012587608, 0.7275832, 0.6858759, 0.0062046587)
+bones/18/scale = Vector3(0.9383808, 0.6547716, 0.97421074)
+bones/19/position = Vector3(0.14609721, 0.12747148, -0.011138493)
+bones/19/rotation = Quaternion(-0.033309665, 0.5565277, 0.8177001, -0.14329691)
+bones/19/scale = Vector3(1, 1, 1)
+bones/20/position = Vector3(0.08413247, 0.21537995, -0.07423549)
+bones/20/rotation = Quaternion(1.3767877e-07, 0.7071068, -0.7071068, -1.3767877e-07)
+bones/21/position = Vector3(-0.15710257, 0.16096488, -0.0005919486)
+bones/21/rotation = Quaternion(-1.3767877e-07, 0.7071068, -0.7071068, 1.3767877e-07)
+bones/22/position = Vector3(0.04790385, 0.007222561, 0)
+bones/22/rotation = Quaternion(-2.5288116e-07, 0.7071068, 0.7071068, -2.5288116e-07)
+bones/22/scale = Vector3(0.63530767, 1, 1)
+bones/23/position = Vector3(-0.045711383, 0.0703327, 0.06432338)
+bones/24/position = Vector3(-0.043320708, 0.007222561, 0)
+bones/24/rotation = Quaternion(2.5288116e-07, 0.7071068, 0.7071068, 2.5288116e-07)
+bones/24/scale = Vector3(0.63530767, 1, 1)
+bones/25/position = Vector3(-0.0010686368, 0.57084304, -0.017211676)
+bones/25/rotation = Quaternion(-1, -9.223811e-15, -1.2217305e-07, 1.6292068e-07)
+bones/25/scale = Vector3(2.6982234, 2.6982229, 2.6982234)
+
+[node name="Hand_L_Socket" parent="Armature/Skeleton3D" index="0" unique_id=541900749]
+transform = Transform3D(-0.9567123, 0.19726898, -0.21397832, -0.27143016, -0.33950758, 0.9005891, 0.10501081, 0.9196863, 0.37835497, 0.1460992, 0.12747057, -0.011138642)
+
+[node name="Arm" parent="Armature/Skeleton3D" index="1" unique_id=105024929]
+surface_material_override/0 = SubResource("ShaderMaterial_7kn7g")
+
+[node name="Body" parent="Armature/Skeleton3D" index="2" unique_id=620976008]
+surface_material_override/0 = SubResource("ShaderMaterial_7kn7g")
+
+[node name="Button" parent="Armature/Skeleton3D" index="3" unique_id=2054736450]
+surface_material_override/0 = SubResource("ShaderMaterial_7kn7g")
+
+[node name="Circle" parent="Armature/Skeleton3D" index="4" unique_id=1427451952]
+surface_material_override/0 = SubResource("ShaderMaterial_7kn7g")
+
+[node name="Hand_L" parent="Armature/Skeleton3D" index="5" unique_id=2105478840]
+surface_material_override/0 = SubResource("ShaderMaterial_7kn7g")
+
+[node name="Hand_R" parent="Armature/Skeleton3D" index="6" unique_id=1654084590]
+surface_material_override/0 = SubResource("ShaderMaterial_7kn7g")
+
+[node name="Leg" parent="Armature/Skeleton3D" index="8" unique_id=1213019079]
+surface_material_override/0 = SubResource("ShaderMaterial_7kn7g")
+
+[node name="Head_Socket" parent="Armature/Skeleton3D" index="9" unique_id=1137685559]
+transform = Transform3D(1, -8.996787e-09, 2.3841858e-07, -1.0824825e-08, 0.99654883, 0.083007626, -2.383426e-07, -0.08300762, 0.9965489, 4.5652265e-05, 0.24238195, -0.009793229)
+
+[node name="Spine_Socket" parent="Armature/Skeleton3D" index="10" unique_id=365435926]
+transform = Transform3D(1, -8.996787e-09, 2.3841855e-07, -1.0824821e-08, 0.99654883, 0.083007626, -2.3834255e-07, -0.08300762, 0.9965489, 4.5653196e-05, 0.13922197, -0.00120051)
+
+[node name="HeldItemSocket" parent="Armature/Skeleton3D" index="11" unique_id=446607129]
+transform = Transform3D(2.6982234, 1.5718945e-13, 6.593003e-07, -5.763786e-14, -2.6982229, 8.791928e-07, 6.593003e-07, -8.791926e-07, -2.6982234, -0.0010686368, 0.57084304, -0.017211676)
+
+[node name="Sphere_001" parent="Armature/Skeleton3D" index="12" unique_id=745973737]
+surface_material_override/0 = SubResource("ShaderMaterial_7kn7g")
+
+[node name="SpringBoneSimulator3D" type="SpringBoneSimulator3D" parent="Armature/Skeleton3D" index="13" unique_id=258612005]
+setting_count = 3
+settings/0/root_bone_name = "Spine"
+settings/0/root_bone = 8
+settings/0/end_bone_name = "Head"
+settings/0/end_bone = 9
+settings/0/extend_end_bone = false
+settings/0/center_from = 0
+settings/0/individual_config = false
+settings/0/rotation_axis = 3
+settings/0/radius/value = 0.02
+settings/0/radius/damping_curve = null
+settings/0/stiffness/value = 1.0
+settings/0/stiffness/damping_curve = null
+settings/0/drag/value = 0.4
+settings/0/drag/damping_curve = null
+settings/0/gravity/value = 0.0
+settings/0/gravity/damping_curve = null
+settings/0/gravity/direction = Vector3(0, -1, 0)
+settings/0/joints/0/bone_name = "Spine"
+settings/0/joints/0/bone = 8
+settings/0/joints/1/bone_name = "Head"
+settings/0/joints/1/bone = 9
+settings/0/enable_all_child_collisions = true
+settings/0/exclude_collision_count = 0
+settings/1/root_bone_name = "Bicep.L"
+settings/1/root_bone = 14
+settings/1/end_bone_name = "Hand.L"
+settings/1/end_bone = 16
+settings/1/extend_end_bone = false
+settings/1/center_from = 0
+settings/1/individual_config = false
+settings/1/rotation_axis = 3
+settings/1/radius/value = 0.02
+settings/1/radius/damping_curve = null
+settings/1/stiffness/value = 1.0
+settings/1/stiffness/damping_curve = null
+settings/1/drag/value = 0.4
+settings/1/drag/damping_curve = null
+settings/1/gravity/value = 0.0
+settings/1/gravity/damping_curve = null
+settings/1/gravity/direction = Vector3(0, -1, 0)
+settings/1/joints/0/bone_name = "Bicep.L"
+settings/1/joints/0/bone = 14
+settings/1/joints/1/bone_name = "Forearm.L"
+settings/1/joints/1/bone = 15
+settings/1/joints/2/bone_name = "Hand.L"
+settings/1/joints/2/bone = 16
+settings/1/enable_all_child_collisions = true
+settings/1/exclude_collision_count = 0
+settings/2/root_bone_name = "Bicep.R"
+settings/2/root_bone = 11
+settings/2/end_bone_name = "Hand.R"
+settings/2/end_bone = 13
+settings/2/extend_end_bone = false
+settings/2/center_from = 0
+settings/2/individual_config = false
+settings/2/rotation_axis = 3
+settings/2/radius/value = 0.02
+settings/2/radius/damping_curve = null
+settings/2/stiffness/value = 1.0
+settings/2/stiffness/damping_curve = null
+settings/2/drag/value = 0.4
+settings/2/drag/damping_curve = null
+settings/2/gravity/value = 0.0
+settings/2/gravity/damping_curve = null
+settings/2/gravity/direction = Vector3(0, -1, 0)
+settings/2/joints/0/bone_name = "Bicep.R"
+settings/2/joints/0/bone = 11
+settings/2/joints/1/bone_name = "Forearm.R"
+settings/2/joints/1/bone = 12
+settings/2/joints/2/bone_name = "Hand.R"
+settings/2/joints/2/bone = 13
+settings/2/enable_all_child_collisions = true
+settings/2/exclude_collision_count = 0
+
+[node name="AnimationTree" parent="." index="5" unique_id=498575357]
+tree_root = SubResource("AnimationNodeBlendTree_dn58o")

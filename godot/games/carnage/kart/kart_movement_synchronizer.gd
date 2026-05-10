@@ -26,7 +26,8 @@ var _remote_state_target: Dictionary = {}
 var physics_state: Dictionary = {
   "position": Vector3.ZERO,
   "velocity": Vector3.ZERO,
-  "rotation_y": 0.0
+  "rotation_y": 0.0,
+  "wheel_turn": 0.0,
 }
 
 var mappings := {
@@ -69,6 +70,7 @@ func _ready() -> void:
     "position": kart.global_position,
     "rotation_y": kart.rotation.y,
     "velocity": Vector3.ZERO,
+    "wheel_turn": 0.0,
   }
   _initial_tick_set = is_host
   _request_net_tick_update()
@@ -188,15 +190,18 @@ func consume_input_for_tick(tick: int) -> Vector2:
 
 const MAX_SPEED := 4.0
 const ACCELERATION := 0.1
-const DRAG := 7.0
-const MAX_TURN_SPEED := 3.0   # radians/sec cap — exceed this and you drift
+const DRAG := 3.0
+
 const TURN_RAMP := 1.0        # how quickly turn speed scales with velocity
+const GRIP := 0.02             # lateral friction factor: 1.0 = no drift, 0.0 = full ice
+const MAX_WHEEL_ANGLE := deg_to_rad(45.0)
+const WHEEL_TURN_SPEED := deg_to_rad(100.0)
 
 func simulate_one_frame(input_vec: Vector2, state: Dictionary) -> Dictionary:
   var delta := 1.0 / 60.0
   var throttle := input_vec[0]
-  var steer := input_vec[1]
 
+  var wheel_turn: float = state.wheel_turn
   var velocity: Vector3 = state.velocity
   var rotation_y: float = state.rotation_y
   var forward := Vector3(sin(rotation_y), 0.0, cos(rotation_y))
@@ -208,20 +213,28 @@ func simulate_one_frame(input_vec: Vector2, state: Dictionary) -> Dictionary:
   else:
     velocity = velocity.lerp(Vector3.ZERO, delta * DRAG)
 
-  # Turning — scales with speed, capped to MAX_TURN_SPEED to allow drifting
+  var desired_wheel_angle := input_vec[1] * MAX_WHEEL_ANGLE
+  wheel_turn = move_toward(wheel_turn, desired_wheel_angle, WHEEL_TURN_SPEED * delta)
+  wheel_turn = clampf(wheel_turn, -MAX_WHEEL_ANGLE, MAX_WHEEL_ANGLE)
+
   var speed := velocity.length()
-  if speed > 0.01 and abs(steer) > 0.0:
-    var turn_speed := minf(max(speed, 0.0) * TURN_RAMP, MAX_TURN_SPEED)
-    rotation_y += steer * turn_speed * delta
-  # rotation_y += steer * delta * 3.0
+  var travel_sign := signf(forward.dot(velocity))
+  rotation_y += (wheel_turn / MAX_WHEEL_ANGLE) * speed * TURN_RAMP * travel_sign * delta
+
+  var wheel_angle := rotation_y + wheel_turn
+  var wheel_right_vector := Vector3(cos(wheel_angle), 0.0, -sin(wheel_angle))
+  var lateral_velocity := wheel_right_vector.dot(velocity)
+  velocity -= wheel_right_vector * lateral_velocity * GRIP
 
   var position: Vector3 = state.position + velocity * delta
 
   kart.global_position = position
   kart.rotation.y = rotation_y
   kart.velocity = velocity
+  kart.wheel_turn = wheel_turn
 
   return {
+    "wheel_turn": wheel_turn,
     "position": position,
     "rotation_y": rotation_y,
     "velocity": velocity,
@@ -269,9 +282,11 @@ func _physics_process(delta: float) -> void:
       "position": physics_state.position.lerp(_remote_state_target.position, weight),
       "rotation_y": lerp(physics_state.rotation_y, _remote_state_target.rotation_y, weight),
       "velocity": _remote_state_target.get("velocity", Vector3.ZERO),
+      "wheel_turn": lerp(physics_state.wheel_turn, _remote_state_target.get("wheel_turn", 0.0), weight),
     }
     kart.global_position = physics_state.position
     kart.rotation.y = physics_state.rotation_y
+    kart.wheel_turn = physics_state.wheel_turn
   
   # Authority for remote autonomous
   elif is_host:
