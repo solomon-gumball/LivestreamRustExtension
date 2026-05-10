@@ -27,18 +27,18 @@ script = ExtResource("1_5x8vd")
 
 [node name="gumbot" parent="." unique_id=2126276004 instance=ExtResource("3_6xwj1")]
 unique_name_in_owner = true
-transform = Transform3D(3.600779, 0, 0, 0, 3.600779, 0, 0, 0, 3.600779, 0, -0.057376325, -0.48919284)
+transform = Transform3D(3.600779, 0, 0, 0, 3.600779, 0, 0, 0, 3.600779, 0, -0.057376325, 0.22960997)
 collision_layer = 0
 collision_mask = 0
 surface_mat = SubResource("ShaderMaterial_66xnu")
 
 [node name="Kart" type="MeshInstance3D" parent="." unique_id=416408719]
-transform = Transform3D(0.29999998, 0, 0, 0, 0.29999998, 0, 0, 0, 0.29999998, 0, 0.042976737, -0.30775967)
+transform = Transform3D(0.29999998, 0, 0, 0, 0.29999998, 0, 0, 0, 0.29999998, 0, 0.042976737, 0.41104314)
 mesh = ExtResource("1_itbdw")
 surface_material_override/0 = SubResource("StandardMaterial3D_itbdw")
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="." unique_id=1152960397]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.608355, -0.35811666)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.608355, 0.36068615)
 shape = SubResource("BoxShape3D_itbdw")
 
 [node name="KartMovement" type="Node" parent="." unique_id=1188391205 node_paths=PackedStringArray("kart")]

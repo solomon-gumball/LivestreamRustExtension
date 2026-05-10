@@ -6,8 +6,8 @@ extends Node
 var local_input_buffer: CircularBuffer = CircularBuffer.new()
 
 const TICK_RATE_HZ := 60
-const INPUT_BUFFER_DEPTH := 8 # ticks  (~133ms)
-const MARGIN_TICKS := 3
+const INPUT_BUFFER_DEPTH := 8 # 8 ticks * 1/60 = (~133ms)
+const MARGIN_TICKS := 3 # Accounts for jitter
 const SERVER_SYNC_RATE: float = 1.0 / 20.0
 
 var net_sim_tick := 0
@@ -120,7 +120,6 @@ func _handle_incoming_peer_packet(_sender_id: int, packet: Dictionary) -> void:
       if is_host: return
       var server_physics_state: Dictionary = packet.get("state")
       var server_tick: int = packet.get("net_sim_tick")
-      print("[client] received snapshot server_tick=", server_tick, " my net_sim_tick=", net_sim_tick, " is_owning_peer=", is_owning_peer)
       if !_has_initial_state:
         physics_state = server_physics_state
         _remote_state_target = server_physics_state
@@ -138,69 +137,91 @@ func _handle_incoming_peer_packet(_sender_id: int, packet: Dictionary) -> void:
         _server_input_store[tick] = input
 
 const POS_CORRECTION_THRESHOLD := 0.1
+const VEL_CORRECTION_THRESHOLD := 0.1
+const ROT_CORRECTION_THRESHOLD := deg_to_rad(1.0)
 func reconcile_server_update(server_tick: int, server_state: Dictionary) -> void:
   var local_predicted_state: Dictionary = local_input_buffer.get_entry(server_tick)
 
-  # if no local state, resimulate
+  # if no local state, snap directly — client never predicted this tick
   if local_predicted_state.keys().size() == 0:
-    print("no buffer entry for server_tick=", server_tick, " current_tick=", net_sim_tick, " gap=", net_sim_tick - server_tick)
-    resimulate(server_tick, server_state)
+    print("no buffer entry for server_tick=", server_tick, " snapping. my_local_tick=", net_sim_tick, " server_state=", server_state)
+    physics_state = server_state
     return
-  
-  var local_pos: Vector3 = local_predicted_state.get("state", {}).get("position", Vector3.ZERO)
+
+  var local_state: Dictionary = local_predicted_state.get("state", {})
+  var local_pos: Vector3 = local_state.get("position", Vector3.ZERO)
+  var local_vel: Vector3 = local_state.get("velocity", Vector3.ZERO)
+  var local_rot_y: float = local_state.get("rotation_y", 0.0)
   var server_pos: Vector3 = server_state.get("position", Vector3.ZERO)
-  if local_pos.distance_to(server_pos) > POS_CORRECTION_THRESHOLD:
-    print("correction at server_tick=", server_tick, " error=", local_pos.distance_to(server_pos), " local=", local_pos, " server=", server_pos)
+  var server_vel: Vector3 = server_state.get("velocity", Vector3.ZERO)
+  var server_rot_y: float = server_state.get("rotation_y", 0.0)
+
+  var pos_err := local_pos.distance_to(server_pos)
+  var vel_err := local_vel.distance_to(server_vel)
+  var rot_err: float = abs(local_rot_y - server_rot_y)
+
+  if pos_err > POS_CORRECTION_THRESHOLD or vel_err > VEL_CORRECTION_THRESHOLD or rot_err > ROT_CORRECTION_THRESHOLD:
+    print("correction at server_tick=", server_tick, " pos_err=", pos_err, " vel_err=", vel_err, " rot_err=", rot_err)
     resimulate(server_tick, server_state)
 
 func resimulate(from_tick: int, authoritative_state: Dictionary) -> void:
   var state := authoritative_state
-  for tick in range(from_tick, net_sim_tick):
+  # Start from tick after correction, since correction is truth and
+  # we don't need to updated that original entry
+  for tick in range(from_tick + 1, net_sim_tick):
     var entry := local_input_buffer.get_entry(tick)
-    var input := entry.get("input", Vector2.ZERO) as Vector2
+    var input := entry.get("input", _last_consumed_input) as Vector2
     state = simulate_one_frame(input, state)
+    local_input_buffer.store(tick, input, state)
   physics_state = state
 
 func consume_input_for_tick(tick: int) -> Vector2:
   if _server_input_store.has(tick):
     _last_consumed_input = _server_input_store[tick]
     _server_input_store.erase(tick)
+  else:
+    print("Server is missing input for tick ", tick, ". Using _last_consumed=", _last_consumed_input)
   return _last_consumed_input
 
 const MAX_SPEED := 4.0
 const ACCELERATION := 0.1
-const DRAG := 5.0
+const DRAG := 7.0
 const MAX_TURN_SPEED := 3.0   # radians/sec cap — exceed this and you drift
-const TURN_RAMP := 3.0        # how quickly turn speed scales with velocity
+const TURN_RAMP := 1.0        # how quickly turn speed scales with velocity
 
 func simulate_one_frame(input_vec: Vector2, state: Dictionary) -> Dictionary:
   var delta := 1.0 / 60.0
   var throttle := input_vec[0]
   var steer := input_vec[1]
 
-  kart.global_position = state.position
-  kart.rotation.y = state.rotation_y
-  kart.velocity = state.velocity
+  var velocity: Vector3 = state.velocity
+  var rotation_y: float = state.rotation_y
+  var forward := Vector3(sin(rotation_y), 0.0, cos(rotation_y))
 
   # Acceleration / drag
   if abs(throttle) > 0.0:
-    kart.velocity += kart.global_basis.z * throttle * ACCELERATION
-    kart.velocity = kart.velocity.limit_length(MAX_SPEED)
+    velocity += forward * throttle * ACCELERATION
+    velocity = velocity.limit_length(MAX_SPEED)
   else:
-    kart.velocity = kart.velocity.lerp(Vector3.ZERO, delta * DRAG)
+    velocity = velocity.lerp(Vector3.ZERO, delta * DRAG)
 
   # Turning — scales with speed, capped to MAX_TURN_SPEED to allow drifting
-  var speed := kart.velocity.length()
+  var speed := velocity.length()
   if speed > 0.01 and abs(steer) > 0.0:
-    var turn_speed := minf(speed * TURN_RAMP, MAX_TURN_SPEED)
-    kart.rotation.y += steer * turn_speed * delta
+    var turn_speed := minf(max(speed, 0.0) * TURN_RAMP, MAX_TURN_SPEED)
+    rotation_y += steer * turn_speed * delta
+  # rotation_y += steer * delta * 3.0
 
-  kart.move_and_slide()
+  var position: Vector3 = state.position + velocity * delta
+
+  kart.global_position = position
+  kart.rotation.y = rotation_y
+  kart.velocity = velocity
 
   return {
-    "position": kart.global_position,
-    "rotation_y": kart.rotation.y,
-    "velocity": kart.velocity,
+    "position": position,
+    "rotation_y": rotation_y,
+    "velocity": velocity,
   }
 
 func _physics_process(delta: float) -> void:
@@ -214,6 +235,8 @@ func _physics_process(delta: float) -> void:
     local_input_buffer.store(net_sim_tick, input_vector, physics_state)
 
     if !is_host:
+      #if owner_peer_id != 1:
+        #print("[client] sending input=", input_vector, " tick=", net_sim_tick)
       MultiplayerClient.send_packet({
         "type": Carnage.CarnageGameMessage.ClientKartInputs,
         "input": input_vector,
@@ -224,7 +247,7 @@ func _physics_process(delta: float) -> void:
       _sync_accumulator += delta / Engine.time_scale
       if _sync_accumulator >= SERVER_SYNC_RATE:
         _sync_accumulator -= SERVER_SYNC_RATE
-        print("[host] sending snapshot at net_sim_tick=", net_sim_tick, " owner_peer_id=", owner_peer_id)
+        # print("[host] sending snapshot at net_sim_tick=", net_sim_tick, " owner_peer_id=", owner_peer_id)
         MultiplayerClient.send_packet({
           "type": Carnage.CarnageGameMessage.ServerKartState,
           "net_sim_tick": net_sim_tick,
@@ -267,7 +290,7 @@ func _physics_process(delta: float) -> void:
   net_sim_tick += 1
 
 class CircularBuffer:
-  const BUFFER_SIZE := 128  # must be power of 2 for fast modulo
+  const BUFFER_SIZE := 256  # must be power of 2 for fast modulo
   var input_buffer := []
 
   func _init() -> void:
@@ -281,5 +304,6 @@ class CircularBuffer:
     var slot = tick % BUFFER_SIZE
     var entry = input_buffer[slot]
     if entry == null or entry.tick != tick:
+      if entry and entry.tick != tick: print("MISMATCH: entry.tick -> ", entry.tick, " tick -> ", tick)
       return {} # was overwritten by a newer tick
     return entry
