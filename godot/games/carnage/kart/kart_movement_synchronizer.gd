@@ -4,7 +4,6 @@ extends Node
 signal punch_landed(attacker_peer_id: int, target_peer_id: int)
 
 @export var kart: KartBot
-@export var turn_ramp: Curve
 
 var local_input_buffer: CircularBuffer = CircularBuffer.new()
 
@@ -173,8 +172,9 @@ const ACCELERATION := 0.03
 const DRAG := 3.0
 
 const GRAVITY := 9.8
-const TURN_RAMP := 5.0
-const MAX_WHEEL_ANGLE := deg_to_rad(70.0)
+const TURN_RAMP := 4.0
+const GRIP := 0.05
+const MAX_WHEEL_ANGLE := deg_to_rad(45.0)
 const WHEEL_TURN_SPEED := deg_to_rad(100.0)
 
 var _logger := SimLogger.new()
@@ -221,23 +221,18 @@ func simulate_one_frame(input: Dictionary, state: Dictionary, tick: int) -> Dict
   wheel_turn = move_toward(wheel_turn, desired_wheel_angle, WHEEL_TURN_SPEED * delta)
   wheel_turn = clampf(wheel_turn, -MAX_WHEEL_ANGLE, MAX_WHEEL_ANGLE)
 
+  var speed := velocity.length()
+  var travel_sign := signf(forward.dot(velocity))
+  rotation_y += (wheel_turn / MAX_WHEEL_ANGLE) * speed * TURN_RAMP * travel_sign * delta
+
+  _logger.log("%s AFTER_STEER rot=%.4f wt=%.4f" % [_sim_tag(tick), rotation_y, wheel_turn])
+
   var wheel_angle := rotation_y + wheel_turn
   var wheel_right_vector := Vector3(cos(wheel_angle), 0.0, -sin(wheel_angle))
   var lateral_velocity := wheel_right_vector.dot(velocity)
-  var curve_t := absf(wheel_right_vector.dot(velocity.normalized()))
-  var grip_factor := turn_ramp.sample(curve_t) if turn_ramp else 0.0
-  velocity -= wheel_right_vector * lateral_velocity * grip_factor
+  velocity -= wheel_right_vector * lateral_velocity * GRIP
 
   _logger.log("%s AFTER_GRIP vel=%s lateral=%.4f" % [_sim_tag(tick), velocity, lateral_velocity])
-
-  # if owner_peer_id == 1:
-  #   print(grip_factor)
-
-  var speed := velocity.length()
-  var travel_sign := signf(forward.dot(velocity))
-  rotation_y += (wheel_turn / MAX_WHEEL_ANGLE) * max(speed * 6.0, .01) * travel_sign * delta
-
-  _logger.log("%s AFTER_STEER rot=%.4f wt=%.4f" % [_sim_tag(tick), rotation_y, wheel_turn])
 
   velocity.y -= GRAVITY * delta
 
