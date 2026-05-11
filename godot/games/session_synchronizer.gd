@@ -106,7 +106,8 @@ func _handle_peer_packet(sender_id: int, packet: Dictionary) -> void:
       var client_time_ms := packet.get("client_time", -1) as int
       var rtt_msec := Time.get_ticks_msec() - client_time_ms
       var server_net_tick := packet.get("net_sim_tick", 0) as int
-      var one_way_ticks := int(round((rtt_msec / 2.0) / 1000.0 * TICK_RATE_HZ))
+      var one_way_ticks := int(round((float(rtt_msec) / 2.0) / 1000.0 * TICK_RATE_HZ))
+      print(rtt_msec, "ms PING - ONE WAY TICKS ", one_way_ticks)
       current_ping = rtt_msec
 
       var new_target_tick := server_net_tick + INPUT_BUFFER_DEPTH + one_way_ticks + MARGIN_TICKS
@@ -154,7 +155,6 @@ func notify_ready() -> void:
     all_peers_ready.emit()
     return
   state[MultiplayerClient.my_peer_id()] = true
-  print(MultiplayerClient.my_peer_id(), ' local ready state -> ', JSON.stringify(state))
   MultiplayerClient.send_packet(
     { "type": GlobalGameMessage.ClientReady },
     MultiplayerPeer.TARGET_PEER_BROADCAST,

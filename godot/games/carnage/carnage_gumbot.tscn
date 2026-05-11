@@ -6,7 +6,7 @@
 [ext_resource type="Texture2D" uid="uid://cas3gr887xevi" path="res://materials/bot_mat/bot_albedo.png" id="3_qqirw"]
 [ext_resource type="Texture2D" uid="uid://ba6mac1k3t38a" path="res://materials/bot_mat/bot_normals.png" id="4_crujt"]
 
-[sub_resource type="ShaderMaterial" id="ShaderMaterial_epnf4"]
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_7kn7g"]
 resource_local_to_scene = true
 render_priority = 0
 shader = ExtResource("2_dn58o")
@@ -30,7 +30,7 @@ animation = &"KartNeutral"
 fadein_time = 0.1
 fadeout_time = 0.1
 
-[sub_resource type="AnimationNodeBlendTree" id="AnimationNodeBlendTree_qqirw"]
+[sub_resource type="AnimationNodeBlendTree" id="AnimationNodeBlendTree_dn58o"]
 resource_local_to_scene = true
 graph_offset = Vector2(-456.94913, -138.9027)
 nodes/Add2/node = SubResource("AnimationNodeAdd2_o2iqh")
@@ -47,12 +47,18 @@ node_connections = [&"output", 0, &"Add2", &"Add2", 0, &"PunchOneShot", &"Add2",
 
 [node name="gumbot" unique_id=2126276004 instance=ExtResource("1_7kn7g")]
 script = ExtResource("2_7kn7g")
-surface_mat = SubResource("ShaderMaterial_epnf4")
+spring_stiffness = 1.0
+spring_drag = 0.1
+surface_mat = SubResource("ShaderMaterial_7kn7g")
 
 [node name="Armature" parent="." index="2" unique_id=413497102]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.008804508, 0, 0)
 
 [node name="Skeleton3D" parent="Armature" index="0" unique_id=1349617913]
+process_priority = -1
+process_physics_priority = -1
+physics_interpolation_mode = 1
+modifier_callback_mode_process = 0
 bones/1/position = Vector3(0, 0.10910883, 0)
 bones/1/rotation = Quaternion(-0.035358805, 0, 0, 0.9993747)
 bones/2/rotation = Quaternion(-0.004864409, 0.20423174, 0.9788058, -0.014322893)
@@ -62,7 +68,7 @@ bones/5/rotation = Quaternion(0.004864324, 0.20423174, 0.9788058, 0.014322897)
 bones/6/rotation = Quaternion(-0.385835, -2.1915228e-07, 2.4042106e-07, 0.9225678)
 bones/7/rotation = Quaternion(0.8077263, 0.009526977, 0.011748617, 0.58936363)
 bones/8/rotation = Quaternion(5.293955e-23, 1.1920927e-07, 4.440892e-16, 1)
-bones/10/rotation = Quaternion(-0.37149903, 0.6016548, 0.37149903, 0.6016548)
+bones/10/rotation = Quaternion(0.19962135, 0.67834455, -0.19962135, 0.67834455)
 bones/11/rotation = Quaternion(0.2193065, 0.50968, 0.81721145, 0.15587369)
 bones/12/rotation = Quaternion(0.569141, -3.2907852e-08, -1.5511588e-07, 0.82223994)
 bones/13/rotation = Quaternion(0.28364977, 0.66767955, 0.06391271, 0.685319)
@@ -90,37 +96,37 @@ bones/24/rotation = Quaternion(2.5288116e-07, 0.7071068, 0.7071068, 2.5288116e-0
 bones/24/scale = Vector3(0.63530767, 1, 1)
 
 [node name="Hand_L_Socket" parent="Armature/Skeleton3D" index="0" unique_id=541900749]
-transform = Transform3D(-0.050831184, -0.24440745, 0.96833456, 0.21269628, 0.9446982, 0.24960402, -0.97579235, 0.21865064, 0.003964085, 0.054230545, 0.21532519, 0.08801343)
+transform = Transform3D(-0.05082822, -0.24440078, 0.9683364, 0.21268544, 0.94470274, 0.24959695, -0.9757949, 0.21863925, 0.0039625876, 0.054230724, 0.21532576, 0.08801228)
 
 [node name="Arm" parent="Armature/Skeleton3D" index="1" unique_id=931929449]
-surface_material_override/0 = SubResource("ShaderMaterial_epnf4")
+surface_material_override/0 = SubResource("ShaderMaterial_7kn7g")
 
 [node name="Body" parent="Armature/Skeleton3D" index="2" unique_id=1838460602]
-surface_material_override/0 = SubResource("ShaderMaterial_epnf4")
+surface_material_override/0 = SubResource("ShaderMaterial_7kn7g")
 
 [node name="Button" parent="Armature/Skeleton3D" index="3" unique_id=479263752]
-surface_material_override/0 = SubResource("ShaderMaterial_epnf4")
+surface_material_override/0 = SubResource("ShaderMaterial_7kn7g")
 
 [node name="Circle" parent="Armature/Skeleton3D" index="4" unique_id=998378276]
-surface_material_override/0 = SubResource("ShaderMaterial_epnf4")
+surface_material_override/0 = SubResource("ShaderMaterial_7kn7g")
 
 [node name="Hand_L" parent="Armature/Skeleton3D" index="5" unique_id=364319249]
-surface_material_override/0 = SubResource("ShaderMaterial_epnf4")
+surface_material_override/0 = SubResource("ShaderMaterial_7kn7g")
 
 [node name="Hand_R" parent="Armature/Skeleton3D" index="6" unique_id=2134345466]
-surface_material_override/0 = SubResource("ShaderMaterial_epnf4")
+surface_material_override/0 = SubResource("ShaderMaterial_7kn7g")
 
 [node name="Leg" parent="Armature/Skeleton3D" index="8" unique_id=1299862301]
-surface_material_override/0 = SubResource("ShaderMaterial_epnf4")
+surface_material_override/0 = SubResource("ShaderMaterial_7kn7g")
 
 [node name="Head_Socket" parent="Armature/Skeleton3D" index="9" unique_id=1137685559]
-transform = Transform3D(1, 8.8807e-16, 2.3841858e-07, -1.684729e-08, 0.99750024, 0.070662655, -2.378226e-07, -0.07066265, 0.9975003, 9.193055e-17, 0.23987955, -0.009264059)
+transform = Transform3D(1, 0, 2.3841858e-07, -1.684985e-08, 0.99749947, 0.07067339, -2.3782243e-07, -0.070673384, 0.9974995, 0, 0.23987946, -0.009265171)
 
 [node name="Spine_Socket" parent="Armature/Skeleton3D" index="10" unique_id=365435926]
-transform = Transform3D(1, 8.8807e-16, 2.3841855e-07, -1.6847288e-08, 0.99750024, 0.070662655, -2.3782258e-07, -0.07066265, 0.9975003, 0, 0.13662107, -0.0019492578)
+transform = Transform3D(1, 0, 2.3841856e-07, -1.6849848e-08, 0.99749947, 0.07067339, -2.378224e-07, -0.070673384, 0.9974995, 0, 0.13662107, -0.0019492578)
 
 [node name="Sphere_001" parent="Armature/Skeleton3D" index="12" unique_id=1500627954]
-surface_material_override/0 = SubResource("ShaderMaterial_epnf4")
+surface_material_override/0 = SubResource("ShaderMaterial_7kn7g")
 
 [node name="SpringBoneSimulator3D" type="SpringBoneSimulator3D" parent="Armature/Skeleton3D" index="13" unique_id=258612005]
 unique_name_in_owner = true
@@ -135,9 +141,9 @@ settings/0/individual_config = false
 settings/0/rotation_axis = 3
 settings/0/radius/value = 0.02
 settings/0/radius/damping_curve = null
-settings/0/stiffness/value = 2.0
+settings/0/stiffness/value = 1.0
 settings/0/stiffness/damping_curve = null
-settings/0/drag/value = 0.4
+settings/0/drag/value = 0.1
 settings/0/drag/damping_curve = null
 settings/0/gravity/value = 0.0
 settings/0/gravity/damping_curve = null
@@ -146,8 +152,8 @@ settings/0/joints/0/bone_name = "Spine"
 settings/0/joints/0/bone = 8
 settings/0/joints/1/bone_name = "Head"
 settings/0/joints/1/bone = 9
-settings/0/enable_all_child_collisions = true
-settings/0/exclude_collision_count = 0
+settings/0/enable_all_child_collisions = false
+settings/0/collision_count = 0
 settings/1/root_bone_name = "Bicep.L"
 settings/1/root_bone = 14
 settings/1/end_bone_name = "Hand.L"
@@ -158,9 +164,9 @@ settings/1/individual_config = false
 settings/1/rotation_axis = 3
 settings/1/radius/value = 0.02
 settings/1/radius/damping_curve = null
-settings/1/stiffness/value = 2.0
+settings/1/stiffness/value = 1.0
 settings/1/stiffness/damping_curve = null
-settings/1/drag/value = 0.4
+settings/1/drag/value = 0.1
 settings/1/drag/damping_curve = null
 settings/1/gravity/value = 0.0
 settings/1/gravity/damping_curve = null
@@ -171,8 +177,8 @@ settings/1/joints/1/bone_name = "Forearm.L"
 settings/1/joints/1/bone = 15
 settings/1/joints/2/bone_name = "Hand.L"
 settings/1/joints/2/bone = 16
-settings/1/enable_all_child_collisions = true
-settings/1/exclude_collision_count = 0
+settings/1/enable_all_child_collisions = false
+settings/1/collision_count = 0
 settings/2/root_bone_name = "Bicep.R"
 settings/2/root_bone = 11
 settings/2/end_bone_name = "Hand.R"
@@ -183,9 +189,9 @@ settings/2/individual_config = false
 settings/2/rotation_axis = 3
 settings/2/radius/value = 0.02
 settings/2/radius/damping_curve = null
-settings/2/stiffness/value = 2.0
+settings/2/stiffness/value = 1.0
 settings/2/stiffness/damping_curve = null
-settings/2/drag/value = 0.4
+settings/2/drag/value = 0.1
 settings/2/drag/damping_curve = null
 settings/2/gravity/value = 0.0
 settings/2/gravity/damping_curve = null
@@ -196,13 +202,13 @@ settings/2/joints/1/bone_name = "Forearm.R"
 settings/2/joints/1/bone = 12
 settings/2/joints/2/bone_name = "Hand.R"
 settings/2/joints/2/bone = 13
-settings/2/enable_all_child_collisions = true
-settings/2/exclude_collision_count = 0
+settings/2/enable_all_child_collisions = false
+settings/2/collision_count = 0
 
 [node name="AnimationTree" parent="." index="5" unique_id=498575357]
 unique_name_in_owner = true
 root_node = NodePath("%AnimationTree/..")
-tree_root = SubResource("AnimationNodeBlendTree_qqirw")
+tree_root = SubResource("AnimationNodeBlendTree_dn58o")
 parameters/PunchOneShot/active = false
 parameters/PunchOneShot/internal_active = false
 parameters/PunchOneShot/request = 0

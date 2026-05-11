@@ -31,7 +31,7 @@ func _ready() -> void:
 func punch_collide() -> void:
   var overlapping: Array[Node3D] = punch_area.get_overlapping_bodies()
   for bot in overlapping:
-    if bot is KartBot:
+    if bot is KartBot and bot != self:
       bot.handle_punch_impact(self)
 
 func handle_punch_impact(from_kart: KartBot) -> void:

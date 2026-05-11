@@ -6,7 +6,8 @@ enum CarnageGameMessage {
   ClientKartInputs,
   ServerKartState,
   PingNetTick,
-  PongNetTick
+  PongNetTick,
+  ServerKartPunch,
 }
 
 @onready var spawn_center_node: Marker3D = %SpawnCenter

@@ -94,6 +94,9 @@ func _handle_incoming_peer_packet(_sender_id: int, packet: Dictionary) -> void:
       var tick: int = packet.get("net_sim_tick", -1)
       if tick >= 0 and not _server_input_store.has(tick):
         _server_input_store[tick] = packet.get("input", {})
+    Carnage.CarnageGameMessage.ServerKartPunch:
+      if is_owning_peer: return  # already triggered locally on button press
+      kart.punch_cosmetic()
 
 const POS_CORRECTION_THRESHOLD := 0.1
 const VEL_CORRECTION_THRESHOLD := 0.1
@@ -209,6 +212,10 @@ func simulate_one_frame(input: Dictionary, state: Dictionary, tick: int) -> Dict
     kart.punch_cosmetic()
     if is_host:
       kart.punch_collide()
+      MultiplayerClient.send_packet({
+        "type": Carnage.CarnageGameMessage.ServerKartPunch,
+        "owner_peer_id": owner_peer_id,
+      })
 
   var desired_wheel_angle := input_vec[1] * MAX_WHEEL_ANGLE
   wheel_turn = move_toward(wheel_turn, desired_wheel_angle, WHEEL_TURN_SPEED * delta)
@@ -265,9 +272,14 @@ func _sample_input() -> Dictionary:
     "punch_pressed": Input.is_action_just_pressed("punch"),
   }
 
+var did_start_simulating = false
 func simulate_tick(current_tick: int, delta: float) -> void:
   if not is_host and not _has_initial_state: return
   _current_tick = current_tick
+
+  if !is_host and !did_start_simulating:
+    print("CLIENT STARTED SIMULATING!")
+    did_start_simulating = true
 
   if is_owning_peer:
     var input_vector := _sample_input()
@@ -298,7 +310,8 @@ func simulate_tick(current_tick: int, delta: float) -> void:
 
   elif !is_owning_peer and !is_host:
     if _remote_state_target.is_empty(): return
-    var weight := (1.0 / SERVER_SYNC_RATE) * delta
+    # var weight := (1.0 / SERVER_SYNC_RATE) * delta
+    var weight := delta * 5.0
     physics_state = {
       "position": physics_state.position.lerp(_remote_state_target.position, weight),
       "rotation_y": lerp(physics_state.rotation_y, _remote_state_target.rotation_y, weight),
