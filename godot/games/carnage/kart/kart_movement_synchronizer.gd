@@ -139,6 +139,9 @@ func reconcile_server_update(server_tick: int, server_state: Dictionary) -> void
     resimulate(server_tick, server_state)
 
 func resimulate(from_tick: int, authoritative_state: Dictionary) -> void:
+  var pre_pos: Vector3 = physics_state.get("position", Vector3.ZERO)
+  var pre_rot_y: float = physics_state.get("rotation_y", 0.0)
+
   var state := authoritative_state
   for tick in range(from_tick + 1, _current_tick):
     var entry := local_input_buffer.get_entry(tick)
@@ -146,6 +149,10 @@ func resimulate(from_tick: int, authoritative_state: Dictionary) -> void:
     state = simulate_one_frame(input, state, tick)
     local_input_buffer.store(tick, input, state)
   physics_state = state
+
+  var pos_delta: Vector3 = pre_pos - state.get("position", Vector3.ZERO)
+  var rot_delta: float = pre_rot_y - state.get("rotation_y", 0.0)
+  kart.apply_visual_correction(pos_delta, rot_delta)
 
 func consume_input_for_tick(tick: int) -> Dictionary:
   if _server_input_store.has(tick):
@@ -163,7 +170,7 @@ const DRAG := 3.0
 
 const GRAVITY := 9.8
 const TURN_RAMP := 1.0
-const GRIP := 0.02
+const GRIP := 0.05
 const MAX_WHEEL_ANGLE := deg_to_rad(45.0)
 const WHEEL_TURN_SPEED := deg_to_rad(100.0)
 
