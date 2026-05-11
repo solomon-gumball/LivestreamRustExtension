@@ -8,8 +8,12 @@
 [ext_resource type="Texture2D" uid="uid://ba6mac1k3t38a" path="res://materials/bot_mat/bot_normals.png" id="6_540i1"]
 [ext_resource type="Script" uid="uid://dunl41wpv0y0g" path="res://games/carnage/kart/kart_movement_synchronizer.gd" id="7_3xp8h"]
 [ext_resource type="ArrayMesh" uid="uid://cqeggykeqbqft" path="res://games/carnage/kart/kart_wheel.res" id="7_8q7wk"]
+[ext_resource type="Texture2D" uid="uid://dqsehjf3nhnov" path="res://games/carnage/textures/car_blue_albedo.png" id="7_540i1"]
 
-[sub_resource type="ShaderMaterial" id="ShaderMaterial_540i1"]
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_66xnu"]
+albedo_texture = ExtResource("7_540i1")
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_8q7wk"]
 resource_local_to_scene = true
 render_priority = 0
 shader = ExtResource("4_3xp8h")
@@ -22,27 +26,31 @@ size = Vector3(0.65, 1.1368282, 1.311)
 
 [node name="KartBot" type="CharacterBody3D" unique_id=728622550]
 script = ExtResource("1_5x8vd")
+kart_material = SubResource("StandardMaterial3D_66xnu")
 
 [node name="gumbot" parent="." unique_id=2126276004 instance=ExtResource("2_8q7wk")]
 unique_name_in_owner = true
-transform = Transform3D(3.4380493, 0, 0, 0, 3.4380493, 0, 0, 0, 3.4380493, 0.0058321953, 0.06075704, 0.15825891)
+transform = Transform3D(4.3077292, 0, 0, 0, 4.3077292, 0, 0, 0, 4.3077292, 0, 0.026551217, 0.158)
 collision_layer = 0
 collision_mask = 0
-surface_mat = SubResource("ShaderMaterial_540i1")
+surface_mat = SubResource("ShaderMaterial_8q7wk")
 
 [node name="Kart" type="MeshInstance3D" parent="." unique_id=416408719]
 transform = Transform3D(0.29999998, 0, 0, 0, 0.29999998, 0, 0, 0, 0.29999998, 0, 0.042976737, 0.41104314)
 mesh = ExtResource("1_itbdw")
+surface_material_override/0 = SubResource("StandardMaterial3D_66xnu")
 
 [node name="KartWheel_R" type="MeshInstance3D" parent="Kart" unique_id=870050552]
 unique_name_in_owner = true
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.0214937, 0.25116947, 0.9971032)
 mesh = ExtResource("7_8q7wk")
+surface_material_override/0 = SubResource("StandardMaterial3D_66xnu")
 
 [node name="KartWheel_L" type="MeshInstance3D" parent="Kart" unique_id=504209422]
 unique_name_in_owner = true
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.0014075, 0.25116947, 0.9971032)
 mesh = ExtResource("7_8q7wk")
+surface_material_override/0 = SubResource("StandardMaterial3D_66xnu")
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="." unique_id=1152960397]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.608355, 0.36068615)

@@ -1,13 +1,15 @@
 class_name KartMovementSynchronizer
 extends Node
 
+signal punch_landed(attacker_peer_id: int, target_peer_id: int)
+
 @export var kart: KartBot
 
 var local_input_buffer: CircularBuffer = CircularBuffer.new()
 
 const TICK_RATE_HZ := 60
 const INPUT_BUFFER_DEPTH := 8 # 8 ticks * 1/60 = (~133ms)
-const MARGIN_TICKS := 3 # Accounts for jitter
+const MARGIN_TICKS := 10 # Accounts for jitter
 const SERVER_SYNC_RATE: float = 1.0 / 20.0
 
 var net_sim_tick := 0
@@ -20,7 +22,7 @@ var is_host: bool = false
 var is_owning_peer := false
 
 var _server_input_store: Dictionary = {}
-var _last_consumed_input: Vector2 = Vector2.ZERO
+var _last_consumed_input: Dictionary = { "move": Vector2.ZERO, "punch_pressed": false }
 var _has_initial_state := false
 var _remote_state_target: Dictionary = {}
 var physics_state: Dictionary = {
@@ -35,6 +37,7 @@ var mappings := {
   "move_back": KEY_S,
   "turn_left": KEY_A,
   "turn_right": KEY_D,
+  "punch": KEY_SPACE,
 }
 
 func _bind_inputs() -> void:
@@ -75,6 +78,7 @@ func _ready() -> void:
   _initial_tick_set = is_host
   _request_net_tick_update()
   is_owning_peer = owner_peer_id == MultiplayerClient.my_peer_id()
+  _logger.setup(is_host, owner_peer_id)
 
 func _enter_tree() -> void:
   if is_owning_peer: _bind_inputs()
@@ -114,10 +118,11 @@ func _handle_incoming_peer_packet(_sender_id: int, packet: Dictionary) -> void:
         net_sim_tick = new_target_tick
       elif abs(net_sim_tick - new_target_tick) > 2:
         if new_target_tick > net_sim_tick:
+          _logger.log("CLIENT latency increased significantly, incrementing local sim_tick", true)
           _physics_process(1.0 / 60.0)
-          net_sim_tick += 1
 
         elif new_target_tick < net_sim_tick:
+          _logger.log("CLIENT latency decreased significantly, decrementing local sim_tick", true)
           net_sim_tick -= 1
 
       _initial_tick_set = true
@@ -137,26 +142,33 @@ func _handle_incoming_peer_packet(_sender_id: int, packet: Dictionary) -> void:
     Carnage.CarnageGameMessage.ClientKartInputs:
       if !is_host: return
       var tick: int = packet.get("net_sim_tick", -1)
-      var input: Vector2 = packet.get("input", Vector2.ZERO)
       if tick >= 0 and not _server_input_store.has(tick):
-        _server_input_store[tick] = input
+        _server_input_store[tick] = packet.get("input", {})
 
 const POS_CORRECTION_THRESHOLD := 0.1
 const VEL_CORRECTION_THRESHOLD := 0.1
 const ROT_CORRECTION_THRESHOLD := deg_to_rad(1.0)
+const WHEEL_TURN_CORRECTION_THRESHOLD := 0.02
+
 func reconcile_server_update(server_tick: int, server_state: Dictionary) -> void:
   var local_predicted_state: Dictionary = local_input_buffer.get_entry(server_tick)
 
   # if no local state, snap directly — client never predicted this tick
   if local_predicted_state.keys().size() == 0:
-    print("no buffer entry for server_tick=", server_tick, " snapping. my_local_tick=", net_sim_tick, " server_state=", server_state)
+    _logger.log(
+      "LOCAL missing input server_tick=%d my_local_tick=%d" %
+      [server_tick, net_sim_tick],
+      true
+    )
     physics_state = server_state
     return
 
   var local_state: Dictionary = local_predicted_state.get("state", {})
+  var local_wheel_turn: float = local_state.get("wheel_turn", 0.0)
   var local_pos: Vector3 = local_state.get("position", Vector3.ZERO)
   var local_vel: Vector3 = local_state.get("velocity", Vector3.ZERO)
   var local_rot_y: float = local_state.get("rotation_y", 0.0)
+  var server_wheel_turn: float = server_state.get("wheel_turn", 0.0)
   var server_pos: Vector3 = server_state.get("position", Vector3.ZERO)
   var server_vel: Vector3 = server_state.get("velocity", Vector3.ZERO)
   var server_rot_y: float = server_state.get("rotation_y", 0.0)
@@ -164,9 +176,17 @@ func reconcile_server_update(server_tick: int, server_state: Dictionary) -> void
   var pos_err := local_pos.distance_to(server_pos)
   var vel_err := local_vel.distance_to(server_vel)
   var rot_err: float = abs(local_rot_y - server_rot_y)
+  var wheel_turn_err: float = abs(local_wheel_turn - server_wheel_turn)
 
-  if pos_err > POS_CORRECTION_THRESHOLD or vel_err > VEL_CORRECTION_THRESHOLD or rot_err > ROT_CORRECTION_THRESHOLD:
-    print("correction at server_tick=", server_tick, " pos_err=", pos_err, " vel_err=", vel_err, " rot_err=", rot_err)
+  if pos_err > POS_CORRECTION_THRESHOLD or \
+     vel_err > VEL_CORRECTION_THRESHOLD or \
+     rot_err > ROT_CORRECTION_THRESHOLD or \
+     wheel_turn_err > WHEEL_TURN_CORRECTION_THRESHOLD:
+    _logger.log(
+      "correction at server_tick=%d pos_err=%.4f vel_err=%.4f rot_err=%.4f wt_err=%.4f" %
+      [server_tick, pos_err, vel_err, rot_err, wheel_turn_err],
+      true
+    )
     resimulate(server_tick, server_state)
 
 func resimulate(from_tick: int, authoritative_state: Dictionary) -> void:
@@ -175,30 +195,43 @@ func resimulate(from_tick: int, authoritative_state: Dictionary) -> void:
   # we don't need to updated that original entry
   for tick in range(from_tick + 1, net_sim_tick):
     var entry := local_input_buffer.get_entry(tick)
-    var input := entry.get("input", _last_consumed_input) as Vector2
+    var input: Dictionary = entry.get("input", _last_consumed_input)
     state = simulate_one_frame(input, state)
     local_input_buffer.store(tick, input, state)
   physics_state = state
 
-func consume_input_for_tick(tick: int) -> Vector2:
+func consume_input_for_tick(tick: int) -> Dictionary:
   if _server_input_store.has(tick):
     _last_consumed_input = _server_input_store[tick]
     _server_input_store.erase(tick)
   else:
-    print("Server is missing input for tick ", tick, ". Using _last_consumed=", _last_consumed_input)
+    _logger.log("HOST missing input tick=%d using_prev=%s" % [
+      tick, _last_consumed_input
+    ], true)
   return _last_consumed_input
 
 const MAX_SPEED := 4.0
 const ACCELERATION := 0.1
 const DRAG := 3.0
 
-const TURN_RAMP := 1.0        # how quickly turn speed scales with velocity
+const GRAVITY := 9.8
+const TURN_RAMP := 1.0         # how quickly turn speed scales with velocity
 const GRIP := 0.02             # lateral friction factor: 1.0 = no drift, 0.0 = full ice
 const MAX_WHEEL_ANGLE := deg_to_rad(45.0)
 const WHEEL_TURN_SPEED := deg_to_rad(100.0)
 
-func simulate_one_frame(input_vec: Vector2, state: Dictionary) -> Dictionary:
+var _logger := SimLogger.new()
+
+func _init() -> void:
+  add_child(_logger)
+
+func _sim_tag() -> String:
+  return "[sim:%d peer:%d host:%s]" % [net_sim_tick, owner_peer_id, is_host]
+
+func simulate_one_frame(input: Dictionary, state: Dictionary) -> Dictionary:
   var delta := 1.0 / 60.0
+  var input_vec: Vector2 = input.get("move", Vector2.ZERO)
+  var punch_pressed: bool = input.get("punch_pressed", false)
   var throttle := input_vec[0]
 
   var wheel_turn: float = state.wheel_turn
@@ -206,12 +239,24 @@ func simulate_one_frame(input_vec: Vector2, state: Dictionary) -> Dictionary:
   var rotation_y: float = state.rotation_y
   var forward := Vector3(sin(rotation_y), 0.0, cos(rotation_y))
 
+  _logger.log("%s IN pos=%s vel=%s rot=%.4f wt=%.4f move=%s punch=%s" % [
+    _sim_tag(), state.position, state.velocity, state.rotation_y, state.wheel_turn,
+    input_vec, punch_pressed])
+
   # Acceleration / drag
   if abs(throttle) > 0.0:
     velocity += forward * throttle * ACCELERATION
     velocity = velocity.limit_length(MAX_SPEED)
   else:
-    velocity = velocity.lerp(Vector3.ZERO, delta * DRAG)
+    velocity = velocity.move_toward(Vector3.ZERO, delta * DRAG)
+
+  _logger.log("%s AFTER_ACCEL vel=%s" % [_sim_tag(), velocity])
+
+  if punch_pressed and is_host:
+    kart.punch_cosmetic()
+    var hit := _check_punch_overlap()
+    if hit != -1:
+      punch_landed.emit(owner_peer_id, hit)
 
   var desired_wheel_angle := input_vec[1] * MAX_WHEEL_ANGLE
   wheel_turn = move_toward(wheel_turn, desired_wheel_angle, WHEEL_TURN_SPEED * delta)
@@ -221,17 +266,39 @@ func simulate_one_frame(input_vec: Vector2, state: Dictionary) -> Dictionary:
   var travel_sign := signf(forward.dot(velocity))
   rotation_y += (wheel_turn / MAX_WHEEL_ANGLE) * speed * TURN_RAMP * travel_sign * delta
 
+  _logger.log("%s AFTER_STEER rot=%.4f wt=%.4f" % [_sim_tag(), rotation_y, wheel_turn])
+
   var wheel_angle := rotation_y + wheel_turn
   var wheel_right_vector := Vector3(cos(wheel_angle), 0.0, -sin(wheel_angle))
   var lateral_velocity := wheel_right_vector.dot(velocity)
   velocity -= wheel_right_vector * lateral_velocity * GRIP
 
-  var position: Vector3 = state.position + velocity * delta
+  _logger.log("%s AFTER_GRIP vel=%s lateral=%.4f" % [_sim_tag(), velocity, lateral_velocity])
 
-  kart.global_position = position
+  velocity.y -= GRAVITY * delta
+
+  kart.global_position = state.position
   kart.rotation.y = rotation_y
+  var remaining := velocity * delta
+  for _i in 2:
+    var collision := kart.move_and_collide(remaining)
+    if not collision:
+      break
+    var normal := collision.get_normal()
+    remaining = remaining.slide(normal)
+    velocity = velocity.slide(normal)
+    if normal.dot(Vector3.UP) > 0.7:
+      velocity.y = 0.0
+
+  _logger.log("%s AFTER_COLLIDE vel=%s" % [_sim_tag(), velocity])
+
+  var position := kart.global_position
+
   kart.velocity = velocity
   kart.wheel_turn = wheel_turn
+
+  _logger.log("%s OUT pos=%s vel=%s rot=%.4f wt=%.4f" % [
+    _sim_tag(), position, velocity, rotation_y, wheel_turn])
 
   return {
     "wheel_turn": wheel_turn,
@@ -240,8 +307,14 @@ func simulate_one_frame(input_vec: Vector2, state: Dictionary) -> Dictionary:
     "velocity": velocity,
   }
 
-func _sample_input() -> Vector2:
-  return Input.get_vector("move_back", "move_forward", "turn_right", "turn_left")
+func _check_punch_overlap() -> int:
+  return -1
+
+func _sample_input() -> Dictionary:
+  return {
+    "move": Input.get_vector("move_back", "move_forward", "turn_right", "turn_left"),
+    "punch_pressed": Input.is_action_just_pressed("punch"),
+  }
 
 func _physics_process(delta: float) -> void:
   if !_initial_tick_set: return
@@ -250,15 +323,17 @@ func _physics_process(delta: float) -> void:
   # Authority or autonomous proxy
   if is_owning_peer:
     var input_vector := _sample_input()
+
+    if input_vector.get("punch_pressed", false):
+      kart.punch_cosmetic()
+
     physics_state = simulate_one_frame(input_vector, physics_state)
     local_input_buffer.store(net_sim_tick, input_vector, physics_state)
 
     if !is_host:
-      #if owner_peer_id != 1:
-        #print("[client] sending input=", input_vector, " tick=", net_sim_tick)
       MultiplayerClient.send_packet({
         "type": Carnage.CarnageGameMessage.ClientKartInputs,
-        "input": input_vector,
+        "input": input_vector,  # input_vector is already the full { move, punch_pressed } dict
         "net_sim_tick": net_sim_tick,
         "owner_peer_id": owner_peer_id
       })
@@ -266,7 +341,6 @@ func _physics_process(delta: float) -> void:
       _sync_accumulator += delta / Engine.time_scale
       if _sync_accumulator >= SERVER_SYNC_RATE:
         _sync_accumulator -= SERVER_SYNC_RATE
-        # print("[host] sending snapshot at net_sim_tick=", net_sim_tick, " owner_peer_id=", owner_peer_id)
         MultiplayerClient.send_packet({
           "type": Carnage.CarnageGameMessage.ServerKartState,
           "net_sim_tick": net_sim_tick,
@@ -317,7 +391,7 @@ class CircularBuffer:
   func _init() -> void:
     input_buffer.resize(BUFFER_SIZE)
 
-  func store(tick: int, input: Vector2, state: Variant):
+  func store(tick: int, input: Dictionary, state: Variant):
     var slot = tick % BUFFER_SIZE
     input_buffer[slot] = { "tick": tick, "input": input, "state": state }
 

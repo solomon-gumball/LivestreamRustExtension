@@ -10,6 +10,9 @@ web/node_modules
 web/localhost-key.pem
 web/localhost.pem
 
+godot/client.txt
+godot/host.txt
+
 overlay/*
 
 # Blender

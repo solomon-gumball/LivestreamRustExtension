@@ -2,9 +2,7 @@
 extends Node
 
 var remote_server_socket: WebSocketPeer
-
 var debug_chatter_id: String
-
 var state: StateMachine = StateMachine.new()
 var disconnected_state: DisconnectedState = DisconnectedState.new(self)
 var connected_state: ConnectedState = ConnectedState.new(self)
@@ -14,6 +12,8 @@ var use_local_server: bool = !OS.has_feature("prod_server")
 var is_ios: bool = false
 var browser: Browser = Browser.Unknown
 enum Browser { Unknown, Chrome, Firefox, Safari, Other }
+
+const PRINT_DEBUG: bool = false
 
 signal authenticated
 
@@ -194,7 +194,7 @@ class WSClientState extends State:
   func _init(_net: Node) -> void:
     net = _net
   func handle_remote_message(message: Variant) -> void:
-    print("UNCAUGHT SOCKET MESSAGE => ", message.type)
+    print("[WSClient] UNCAUGHT SOCKET MESSAGE => ", message.type)
     return
 
 class DisconnectedState extends WSClientState:
@@ -218,11 +218,9 @@ class DisconnectedState extends WSClientState:
   func _input(_event: InputEvent) -> void:
     if Input.is_action_just_pressed("DebugToggleNetwork"):
       if net.remote_server_socket.get_ready_state() == WebSocketPeer.STATE_OPEN:
-        print("Websocket connection lost!")
         debug_force_disconnected = true
         net.remote_server_socket.close()
       else:
-        print("Websocket reconnecting!")
         debug_force_disconnected = false
   
   func _try_connect_to_remote_server() -> void:
@@ -231,12 +229,9 @@ class DisconnectedState extends WSClientState:
     if ready_state == WebSocketPeer.STATE_CONNECTING or ready_state == WebSocketPeer.STATE_OPEN:
       return
     var url = net.getWsServerUrl()
-    print("[WSClient] Connecting to: ", url, " | ", Time.get_datetime_string_from_system())
     var err = net.remote_server_socket.connect_to_url(url, TLSOptions.client_unsafe() if net.use_local_server else null)
     if err != OK:
       print("[WSClient] Error connecting to remote server: %d" % err)
-    else:
-      print("[WSClient] connect_to_url OK, waiting for STATE_OPEN...")
 
 class ConnectedState extends WSClientState:
   signal authenticated_successfully
@@ -248,22 +243,18 @@ class ConnectedState extends WSClientState:
   var twitch_extension_cb: JavaScriptObject
 
   func _ready() -> void:
-    print("[WSClient/ConnectedState] _ready — has extension feature: ", OS.has_feature("extension"), " | has oauth feature: ", OS.has_feature("oauth"))
     if OS.has_feature("extension"):
       twitch_extension_cb = JavaScriptBridge.create_callback(_on_twitch_authorized)
       JavaScriptBridge.get_interface("window").twitchTokenCallback = twitch_extension_cb
     if OS.has_feature("oauth"):
       var raw = JavaScriptBridge.get_interface("window").oauthToken
       twitch_oauth_token = str(raw) if raw != null else ""
-      print("[WSClient/ConnectedState] oauthToken from window: ", "present (len=" + str(twitch_oauth_token.length()) + ")" if not twitch_oauth_token.is_empty() else "MISSING")
 
   func enter_state(_previous_state: State) -> void:
-    print("[WSClient] STATE_OPEN — entering ConnectedState, calling _try_authenticate")
     _try_authenticate()
 
   func _on_twitch_authorized(args: Array) -> void:
     twitch_extension_auth_token = str(args[0])
-    print("[WSClient/ConnectedState] Twitch extension token received, re-authenticating")
     _try_authenticate()
 
   func _try_authenticate() -> void:
@@ -271,13 +262,10 @@ class ConnectedState extends WSClientState:
 
     if not net.debug_chatter_id.is_empty():
       auth_msg["debugAuthId"] = net.debug_chatter_id
-      print("[WSClient] Authenticating with debugAuthId: ", net.debug_chatter_id)
     elif not twitch_extension_auth_token.is_empty():
       auth_msg["token"] = twitch_extension_auth_token
-      print("[WSClient] Authenticating with Twitch extension token")
     elif not twitch_oauth_token.is_empty():
       auth_msg["oauthToken"] = twitch_oauth_token
-      print("[WSClient] Authenticating with OAuth JWT")
     else:
       print("[WSClient] WARNING: No auth token available — sending authenticate with no credentials")
 
@@ -297,13 +285,11 @@ class ConnectedState extends WSClientState:
     match message.type:
       "authenticated":
         var success = message.get("success", false)
-        print("[WSClient] authenticated response — success: ", success, " | error: ", message.get("error", "none"))
         if success:
           if message.get("turnCredentials") != null:
             turn_credentials = message.turnCredentials
           if message.get("chatter"):
             current_chatter = Chatter.FromData(message.get("chatter"))
-            print("[WSClient] Authenticated as chatter: ", current_chatter.id)
           if message.get("store"):
             store_data = Message.StoreData.FromData(message.get("store"))
           authenticated_successfully.emit()

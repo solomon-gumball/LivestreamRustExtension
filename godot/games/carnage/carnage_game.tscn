@@ -14,6 +14,11 @@ ambient_light_energy = 0.16
 tonemap_mode = 2
 ssao_enabled = true
 
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_rhos2"]
+cull_mode = 1
+shading_mode = 0
+albedo_color = Color(0.2921582, 0.03526208, 0.4698527, 1)
+
 [node name="CarnageGame" type="Node3D" unique_id=1863440489]
 script = ExtResource("1_rhos2")
 
@@ -45,3 +50,8 @@ environment = SubResource("Environment_q63vr")
 [node name="Camera3D" type="Camera3D" parent="." unique_id=1785970488]
 transform = Transform3D(1, 0, 0, 0, 0.6344473, 0.7729662, 0, -0.7729662, 0.6344473, -1.9073486e-06, 19.74187, 16.105719)
 fov = 20.0
+
+[node name="CSGSphere3D" type="CSGSphere3D" parent="." unique_id=269553093]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.010496095, -1.9073486e-05, 0.021273375)
+radius = 100.0
+material = SubResource("StandardMaterial3D_rhos2")
