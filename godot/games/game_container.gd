@@ -12,8 +12,6 @@ var debug_overlay_template: PackedScene = preload("res://games/game_debug_overla
 
 func _ready() -> void:
   _load_pck_cache()
-  var overlay := debug_overlay_template.instantiate()
-  add_child(overlay)
 
 func _load_pck_cache() -> void:
   var file := FileAccess.open(PCK_CACHE_PATH, FileAccess.READ)
@@ -71,14 +69,21 @@ func _fetch_and_cache_pck(game: GameMetadata) -> bool:
 
   return true
 
+var _overlay: GameDebugOverlay = null
 func load_game_from_lobby(lobby: Lobby) -> void:
   if is_instance_valid(_session_sync):
     _session_sync.queue_free()
     _session_sync = null
+  if _overlay:
+    _overlay.queue_free()
+    _overlay = null
 
   _session_sync = SessionSynchronizer.new()
   add_child(_session_sync)
   _session_sync.setup(lobby)
+
+  _overlay = debug_overlay_template.instantiate()
+  add_child(_overlay)
 
   var game := lobby.game
 

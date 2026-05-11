@@ -13,6 +13,9 @@
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_66xnu"]
 albedo_texture = ExtResource("7_540i1")
 
+[sub_resource type="SphereShape3D" id="SphereShape3D_540i1"]
+radius = 0.8264147
+
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_540i1"]
 resource_local_to_scene = true
 render_priority = 0
@@ -25,8 +28,20 @@ shader_parameter/bot_color = Color(1, 0, 0, 1)
 size = Vector3(0.65, 1.1368282, 1.311)
 
 [node name="KartBot" type="CharacterBody3D" unique_id=728622550]
+collision_layer = 2
+collision_mask = 3
 script = ExtResource("1_5x8vd")
 kart_material = SubResource("StandardMaterial3D_66xnu")
+
+[node name="PunchArea" type="Area3D" parent="." unique_id=1491449194]
+unique_name_in_owner = true
+transform = Transform3D(0.29999998, 0, 0, 0, 0.29999998, 0, 0, 0, 0.29999998, 0, 0.44634497, 1.2257707)
+collision_layer = 0
+collision_mask = 2
+
+[node name="CollisionShape3D2" type="CollisionShape3D" parent="PunchArea" unique_id=631958019]
+transform = Transform3D(3.3333335, 0, 0, 0, 3.3333335, 0, 0, 0, 3.3333335, 0, 0, 0)
+shape = SubResource("SphereShape3D_540i1")
 
 [node name="Mesh" type="MeshInstance3D" parent="." unique_id=416408719]
 unique_name_in_owner = true

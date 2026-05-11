@@ -7,6 +7,8 @@ class_name KartBot
 @onready var kart_movement: KartMovementSynchronizer = %KartMovement
 @onready var gumbot: CarnageGumbot = %gumbot
 @onready var mesh: MeshInstance3D = %Mesh
+@onready var punch_area: Area3D = %PunchArea
+
 # @onready var anim_tree: AnimationTree = %AnimationTree
 
 @export var kart_material: StandardMaterial3D
@@ -25,6 +27,20 @@ var _mesh_rest_rotation_y: float
 func _ready() -> void:
   _mesh_rest_position = mesh.position
   _mesh_rest_rotation_y = mesh.rotation.y
+
+func punch_collide() -> void:
+  var overlapping: Array[Node3D] = punch_area.get_overlapping_bodies()
+  for bot in overlapping:
+    if bot is KartBot:
+      bot.handle_punch_impact(self)
+
+func handle_punch_impact(from_kart: KartBot) -> void:
+  var impulse: Vector3 = (global_position - from_kart.global_position).normalized()
+  var axis := impulse.cross(Vector3.UP).normalized()
+  impulse = impulse.rotated(axis, deg_to_rad(65))
+  impulse *= 5.0
+
+  kart_movement.physics_state.velocity += impulse
 
 func apply_visual_correction(pos_offset: Vector3, rot_y_offset: float) -> void:
   mesh.position = _mesh_rest_position + pos_offset

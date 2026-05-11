@@ -12,7 +12,7 @@ static func get_instance() -> SessionSynchronizer:
   return _instance
 
 enum GlobalGameMessage {
-  ClientReady = 1000,
+  ClientReady = 2000,
   CamFollow,
   UpdateAnimation,
   AnimationStateRefresh,
@@ -21,17 +21,19 @@ enum GlobalGameMessage {
   PongNetTick,
 }
 
+signal rtt_updated(rtt_msec: int, net_tick_prediction_offset: int)
 signal all_peers_ready()
 signal peer_is_ready(peer_id: int)
 
 var state: Dictionary[int, bool] = {}
 var _lobby: Lobby = null
 var _all_peers_ready_fired: bool = false
+var current_ping := 0
 
 # --- Sim clock ---
 const TICK_RATE_HZ := 60
 const INPUT_BUFFER_DEPTH := 8
-const MARGIN_TICKS := 10
+const MARGIN_TICKS := 3
 
 var net_sim_tick := 0
 var _initial_tick_set := false
@@ -105,6 +107,8 @@ func _handle_peer_packet(sender_id: int, packet: Dictionary) -> void:
       var rtt_msec := Time.get_ticks_msec() - client_time_ms
       var server_net_tick := packet.get("net_sim_tick", 0) as int
       var one_way_ticks := int(round((rtt_msec / 2.0) / 1000.0 * TICK_RATE_HZ))
+      current_ping = rtt_msec
+
       var new_target_tick := server_net_tick + INPUT_BUFFER_DEPTH + one_way_ticks + MARGIN_TICKS
 
       if not _initial_tick_set:
@@ -117,6 +121,8 @@ func _handle_peer_packet(sender_id: int, packet: Dictionary) -> void:
         elif new_target_tick < net_sim_tick:
           print("[SessionSynchronizer] latency decreased, skipping next frame")
           _skip_next_frame = true
+
+      rtt_updated.emit(current_ping, net_sim_tick - server_net_tick)
 
 func _physics_process(delta: float) -> void:
   if not _initial_tick_set: return

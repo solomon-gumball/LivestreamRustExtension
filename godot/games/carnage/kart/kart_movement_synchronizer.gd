@@ -205,11 +205,10 @@ func simulate_one_frame(input: Dictionary, state: Dictionary, tick: int) -> Dict
 
   _logger.log("%s AFTER_ACCEL vel=%s" % [_sim_tag(tick), velocity])
 
-  if punch_pressed and is_host:
+  if punch_pressed:
     kart.punch_cosmetic()
-    var hit := _check_punch_overlap()
-    if hit != -1:
-      punch_landed.emit(owner_peer_id, hit)
+    if is_host:
+      kart.punch_collide()
 
   var desired_wheel_angle := input_vec[1] * MAX_WHEEL_ANGLE
   wheel_turn = move_toward(wheel_turn, desired_wheel_angle, WHEEL_TURN_SPEED * delta)
@@ -260,9 +259,6 @@ func simulate_one_frame(input: Dictionary, state: Dictionary, tick: int) -> Dict
     "velocity": velocity,
   }
 
-func _check_punch_overlap() -> int:
-  return -1
-
 func _sample_input() -> Dictionary:
   return {
     "move": Input.get_vector("move_back", "move_forward", "turn_right", "turn_left"),
@@ -276,8 +272,8 @@ func simulate_tick(current_tick: int, delta: float) -> void:
   if is_owning_peer:
     var input_vector := _sample_input()
 
-    if input_vector.get("punch_pressed", false):
-      kart.punch_cosmetic()
+    # if input_vector.get("punch_pressed", false):
+    #   kart.punch_cosmetic()
 
     physics_state = simulate_one_frame(input_vector, physics_state, current_tick)
     local_input_buffer.store(current_tick, input_vector, physics_state)
