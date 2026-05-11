@@ -30,7 +30,7 @@ func _handle_chatter_loaded(chatter: Chatter) -> void:
     
 var karts_by_peer_id: Dictionary[int, KartBot] = {}
 
-const spawn_ring_size := 3.0
+const spawn_ring_size := 1.0
 const car_template: PackedScene = preload("res://games/carnage/kart/kart_bot.tscn")
 func spawn_cars() -> void:
   var i := 0

@@ -14,7 +14,7 @@
 albedo_texture = ExtResource("7_540i1")
 
 [sub_resource type="SphereShape3D" id="SphereShape3D_540i1"]
-radius = 0.8264147
+radius = 0.21981534
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_540i1"]
 resource_local_to_scene = true
@@ -25,7 +25,11 @@ shader_parameter/normal_map = ExtResource("6_540i1")
 shader_parameter/bot_color = Color(1, 0, 0, 1)
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_itbdw"]
-size = Vector3(0.65, 1.1368282, 1.311)
+size = Vector3(0.19887695, 0.34597462, 0.36168554)
+
+[sub_resource type="Curve" id="Curve_540i1"]
+_data = [Vector2(0, 0.594123), 0.0, -0.01615138, 0, 0, Vector2(0.2463768, 0.23997551), 0.0, 0.0, 0, 0]
+point_count = 2
 
 [node name="KartBot" type="CharacterBody3D" unique_id=728622550]
 collision_layer = 2
@@ -35,7 +39,7 @@ kart_material = SubResource("StandardMaterial3D_66xnu")
 
 [node name="PunchArea" type="Area3D" parent="." unique_id=1491449194]
 unique_name_in_owner = true
-transform = Transform3D(0.29999998, 0, 0, 0, 0.29999998, 0, 0, 0, 0.29999998, 0, 0.44634497, 1.2257707)
+transform = Transform3D(0.29999998, 0, 0, 0, 0.29999998, 0, 0, 0, 0.29999998, -1.1920929e-07, 0.17561662, 0.38370407)
 collision_layer = 0
 collision_mask = 2
 
@@ -43,9 +47,16 @@ collision_mask = 2
 transform = Transform3D(3.3333335, 0, 0, 0, 3.3333335, 0, 0, 0, 3.3333335, 0, 0, 0)
 shape = SubResource("SphereShape3D_540i1")
 
+[node name="gumbot" parent="." unique_id=2126276004 instance=ExtResource("2_8q7wk")]
+unique_name_in_owner = true
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.012531064, 0.053692795)
+collision_layer = 0
+collision_mask = 0
+surface_mat = SubResource("ShaderMaterial_540i1")
+
 [node name="Mesh" type="MeshInstance3D" parent="." unique_id=416408719]
 unique_name_in_owner = true
-transform = Transform3D(0.29999998, 0, 0, 0, 0.29999998, 0, 0, 0, 0.29999998, 0, 0.042976737, 0.41104314)
+transform = Transform3D(0.08089992, 0, 0, 0, 0.08089992, 0, 0, 0, 0.08089992, 0, 0.014091693, 0.11620152)
 mesh = ExtResource("1_itbdw")
 surface_material_override/0 = SubResource("StandardMaterial3D_66xnu")
 
@@ -61,18 +72,12 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.0014075, 0.25116947, 0.9971
 mesh = ExtResource("7_8q7wk")
 surface_material_override/0 = SubResource("StandardMaterial3D_66xnu")
 
-[node name="gumbot" parent="Mesh" unique_id=2126276004 instance=ExtResource("2_8q7wk")]
-unique_name_in_owner = true
-transform = Transform3D(14.359098, 0, 0, 0, 14.359098, 0, 0, 0, 14.359098, 0, -0.05475174, -0.8434772)
-collision_layer = 0
-collision_mask = 0
-surface_mat = SubResource("ShaderMaterial_540i1")
-
 [node name="CollisionShape3D" type="CollisionShape3D" parent="." unique_id=1152960397]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.608355, 0.36068615)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.00065918267, 0.17298222, 0.09939556)
 shape = SubResource("BoxShape3D_itbdw")
 
 [node name="KartMovement" type="Node" parent="." unique_id=1188391205 node_paths=PackedStringArray("kart")]
 unique_name_in_owner = true
 script = ExtResource("7_3xp8h")
 kart = NodePath("..")
+turn_ramp = SubResource("Curve_540i1")

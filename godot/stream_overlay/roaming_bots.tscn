@@ -114,7 +114,7 @@ size = 2.0
 [node name="GambaActionHandler" parent="Camera" unique_id=676642780 instance=ExtResource("3_0umhx")]
 unique_name_in_owner = true
 
-[node name="TTSActionHandler" parent="Camera" unique_id=776642781 instance=ExtResource("4_ttshandler")]
+[node name="TTSActionHandler" parent="Camera" unique_id=100000001 instance=ExtResource("4_ttshandler")]
 unique_name_in_owner = true
 
 [node name="BotSpawnLocation" type="Marker3D" parent="." unique_id=1213857580]

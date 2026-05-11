@@ -47,6 +47,8 @@ func apply_visual_correction(pos_offset: Vector3, rot_y_offset: float) -> void:
   mesh.rotation.y = _mesh_rest_rotation_y + rot_y_offset
 
 func _process(delta: float) -> void:
+  if Engine.is_editor_hint():
+    return
   if mesh.position != _mesh_rest_position:
     mesh.position = mesh.position.move_toward(_mesh_rest_position, VISUAL_CORRECTION_SMOOTH * delta)
   if mesh.rotation.y != _mesh_rest_rotation_y:

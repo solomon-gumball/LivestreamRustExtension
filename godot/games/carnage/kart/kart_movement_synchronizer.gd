@@ -4,6 +4,7 @@ extends Node
 signal punch_landed(attacker_peer_id: int, target_peer_id: int)
 
 @export var kart: KartBot
+@export var turn_ramp: Curve
 
 var local_input_buffer: CircularBuffer = CircularBuffer.new()
 
@@ -98,8 +99,8 @@ func _handle_incoming_peer_packet(_sender_id: int, packet: Dictionary) -> void:
       if is_owning_peer: return  # already triggered locally on button press
       kart.punch_cosmetic()
 
-const POS_CORRECTION_THRESHOLD := 0.1
-const VEL_CORRECTION_THRESHOLD := 0.1
+const POS_CORRECTION_THRESHOLD := 0.02
+const VEL_CORRECTION_THRESHOLD := 0.02
 const ROT_CORRECTION_THRESHOLD := deg_to_rad(1.0)
 const WHEEL_TURN_CORRECTION_THRESHOLD := 0.02
 
@@ -167,14 +168,13 @@ func consume_input_for_tick(tick: int) -> Dictionary:
     ], true)
   return _last_consumed_input
 
-const MAX_SPEED := 4.0
-const ACCELERATION := 0.1
+const MAX_SPEED := 1.0
+const ACCELERATION := 0.03
 const DRAG := 3.0
 
 const GRAVITY := 9.8
-const TURN_RAMP := 1.0
-const GRIP := 0.05
-const MAX_WHEEL_ANGLE := deg_to_rad(45.0)
+const TURN_RAMP := 5.0
+const MAX_WHEEL_ANGLE := deg_to_rad(70.0)
 const WHEEL_TURN_SPEED := deg_to_rad(100.0)
 
 var _logger := SimLogger.new()
@@ -221,18 +221,23 @@ func simulate_one_frame(input: Dictionary, state: Dictionary, tick: int) -> Dict
   wheel_turn = move_toward(wheel_turn, desired_wheel_angle, WHEEL_TURN_SPEED * delta)
   wheel_turn = clampf(wheel_turn, -MAX_WHEEL_ANGLE, MAX_WHEEL_ANGLE)
 
-  var speed := velocity.length()
-  var travel_sign := signf(forward.dot(velocity))
-  rotation_y += (wheel_turn / MAX_WHEEL_ANGLE) * speed * TURN_RAMP * travel_sign * delta
-
-  _logger.log("%s AFTER_STEER rot=%.4f wt=%.4f" % [_sim_tag(tick), rotation_y, wheel_turn])
-
   var wheel_angle := rotation_y + wheel_turn
   var wheel_right_vector := Vector3(cos(wheel_angle), 0.0, -sin(wheel_angle))
   var lateral_velocity := wheel_right_vector.dot(velocity)
-  velocity -= wheel_right_vector * lateral_velocity * GRIP
+  var curve_t := absf(wheel_right_vector.dot(velocity.normalized()))
+  var grip_factor := turn_ramp.sample(curve_t) if turn_ramp else 0.0
+  velocity -= wheel_right_vector * lateral_velocity * grip_factor
 
   _logger.log("%s AFTER_GRIP vel=%s lateral=%.4f" % [_sim_tag(tick), velocity, lateral_velocity])
+
+  # if owner_peer_id == 1:
+  #   print(grip_factor)
+
+  var speed := velocity.length()
+  var travel_sign := signf(forward.dot(velocity))
+  rotation_y += (wheel_turn / MAX_WHEEL_ANGLE) * max(speed * 6.0, .01) * travel_sign * delta
+
+  _logger.log("%s AFTER_STEER rot=%.4f wt=%.4f" % [_sim_tag(tick), rotation_y, wheel_turn])
 
   velocity.y -= GRAVITY * delta
 
@@ -311,7 +316,7 @@ func simulate_tick(current_tick: int, delta: float) -> void:
   elif !is_owning_peer and !is_host:
     if _remote_state_target.is_empty(): return
     # var weight := (1.0 / SERVER_SYNC_RATE) * delta
-    var weight := delta * 5.0
+    var weight := delta * 10.0
     physics_state = {
       "position": physics_state.position.lerp(_remote_state_target.position, weight),
       "rotation_y": lerp(physics_state.rotation_y, _remote_state_target.rotation_y, weight),
