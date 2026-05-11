@@ -14,7 +14,9 @@ var rtc_mp := WebRTCMultiplayerPeer.new()
 var current_ping: float = 0.0
 
 const PRINT_DEBUG: bool = false
-const RELAY_ONLY_CANDIDATES: bool = true
+const ALLOW_LAN: bool = true
+const ALLOW_PUBLIC_IP: bool = false
+const ALLOW_RELAY: bool = false
 
 # Magic prefix written before every outgoing packet so we can identify packets
 # we encoded with var_to_bytes and skip any internal WebRTCMultiplayerPeer
@@ -334,7 +336,12 @@ class Connected extends MultiplayerClientState:
 
   func _new_ice_candidate(mid_name: String, index_name: int, sdp_name: String, id: int) -> void:
     if mc.PRINT_DEBUG: print("Created a new ice candidate to send to peer %d: %s %d %s" % [id, mid_name, index_name, sdp_name])
-    if mc.RELAY_ONLY_CANDIDATES and "typ relay" not in sdp_name:
+    print("ice canddiate tyep ", sdp_name)
+    if "typ host" in sdp_name and not mc.ALLOW_LAN:
+      return
+    if "typ srflx" in sdp_name and not mc.ALLOW_PUBLIC_IP:
+      return
+    if "typ relay" in sdp_name and not mc.ALLOW_RELAY:
       return
     
     mc.send_candidate(id, mid_name, index_name, sdp_name)

@@ -33,7 +33,7 @@ var current_ping := 0
 # --- Sim clock ---
 const TICK_RATE_HZ := 60
 const INPUT_BUFFER_DEPTH := 8
-const MARGIN_TICKS := 3
+const MARGIN_TICKS := 2
 
 var net_sim_tick := 0
 var _initial_tick_set := false
