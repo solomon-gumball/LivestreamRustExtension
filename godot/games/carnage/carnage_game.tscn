@@ -4,7 +4,7 @@
 [ext_resource type="Script" uid="uid://c27qhdb12hl0x" path="res://games/carnage/carnage_game.gd" id="1_rhos2"]
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_rhos2"]
-size = Vector3(3, 0.08154297, 3)
+size = Vector3(10, 0.082, 10)
 
 [sub_resource type="Environment" id="Environment_q63vr"]
 background_mode = 3
@@ -23,6 +23,7 @@ albedo_color = Color(0.2921582, 0.03526208, 0.4698527, 1)
 script = ExtResource("1_rhos2")
 
 [node name="StaticBody3D" type="StaticBody3D" parent="." unique_id=82987365]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -2.2655797, 0)
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="StaticBody3D" unique_id=1655099418]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.22748864, 0)
@@ -30,8 +31,9 @@ shape = SubResource("BoxShape3D_rhos2")
 
 [node name="SpawnCenter" type="Marker3D" parent="." unique_id=1167048723]
 unique_name_in_owner = true
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.69712985, 0)
 
-[node name="boxing_ring" parent="." unique_id=543761004 instance=ExtResource("1_q63vr")]
+[node name="boxing_ring" parent="." unique_id=1235897736 instance=ExtResource("1_q63vr")]
 transform = Transform3D(0.3, 0, 0, 0, 0.3, 0, 0, 0, 0.3, 0, -0.26946414, 0)
 
 [node name="DirectionalLight3D" type="DirectionalLight3D" parent="." unique_id=1486856216]
@@ -47,7 +49,10 @@ spot_angle = 53.16479
 [node name="WorldEnvironment" type="WorldEnvironment" parent="." unique_id=1243038836]
 environment = SubResource("Environment_q63vr")
 
-[node name="Camera3D" type="Camera3D" parent="." unique_id=1785970488]
+[node name="BoomNode" type="Node3D" parent="." unique_id=1864927377]
+unique_name_in_owner = true
+
+[node name="Camera3D" type="Camera3D" parent="BoomNode" unique_id=1785970488]
 transform = Transform3D(1, 0, 0, 0, 0.6344473, 0.7729662, 0, -0.7729662, 0.6344473, -1.9073486e-06, 5.6526594, 4.874319)
 fov = 20.0
 

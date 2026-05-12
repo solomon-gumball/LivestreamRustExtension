@@ -1,0 +1,6 @@
+[gd_resource type="StandardMaterial3D" format=3 uid="uid://cjoipeqa1gg8v"]
+
+[ext_resource type="Texture2D" uid="uid://dqsehjf3nhnov" path="res://games/carnage/textures/car_blue_albedo.png" id="1_nusj7"]
+
+[resource]
+albedo_texture = ExtResource("1_nusj7")

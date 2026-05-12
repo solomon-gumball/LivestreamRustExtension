@@ -38,6 +38,13 @@ materials/extract=0
 materials/extract_format=0
 materials/extract_path=""
 _subresources={
+"materials": {
+"standardSurface1": {
+"use_external/enabled": true,
+"use_external/fallback_path": "res://games/carnage/materials/kart_mat.tres",
+"use_external/path": "uid://cjoipeqa1gg8v"
+}
+},
 "meshes": {
 "car_Mesh_002": {
 "generate/lightmap_uv": 0,

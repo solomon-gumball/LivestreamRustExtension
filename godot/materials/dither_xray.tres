@@ -1,0 +1,12 @@
+[gd_resource type="ShaderMaterial" format=3 uid="uid://dm2jijq5ff7uc"]
+
+[ext_resource type="Shader" uid="uid://bc57lb2k1uuvp" path="res://shaders/ss_dither.gdshader" id="1_nuvyc"]
+[ext_resource type="Texture2D" uid="uid://dq0fst107hxb8" path="res://textures/DitherMask.jpg" id="2_7hsn4"]
+
+[resource]
+resource_local_to_scene = true
+render_priority = 0
+shader = ExtResource("1_nuvyc")
+shader_parameter/color = Color(1, 1, 0, 1)
+shader_parameter/dither_pattern = ExtResource("2_7hsn4")
+shader_parameter/dither_scale = 0.01

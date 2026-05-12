@@ -1,0 +1,7 @@
+[gd_resource type="StandardMaterial3D" format=3 uid="uid://dj1ddxu7s8ygq"]
+
+[ext_resource type="Material" uid="uid://dm2jijq5ff7uc" path="res://materials/dither_xray.tres" id="1_isqkj"]
+
+[resource]
+next_pass = ExtResource("1_isqkj")
+shading_mode = 0

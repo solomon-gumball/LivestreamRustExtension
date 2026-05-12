@@ -35,6 +35,8 @@ func _handle_ws_message(parsed: Variant) -> void:
     return
   var msg: Dictionary = parsed
   if msg.get("type", "") == "rtc-lobbies-updated":
+    _host_check_ready()
+
     var lobbies_data: Array = msg.get("lobbies", [])
     if lobbies_data.get(0):
       var lobby_to_join := Lobby.from_data(lobbies_data.get(0))
@@ -45,9 +47,9 @@ func _handle_ws_message(parsed: Variant) -> void:
 var did_start := false
 func _host_check_ready() -> void:
   if !is_host or did_start: return
-
   if MultiplayerClient.state.current is MultiplayerClient.Connected:
     var lobby: Lobby = MultiplayerClient.current_lobby
+
     var all_players_ready := ready_peers.size() >= num_players - 1
     if !lobby.started and all_players_ready:
       did_start = true
@@ -55,6 +57,7 @@ func _host_check_ready() -> void:
 
 func try_start():
   var lobby := MultiplayerClient.current_lobby
+
   if lobby and lobby.started:
     var game_container := GameContainer.new()
     add_child(game_container)

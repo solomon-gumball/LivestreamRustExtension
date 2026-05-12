@@ -3,15 +3,12 @@
 [ext_resource type="Script" uid="uid://bqyfthnkkbiiq" path="res://games/carnage/kart/kart_bot.gd" id="1_5x8vd"]
 [ext_resource type="ArrayMesh" uid="uid://bctux32kh7t6a" path="res://games/carnage/kart/kart.res" id="1_itbdw"]
 [ext_resource type="PackedScene" uid="uid://d2c704lgm76kh" path="res://games/carnage/carnage_gumbot.tscn" id="2_8q7wk"]
+[ext_resource type="Material" uid="uid://cjoipeqa1gg8v" path="res://games/carnage/materials/kart_mat.tres" id="2_540i1"]
 [ext_resource type="Shader" uid="uid://cw1km147x2fwu" path="res://materials/bot_mat/bot_shader.gdshader" id="4_3xp8h"]
 [ext_resource type="Texture2D" uid="uid://cas3gr887xevi" path="res://materials/bot_mat/bot_albedo.png" id="5_8q7wk"]
 [ext_resource type="Texture2D" uid="uid://ba6mac1k3t38a" path="res://materials/bot_mat/bot_normals.png" id="6_540i1"]
 [ext_resource type="Script" uid="uid://dunl41wpv0y0g" path="res://games/carnage/kart/kart_movement_synchronizer.gd" id="7_3xp8h"]
 [ext_resource type="ArrayMesh" uid="uid://cqeggykeqbqft" path="res://games/carnage/kart/kart_wheel.res" id="7_8q7wk"]
-[ext_resource type="Texture2D" uid="uid://dqsehjf3nhnov" path="res://games/carnage/textures/car_blue_albedo.png" id="7_540i1"]
-
-[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_66xnu"]
-albedo_texture = ExtResource("7_540i1")
 
 [sub_resource type="SphereShape3D" id="SphereShape3D_540i1"]
 radius = 0.21981534
@@ -31,7 +28,7 @@ size = Vector3(0.19887695, 0.34597462, 0.36168554)
 collision_layer = 2
 collision_mask = 3
 script = ExtResource("1_5x8vd")
-kart_material = SubResource("StandardMaterial3D_66xnu")
+kart_material = ExtResource("2_540i1")
 
 [node name="PunchArea" type="Area3D" parent="." unique_id=1491449194]
 unique_name_in_owner = true
@@ -46,20 +43,21 @@ shape = SubResource("SphereShape3D_540i1")
 [node name="Mesh" type="MeshInstance3D" parent="." unique_id=416408719]
 unique_name_in_owner = true
 transform = Transform3D(0.08089992, 0, 0, 0, 0.08089992, 0, 0, 0, 0.08089992, 0, 0.014091693, 0.11620152)
+top_level = true
 mesh = ExtResource("1_itbdw")
-surface_material_override/0 = SubResource("StandardMaterial3D_66xnu")
+surface_material_override/0 = ExtResource("2_540i1")
 
 [node name="KartWheel_R" type="MeshInstance3D" parent="Mesh" unique_id=870050552]
 unique_name_in_owner = true
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.0214937, 0.25116947, 0.9971032)
 mesh = ExtResource("7_8q7wk")
-surface_material_override/0 = SubResource("StandardMaterial3D_66xnu")
+surface_material_override/0 = ExtResource("2_540i1")
 
 [node name="KartWheel_L" type="MeshInstance3D" parent="Mesh" unique_id=504209422]
 unique_name_in_owner = true
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.0014075, 0.25116947, 0.9971032)
 mesh = ExtResource("7_8q7wk")
-surface_material_override/0 = SubResource("StandardMaterial3D_66xnu")
+surface_material_override/0 = ExtResource("2_540i1")
 
 [node name="gumbot" parent="Mesh" unique_id=2126276004 instance=ExtResource("2_8q7wk")]
 unique_name_in_owner = true

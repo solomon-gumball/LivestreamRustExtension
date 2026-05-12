@@ -1,0 +1,75 @@
+[gd_scene format=3 uid="uid://c8uck3hfq4df7"]
+
+[ext_resource type="Script" uid="uid://b3f8vfbvbkp7q" path="res://games/carnage/kart/physics_kart.gd" id="1_4r8fh"]
+[ext_resource type="Script" uid="uid://cbaeb05ehbrra" path="res://games/carnage/kart/physics_kart_movement_synchronizer.gd" id="1_kkve7"]
+[ext_resource type="PackedScene" uid="uid://d2c704lgm76kh" path="res://games/carnage/carnage_gumbot.tscn" id="1_pnixd"]
+[ext_resource type="ArrayMesh" uid="uid://bctux32kh7t6a" path="res://games/carnage/kart/kart.res" id="1_ygued"]
+[ext_resource type="PackedScene" uid="uid://bevytksojtyw2" path="res://games/carnage/kart/physics_wheel.tscn" id="2_4r8fh"]
+[ext_resource type="Shader" uid="uid://cw1km147x2fwu" path="res://materials/bot_mat/bot_shader.gdshader" id="2_7mpfn"]
+[ext_resource type="Texture2D" uid="uid://cas3gr887xevi" path="res://materials/bot_mat/bot_albedo.png" id="3_ygued"]
+[ext_resource type="Texture2D" uid="uid://ba6mac1k3t38a" path="res://materials/bot_mat/bot_normals.png" id="4_kkve7"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_4r8fh"]
+resource_local_to_scene = true
+render_priority = 0
+shader = ExtResource("2_7mpfn")
+shader_parameter/albedo_texture = ExtResource("3_ygued")
+shader_parameter/normal_map = ExtResource("4_kkve7")
+shader_parameter/bot_color = Color(1, 0, 0, 1)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_26l52"]
+size = Vector3(0.19887695, 0.30988234, 0.36168554)
+
+[sub_resource type="Curve" id="Curve_gvgjh"]
+_data = [Vector2(0.00314466, 0.495897), 0.0, 0.0, 0, 0, Vector2(0.416667, 0.986236), 0.0, 0.0, 0, 0, Vector2(0.646226, 0.984516), 0.0, 0.0, 0, 0, Vector2(1, 0.339333), 0.0, 0.0, 0, 0]
+point_count = 4
+
+[node name="PhysicsKart" type="RigidBody3D" unique_id=1967429638]
+mass = 5.0
+gravity_scale = 0.0
+center_of_mass_mode = 1
+center_of_mass = Vector3(0, 0.08, 0)
+custom_integrator = true
+script = ExtResource("1_4r8fh")
+
+[node name="Camera3D" type="Camera3D" parent="." unique_id=1133113333]
+transform = Transform3D(-4.371139e-08, 0, 1, 0, 1, 0, -1, 0, -4.371139e-08, 0.46557254, 0.18863684, -0.020418957)
+
+[node name="Wheel_Front_Left" parent="." unique_id=856590652 instance=ExtResource("2_4r8fh")]
+unique_name_in_owner = true
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.0726873, 0.11882522, 0.107221186)
+
+[node name="Wheel_Front_Right" parent="." unique_id=271885351 instance=ExtResource("2_4r8fh")]
+unique_name_in_owner = true
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.08327562, 0.11882522, 0.107221186)
+
+[node name="Wheel_Back_Right" parent="." unique_id=958039242 instance=ExtResource("2_4r8fh")]
+unique_name_in_owner = true
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.08327562, 0.11882522, -0.08784592)
+
+[node name="Wheel_Back_Left" parent="." unique_id=1421979309 instance=ExtResource("2_4r8fh")]
+unique_name_in_owner = true
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.0726873, 0.11882522, -0.09877588)
+
+[node name="Mesh" type="MeshInstance3D" parent="." unique_id=1659740352]
+unique_name_in_owner = true
+transform = Transform3D(0.08089992, 0, 0, 0, 0.08089992, 0, 0, 0, 0.08089992, 0, 0.056507967, 0.023652792)
+mesh = ExtResource("1_ygued")
+
+[node name="gumbot" parent="Mesh" unique_id=2126276004 instance=ExtResource("1_pnixd")]
+unique_name_in_owner = true
+transform = Transform3D(12.360951, 0, 0, 0, 12.360951, 0, 0, 0, 12.360951, 0, -0.019290864, -0.7726673)
+collision_layer = 0
+collision_mask = 0
+surface_mat = SubResource("ShaderMaterial_4r8fh")
+
+[node name="CollisionShape3D2" type="CollisionShape3D" parent="." unique_id=516426750]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.00065918267, 0.23344463, 0.0068468302)
+shape = SubResource("BoxShape3D_26l52")
+
+[node name="PhysicsKartMovementSynchronizer" type="Node" parent="." unique_id=1826281243 node_paths=PackedStringArray("kart")]
+unique_name_in_owner = true
+script = ExtResource("1_kkve7")
+kart = NodePath("..")
+collision_box_shape = SubResource("BoxShape3D_26l52")
+acceleration_curve = SubResource("Curve_gvgjh")

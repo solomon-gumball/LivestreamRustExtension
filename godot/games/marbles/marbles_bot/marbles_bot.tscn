@@ -1,10 +1,9 @@
 [gd_scene format=3 uid="uid://b4y1nifskfobg"]
 
 [ext_resource type="Script" uid="uid://c4ivyfbuwvsti" path="res://games/marbles/marbles_bot/marbles_bot.gd" id="1_34rat"]
-[ext_resource type="Shader" uid="uid://bc57lb2k1uuvp" path="res://shaders/ss_dither.gdshader" id="2_jkymx"]
+[ext_resource type="Material" uid="uid://dm2jijq5ff7uc" path="res://materials/dither_xray.tres" id="2_jkymx"]
 [ext_resource type="PackedScene" uid="uid://18s1j8sdp2pt" path="res://gumbot/emote_billboard.tscn" id="2_q8oxr"]
 [ext_resource type="FontFile" uid="uid://7uibxoligyvb" path="res://fonts/HomeVideo-BLG6G.ttf" id="3_qhe1h"]
-[ext_resource type="Texture2D" uid="uid://dq0fst107hxb8" path="res://textures/DitherMask.jpg" id="3_xy0im"]
 [ext_resource type="Shader" uid="uid://b00uak7trayog" path="res://materials/emote_icon/emote_icon.gdshader" id="4_b3ckc"]
 [ext_resource type="Texture2D" uid="uid://c53kbdrgxxvfc" path="res://icon.svg" id="5_jkymx"]
 [ext_resource type="ArrayMesh" uid="uid://bgcod2p568c06" path="res://games/marbles/marbles_bot/marbles_bubble.res" id="5_lmqmq"]
@@ -12,18 +11,10 @@
 [sub_resource type="PhysicsMaterial" id="PhysicsMaterial_6k1q8"]
 bounce = 0.5
 
-[sub_resource type="ShaderMaterial" id="ShaderMaterial_aa8ei"]
-resource_local_to_scene = true
-render_priority = 0
-shader = ExtResource("2_jkymx")
-shader_parameter/color = Color(1, 1, 0, 1)
-shader_parameter/dither_pattern = ExtResource("3_xy0im")
-shader_parameter/dither_scale = 0.01
-
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_b8ety"]
 resource_local_to_scene = true
 resource_name = "TranslucentBubble"
-next_pass = SubResource("ShaderMaterial_aa8ei")
+next_pass = ExtResource("2_jkymx")
 cull_mode = 2
 albedo_color = Color(0.8901961, 0.2, 0.30980393, 1)
 roughness = 0.0
@@ -33,7 +24,7 @@ radius = 0.177366
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_xy0im"]
 resource_name = "TransparentGlassBubble"
-next_pass = SubResource("ShaderMaterial_aa8ei")
+next_pass = ExtResource("2_jkymx")
 transparency = 4
 albedo_color = Color(0.9063318, 0.9063318, 0.9063318, 0.24475527)
 roughness = 0.14
@@ -52,7 +43,7 @@ freeze = true
 freeze_mode = 1
 script = ExtResource("1_34rat")
 bubble_mat = SubResource("StandardMaterial3D_b8ety")
-bubble_second_pass_mat = SubResource("ShaderMaterial_aa8ei")
+bubble_second_pass_mat = ExtResource("2_jkymx")
 
 [node name="RemoteTransform3D" type="RemoteTransform3D" parent="." unique_id=588227373]
 remote_path = NodePath("../LabelNode")
