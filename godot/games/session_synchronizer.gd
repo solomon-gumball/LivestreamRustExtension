@@ -19,6 +19,8 @@ enum GlobalGameMessage {
   SessionStateRefresh,
   PingNetTick,
   PongNetTick,
+  ServerMovementState,
+  ClientMovementInputs,
 }
 
 signal rtt_updated(rtt_msec: int, net_tick_prediction_offset: int)
@@ -42,7 +44,7 @@ var is_host := false
 var _skip_next_frame := false
 var _run_extra_frame := false
 
-var _registered_karts: Array[KartMovementSynchronizer] = []
+var _registered_synchronizers: Array[MovementSynchronizer] = []
 var _ping_timer: Timer = null
 
 func _ready() -> void:
@@ -67,12 +69,12 @@ func _exit_tree() -> void:
 func setup(lobby: Lobby) -> void:
   _lobby = lobby
 
-func register_kart(kart_sync: KartMovementSynchronizer) -> void:
-  if not _registered_karts.has(kart_sync):
-    _registered_karts.append(kart_sync)
+func register_synchronizer(sync: MovementSynchronizer) -> void:
+  if not _registered_synchronizers.has(sync):
+    _registered_synchronizers.append(sync)
 
-func unregister_kart(kart_sync: KartMovementSynchronizer) -> void:
-  _registered_karts.erase(kart_sync)
+func unregister_synchronizer(sync: MovementSynchronizer) -> void:
+  _registered_synchronizers.erase(sync)
 
 func _send_ping() -> void:
   if is_host: return
@@ -132,15 +134,15 @@ func _physics_process(delta: float) -> void:
     _skip_next_frame = false
     return
 
-  _tick_all_karts(delta)
+  _tick_all_synchronizers(delta)
 
   if _run_extra_frame:
     _run_extra_frame = false
-    _tick_all_karts(delta)
+    _tick_all_synchronizers(delta)
 
-func _tick_all_karts(delta: float) -> void:
-  for kart_sync in _registered_karts:
-    kart_sync.simulate_tick(net_sim_tick, delta)
+func _tick_all_synchronizers(delta: float) -> void:
+  for sync in _registered_synchronizers:
+    sync.simulate_tick(net_sim_tick, delta)
   net_sim_tick += 1
 
 func _new_peer_ready(peer_id: int) -> void:

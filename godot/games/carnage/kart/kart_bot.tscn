@@ -27,10 +27,6 @@ shader_parameter/bot_color = Color(1, 0, 0, 1)
 [sub_resource type="BoxShape3D" id="BoxShape3D_itbdw"]
 size = Vector3(0.19887695, 0.34597462, 0.36168554)
 
-[sub_resource type="Curve" id="Curve_540i1"]
-_data = [Vector2(0, 0.594123), 0.0, -0.01615138, 0, 0, Vector2(0.2463768, 0.23997551), 0.0, 0.0, 0, 0]
-point_count = 2
-
 [node name="KartBot" type="CharacterBody3D" unique_id=728622550]
 collision_layer = 2
 collision_mask = 3
@@ -46,13 +42,6 @@ collision_mask = 2
 [node name="CollisionShape3D2" type="CollisionShape3D" parent="PunchArea" unique_id=631958019]
 transform = Transform3D(3.3333335, 0, 0, 0, 3.3333335, 0, 0, 0, 3.3333335, 0, 0, 0)
 shape = SubResource("SphereShape3D_540i1")
-
-[node name="gumbot" parent="." unique_id=2126276004 instance=ExtResource("2_8q7wk")]
-unique_name_in_owner = true
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.012531064, 0.053692795)
-collision_layer = 0
-collision_mask = 0
-surface_mat = SubResource("ShaderMaterial_540i1")
 
 [node name="Mesh" type="MeshInstance3D" parent="." unique_id=416408719]
 unique_name_in_owner = true
@@ -72,6 +61,13 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.0014075, 0.25116947, 0.9971
 mesh = ExtResource("7_8q7wk")
 surface_material_override/0 = SubResource("StandardMaterial3D_66xnu")
 
+[node name="gumbot" parent="Mesh" unique_id=2126276004 instance=ExtResource("2_8q7wk")]
+unique_name_in_owner = true
+transform = Transform3D(12.360951, 0, 0, 0, 12.360951, 0, 0, 0, 12.360951, 0, -0.019290864, -0.7726673)
+collision_layer = 0
+collision_mask = 0
+surface_mat = SubResource("ShaderMaterial_540i1")
+
 [node name="CollisionShape3D" type="CollisionShape3D" parent="." unique_id=1152960397]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.00065918267, 0.17298222, 0.09939556)
 shape = SubResource("BoxShape3D_itbdw")
@@ -80,4 +76,3 @@ shape = SubResource("BoxShape3D_itbdw")
 unique_name_in_owner = true
 script = ExtResource("7_3xp8h")
 kart = NodePath("..")
-turn_ramp = SubResource("Curve_540i1")

@@ -19,7 +19,7 @@ class_name KartBot
     kart_wheel_l.rotation.y = wheel_turn
     kart_wheel_r.rotation.y = wheel_turn
 
-const VISUAL_CORRECTION_SMOOTH := 12.0
+const VISUAL_CORRECTION_SMOOTH := 0.001
 
 var _mesh_rest_position: Vector3
 var _mesh_rest_rotation_y: float
@@ -43,13 +43,15 @@ func handle_punch_impact(from_kart: KartBot) -> void:
   kart_movement.physics_state.velocity += impulse
 
 func apply_visual_correction(pos_offset: Vector3, rot_y_offset: float) -> void:
-  mesh.position = _mesh_rest_position + pos_offset
-  mesh.rotation.y = _mesh_rest_rotation_y + rot_y_offset
+  mesh.position = _mesh_rest_position - pos_offset
+  mesh.rotation.y = _mesh_rest_rotation_y - rot_y_offset
 
 func _process(delta: float) -> void:
   if Engine.is_editor_hint():
     return
+  
   if mesh.position != _mesh_rest_position:
+    print("interping mesh position")
     mesh.position = mesh.position.move_toward(_mesh_rest_position, VISUAL_CORRECTION_SMOOTH * delta)
   if mesh.rotation.y != _mesh_rest_rotation_y:
     mesh.rotation.y = move_toward(mesh.rotation.y, _mesh_rest_rotation_y, VISUAL_CORRECTION_SMOOTH * delta)

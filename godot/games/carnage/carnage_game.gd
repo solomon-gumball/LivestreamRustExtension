@@ -3,10 +3,6 @@ extends GameBase
 class_name Carnage
 
 enum CarnageGameMessage {
-  ClientKartInputs,
-  ServerKartState,
-  PingNetTick,
-  PongNetTick,
   ServerKartPunch,
 }
 
