@@ -19,7 +19,7 @@ class_name KartBot
     kart_wheel_l.rotation.y = wheel_turn
     kart_wheel_r.rotation.y = wheel_turn
 
-const VISUAL_CORRECTION_SMOOTH := 0.0001
+const VISUAL_CORRECTION_DURATION := 0.3
 
 var _mesh_rest_position: Vector3
 var _mesh_rest_rotation_y: float
@@ -37,26 +37,32 @@ func punch_collide() -> void:
 func handle_punch_impact(from_kart: KartBot) -> void:
   var impulse: Vector3 = (global_position - from_kart.global_position).normalized()
   var axis := impulse.cross(Vector3.UP).normalized()
-  impulse = impulse.rotated(axis, deg_to_rad(65))
+  impulse = impulse.rotated(axis, deg_to_rad(85))
   impulse *= 5.0
 
   kart_movement.physics_state.velocity += impulse
 
-# var visual_interp_target_position: Vector3
-func apply_visual_correction(pos_offset: Vector3, rot_y_offset: float) -> void:
-  pass
-  # mesh.position = _mesh_rest_position - pos_offset
-  # mesh.rotation.y = _mesh_rest_rotation_y - rot_y_offset
+var interp_visual_tween: Tween = null
+func apply_visual_correction(prev_global_pos: Vector3, prev_global_rot_y: float) -> void:
+  if interp_visual_tween:
+    interp_visual_tween.kill()
 
-func _process(delta: float) -> void:
+  interp_visual_tween = get_tree().create_tween()
+  interp_visual_tween.set_ease(Tween.EASE_OUT)
+  interp_visual_tween.set_trans(Tween.TRANS_QUAD)
+
+  interp_visual_tween.tween_method(
+    func(t: float) -> void:
+      var target_global_pos := global_position + global_basis * _mesh_rest_position
+      var target_global_rot_y := global_rotation.y + _mesh_rest_rotation_y
+      var rot_delta := angle_difference(prev_global_rot_y, target_global_rot_y)
+      mesh.global_position = prev_global_pos.lerp(target_global_pos, t)
+      mesh.global_rotation.y = prev_global_rot_y + rot_delta * t,
+    0.0, 1.0, VISUAL_CORRECTION_DURATION)
+
+func _process(_delta: float) -> void:
   if Engine.is_editor_hint():
     return
-  
-  if mesh.position != _mesh_rest_position:
-    print("interping mesh position")
-    mesh.position = mesh.position.move_toward(_mesh_rest_position, VISUAL_CORRECTION_SMOOTH * delta)
-  if mesh.rotation.y != _mesh_rest_rotation_y:
-    mesh.rotation.y = move_toward(mesh.rotation.y, _mesh_rest_rotation_y, VISUAL_CORRECTION_SMOOTH * delta)
 
 func punch_cosmetic() -> void:
   get_tree().create_tween().tween_property(gumbot.spring_bone_sim, "influence", 0, 0.1)

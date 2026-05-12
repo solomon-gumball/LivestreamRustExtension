@@ -41,16 +41,12 @@ func apply_state_to_entity(state: Dictionary) -> void:
   kart.wheel_turn = state.get("wheel_turn", 0.0)
 
 func apply_visual_correction(pre_state: Dictionary, post_state: Dictionary) -> void:
-  var pos_delta: Vector3 = pre_state.get("position", Vector3.ZERO) - post_state.get("position", Vector3.ZERO)
-  var rot_delta: float = pre_state.get("rotation_y", 0.0) - post_state.get("rotation_y", 0.0)
-  DebugDraw.draw_sphere(pre_state.get("position", Vector3.ZERO), 0.05, Color.RED, 1.0)
-  DebugDraw.draw_sphere(post_state.get("position", Vector3.ZERO), 0.05, Color.GREEN, 1.0)
-  DebugDraw.draw_line(
+  DebugDraw.draw_sphere(pre_state.get("position", Vector3.ZERO), 0.15, Color.RED, 1.0)
+  DebugDraw.draw_sphere(post_state.get("position", Vector3.ZERO), 0.15, Color.GREEN, 1.0)
+  kart.apply_visual_correction(
     pre_state.get("position", Vector3.ZERO),
-    post_state.get("position", Vector3.ZERO),
-    Color.ORANGE,
-  5.0)
-  kart.apply_visual_correction(pos_delta, rot_delta)
+    pre_state.get("rotation_y", 0.0)
+  )
 
 const POS_CORRECTION_THRESHOLD := 0.02
 const VEL_CORRECTION_THRESHOLD := 0.02

@@ -46,13 +46,11 @@ func _make_mmi(mesh: Mesh) -> MultiMeshInstance3D:
 	mmi.material_override = mat
 	return mmi
 
-
 func _process(delta: float) -> void:
 	_flush(_sphere_mmi, _sphere_items)
 	_flush(_line_mmi, _line_items)
 	_cull(delta, _sphere_items)
 	_cull(delta, _line_items)
-
 
 func _flush(mmi: MultiMeshInstance3D, items: Array) -> void:
 	var mm := mmi.multimesh
@@ -60,7 +58,6 @@ func _flush(mmi: MultiMeshInstance3D, items: Array) -> void:
 	for i in items.size():
 		mm.set_instance_transform(i, items[i].transform)
 		mm.set_instance_color(i, items[i].color)
-
 
 func _cull(delta: float, items: Array) -> void:
 	var i := items.size() - 1
@@ -70,15 +67,12 @@ func _cull(delta: float, items: Array) -> void:
 			items.remove_at(i)
 		i -= 1
 
-
 func draw_sphere(location: Vector3, radius: float, color: Color, duration: float = 0.0) -> void:
 	var t := Transform3D(Basis.IDENTITY.scaled(Vector3(radius, radius, radius)), location)
 	_sphere_items.append(_Item.new(t, color, duration))
 
-
 func draw_line(from_point: Vector3, to_point: Vector3, color: Color, duration: float = 0.0) -> void:
 	_line_items.append(_Item.new(_line_transform(from_point, to_point), color, duration))
-
 
 static func _line_transform(from_pt: Vector3, to_pt: Vector3) -> Transform3D:
 	var diff := to_pt - from_pt
@@ -86,9 +80,9 @@ static func _line_transform(from_pt: Vector3, to_pt: Vector3) -> Transform3D:
 	if length < 1e-6:
 		return Transform3D.IDENTITY
 	var dir := diff / length
-	var basis := _y_basis(dir).scaled(Vector3(1.0, length, 1.0))
+	var b := _y_basis(dir)
+	var basis := Basis(b.x, b.y * length, b.z)
 	return Transform3D(basis, (from_pt + to_pt) * 0.5)
-
 
 static func _y_basis(y_axis: Vector3) -> Basis:
 	var ref := Vector3.RIGHT if abs(y_axis.dot(Vector3.RIGHT)) < 0.9 else Vector3.UP
