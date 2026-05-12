@@ -97,6 +97,7 @@ func resimulate(from_tick: int, authoritative_state: Dictionary) -> void:
     local_input_buffer.store(tick, input, state)
   physics_state = state
 
+  apply_state_to_entity(physics_state)
   apply_visual_correction(pre_state, state)
 
 func consume_input_for_tick(tick: int) -> Dictionary:

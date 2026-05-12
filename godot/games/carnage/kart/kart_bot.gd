@@ -19,7 +19,7 @@ class_name KartBot
     kart_wheel_l.rotation.y = wheel_turn
     kart_wheel_r.rotation.y = wheel_turn
 
-const VISUAL_CORRECTION_DURATION := 0.3
+const VISUAL_CORRECTION_DURATION := 0.5
 
 var _mesh_rest_position: Vector3
 var _mesh_rest_rotation_y: float
@@ -27,6 +27,7 @@ var _mesh_rest_rotation_y: float
 func _ready() -> void:
   _mesh_rest_position = mesh.position
   _mesh_rest_rotation_y = mesh.rotation.y
+  mesh.top_level = true
 
 func punch_collide() -> void:
   var overlapping: Array[Node3D] = punch_area.get_overlapping_bodies()
@@ -44,8 +45,16 @@ func handle_punch_impact(from_kart: KartBot) -> void:
 
 var interp_visual_tween: Tween = null
 func apply_visual_correction(prev_global_pos: Vector3, prev_global_rot_y: float) -> void:
-  if interp_visual_tween:
+  var start_pos: Vector3
+  var start_rot_y: float
+
+  if interp_visual_tween != null and interp_visual_tween.is_running():
+    start_pos = mesh.global_position
+    start_rot_y = mesh.global_rotation.y
     interp_visual_tween.kill()
+  else:
+    start_pos = prev_global_pos
+    start_rot_y = prev_global_rot_y
 
   interp_visual_tween = get_tree().create_tween()
   interp_visual_tween.set_ease(Tween.EASE_OUT)
@@ -55,10 +64,15 @@ func apply_visual_correction(prev_global_pos: Vector3, prev_global_rot_y: float)
     func(t: float) -> void:
       var target_global_pos := global_position + global_basis * _mesh_rest_position
       var target_global_rot_y := global_rotation.y + _mesh_rest_rotation_y
-      var rot_delta := angle_difference(prev_global_rot_y, target_global_rot_y)
-      mesh.global_position = prev_global_pos.lerp(target_global_pos, t)
-      mesh.global_rotation.y = prev_global_rot_y + rot_delta * t,
+      var rot_delta := angle_difference(start_rot_y, target_global_rot_y)
+      mesh.global_position = start_pos.lerp(target_global_pos, t)
+      mesh.global_rotation.y = start_rot_y + rot_delta * t,
     0.0, 1.0, VISUAL_CORRECTION_DURATION)
+
+func _physics_process(_delta: float) -> void:
+  if interp_visual_tween == null or not interp_visual_tween.is_running():
+    mesh.global_position = global_position + global_basis * _mesh_rest_position
+    mesh.global_rotation.y = global_rotation.y + _mesh_rest_rotation_y
 
 func _process(_delta: float) -> void:
   if Engine.is_editor_hint():
