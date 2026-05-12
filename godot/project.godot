@@ -25,6 +25,7 @@ WSClient="*uid://c6x8llyglpm7e"
 Settings="*uid://s5c1ic0vboy0"
 ObsClient="*uid://c6vhllq4e1cu4"
 AlertLayer="*uid://cpfdkqp87e1rj"
+DebugDraw="*uid://bq4lhwovug77r"
 
 [display]
 
