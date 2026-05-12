@@ -90,7 +90,7 @@ func resimulate(from_tick: int, authoritative_state: Dictionary) -> void:
   var pre_state := physics_state.duplicate()
 
   var state := authoritative_state
-  for tick in range(from_tick + 1, _current_tick):
+  for tick in range(from_tick + 1, _current_tick + 1):
     var entry := local_input_buffer.get_entry(tick)
     var input: Dictionary = entry.get("input", _last_consumed_input)
     state = simulate_one_frame(input, state, tick)

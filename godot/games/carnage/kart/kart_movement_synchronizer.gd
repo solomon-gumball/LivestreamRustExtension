@@ -11,6 +11,11 @@ var mappings := {
   "punch": KEY_SPACE,
 }
 
+func _ready() -> void:
+  super._ready()
+  if !is_host:
+    kart.collision_mask = 1
+
 func _bind_inputs() -> void:
   for action in mappings:
     if not InputMap.has_action(action):

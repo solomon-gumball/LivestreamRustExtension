@@ -19,7 +19,7 @@ class_name KartBot
     kart_wheel_l.rotation.y = wheel_turn
     kart_wheel_r.rotation.y = wheel_turn
 
-const VISUAL_CORRECTION_DURATION := 0.5
+const VISUAL_CORRECTION_DURATION := 0.3
 
 var _mesh_rest_position: Vector3
 var _mesh_rest_rotation_y: float
@@ -53,8 +53,8 @@ func apply_visual_correction(prev_global_pos: Vector3, prev_global_rot_y: float)
     start_rot_y = mesh.global_rotation.y
     interp_visual_tween.kill()
   else:
-    start_pos = prev_global_pos
-    start_rot_y = prev_global_rot_y
+    start_pos = prev_global_pos + Basis(Vector3.UP, prev_global_rot_y) * _mesh_rest_position
+    start_rot_y = prev_global_rot_y + _mesh_rest_rotation_y
 
   interp_visual_tween = get_tree().create_tween()
   interp_visual_tween.set_ease(Tween.EASE_OUT)
