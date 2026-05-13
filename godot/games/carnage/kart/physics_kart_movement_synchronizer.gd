@@ -10,7 +10,8 @@ extends MovementSynchronizer
 @export var min_speed_threshold: float = 0.01
 @export var mass: float = 5.0
 @export var gravity: float = 2.0
-@export var angular_damp: float = 2.0
+@export var angular_damp: float = 0.1
+@export var surface_friction: float = 4.0
 
 var mappings := {
   "move_forward": KEY_W,
@@ -233,6 +234,12 @@ func simulate_one_frame(input: Dictionary, state: Dictionary, tick: int) -> Dict
 
     linear_velocity = linear_velocity.slide(normal)
 
+    # Apply surface friction on non-wall contacts — bleeds off sliding velocity
+    # proportional to how flat the surface is (no friction on steep walls).
+    var flatness := normal.dot(Vector3.UP)
+    if flatness > 0.3:
+      linear_velocity *= clampf(1.0 - surface_friction * flatness * delta, 0.0, 1.0)
+
     # Handle remainder with a second sweep
     var remainder := result.get_remainder()
     if remainder.length() > 0.001:
@@ -257,6 +264,7 @@ func simulate_one_frame(input: Dictionary, state: Dictionary, tick: int) -> Dict
   kart.global_basis = basis
   kart.wheel_turn = wheel_turn
   kart.set_velocities(linear_velocity, angular_velocity)
+  DebugDraw.draw_sphere(position + Vector3(0, 1.0, 0), 0.1, Color.GREEN if any_grounded else Color.RED)
 
   return {
     "position": position,
