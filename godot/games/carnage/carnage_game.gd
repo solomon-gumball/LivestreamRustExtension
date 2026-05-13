@@ -53,7 +53,6 @@ func spawn_cars() -> void:
     kart_inst.global_position = location
     kart_inst.look_at(Vector3.ZERO, Vector3.UP, true)
     if peer.peer_id == MultiplayerClient.my_peer_id():
-      print("cam target set")
       cam_target = kart_inst
       debug_camera.enter_follow_mode(kart_inst)
 
@@ -64,7 +63,7 @@ func start_game() -> void:
   
 var cam_target: Node3D = null
 
-func _physics_process(delta: float) -> void:
-  if cam_target:
-    camera_boom.global_position = camera_boom.global_position.lerp(cam_target.global_position, 5.0 * delta)
-    camera.look_at(camera_boom.global_position, Vector3.UP)
+# func _physics_process(delta: float) -> void:
+  # if cam_target:
+    # camera_boom.global_position = camera_boom.global_position.lerp(cam_target.global_position, 5.0 * delta)
+    # camera.look_at(camera_boom.global_position, Vector3.UP)

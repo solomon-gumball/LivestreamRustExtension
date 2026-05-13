@@ -52,8 +52,13 @@ environment = SubResource("Environment_q63vr")
 
 [node name="DebugCamera" parent="." unique_id=1098239593 instance=ExtResource("3_2xtgp")]
 unique_name_in_owner = true
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.91681266, 0)
+transform = Transform3D(1, 0, 0, 0, 0.97652966, 0.21538304, 0, -0.21538304, 0.97652966, 15.556162, 2.1902146, 9.260475)
 allow_free_cam = false
+
+[node name="Camera2" type="Camera3D" parent="DebugCamera" unique_id=1785970488]
+unique_name_in_owner = true
+current = true
+fov = 20.0
 
 [node name="BoomNode" type="Node3D" parent="." unique_id=1864927377]
 unique_name_in_owner = true
@@ -62,12 +67,6 @@ unique_name_in_owner = true
 unique_name_in_owner = true
 transform = Transform3D(1, 0, 0, 0, 0.6344473, 0.7729662, 0, -0.7729662, 0.6344473, -2.1457672e-06, 1.3747739, 1.8045387)
 visible = false
-
-[node name="Camera2" type="Camera3D" parent="BoomNode" unique_id=1785970488]
-unique_name_in_owner = true
-transform = Transform3D(1, 0, 0, 0, 0.6344473, 0.7729662, 0, -0.7729662, 0.6344473, -1.9073486e-06, 5.6526594, 4.874319)
-visible = false
-fov = 20.0
 
 [node name="CSGSphere3D" type="CSGSphere3D" parent="." unique_id=269553093]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.010496095, -1.9073486e-05, 0.021273375)

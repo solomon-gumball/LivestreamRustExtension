@@ -78,37 +78,27 @@ transform = Transform3D(-0.388362, -0.443438, -0.807798, -0.509024, -0.627499, 0
 shadow_enabled = true
 shadow_opacity = 0.57
 
-[node name="Sphere" parent="." index="5" unique_id=1218526013]
+[node name="Cube" parent="." index="14" unique_id=1006871667]
 visible = false
 
-[node name="Sphere_001-noimport" parent="." index="6" unique_id=1365265424]
-visible = false
+[node name="Camera" parent="." index="15" unique_id=214872609]
+transform = Transform3D(-0.33689916, -0.6081267, 0.7188051, 3.3169985e-05, 0.76342714, 0.6458938, -0.9415407, 0.21762489, -0.25717783, 122.04688, 93.43829, -1.9442319)
+current = true
+fov = 75.0
 
-[node name="Funnel" parent="." index="8" unique_id=45935798]
-visible = false
-
-[node name="MarblesSpinner" parent="." index="18" unique_id=256819916]
-visible = false
-
-[node name="Circle_001" parent="." index="21" unique_id=804863669]
-visible = false
-
-[node name="Circle_002" parent="." index="22" unique_id=259667857]
-visible = false
-
-[node name="marbles-bumper3" parent="." index="24" unique_id=462884197 instance=ExtResource("4_sevp3")]
+[node name="marbles-bumper3" parent="." index="19" unique_id=462884197 instance=ExtResource("4_sevp3")]
 transform = Transform3D(0.990595, 0, 0, 0, 0.349778, -0.926787, 0, 0.926787, 0.349778, 24.5844, 23.1001, -11.4756)
 
-[node name="marbles-bumper8" parent="." index="25" unique_id=1514189121 instance=ExtResource("4_sevp3")]
+[node name="marbles-bumper8" parent="." index="20" unique_id=1514189121 instance=ExtResource("4_sevp3")]
 transform = Transform3D(-0.990595, -8.10223e-08, -3.05786e-08, 0, 0.349778, -0.926787, 8.66006e-08, -0.926787, -0.349778, 24.5844, 23.4033, 0.83876)
 
-[node name="marbles-bumper2" parent="." index="26" unique_id=646239695 instance=ExtResource("4_sevp3")]
+[node name="marbles-bumper2" parent="." index="21" unique_id=646239695 instance=ExtResource("4_sevp3")]
 transform = Transform3D(0.990595, 0, 0, 0, 0.915989, -0.377151, 0, 0.377151, 0.915989, 24.5844, 17.5791, -8.61866)
 
-[node name="marbles-bumper5" parent="." index="27" unique_id=391888060 instance=ExtResource("4_sevp3")]
+[node name="marbles-bumper5" parent="." index="22" unique_id=391888060 instance=ExtResource("4_sevp3")]
 transform = Transform3D(0.990595, 0, 0, 0, 0.914853, 0.379899, 0, -0.379899, 0.914853, 24.5844, 17.7193, -2.0492)
 
-[node name="FinishArea2" type="Area3D" parent="." index="31" unique_id=749977209]
+[node name="FinishArea2" type="Area3D" parent="." index="23" unique_id=749977209]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -6.65094, -6.33502)
 collision_mask = 2
 
@@ -116,7 +106,7 @@ collision_mask = 2
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.580431, -11.536358, -8.960535)
 shape = SubResource("BoxShape3D_tjf41")
 
-[node name="OutOfBoundsArea" type="Area3D" parent="." index="32" unique_id=1964003097]
+[node name="OutOfBoundsArea" type="Area3D" parent="." index="24" unique_id=1964003097]
 unique_name_in_owner = true
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -13.6046, -5.97411)
 collision_layer = 0
@@ -134,41 +124,35 @@ shape = SubResource("BoxShape3D_87yb8")
 transform = Transform3D(0.9427405, -0.33352715, 0, 0.33352715, 0.9427405, 0, 0, 0, 1, 135.67004, 74.86697, 8.89998)
 shape = SubResource("BoxShape3D_fxgnb")
 
-[node name="SpawnPath" type="Path3D" parent="." index="33" unique_id=454938272]
+[node name="SpawnPath" type="Path3D" parent="." index="25" unique_id=454938272]
 transform = Transform3D(0.9999978, 0.0015394343, 0.0014083391, -0.0015396923, 0.9999988, 0.00018113754, -0.0014080569, -0.00018331753, 0.999999, 119.5167, 91.8646, 0.01438427)
 visible = false
 curve = SubResource("Curve3D_tjf41")
 
-[node name="SpawnPathTEST" type="Path3D" parent="." index="34" unique_id=1977413412]
+[node name="SpawnPathTEST" type="Path3D" parent="." index="26" unique_id=1977413412]
 transform = Transform3D(0.9999978, 0.0015394343, 0.0014083391, -0.0015396923, 0.9999988, 0.00018113754, -0.0014080569, -0.00018331753, 0.999999, 7.280916, 5.418811, -6.2699146)
 curve = SubResource("Curve3D_tjf41")
 
-[node name="DebugCamera" parent="." index="35" unique_id=1098239593 instance=ExtResource("3_4cld7")]
+[node name="DebugCamera" parent="." index="27" unique_id=1098239593 instance=ExtResource("3_4cld7")]
 unique_name_in_owner = true
 transform = Transform3D(-0.029620912, -0.56637686, 0.82361394, -0.020025253, 0.8241464, 0.5660228, -0.9993606, 0.00027303345, -0.035753805, 107.32893, 95.07298, -0.6528377)
 
-[node name="WorldEnvironment" type="WorldEnvironment" parent="." index="37" unique_id=1610954951]
+[node name="Camera" type="Camera3D" parent="DebugCamera" index="2" unique_id=102278982]
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="." index="28" unique_id=1610954951]
 environment = SubResource("Environment_8bl5g")
 
-[node name="shattering-glass" parent="." index="38" unique_id=1880019793 instance=ExtResource("9_1um5w")]
+[node name="shattering-glass" parent="." index="29" unique_id=1880019793 instance=ExtResource("9_1um5w")]
 transform = Transform3D(0.66785985, 0, 0, 0, 0.6653849, 0.05744333, 0, -0.05744333, 0.6653849, 0.66866255, -18.913874, -14.3682375)
 
-[node name="Cube" parent="." index="39" unique_id=387175557]
-visible = false
-
-[node name="SkySphere" type="CSGSphere3D" parent="." index="40" unique_id=2049814171]
+[node name="SkySphere" type="CSGSphere3D" parent="." index="30" unique_id=2049814171]
 transform = Transform3D(1, 5.9604645e-08, 0, 0, 0.9999999, 0, -2.9802322e-08, -2.9802322e-08, 0.99999994, -2.2888184e-05, 0, 4.887581e-06)
 radius = 550.13477
 radial_segments = 32
 rings = 32
 material = SubResource("StandardMaterial3D_1um5w")
 
-[node name="Camera" parent="." index="41" unique_id=1104200011]
-transform = Transform3D(-0.33689916, -0.6081267, 0.7188051, 3.3169985e-05, 0.76342714, 0.6458938, -0.9415407, 0.21762489, -0.25717783, 122.04688, 93.43829, -1.9442319)
-current = true
-fov = 75.0
-
-[node name="RigidBody3D" type="RigidBody3D" parent="." index="45" unique_id=857522275]
+[node name="RigidBody3D" type="RigidBody3D" parent="." index="31" unique_id=857522275]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -14.875166, -17.274761)
 visible = false
 

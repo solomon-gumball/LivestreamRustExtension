@@ -34,9 +34,12 @@ func _ready() -> void:
 func _unhandled_input(event: InputEvent) -> void:
   _state.input_state(event)
 
-func enter_follow_mode(node_to_follow: Node3D) -> void:
-  _follow_state.target = node_to_follow
+func enter_follow_mode(node_to_follow: Node3D, pitch: float = NAN) -> void:
+  _follow_state.set_target(node_to_follow, pitch)
   _state.change_state(_follow_state)
+
+func set_default_orbit_distance(new_distance: float) -> void:
+  _follow_state.default_orbit_distance = new_distance
 
 func enter_free_mode() -> void:
   _state.change_state(_free_state)
@@ -146,29 +149,32 @@ class FollowState extends DebugCameraState:
   const TRANSITION_DURATION: float = 0.5
   const MIN_DISTANCE: float = 0.5
   const ZOOM_RECOVER_SPEED: float = 2.0
-  const DEFAULT_ORBIT_DISTANCE: float = 5.0
 
+  var default_orbit_distance: float = 5.0
   var invert_pitch: bool = true
   var prevent_wall_clip: bool = false
 
-  var target: Node3D = null:
-    set(value):
-      _t = 0.0
-      var had_target := is_instance_valid(target)
-      _from_target = target if had_target else null
-      _from_transform = cam.global_transform
-      target = value
-      if not is_instance_valid(target):
-        return
-      orbit_distance = DEFAULT_ORBIT_DISTANCE
-      _current_distance = orbit_distance
-      if not had_target:
-        var forward := cam.global_transform.basis * Vector3.FORWARD
-        cam._yaw = atan2(-forward.x, -forward.z)
-        cam._pitch = asin(clamp(-forward.y, -1.0, 1.0))
-        cam._pitch = clamp(cam._pitch, deg_to_rad(-89.0), deg_to_rad(89.0))
+  var target: Node3D = null
 
-  var orbit_distance: float = DEFAULT_ORBIT_DISTANCE
+  func set_target(value: Node3D, pitch: float = NAN) -> void:
+    _t = 0.0
+    var had_target := is_instance_valid(target)
+    _from_target = target if had_target else null
+    _from_transform = cam.global_transform
+    target = value
+    if not is_instance_valid(target):
+      return
+    orbit_distance = default_orbit_distance
+    _current_distance = orbit_distance
+    if not is_nan(pitch):
+      cam._pitch = clamp(pitch, deg_to_rad(-89.0), deg_to_rad(89.0))
+    elif not had_target:
+      var forward := cam.global_transform.basis * Vector3.FORWARD
+      cam._yaw = atan2(-forward.x, -forward.z)
+      cam._pitch = asin(clamp(-forward.y, -1.0, 1.0))
+      cam._pitch = clamp(cam._pitch, deg_to_rad(-89.0), deg_to_rad(89.0))
+
+  var orbit_distance: float = default_orbit_distance
   var _current_distance: float = 5.0
   var _t: float = 1.0
   var _from_target: Node3D = null
