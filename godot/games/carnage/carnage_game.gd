@@ -8,6 +8,8 @@ enum CarnageGameMessage {
 
 @onready var spawn_center_node: Marker3D = %SpawnCenter
 @onready var camera_boom: Node3D = %BoomNode
+@onready var camera: Camera3D = %Camera2
+@onready var debug_camera: DebugCamera = %DebugCamera
 
 func _ready() -> void:
   super._ready()
@@ -53,6 +55,7 @@ func spawn_cars() -> void:
     if peer.peer_id == MultiplayerClient.my_peer_id():
       print("cam target set")
       cam_target = kart_inst
+      debug_camera.enter_follow_mode(kart_inst)
 
     i += 1
 
@@ -64,3 +67,4 @@ var cam_target: Node3D = null
 func _physics_process(delta: float) -> void:
   if cam_target:
     camera_boom.global_position = camera_boom.global_position.lerp(cam_target.global_position, 5.0 * delta)
+    camera.look_at(camera_boom.global_position, Vector3.UP)

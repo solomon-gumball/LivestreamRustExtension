@@ -67,7 +67,7 @@ bones/4/rotation = Quaternion(0.8077316, -0.009526761, -0.011748753, 0.5893563)
 bones/5/rotation = Quaternion(0.004864545, 0.20424525, 0.9788029, 0.014322811)
 bones/6/rotation = Quaternion(-0.38585603, -2.193282e-07, 2.4067282e-07, 0.9225591)
 bones/7/rotation = Quaternion(0.8077316, 0.009527074, 0.011748521, 0.5893563)
-bones/10/rotation = Quaternion(-0.026487151, 0.7066105, 0.02648715, 0.7066106)
+bones/10/rotation = Quaternion(-0.46139735, 0.53582877, 0.4613974, 0.53582877)
 bones/11/rotation = Quaternion(0.21930714, 0.50968343, 0.8172093, 0.15587258)
 bones/12/rotation = Quaternion(0.5691332, -1.0868064e-08, -1.390974e-07, 0.8222453)
 bones/13/rotation = Quaternion(0.2836535, 0.66767967, 0.063909724, 0.6853176)
@@ -95,7 +95,7 @@ bones/24/rotation = Quaternion(2.5288116e-07, 0.7071068, 0.7071068, 2.5288116e-0
 bones/24/scale = Vector3(0.63530767, 1, 1)
 
 [node name="Hand_L_Socket" parent="Armature/Skeleton3D" index="0" unique_id=541900749]
-transform = Transform3D(-0.05083309, -0.24439196, 0.96833825, 0.21269321, 0.94470406, 0.24958895, -0.9757927, 0.21864864, 0.003957823, 0.05423054, 0.21532588, 0.08801289)
+transform = Transform3D(-0.050833017, -0.24439189, 0.9683383, 0.21269289, 0.94470406, 0.24958888, -0.9757929, 0.21864831, 0.003957879, 0.05423055, 0.21532586, 0.08801288)
 
 [node name="Arm" parent="Armature/Skeleton3D" index="1" unique_id=1971448625]
 surface_material_override/0 = SubResource("ShaderMaterial_7kn7g")
@@ -119,17 +119,16 @@ surface_material_override/0 = SubResource("ShaderMaterial_7kn7g")
 surface_material_override/0 = SubResource("ShaderMaterial_7kn7g")
 
 [node name="Head_Socket" parent="Armature/Skeleton3D" index="9" unique_id=1137685559]
-transform = Transform3D(1, 0, 2.3841856e-07, -1.684985e-08, 0.99749947, 0.07067339, -2.378224e-07, -0.070673384, 0.9974995, 0, 0.23987946, -0.009265171)
+transform = Transform3D(1, 8.881784e-16, 2.3841858e-07, -1.6849851e-08, 0.99749947, 0.07067339, -2.3782243e-07, -0.070673384, 0.9974995, 9.1941774e-17, 0.23987946, -0.009265171)
 
 [node name="Spine_Socket" parent="Armature/Skeleton3D" index="10" unique_id=365435926]
-transform = Transform3D(1, 0, 2.3841852e-07, -1.6849846e-08, 0.99749947, 0.07067339, -2.3782236e-07, -0.070673384, 0.9974995, 0, 0.13662107, -0.0019492578)
+transform = Transform3D(1, 8.881784e-16, 2.3841855e-07, -1.6849848e-08, 0.99749947, 0.07067339, -2.3782239e-07, -0.070673384, 0.9974995, 0, 0.13662107, -0.0019492578)
 
 [node name="Sphere_001" parent="Armature/Skeleton3D" index="12" unique_id=1258894944]
 surface_material_override/0 = SubResource("ShaderMaterial_7kn7g")
 
 [node name="SpringBoneSimulator3D" type="SpringBoneSimulator3D" parent="Armature/Skeleton3D" index="13" unique_id=258612005]
 unique_name_in_owner = true
-active = false
 setting_count = 3
 settings/0/root_bone_name = "Spine"
 settings/0/root_bone = 8

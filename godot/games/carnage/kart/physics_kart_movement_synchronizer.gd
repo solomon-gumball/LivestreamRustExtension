@@ -10,8 +10,9 @@ extends MovementSynchronizer
 @export var min_speed_threshold: float = 0.01
 @export var mass: float = 5.0
 @export var gravity: float = 2.0
-@export var angular_damp: float = 0.1
+@export var angular_damp: float = 0.5
 @export var surface_friction: float = 4.0
+@export var collision_torque_scale: float = 0.2
 
 var mappings := {
   "move_forward": KEY_W,
@@ -230,7 +231,7 @@ func simulate_one_frame(input: Dictionary, state: Dictionary, tick: int) -> Dict
         ct_local.x / _inertia.x,
         ct_local.y / _inertia.y,
         ct_local.z / _inertia.z,
-      ) * delta
+      ) * collision_torque_scale
 
     linear_velocity = linear_velocity.slide(normal)
 

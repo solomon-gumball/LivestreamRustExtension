@@ -4,7 +4,7 @@ class_name DebugCamera
 @export var move_speed: float = 10.0
 @export var fast_move_speed: float = 50.0
 @export var mouse_sensitivity: float = 0.003
-@onready var camera: Camera3D = $Camera
+@export var allow_free_cam: bool = true
 @onready var collision_shape_cast: ShapeCast3D = %ShapeCast
 
 var _yaw: float = 0.0
@@ -186,8 +186,9 @@ class FollowState extends DebugCameraState:
     or Input.is_action_pressed("move_back") \
     or Input.is_action_pressed("move_left") or \
     Input.is_action_pressed("move_right"):
-      cam.enter_free_mode()
-      cam.did_enter_free_cam.emit()
+      if cam.allow_free_cam:
+        cam.enter_free_mode()
+        cam.did_enter_free_cam.emit()
 
     if event is InputEventMouseButton:
       if event.button_index == MOUSE_BUTTON_LEFT:

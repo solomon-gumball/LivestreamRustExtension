@@ -2,6 +2,7 @@
 
 [ext_resource type="PackedScene" uid="uid://cjoyyhxf1to18" path="res://games/carnage/blender/boxing_ring.blend" id="1_q63vr"]
 [ext_resource type="Script" uid="uid://c27qhdb12hl0x" path="res://games/carnage/carnage_game.gd" id="1_rhos2"]
+[ext_resource type="PackedScene" uid="uid://diyvoye7vs7ks" path="res://games/debug_camera.tscn" id="3_2xtgp"]
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_rhos2"]
 size = Vector3(10, 0.082, 10)
@@ -33,13 +34,13 @@ shape = SubResource("BoxShape3D_rhos2")
 unique_name_in_owner = true
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.69712985, 0)
 
-[node name="boxing_ring" parent="." unique_id=1235897736 instance=ExtResource("1_q63vr")]
+[node name="boxing_ring" parent="." unique_id=726846550 instance=ExtResource("1_q63vr")]
 transform = Transform3D(0.3, 0, 0, 0, 0.3, 0, 0, 0, 0.3, 0, -0.26946414, 0)
 
 [node name="DirectionalLight3D" type="DirectionalLight3D" parent="." unique_id=1486856216]
 transform = Transform3D(0.18701153, 0.62628746, 0.7568294, 0.06279059, -0.77646667, 0.6270222, 0.98034894, -0.069738604, -0.18453318, 1.137617, 0.9017843, -0.071688496)
 light_color = Color(0.99646264, 0.82775444, 0.63832206, 1)
-light_energy = 0.0
+light_energy = 0.1
 
 [node name="SpotLight3D" type="SpotLight3D" parent="." unique_id=494591315]
 transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, 0, 5.456707, 0)
@@ -49,11 +50,23 @@ spot_angle = 53.16479
 [node name="WorldEnvironment" type="WorldEnvironment" parent="." unique_id=1243038836]
 environment = SubResource("Environment_q63vr")
 
+[node name="DebugCamera" parent="." unique_id=1098239593 instance=ExtResource("3_2xtgp")]
+unique_name_in_owner = true
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.91681266, 0)
+allow_free_cam = false
+
 [node name="BoomNode" type="Node3D" parent="." unique_id=1864927377]
 unique_name_in_owner = true
 
-[node name="Camera3D" type="Camera3D" parent="BoomNode" unique_id=1785970488]
+[node name="Camera" type="Camera3D" parent="BoomNode" unique_id=1453069546]
+unique_name_in_owner = true
+transform = Transform3D(1, 0, 0, 0, 0.6344473, 0.7729662, 0, -0.7729662, 0.6344473, -2.1457672e-06, 1.3747739, 1.8045387)
+visible = false
+
+[node name="Camera2" type="Camera3D" parent="BoomNode" unique_id=1785970488]
+unique_name_in_owner = true
 transform = Transform3D(1, 0, 0, 0, 0.6344473, 0.7729662, 0, -0.7729662, 0.6344473, -1.9073486e-06, 5.6526594, 4.874319)
+visible = false
 fov = 20.0
 
 [node name="CSGSphere3D" type="CSGSphere3D" parent="." unique_id=269553093]

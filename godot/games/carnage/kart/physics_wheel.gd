@@ -72,7 +72,8 @@ func compute_forces(
 
   # Lateral grip (opposes sliding in the wheel's side direction)
   var vel_in_side_dir: float = force_basis.x.dot(world_velocity)
-  var friction_lookup: float = wheel_friction_curve.sample(abs(force_basis.x.dot(world_velocity.normalized())))
+  var tire_brake_dot: float = absf(force_basis.x.dot(world_velocity.normalized()))
+  var friction_lookup: float = wheel_friction_curve.sample(tire_brake_dot)
   var desired_acceleration: float = (-vel_in_side_dir * friction_lookup * base_friction) / delta
   var steering_force: Vector3 = desired_acceleration * force_basis.x * tire_mass 
 
