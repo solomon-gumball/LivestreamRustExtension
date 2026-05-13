@@ -3,6 +3,7 @@
 [ext_resource type="PackedScene" uid="uid://cjoyyhxf1to18" path="res://games/carnage/blender/boxing_ring.blend" id="1_q63vr"]
 [ext_resource type="Script" uid="uid://c27qhdb12hl0x" path="res://games/carnage/carnage_game.gd" id="1_rhos2"]
 [ext_resource type="PackedScene" uid="uid://diyvoye7vs7ks" path="res://games/debug_camera.tscn" id="3_2xtgp"]
+[ext_resource type="PackedScene" uid="uid://crpnxmsftnv0f" path="res://games/carnage/props/race_checkpoint.tscn" id="4_7nuw5"]
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_rhos2"]
 size = Vector3(10, 0.082, 10)
@@ -14,6 +15,7 @@ ambient_light_color = Color(1, 1, 1, 1)
 ambient_light_energy = 0.16
 tonemap_mode = 2
 ssao_enabled = true
+glow_enabled = true
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_rhos2"]
 cull_mode = 1
@@ -22,6 +24,12 @@ albedo_color = Color(0.2921582, 0.03526208, 0.4698527, 1)
 
 [node name="CarnageGame" type="Node3D" unique_id=1863440489]
 script = ExtResource("1_rhos2")
+
+[node name="RaceCheckpoint" parent="." unique_id=712868245 instance=ExtResource("4_7nuw5")]
+transform = Transform3D(-4.371139e-08, 0, 1, 0, 1, 0, -1, 0, -4.371139e-08, -38.446407, 0.65156734, 0.012181282)
+
+[node name="RaceCheckpoint2" parent="." unique_id=35775725 instance=ExtResource("4_7nuw5")]
+transform = Transform3D(-4.371139e-08, 0, 1, 0, 1, 0, -1, 0, -4.371139e-08, -28.446407, 0.65156734, 0.08892778)
 
 [node name="StaticBody3D" type="StaticBody3D" parent="." unique_id=82987365]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -2.2655797, 0)
@@ -32,18 +40,21 @@ shape = SubResource("BoxShape3D_rhos2")
 
 [node name="SpawnCenter" type="Marker3D" parent="." unique_id=1167048723]
 unique_name_in_owner = true
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.69712985, 0)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -27.993715, 0.58948624, -0.017645597)
 
-[node name="boxing_ring" parent="." unique_id=726846550 instance=ExtResource("1_q63vr")]
+[node name="boxing_ring" parent="." unique_id=2007237807 instance=ExtResource("1_q63vr")]
 transform = Transform3D(0.3, 0, 0, 0, 0.3, 0, 0, 0, 0.3, 0, -0.26946414, 0)
 
 [node name="DirectionalLight3D" type="DirectionalLight3D" parent="." unique_id=1486856216]
-transform = Transform3D(0.18701153, 0.62628746, 0.7568294, 0.06279059, -0.77646667, 0.6270222, 0.98034894, -0.069738604, -0.18453318, 1.137617, 0.9017843, -0.071688496)
+transform = Transform3D(-0.49766108, 0.63648874, 0.58924997, -0.29978192, -0.76370305, 0.57174164, 0.8139191, 0.10788706, 0.5708731, 2.0339265, 2.6281023, -0.35323796)
 light_color = Color(0.99646264, 0.82775444, 0.63832206, 1)
 light_energy = 0.1
+shadow_enabled = true
+shadow_opacity = 0.68
 
 [node name="SpotLight3D" type="SpotLight3D" parent="." unique_id=494591315]
 transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, 0, 5.456707, 0)
+visible = false
 spot_range = 13.224709
 spot_angle = 53.16479
 
@@ -58,7 +69,7 @@ allow_free_cam = false
 [node name="Camera2" type="Camera3D" parent="DebugCamera" unique_id=1785970488]
 unique_name_in_owner = true
 current = true
-fov = 20.0
+fov = 40.0
 
 [node name="BoomNode" type="Node3D" parent="." unique_id=1864927377]
 unique_name_in_owner = true

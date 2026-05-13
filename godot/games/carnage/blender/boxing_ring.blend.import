@@ -39,10 +39,10 @@ materials/extract_format=0
 materials/extract_path=""
 _subresources={
 "materials": {
-"Ring_Bars": {
+"WorldGrid": {
 "use_external/enabled": true,
-"use_external/fallback_path": "res://games/carnage/materials/ring_mat.tres",
-"use_external/path": "uid://dc6v8ppgmpeol"
+"use_external/fallback_path": "res://games/carnage/materials/world_grid.tres",
+"use_external/path": "uid://b8x72k1h2s85q"
 }
 }
 }

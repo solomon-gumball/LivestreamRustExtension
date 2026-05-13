@@ -23,7 +23,6 @@ func _new_peer_ready(peer_id: int) -> void:
     peer_id,
     MultiplayerPeer.TRANSFER_MODE_RELIABLE,
   )
-  print("Sending updated action")
 
 func _handle_peer_packet(_sender_id: int, packet: Dictionary) -> void:
   match packet.type:

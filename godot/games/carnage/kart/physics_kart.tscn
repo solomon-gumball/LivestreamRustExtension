@@ -7,9 +7,11 @@
 [ext_resource type="PackedScene" uid="uid://bevytksojtyw2" path="res://games/carnage/kart/physics_wheel.tscn" id="2_4r8fh"]
 [ext_resource type="Shader" uid="uid://cw1km147x2fwu" path="res://materials/bot_mat/bot_shader.gdshader" id="2_7mpfn"]
 [ext_resource type="Texture2D" uid="uid://cas3gr887xevi" path="res://materials/bot_mat/bot_albedo.png" id="3_ygued"]
+[ext_resource type="Material" uid="uid://bhq51jlaqehtr" path="res://games/carnage/fx/dust_clouds_fx_process.tres" id="4_26l52"]
 [ext_resource type="Texture2D" uid="uid://ba6mac1k3t38a" path="res://materials/bot_mat/bot_normals.png" id="4_kkve7"]
+[ext_resource type="ArrayMesh" uid="uid://busnpknqqkqhh" path="res://games/carnage/fx/cloud.res" id="5_1qgq1"]
 
-[sub_resource type="ShaderMaterial" id="ShaderMaterial_4r8fh"]
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_1qgq1"]
 resource_local_to_scene = true
 render_priority = 0
 shader = ExtResource("2_7mpfn")
@@ -60,12 +62,28 @@ unique_name_in_owner = true
 transform = Transform3D(0.08089992, 0, 0, 0, 0.08089992, 0, 0, 0, 0.08089992, 0, 0.056507967, 0.023652792)
 mesh = ExtResource("1_ygued")
 
+[node name="SmokeFX_R" type="GPUParticles3D" parent="Mesh" unique_id=1598145811]
+unique_name_in_owner = true
+transform = Transform3D(12.360948, 0, 0, 0, 12.360948, 0, 0, 0, 12.360948, -0.84048563, -0.022100985, -2.2230427)
+visible = false
+amount = 30
+process_material = ExtResource("4_26l52")
+draw_pass_1 = ExtResource("5_1qgq1")
+
+[node name="SmokeFX_L" type="GPUParticles3D" parent="Mesh" unique_id=1875679819]
+unique_name_in_owner = true
+transform = Transform3D(12.360947, 0, 0, 0, 12.360947, 0, 0, 0, 12.360947, 0.7337446, -0.07637793, -2.0160182)
+visible = false
+amount = 30
+process_material = ExtResource("4_26l52")
+draw_pass_1 = ExtResource("5_1qgq1")
+
 [node name="gumbot" parent="Mesh" unique_id=2126276004 instance=ExtResource("1_pnixd")]
 unique_name_in_owner = true
 transform = Transform3D(12.360951, 0, 0, 0, 12.360951, 0, 0, 0, 12.360951, 0, -0.019290864, -0.7726673)
 collision_layer = 0
 collision_mask = 0
-surface_mat = SubResource("ShaderMaterial_4r8fh")
+surface_mat = SubResource("ShaderMaterial_1qgq1")
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="." unique_id=1470868233]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.249, -0.042)

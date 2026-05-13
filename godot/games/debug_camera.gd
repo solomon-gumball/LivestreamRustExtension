@@ -153,6 +153,8 @@ class FollowState extends DebugCameraState:
   var default_orbit_distance: float = 5.0
   var invert_pitch: bool = true
   var prevent_wall_clip: bool = false
+  var move_lerp: float = 0.0
+  var lock_pitch: bool = false
 
   var target: Node3D = null
 
@@ -173,12 +175,14 @@ class FollowState extends DebugCameraState:
       cam._yaw = atan2(-forward.x, -forward.z)
       cam._pitch = asin(clamp(-forward.y, -1.0, 1.0))
       cam._pitch = clamp(cam._pitch, deg_to_rad(-89.0), deg_to_rad(89.0))
+    _lerped_position = target.global_position if is_instance_valid(target) else Vector3.ZERO
 
   var orbit_distance: float = default_orbit_distance
   var _current_distance: float = 5.0
   var _t: float = 1.0
   var _from_target: Node3D = null
   var _from_transform: Transform3D
+  var _lerped_position: Vector3 = Vector3.ZERO
 
   func enter_state(_previous_state: State) -> void:
     pass
@@ -213,8 +217,9 @@ class FollowState extends DebugCameraState:
     if event is InputEventMouseMotion and Input.mouse_mode == Input.MOUSE_MODE_CAPTURED:
       var pitch_sign := 1.0 if invert_pitch else -1.0
       cam._yaw -= event.relative.x * cam.mouse_sensitivity
-      cam._pitch += event.relative.y * cam.mouse_sensitivity * pitch_sign
-      cam._pitch = clamp(cam._pitch, deg_to_rad(-89.0), deg_to_rad(89.0))
+      if not lock_pitch:
+        cam._pitch += event.relative.y * cam.mouse_sensitivity * pitch_sign
+        cam._pitch = clamp(cam._pitch, deg_to_rad(-89.0), deg_to_rad(89.0))
 
   func _compute_safe_distance(orbit_dir: Vector3) -> float:
     var sc := cam.collision_shape_cast
@@ -231,6 +236,11 @@ class FollowState extends DebugCameraState:
     if not is_instance_valid(target):
       return
 
+    if move_lerp > 0.0:
+      _lerped_position = _lerped_position.lerp(target.global_position, move_lerp * delta)
+    else:
+      _lerped_position = target.global_position
+
     var orbit_dir := Vector3(
       sin(cam._yaw) * cos(cam._pitch),
       sin(cam._pitch),
@@ -246,9 +256,9 @@ class FollowState extends DebugCameraState:
     else:
       _current_distance = lerpf(_current_distance, safe_distance, ZOOM_RECOVER_SPEED * delta)
 
-    var orbit_position := target.global_position + orbit_dir * _current_distance
+    var orbit_position := _lerped_position + orbit_dir * _current_distance
     var orbit_transform := Transform3D(cam.global_transform.basis, orbit_position)
-    orbit_transform = orbit_transform.looking_at(target.global_position, Vector3.UP)
+    orbit_transform = orbit_transform.looking_at(_lerped_position, Vector3.UP)
 
     if _t < 1.0:
       _t = minf(_t + delta / TRANSITION_DURATION, 1.0)

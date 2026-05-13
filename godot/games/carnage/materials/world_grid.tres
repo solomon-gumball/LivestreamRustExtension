@@ -1,0 +1,8 @@
+[gd_resource type="StandardMaterial3D" format=3 uid="uid://b8x72k1h2s85q"]
+
+[ext_resource type="Texture2D" uid="uid://btvqnjxp1pq2l" path="res://games/carnage/textures/texture_09.png" id="1_x34cr"]
+
+[resource]
+albedo_texture = ExtResource("1_x34cr")
+uv1_triplanar = true
+uv1_world_triplanar = true

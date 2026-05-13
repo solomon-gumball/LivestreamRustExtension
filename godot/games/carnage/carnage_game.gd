@@ -11,11 +11,19 @@ enum CarnageGameMessage {
 @onready var camera: Camera3D = %Camera2
 @onready var debug_camera: DebugCamera = %DebugCamera
 
+var checkpoints: Array[RaceCheckpoint] = []
+
 func _ready() -> void:
   super._ready()
   SessionSynchronizer.get_instance().notify_ready()
 
   chatter_loaded.connect(_handle_chatter_loaded)
+
+  for child in get_children():
+    if child is RaceCheckpoint:
+      checkpoints.append(child)
+  
+  print("checkpoints.size ", checkpoints.size())
 
   await get_tree().create_timer(2.0).timeout
   spawn_cars()
@@ -53,17 +61,12 @@ func spawn_cars() -> void:
     kart_inst.global_position = location
     kart_inst.look_at(Vector3.ZERO, Vector3.UP, true)
     if peer.peer_id == MultiplayerClient.my_peer_id():
-      cam_target = kart_inst
-      debug_camera.enter_follow_mode(kart_inst)
+      debug_camera._follow_state.move_lerp = 5.0
+      debug_camera._follow_state.lock_pitch = true
+      debug_camera.set_default_orbit_distance(4.0)
+      debug_camera.enter_follow_mode(kart_inst, deg_to_rad(35.0))
 
     i += 1
 
 func start_game() -> void:
   pass
-  
-var cam_target: Node3D = null
-
-# func _physics_process(delta: float) -> void:
-  # if cam_target:
-    # camera_boom.global_position = camera_boom.global_position.lerp(cam_target.global_position, 5.0 * delta)
-    # camera.look_at(camera_boom.global_position, Vector3.UP)

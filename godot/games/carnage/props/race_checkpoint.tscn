@@ -1,0 +1,50 @@
+[gd_scene format=3 uid="uid://crpnxmsftnv0f"]
+
+[ext_resource type="Script" uid="uid://dm20d7kmdauyh" path="res://games/carnage/props/race_checkpoint.gd" id="1_atafs"]
+
+[sub_resource type="PlaneMesh" id="PlaneMesh_atafs"]
+size = Vector2(5, 0.7)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_y6aai"]
+transparency = 1
+cull_mode = 2
+albedo_color = Color(1, 1, 1, 0.33333334)
+emission_enabled = true
+emission = Color(0.38786954, 0.68051493, 0, 1)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_atafs"]
+emission_enabled = true
+emission = Color(0.19973725, 0.84656924, 0.46723878, 1)
+emission_energy_multiplier = 3.64
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_fqc7b"]
+size = Vector3(5, 1, 0.2)
+
+[node name="RaceCheckpoint" type="Area3D" unique_id=35775725]
+script = ExtResource("1_atafs")
+plane_mesh = SubResource("PlaneMesh_atafs")
+plane_material = SubResource("StandardMaterial3D_y6aai")
+pillar_material = SubResource("StandardMaterial3D_atafs")
+box_shape = SubResource("BoxShape3D_fqc7b")
+
+[node name="CollisionShape" type="CollisionShape3D" parent="." unique_id=1295741874]
+unique_name_in_owner = true
+shape = SubResource("BoxShape3D_fqc7b")
+
+[node name="PlaneMesh" type="MeshInstance3D" parent="CollisionShape" unique_id=183795880]
+unique_name_in_owner = true
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, -1, 0, 1, -4.371139e-08, 0, 0, 0)
+mesh = SubResource("PlaneMesh_atafs")
+surface_material_override/0 = SubResource("StandardMaterial3D_y6aai")
+
+[node name="Pillar_L" type="CSGBox3D" parent="CollisionShape" unique_id=1766727769]
+unique_name_in_owner = true
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.5, 0, 0)
+size = Vector3(0.2, 1, 0.2)
+material = SubResource("StandardMaterial3D_atafs")
+
+[node name="Pillar_R" type="CSGBox3D" parent="CollisionShape" unique_id=1251445999]
+unique_name_in_owner = true
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.5, 0, 0)
+size = Vector3(0.2, 1, 0.2)
+material = SubResource("StandardMaterial3D_atafs")
