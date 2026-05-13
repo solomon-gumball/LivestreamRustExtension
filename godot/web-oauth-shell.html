@@ -16,10 +16,9 @@
         align-items: center;
       }
       canvas {
-        display: block;
-        /* aspect-ratio: 1920 / 1080;
-        width: min(100vw, calc(100vh * 1920 / 1080)); */
-        /* height: auto; */
+        aspect-ratio: 1920 / 1080;
+        width: min(100vw, calc(100vh * 1920 / 1080));
+        /* height: auto;
         -webkit-touch-callout: none;
         -webkit-user-select: none;
         -khtml-user-select: none;
@@ -31,9 +30,14 @@
       }
     </style>
     <script>
-      (function () {
-        const TOKEN_KEY = 'oauth_token'
+      const TOKEN_KEY = 'oauth_token'
 
+      window.redirectToTwitchAuth = function () {
+        localStorage.removeItem(TOKEN_KEY)
+        window.location.href = '/auth/twitch'
+      }
+
+      ;(function () {
         // If the OAuth redirect landed a token in the URL hash, persist it and clean the URL.
         const hash = new URLSearchParams(window.location.hash.slice(1))
         const hashToken = hash.get('oauth_token')
@@ -45,14 +49,13 @@
         // Check for an auth error from the OAuth callback.
         const hashError = hash.get('auth_error') || new URLSearchParams(window.location.search).get('auth_error')
         if (hashError) {
-          localStorage.removeItem(TOKEN_KEY)
-          window.location.href = '/auth/twitch'
+          window.redirectToTwitchAuth()
           return
         }
 
         const token = localStorage.getItem(TOKEN_KEY)
         if (!token) {
-          window.location.href = '/auth/twitch'
+          window.redirectToTwitchAuth()
           return
         }
 

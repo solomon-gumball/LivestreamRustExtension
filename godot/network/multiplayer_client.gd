@@ -14,9 +14,9 @@ var rtc_mp := WebRTCMultiplayerPeer.new()
 var current_ping: float = 0.0
 
 const PRINT_DEBUG: bool = false
-const ALLOW_LAN: bool = true
+const ALLOW_LAN: bool = false
 const ALLOW_PUBLIC_IP: bool = false
-const ALLOW_RELAY: bool = false
+const ALLOW_RELAY: bool = true
 
 # Magic prefix written before every outgoing packet so we can identify packets
 # we encoded with var_to_bytes and skip any internal WebRTCMultiplayerPeer

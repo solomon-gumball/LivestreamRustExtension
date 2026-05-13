@@ -53,6 +53,7 @@ var chatter: Chatter = null:
 
     is_outfit_loaded = false
 
+    color = chatter.color
     emote = chatter.emote
     name_label.text = chatter.display_name
 
@@ -177,7 +178,7 @@ func _apply_outfit(loaded_mesh_files: Dictionary, equipped: Dictionary, sockets:
   await get_tree().process_frame
   outfit_loaded.emit()
 
-var color: Color = Color(0.5, 0.5, 0.5, 1.0):
+@export var color: Color = Color(0.5, 0.5, 0.5, 1.0):
   set(new_value):
     color = new_value
     # surface_mat.albedo_color = color

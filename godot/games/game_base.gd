@@ -40,6 +40,7 @@ func _ready() -> void:
     all_chatters_loaded_locally.emit()
 
 func start_game() -> void:
+  assert(false, "start_game should be overridden by game implementation")
   pass
 
 func _lobby_was_updated() -> void:

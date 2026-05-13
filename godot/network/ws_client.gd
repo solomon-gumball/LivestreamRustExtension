@@ -293,6 +293,8 @@ class ConnectedState extends WSClientState:
           if message.get("store"):
             store_data = Message.StoreData.FromData(message.get("store"))
           authenticated_successfully.emit()
+        elif OS.has_feature("oauth") and OS.has_feature("web"):
+          JavaScriptBridge.eval("window.redirectToTwitchAuth()")
 
 class AuthenticatedState extends WSClientState:
   signal store_data_received()
@@ -312,7 +314,6 @@ class AuthenticatedState extends WSClientState:
   signal drops_triggered()
   signal cam_updated(user_name: String)
   signal primary_notification_received(notification: Message.PrimaryNotification)
-  # signal inbox_loaded(mail: Array[Message.ShowMailRequest.Mail])
   signal message_received(message: Variant)
 
   var action_queue: Array[Message.QueueAction] = []

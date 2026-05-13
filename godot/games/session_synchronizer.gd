@@ -17,6 +17,7 @@ enum GlobalGameMessage {
   UpdateAnimation,
   AnimationStateRefresh,
   SessionStateRefresh,
+  SessionForceStart,
   PingNetTick,
   PongNetTick,
   ServerMovementState,
@@ -46,6 +47,7 @@ var _run_extra_frame := false
 
 var _registered_synchronizers: Array[MovementSynchronizer] = []
 var _ping_timer: Timer = null
+var _fallback_start_timer: Timer = null
 
 func _ready() -> void:
   MultiplayerClient.packet_received.connect(_handle_peer_packet)
@@ -57,6 +59,15 @@ func _ready() -> void:
   _ping_timer.one_shot = false
   _ping_timer.autostart = true
   _ping_timer.timeout.connect(_send_ping)
+
+  # _fallback_start_timer = Timer.new()
+  # _fallback_start_timer.wait_time = 10.0
+  # _fallback_start_timer.one_shot = true
+  # _fallback_start_timer.autostart = false
+  # _fallback_start_timer.timeout.connect(_force_start_timeout)
+  # add_child(_fallback_start_timer)
+  # _fallback_start_timer.start()
+
   add_child(_ping_timer)
 
   _send_ping()
@@ -85,6 +96,8 @@ func _send_ping() -> void:
 
 func _handle_peer_packet(sender_id: int, packet: Dictionary) -> void:
   match packet.type:
+    # GlobalGameMessage.SessionForceStart:
+    #   trigger_start_local()
     GlobalGameMessage.ClientReady:
       state[sender_id] = true
       _new_peer_ready(sender_id)
@@ -152,6 +165,13 @@ func _new_peer_ready(peer_id: int) -> void:
     MultiplayerPeer.TRANSFER_MODE_RELIABLE
   )
 
+# func _send_refresh_state() -> void:
+#   MultiplayerClient.send_packet(
+#     { "type": GlobalGameMessage.SessionStateRefresh, "state": state },
+#     peer_id,
+#     MultiplayerPeer.TRANSFER_MODE_RELIABLE
+#   )
+
 func notify_ready() -> void:
   if MultiplayerClient.state.current is MultiplayerClient.Disconnected:
     all_peers_ready.emit()
@@ -172,3 +192,20 @@ func _check_all_peers_ready() -> void:
     if not state.get(peer.peer_id, false): return
   _all_peers_ready_fired = true
   all_peers_ready.emit()
+
+# func trigger_start_local() -> void:
+#   if _all_peers_ready_fired: return
+#   _all_peers_ready_fired = true
+#   all_peers_ready.emit()  
+
+# func _force_start_timeout() -> void:
+#   if _all_peers_ready_fired or !is_host: return
+
+#   _all_peers_ready_fired = true
+#   all_peers_ready.emit()
+
+#   MultiplayerClient.send_packet(
+#     { "type": GlobalGameMessage.SessionForceStart },
+#     MultiplayerPeer.TARGET_PEER_BROADCAST,
+#     MultiplayerPeer.TRANSFER_MODE_RELIABLE
+#   )

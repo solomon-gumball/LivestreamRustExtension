@@ -66,21 +66,29 @@ func _ready() -> void:
 
   # Get all nodes in a group for the current map
   _bind_inputs()
-  if is_game_host:
-    SessionSynchronizer.get_instance().peer_is_ready.connect(_peer_is_ready)
-    SessionSynchronizer.get_instance().all_peers_ready.connect(server_only_start_game)
 
-    current_map.finish_area.body_entered.connect(on_finish_area_entered)
-    current_map.out_of_bounds_area.body_entered.connect(_authority_handle_marble_out_of_bounds)
-
-    var new_state := MarblesGameState.new()
-    new_state.started_at = Time.get_unix_time_from_system()
-
-    _handle_peer_packet(1, { "type": MarblesMessage.StateRefresh, "state": new_state })
-    _send_refresh_state(MultiplayerPeer.TARGET_PEER_BROADCAST)
+  await get_tree().create_timer(2.0).timeout
+  SessionSynchronizer.get_instance().notify_ready()
 
 func toggle_username_visibility(new_visibility: bool) -> void:
   _handle_peer_packet(1, { "type": MarblesMessage.UsernameVisibility, "visibility": new_visibility })
+
+func start_game() -> void:
+  if !is_game_host: return
+
+  print("start_game called!!!")
+
+  # SessionSynchronizer.get_instance().peer_is_ready.connect(_peer_is_ready)
+  # SessionSynchronizer.get_instance().all_peers_ready.connect(server_only_start_game)
+
+  current_map.finish_area.body_entered.connect(on_finish_area_entered)
+  current_map.out_of_bounds_area.body_entered.connect(_authority_handle_marble_out_of_bounds)
+
+  var new_state := MarblesGameState.new()
+  new_state.started_at = Time.get_unix_time_from_system()
+  print("SENDING STATE REFRESH WITH START TIME ", new_state.started_at)
+  _handle_peer_packet(1, { "type": MarblesMessage.StateRefresh, "state": new_state })
+  _send_refresh_state(MultiplayerPeer.TARGET_PEER_BROADCAST)
 
 func handle_lobby_updated() -> void:
   if MultiplayerClient.is_lobby_host():
@@ -163,8 +171,8 @@ func increment_focused_bot(index_change: int) -> void:
   focused_marble = leaderboard[new_index]
 
 func _try_follow_marble_at_cursor(screen_pos: Vector2) -> void:
-  var origin := current_map.camera.camera.project_ray_origin(screen_pos)
-  var direction := current_map.camera.camera.project_ray_normal(screen_pos)
+  var origin: Vector3 = current_map.camera.camera.project_ray_origin(screen_pos)
+  var direction: Vector3 = current_map.camera.camera.project_ray_normal(screen_pos)
   var space := get_world_3d().direct_space_state
   var shape := SphereShape3D.new()
   shape.radius = 0.4
@@ -175,14 +183,14 @@ func _try_follow_marble_at_cursor(screen_pos: Vector2) -> void:
   query.collision_mask = 2
   var result := space.cast_motion(query)
   if result[0] < 1.0:
-    var hit_pos := origin + direction * 1000.0 * result[1]
+    var hit_pos: Vector3 = origin + direction * 1000.0 * result[1]
     var shape_query := PhysicsShapeQueryParameters3D.new()
     shape_query.shape = shape
     shape_query.transform = Transform3D(Basis.IDENTITY, hit_pos)
     shape_query.collision_mask = 2
     var hits := space.intersect_shape(shape_query)
     if hits.size() > 0 and hits[0].collider is Node3D:
-      var selected_marble := hits[0].collider as MarbleBot
+      var selected_marble: MarbleBot = hits[0].collider as MarbleBot
       focused_marble = selected_marble
 
 ## Extra Y offset added on top of the raycast ground hit, so marbles spawn above the surface.

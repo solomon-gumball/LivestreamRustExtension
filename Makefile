@@ -3,6 +3,8 @@ GODOT_PROJECT = godot
 BUILD_TIME := $(shell date -u +"%Y-%m-%d %H:%M UTC")
 BUILD_VERSION := $(shell date -u +"%Y%m%d%H%M")
 
+SED_INPLACE := $(shell if [ "$$(uname)" = "Darwin" ]; then echo "sed -i ''"; else echo "sed -i"; fi)
+
 .PHONY: export extension-prod extension-local website-prod website-local overlay overlay-linux minigame build-rust export-games
 
 export: extension-prod
@@ -17,13 +19,13 @@ website-prod:
 	printf "%s" "$(BUILD_TIME)" > $(GODOT_PROJECT)/version.txt
 	$(GODOT) --headless --path $(GODOT_PROJECT) --export-release "website_prod"
 	gzip -f ../livestream-listener/public/index.wasm
-	sed -i '' "s|/index.pck'|/index.pck?v=$(BUILD_VERSION)'|g" ../livestream-listener/public/index.html
+	$(SED_INPLACE) "s|/index.pck'|/index.pck?v=$(BUILD_VERSION)'|g" ../livestream-listener/public/index.html
 
 website-local:
 	printf "%s" "$(BUILD_TIME)" > $(GODOT_PROJECT)/version.txt
 	$(GODOT) --headless --path $(GODOT_PROJECT) --export-debug "website_local"
 	gzip -f ../livestream-listener/public/index.wasm
-	sed -i '' "s|/index.pck'|/index.pck?v=$(BUILD_VERSION)'|g" ../livestream-listener/public/index.html
+	$(SED_INPLACE) "s|/index.pck'|/index.pck?v=$(BUILD_VERSION)'|g" ../livestream-listener/public/index.html
 
 overlay:
 	$(GODOT) --headless --path $(GODOT_PROJECT) --export-debug "overlay"

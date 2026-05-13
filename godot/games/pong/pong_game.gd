@@ -84,11 +84,12 @@ func _ready() -> void:
   MultiplayerClient.connected_state.left_lobby.connect(_left_lobby)
   MultiplayerClient.packet_received.connect(_handle_peer_packet)
   chatter_loaded.connect(_handle_chatter_loaded)
-  # all_chatters_loaded_locally.connect(func () -> void:
-  #   # TODO: Do this better
-  #   await get_tree().create_timer(3.0).timeout
-  #   SessionSynchronizer.get_instance().notify_ready()
-  # )
+  all_chatters_loaded_locally.connect(func () -> void:
+    # TODO: Do this better
+    await get_tree().create_timer(3.0).timeout
+    print("Notifying ready to SessionSynchronizer")
+    SessionSynchronizer.get_instance().notify_ready()
+  )
 
   var sub_channels: Array[String] = []
   for peer in lobby.peers:
@@ -116,8 +117,9 @@ func _check_bots_loaded() -> void:
   if !pong_paddle_l.gumbot.is_outfit_loaded: return
   if !pong_paddle_r.gumbot.is_outfit_loaded: return
 
+  print("OUTFITS LOADED!!!")
   outfit_loaded_timer.stop()
-  SessionSynchronizer.get_instance().notify_ready()
+  # SessionSynchronizer.get_instance().notify_ready()
 
 func start_game() -> void:
   if not MultiplayerClient.is_lobby_host():
