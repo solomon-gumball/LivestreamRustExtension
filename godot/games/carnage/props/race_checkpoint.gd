@@ -17,3 +17,21 @@ extends Area3D
     plane_mesh.size.x = new_value
     pillar_l.position.x = new_value / 2.0
     pillar_r.position.x = -new_value / 2.0
+
+@export var reached_color: Color = Color.GREEN 
+@export var unreached_color: Color = Color.RED
+@export var reached: bool = false:
+  set(new_reached):
+    reached = new_reached
+    plane_material.emission = reached_color if new_reached else unreached_color
+
+signal checkpoint_reached(peer_id)
+
+func _on_body_entered(body: Node) -> void:
+  if body is PhysicsKart:
+    var kart := body as PhysicsKart
+    checkpoint_reached.emit(kart.physics_kart_movement_sync.owner_peer_id)
+
+func _ready() -> void:
+  body_entered.connect(_on_body_entered)
+  reached = reached

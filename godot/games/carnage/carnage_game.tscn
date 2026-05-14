@@ -2,11 +2,35 @@
 
 [ext_resource type="PackedScene" uid="uid://cjoyyhxf1to18" path="res://games/carnage/blender/boxing_ring.blend" id="1_q63vr"]
 [ext_resource type="Script" uid="uid://c27qhdb12hl0x" path="res://games/carnage/carnage_game.gd" id="1_rhos2"]
+[ext_resource type="Script" uid="uid://cf2o11ublve5u" path="res://games/carnage/kart_game_state_synchronizer.gd" id="2_pjf2b"]
 [ext_resource type="PackedScene" uid="uid://diyvoye7vs7ks" path="res://games/debug_camera.tscn" id="3_2xtgp"]
 [ext_resource type="PackedScene" uid="uid://crpnxmsftnv0f" path="res://games/carnage/props/race_checkpoint.tscn" id="4_7nuw5"]
 
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_pjf2b"]
+resource_local_to_scene = true
+transparency = 1
+cull_mode = 2
+albedo_color = Color(1, 1, 1, 0.33333334)
+emission_enabled = true
+emission = Color(1, 0, 0, 1)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_22osk"]
+resource_local_to_scene = true
+transparency = 1
+cull_mode = 2
+albedo_color = Color(1, 1, 1, 0.33333334)
+emission_enabled = true
+emission = Color(1, 0, 0, 1)
+
 [sub_resource type="BoxShape3D" id="BoxShape3D_rhos2"]
 size = Vector3(10, 0.082, 10)
+
+[sub_resource type="Curve3D" id="Curve3D_pjf2b"]
+_data = {
+"points": PackedVector3Array(0, 0, 0, 0, 0, 0, 0.053583287, 0.18745494, 1.3628873, 0, 0, 0, 0, 0, 0, 0.013246526, 0.18745494, -1.2469606),
+"tilts": PackedFloat32Array(0, 0)
+}
+point_count = 2
 
 [sub_resource type="Environment" id="Environment_q63vr"]
 background_mode = 3
@@ -25,11 +49,17 @@ albedo_color = Color(0.2921582, 0.03526208, 0.4698527, 1)
 [node name="CarnageGame" type="Node3D" unique_id=1863440489]
 script = ExtResource("1_rhos2")
 
+[node name="KartGameStateSynchronizer" type="Node" parent="." unique_id=463833223]
+unique_name_in_owner = true
+script = ExtResource("2_pjf2b")
+
 [node name="RaceCheckpoint" parent="." unique_id=712868245 instance=ExtResource("4_7nuw5")]
 transform = Transform3D(-4.371139e-08, 0, 1, 0, 1, 0, -1, 0, -4.371139e-08, -38.446407, 0.65156734, 0.012181282)
+plane_material = SubResource("StandardMaterial3D_pjf2b")
 
 [node name="RaceCheckpoint2" parent="." unique_id=35775725 instance=ExtResource("4_7nuw5")]
 transform = Transform3D(-4.371139e-08, 0, 1, 0, 1, 0, -1, 0, -4.371139e-08, -28.446407, 0.65156734, 0.08892778)
+plane_material = SubResource("StandardMaterial3D_22osk")
 
 [node name="StaticBody3D" type="StaticBody3D" parent="." unique_id=82987365]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -2.2655797, 0)
@@ -40,7 +70,11 @@ shape = SubResource("BoxShape3D_rhos2")
 
 [node name="SpawnCenter" type="Marker3D" parent="." unique_id=1167048723]
 unique_name_in_owner = true
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -27.993715, 0.58948624, -0.017645597)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -40.79398, 0.58948624, -0.017645597)
+
+[node name="SpawnPath" type="Path3D" parent="SpawnCenter" unique_id=285754891]
+unique_name_in_owner = true
+curve = SubResource("Curve3D_pjf2b")
 
 [node name="boxing_ring" parent="." unique_id=2007237807 instance=ExtResource("1_q63vr")]
 transform = Transform3D(0.3, 0, 0, 0, 0.3, 0, 0, 0, 0.3, 0, -0.26946414, 0)

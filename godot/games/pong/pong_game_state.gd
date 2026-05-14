@@ -1,5 +1,4 @@
 class_name PongGameState
-extends BaseGameState
 
 enum Phase { Intro, Playing, RoundComplete }
 var phase: int = Phase.Intro

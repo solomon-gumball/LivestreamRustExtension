@@ -16,7 +16,6 @@ var is_offline_mode: bool = true
 
 var chatters_loaded_fired: bool = false
 
-var game_state: BaseGameState = null
 var anim_player: AnimationPlayer = null
 
 func _ready() -> void:

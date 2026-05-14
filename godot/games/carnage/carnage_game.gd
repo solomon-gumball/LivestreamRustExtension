@@ -10,25 +10,45 @@ enum CarnageGameMessage {
 @onready var camera_boom: Node3D = %BoomNode
 @onready var camera: Camera3D = %Camera2
 @onready var debug_camera: DebugCamera = %DebugCamera
+@onready var game_state: KartGameStateSynchronizer = %KartGameStateSynchronizer
+@onready var spawn_path: Path3D = %SpawnPath
 
 var checkpoints: Array[RaceCheckpoint] = []
 
 func _ready() -> void:
   super._ready()
-  if Engine.is_editor_hint():
-    return
+  if Engine.is_editor_hint(): return
+
   SessionSynchronizer.get_instance().notify_ready()
 
   chatter_loaded.connect(_handle_chatter_loaded)
 
-  for child in get_children():
-    if child is RaceCheckpoint:
-      checkpoints.append(child)
-  
-  print("checkpoints.size ", checkpoints.size())
+  if is_game_host:
+    _setup_checkpoints()
+
+  game_state.state_updated.connect(_apply_state)
 
   await get_tree().create_timer(2.0).timeout
   spawn_cars()
+
+func _setup_checkpoints() -> void:
+  var checkpoint_index: int = 0
+  for child in get_children():
+    if child is RaceCheckpoint:
+      var checkpoint := child as RaceCheckpoint
+      checkpoints.append(child)
+      var callback: Callable = game_state.authority_checkpoint_reached.bind(checkpoint_index)
+      checkpoint.checkpoint_reached.connect(callback)
+      checkpoint_index += 1
+
+func _apply_state() -> void:
+  var my_peer_id := MultiplayerClient.my_peer_id()
+  var last_reached_checkpoint: int = game_state.game_state.checkpoints_reached.get(my_peer_id, -1)
+
+  var index := 0
+  for checkpoint in checkpoints:
+    checkpoint.reached = last_reached_checkpoint > index
+    index += 1
 
 func _handle_chatter_loaded(chatter: Chatter) -> void:
   if MultiplayerClient.current_lobby == null: return
@@ -42,6 +62,12 @@ var karts_by_peer_id: Dictionary[int, KartBot] = {}
 const spawn_ring_size := 1.0
 const car_template: PackedScene = preload("res://games/carnage/kart/kart_bot.tscn")
 const physics_car_template: PackedScene = preload("res://games/carnage/kart/physics_kart.tscn")
+
+func get_spawn_transform(join_index: int) -> Transform3D:
+  var spawn_path_length = spawn_path.curve.get_baked_length()
+  var spawn_path_offset = spawn_path_length / lobby.players.size() * join_index
+  var spawn_transform = spawn_path.global_transform * spawn_path.curve.sample_baked_with_rotation(spawn_path_offset)
+  return spawn_transform
 
 func spawn_cars() -> void:
   var i := 0

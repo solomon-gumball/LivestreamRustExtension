@@ -11,6 +11,7 @@ func _ready() -> void:
   ObjectSerializer.register_script(MarblesGameState)
   ObjectSerializer.register_script(PongGameState)
   ObjectSerializer.register_script(SessionSynchronizer)
+  ObjectSerializer.register_script(KartGameStateSynchronizer)
 
   if WSClient.state.current is not WSClient.AuthenticatedState:
     await WSClient.authenticated
@@ -21,7 +22,7 @@ func _ready() -> void:
 
   is_host = DebugScreenLayout.window_index == 0
   if is_host:
-    var error: String = await WSClient.create_lobby("pong", true)
+    var error: String = await WSClient.create_lobby("carnage", true)
     if error:
       print("err ", error)
   else:

@@ -12,10 +12,7 @@ enum PongGameMessage {
 }
 const NUM_ROUNDS = 5
 
-var pong_state: PongGameState = null:
-  set(new_state):
-    pong_state = new_state
-    game_state = new_state
+var pong_state: PongGameState = null
 
 var ball: PongBall = null
 var ball_template: PackedScene = preload("res://games/pong/pong_ball.tscn")
@@ -40,9 +37,9 @@ var outfit_loaded_timer: Timer = null
     players_distance_from_center = new_value
     if not is_node_ready():
       return
-    if game_state:
-      pong_paddle_l.position = lerp(game_state.paddle_l_state.position, Vector3(0, 0, -0.3), 1.0 - new_value)
-      pong_paddle_r.position = lerp(game_state.paddle_r_state.position, Vector3(0, 0, 0.3), 1.0 - new_value)
+    if pong_state:
+      pong_paddle_l.position = lerp(pong_state.paddle_l_state.position, Vector3(0, 0, -0.3), 1.0 - new_value)
+      pong_paddle_r.position = lerp(pong_state.paddle_r_state.position, Vector3(0, 0, 0.3), 1.0 - new_value)
     elif Engine.is_editor_hint():
       pong_paddle_l.position = lerp(Vector3(0, 0, -paddle_start_distance), Vector3(0, 0, -0.3), 1.0 - new_value)
       pong_paddle_r.position = lerp(Vector3(0, 0, paddle_start_distance), Vector3(0, 0, 0.3), 1.0 - new_value)
@@ -115,13 +112,13 @@ func _check_bots_loaded() -> void:
 func start_game() -> void:
   if not MultiplayerClient.is_lobby_host():
     return
-  var new_game_state = PongGameState.new()
-  new_game_state.phase_started_at = Time.get_unix_time_from_system()
-  new_game_state.paddle_l_state.owner = lobby.players[0].peer_id
-  new_game_state.paddle_r_state.owner = lobby.players[1].peer_id
+  var new_pong_state = PongGameState.new()
+  new_pong_state.phase_started_at = Time.get_unix_time_from_system()
+  new_pong_state.paddle_l_state.owner = lobby.players[0].peer_id
+  new_pong_state.paddle_r_state.owner = lobby.players[1].peer_id
 
-  new_game_state.paddle_l_state.position = Vector3(0, 0, -paddle_start_distance)
-  new_game_state.paddle_r_state.position = Vector3(0, 0, paddle_start_distance)
+  new_pong_state.paddle_l_state.position = Vector3(0, 0, -paddle_start_distance)
+  new_pong_state.paddle_r_state.position = Vector3(0, 0, paddle_start_distance)
 
   score_region_l.body_entered.connect(_score_area_hit.bind(lobby.players[1].peer_id))
   score_region_r.body_entered.connect(_score_area_hit.bind(lobby.players[0].peer_id))
@@ -130,7 +127,7 @@ func start_game() -> void:
 
   _handle_peer_packet(1, {
     "type": PongGameMessage.StateRefresh,
-    "state": new_game_state
+    "state": new_pong_state
   })
   anim_sync.authority_play_animation("intro")
   _send_refresh_state(MultiplayerPeer.TARGET_PEER_BROADCAST)
@@ -146,7 +143,7 @@ func _exit_tree() -> void:
 func trigger_ending_character_anims() -> void:
   if lobby == null: return
   var winning_peer: Lobby.PeerData = null
-  if game_state.paddle_l_state.score > game_state.paddle_r_state.score:
+  if pong_state.paddle_l_state.score > pong_state.paddle_r_state.score:
     winning_peer = lobby.players.get(0)
     pong_paddle_l.gumbot_animation_state = PongPaddle.GumbotAnimState.Taunt
   else:
@@ -173,7 +170,7 @@ func _send_refresh_state(peer_id: int) -> void:
   MultiplayerClient.send_packet(
     {
       "type": PongGameMessage.StateRefresh,
-      "state": game_state
+      "state": pong_state
     },
     peer_id,
     MultiplayerPeer.TRANSFER_MODE_RELIABLE,
@@ -204,8 +201,8 @@ func _score_area_hit(candidate: Node, winning_peer: int) -> void:
   _handle_peer_packet(1, message)
   MultiplayerClient.send_packet(message)
 
-  if game_state.paddle_l_state.score >= NUM_ROUNDS or\
-    game_state.paddle_r_state.score >= NUM_ROUNDS:
+  if pong_state.paddle_l_state.score >= NUM_ROUNDS or\
+    pong_state.paddle_r_state.score >= NUM_ROUNDS:
       anim_sync.authority_play_animation("outro")
   else:
     await get_tree().create_timer(2.0).timeout
@@ -248,14 +245,14 @@ func _physics_process(_delta: float) -> void:
       my_player_paddle.add_movement_input(Vector2(0, -1))
 
 func paddle_state_for_peer(peer_id: int) -> PongGameState.PongEntity:
-  # print("lookup peer=%d l_owner=%d r_owner=%d" % [peer_id, game_state.paddle_l_state.owner, game_state.paddle_r_state.owner])
-  return game_state.paddle_l_state\
-    if game_state.paddle_l_state.owner == peer_id\
-    else game_state.paddle_r_state
+  # print("lookup peer=%d l_owner=%d r_owner=%d" % [peer_id, pong_state.paddle_l_state.owner, pong_state.paddle_r_state.owner])
+  return pong_state.paddle_l_state\
+    if pong_state.paddle_l_state.owner == peer_id\
+    else pong_state.paddle_r_state
 
 func _handle_peer_packet(sender_id: int, packet: Dictionary) -> void:
   # print("Received packet type=%s from=%d on peer=%d" % [packet.type, sender_id, MultiplayerClient.my_peer_id()])
-  if game_state == null and packet.type != PongGameMessage.StateRefresh:
+  if pong_state == null and packet.type != PongGameMessage.StateRefresh:
     return
 
   match packet.type:
@@ -306,21 +303,21 @@ func _handle_peer_packet(sender_id: int, packet: Dictionary) -> void:
       var paddle_state := paddle_state_for_peer(sender_id)
       paddle_state.position = packet.get("position", Vector3.ZERO)
       paddle_state.velocity = packet.get("velocity", Vector3.ZERO)
-  _apply_game_state()
+  _apply_pong_state()
 
 func _ball_bounced(did_hit_paddle: bool) -> void:
   camera.add_trauma(0.6 if did_hit_paddle else 0.2)
 
-func _apply_game_state() -> void:
-  if game_state:
+func _apply_pong_state() -> void:
+  if pong_state:
     visible = true
 
-  if paddle_l_score.text != str(game_state.paddle_l_state.score):
-    paddle_l_score.text = str(game_state.paddle_l_state.score)
-  if paddle_r_score.text != str(game_state.paddle_r_state.score):
-    paddle_r_score.text = str(game_state.paddle_r_state.score)
+  if paddle_l_score.text != str(pong_state.paddle_l_state.score):
+    paddle_l_score.text = str(pong_state.paddle_l_state.score)
+  if paddle_r_score.text != str(pong_state.paddle_r_state.score):
+    paddle_r_score.text = str(pong_state.paddle_r_state.score)
 
-  if game_state.ball_state == null:
+  if pong_state.ball_state == null:
     if ball:
       ball.queue_free()
       ball = null
@@ -331,10 +328,10 @@ func _apply_game_state() -> void:
       ball.paddle_r = pong_paddle_r
       ball.bounced.connect(_ball_bounced)
       add_child(ball)
-    ball.sync_state = game_state.ball_state
+    ball.sync_state = pong_state.ball_state
 
   pong_paddle_l.round_started_at = pong_state.phase_started_at
   pong_paddle_r.round_started_at = pong_state.phase_started_at
 
-  pong_paddle_l.sync_state = game_state.paddle_l_state
-  pong_paddle_r.sync_state = game_state.paddle_r_state
+  pong_paddle_l.sync_state = pong_state.paddle_l_state
+  pong_paddle_r.sync_state = pong_state.paddle_r_state

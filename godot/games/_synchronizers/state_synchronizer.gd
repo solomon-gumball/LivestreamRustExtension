@@ -3,6 +3,8 @@ extends Node
 
 var state: Variant
 
+signal state_updated
+
 @export var channel_id: String = ""
 
 func _ready() -> void:
@@ -33,6 +35,7 @@ func _handle_peer_packet(sender_id: int, packet: Dictionary) -> void:
       send_refresh_state(sender_id)
 
   message_received(sender_id, packet)
+  state_updated.emit()
 
 func send_packet(
   packet: Dictionary,

@@ -1,11 +1,10 @@
 class_name MarblesGameState
-extends BaseGameState
 
 enum GameState { Waiting, Playing, Slowmo, Ended }
+
 var game_state: int = GameState.Waiting
 var started_at: float = 0
 var marbles_by_peer_id: Dictionary[int, MarbleState] = {}
-var animation: AnimationState = null
 var username_visibility: bool = false
 var winning_chatter: String = ""
 

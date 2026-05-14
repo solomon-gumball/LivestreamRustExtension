@@ -14,10 +14,7 @@ var map: Array[PackedScene] = [
 ]
 
 var current_map: MarblesMap
-var marbles_game_state: MarblesGameState = null:
-  set(new_state):
-    marbles_game_state = new_state
-    game_state = new_state
+var marbles_game_state: MarblesGameState = null
 
 enum MarblesMessage {
   StateRefresh,
@@ -147,7 +144,7 @@ func _left_lobby() -> void:
 
 func _send_refresh_state(peer_id: int) -> void:
   MultiplayerClient.send_packet(
-    { "type": MarblesMessage.StateRefresh, "state": game_state },
+    { "type": MarblesMessage.StateRefresh, "state": marbles_game_state },
     peer_id,
     MultiplayerPeer.TRANSFER_MODE_RELIABLE
   )
@@ -222,14 +219,14 @@ func _server_spawn_all_new_players() -> void:
   var join_index: int = 0
   for peer in lobby.peers:
     # Only spawn a marble for this peer if they don't already have one (e.g. from a previous game or from joining late)
-    if game_state.marbles_by_peer_id.has(peer.peer_id):
+    if marbles_game_state.marbles_by_peer_id.has(peer.peer_id):
       continue
 
     var marble_state := MarblesGameState.MarbleState.new()
     marble_state.position = _get_random_spawn_position(join_index)
     marble_state.rotation = Vector3.ZERO
-    marble_state.frozen = game_state.game_state != MarblesGameState.GameState.Playing
-    game_state.marbles_by_peer_id.set(peer.peer_id, marble_state)
+    marble_state.frozen = marbles_game_state.game_state != MarblesGameState.GameState.Playing
+    marbles_game_state.marbles_by_peer_id.set(peer.peer_id, marble_state)
     var marble := get_or_create_bot_for_peer(peer.peer_id)
     marble.global_position = marble_state.position
     marble.global_rotation = marble_state.rotation
@@ -319,12 +316,10 @@ func on_finish_area_entered(body: PhysicsBody3D) -> void:
       game_finished.emit()
 
 func _handle_peer_packet(sender_id: int, packet: Dictionary) -> void:
-  if game_state == null and packet.type != MarblesMessage.StateRefresh:
+  if marbles_game_state == null and packet.type != MarblesMessage.StateRefresh:
     return
 
   match packet.type:
-    SessionSynchronizer.GlobalGameMessage.ClientReady:
-      _send_refresh_state(sender_id)
     MarblesMessage.SetGameWinner:
       var winner_id: String = packet.get("chatter", "")
       print("winner_id ", winner_id)
@@ -353,15 +348,15 @@ func _handle_peer_packet(sender_id: int, packet: Dictionary) -> void:
   _apply_game_state()
 
 func _apply_game_state() -> void:
-  if game_state == null:
+  if marbles_game_state == null:
     return
-  for peer_id in game_state.marbles_by_peer_id:
+  for peer_id in marbles_game_state.marbles_by_peer_id:
     var marble: MarbleBot = get_or_create_bot_for_peer(peer_id)
-    var marble_state: MarblesGameState.MarbleState = game_state.marbles_by_peer_id[peer_id]
+    var marble_state: MarblesGameState.MarbleState = marbles_game_state.marbles_by_peer_id[peer_id]
     marble.sync_state = marble_state
-    marble.show_username = game_state.username_visibility
+    marble.show_username = marbles_game_state.username_visibility
   for prop in current_map.all_props:
-    prop.game_started_at = game_state.started_at
+    prop.game_started_at = marbles_game_state.started_at
 
   if marbles_game_state.game_state == MarblesGameState.GameState.Slowmo:
     Engine.time_scale = 0.1
@@ -377,7 +372,7 @@ func _apply_game_state() -> void:
 func _physics_process(delta: float) -> void:
   if Engine.is_editor_hint(): return
   if not MultiplayerClient.is_lobby_host(): return
-  if game_state == null: return
+  if marbles_game_state == null: return
 
   _sync_accumulator += delta / Engine.time_scale
   if _sync_accumulator >= SYNC_RATE:
@@ -393,7 +388,7 @@ func _broadcast_marble_states() -> void:
       "rotation": bot.rotation,
       "linear_velocity": bot.linear_velocity,
     }
-    if game_state.marbles_by_peer_id.has(peer_id):
+    if marbles_game_state.marbles_by_peer_id.has(peer_id):
       var s := marbles_game_state.marbles_by_peer_id[peer_id]
       s.position = bot.global_position
       s.rotation = bot.rotation

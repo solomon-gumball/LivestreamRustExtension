@@ -3,7 +3,7 @@ extends MovementSynchronizer
 
 @export var kart: KartBot
 
-var mappings := {
+const mappings := {
   "move_forward": KEY_W,
   "move_back": KEY_S,
   "turn_left": KEY_A,

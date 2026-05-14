@@ -1,6 +1,5 @@
 extends Node
 
-
 signal packet_received(id: int, packet: Dictionary)
 @warning_ignore("UNUSED_SIGNAL")
 signal rtc_peer_ready(peer: int)

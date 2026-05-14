@@ -2,9 +2,9 @@ class_name AnimationSynchronizer
 extends StateSynchronizer
 
 class AnimationState:
-  @export_storage var animation_name: String
-  @export_storage var started_at: float
-  @export_storage var skipped: bool = false
+  var animation_name: String
+  var started_at: float
+  var skipped: bool = false
 
   func equals(other: AnimationState) -> bool:
     if other != null and\
