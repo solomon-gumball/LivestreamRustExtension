@@ -663,7 +663,7 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -3.2)
 
 [node name="PongPaddleR" parent="." unique_id=85046415 instance=ExtResource("2_racd5")]
 unique_name_in_owner = true
-transform = Transform3D(-1, 0, -1.509958e-07, 0, 1, 0, 1.509958e-07, 0, -1, 0, 0, 3.2)
+transform = Transform3D(-1, 0, 8.742278e-08, 0, 1, 0, -8.742278e-08, 0, -1, 0, 0, 3.2)
 
 [node name="PongScoreFX" parent="." unique_id=1170788964 instance=ExtResource("8_r5k7i")]
 
@@ -767,6 +767,7 @@ surface_material_override/0 = SubResource("StandardMaterial3D_r2ito")
 unique_name_in_owner = true
 script = ExtResource("anim_sync_script")
 animation_player = NodePath("../AnimationPlayer")
+channel_id = "anim1"
 metadata/_custom_type_script = "uid://txxkpqyixtos"
 
 [node name="AnimationPlayer" type="AnimationPlayer" parent="." unique_id=1269414756]

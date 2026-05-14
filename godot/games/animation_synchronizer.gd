@@ -1,5 +1,9 @@
 class_name AnimationSynchronizer
-extends Node
+extends StateSynchronizer
+
+var anim_state: AnimationState:
+  get: return state as AnimationState
+  set(v): state = v
 
 @export var animation_player: AnimationPlayer:
   set(new_animation_player):
@@ -9,39 +13,22 @@ extends Node
     if animation_player:
       animation_player.animation_finished.connect(animation_finished.emit)
 
-var state: AnimationState = null
-
-func _ready() -> void:
-  MultiplayerClient.packet_received.connect(_handle_peer_packet)
-  SessionSynchronizer.get_instance().peer_is_ready.connect(_new_peer_ready)
-
-func _new_peer_ready(peer_id: int) -> void:
-  MultiplayerClient.send_packet({
-      "type": SessionSynchronizer.GlobalGameMessage.AnimationStateRefresh,
-      "state": state
-    },
-    peer_id,
-    MultiplayerPeer.TRANSFER_MODE_RELIABLE,
-  )
-
-func _handle_peer_packet(_sender_id: int, packet: Dictionary) -> void:
+func message_received(_sender_id: int, packet: Dictionary) -> void:
   match packet.type:
     SessionSynchronizer.GlobalGameMessage.UpdateAnimation:
-      state = AnimationState.new()
-      state.started_at = packet.get("started_at", 0)
-      state.animation_name = packet.get("animation_name", "")
-      state.skipped = packet.get("skipped", false)
-    SessionSynchronizer.GlobalGameMessage.AnimationStateRefresh:
-      state = packet.get("state")
-  if state:
-    if !state.equals(local_anim_state):
+      anim_state = AnimationState.new()
+      anim_state.started_at = packet.get("started_at", 0)
+      anim_state.animation_name = packet.get("animation_name", "")
+      anim_state.skipped = packet.get("skipped", false)
+  if anim_state:
+    if !anim_state.equals(local_anim_state):
       _sync_animation_state()
 
 signal animation_finished(animation_name: String)
 
 var local_anim_state: AnimationState
 func _sync_animation_state() -> void:
-  local_anim_state = state
+  local_anim_state = anim_state
   var animation_to_play := animation_player.get_animation(local_anim_state.animation_name)
 
   if animation_to_play == null:
@@ -49,12 +36,16 @@ func _sync_animation_state() -> void:
 
   var anim_elapsed_time: float = animation_to_play.length\
     if local_anim_state.skipped\
-    else Time.get_unix_time_from_system() - state.started_at
+    else Time.get_unix_time_from_system() - anim_state.started_at
 
   animation_player.play(local_anim_state.animation_name)
-  animation_player.seek(anim_elapsed_time, true)
   if anim_elapsed_time >= animation_to_play.length:
+    print("JUMP TO END!")
+    animation_player.seek(animation_to_play.length - 0.001, true)
+    animation_player.advance(0.0)
     animation_finished.emit(local_anim_state.animation_name)
+  else:
+    animation_player.seek(anim_elapsed_time, true)
 
 func authority_skip_current_animation() -> void:
   if !MultiplayerClient.is_lobby_host():
@@ -63,6 +54,7 @@ func authority_skip_current_animation() -> void:
   if local_anim_state and !local_anim_state.skipped:
     MultiplayerClient.send_packet(
       {
+        "channel_id": channel_id,
         "type": SessionSynchronizer.GlobalGameMessage.UpdateAnimation,
         "animation_name": local_anim_state.animation_name,
         "started_at": local_anim_state.started_at,
@@ -73,7 +65,7 @@ func authority_skip_current_animation() -> void:
       MultiplayerClient.PacketSelfMode.SelfIncluded
     )
 
-func handle_animation_finished(animation_name: String) -> void:
+func handle_animation_finished(_animation_name: String) -> void:
   pass
 
 func authority_play_animation(animation_name: String) -> void:
@@ -82,6 +74,7 @@ func authority_play_animation(animation_name: String) -> void:
 
   MultiplayerClient.send_packet(
     {
+      "channel_id": channel_id,
       "type": SessionSynchronizer.GlobalGameMessage.UpdateAnimation,
       "animation_name": animation_name,
       "started_at": Time.get_unix_time_from_system(),

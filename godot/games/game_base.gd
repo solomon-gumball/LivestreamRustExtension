@@ -1,5 +1,4 @@
-@tool
-@abstract
+@tool @abstract
 extends Node3D
 class_name GameBase
 

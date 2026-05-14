@@ -22,6 +22,9 @@ enum GlobalGameMessage {
   PongNetTick,
   ServerMovementState,
   ClientMovementInputs,
+
+  StateSyncClientReady,
+  StateSyncRefreshState,
 }
 
 signal rtt_updated(rtt_msec: int, net_tick_prediction_offset: int)
