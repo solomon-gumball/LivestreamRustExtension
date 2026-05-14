@@ -1,6 +1,19 @@
 class_name AnimationSynchronizer
 extends StateSynchronizer
 
+class AnimationState:
+  @export_storage var animation_name: String
+  @export_storage var started_at: float
+  @export_storage var skipped: bool = false
+
+  func equals(other: AnimationState) -> bool:
+    if other != null and\
+      other.animation_name == animation_name and\
+      other.started_at == started_at and\
+      other.skipped == skipped:
+      return true
+    return false
+
 var anim_state: AnimationState:
   get: return state as AnimationState
   set(v): state = v
@@ -53,9 +66,8 @@ func authority_skip_current_animation() -> void:
     assert(false, "ERROR: Non-host player called authority_skip_current_animation()!")
 
   if local_anim_state and !local_anim_state.skipped:
-    MultiplayerClient.send_packet(
+    send_packet(
       {
-        "channel_id": channel_id,
         "type": SessionSynchronizer.GlobalGameMessage.UpdateAnimation,
         "animation_name": local_anim_state.animation_name,
         "started_at": local_anim_state.started_at,
@@ -73,9 +85,8 @@ func authority_play_animation(animation_name: String) -> void:
   if !MultiplayerClient.is_lobby_host():
     assert(false, "ERROR: Non-host player called authority_play_animation()!")
 
-  MultiplayerClient.send_packet(
+  send_packet(
     {
-      "channel_id": channel_id,
       "type": SessionSynchronizer.GlobalGameMessage.UpdateAnimation,
       "animation_name": animation_name,
       "started_at": Time.get_unix_time_from_system(),

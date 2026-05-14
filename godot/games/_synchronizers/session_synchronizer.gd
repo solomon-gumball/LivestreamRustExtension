@@ -12,20 +12,18 @@ static func get_instance() -> SessionSynchronizer:
   return _instance
 
 enum GlobalGameMessage {
-  ClientReady = 2000,
-  CamFollow,
+  CamFollow = 2000,
   UpdateAnimation,
-  AnimationStateRefresh,
-  SessionStateRefresh,
-  SessionForceStart,
+
+  ClientGameLoaded,
   PingNetTick,
   PongNetTick,
+
   ServerMovementState,
   ClientMovementInputs,
 
   StateSyncClientReady,
   StateSyncRefreshState,
-  ClientGameLoaded,
 }
 
 class SessionSyncState:
