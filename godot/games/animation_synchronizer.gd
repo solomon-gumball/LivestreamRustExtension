@@ -40,8 +40,9 @@ func _sync_animation_state() -> void:
 
   animation_player.play(local_anim_state.animation_name)
   if anim_elapsed_time >= animation_to_play.length:
-    print("JUMP TO END!")
-    animation_player.seek(animation_to_play.length - 0.001, true)
+    animation_player.seek(animation_to_play.length, false)
+    animation_player.advance(0.0)
+    await get_tree().process_frame
     animation_player.advance(0.0)
     animation_finished.emit(local_anim_state.animation_name)
   else:

@@ -35,12 +35,6 @@ var outfit_loaded_timer: Timer = null
 @onready var success_audio_player: AudioStreamPlayer = %SuccessAudioPlayer
 @onready var winner_text_block: RichTextLabel = %WinnerText
 
-var saved_pong_l_position: Vector3 = Vector3.ZERO
-var saved_pong_r_position: Vector3 = Vector3.ZERO
-func save_paddle_positions() -> void:
-  saved_pong_l_position = pong_paddle_l.position
-  saved_pong_r_position = pong_paddle_r.position
-
 @export_range(0.0, 1.0) var players_distance_from_center: float = 0.0:
   set(new_value):
     players_distance_from_center = new_value
@@ -86,9 +80,7 @@ func _ready() -> void:
   chatter_loaded.connect(_handle_chatter_loaded)
   all_chatters_loaded_locally.connect(func () -> void:
     # TODO: Do this better
-    await get_tree().create_timer(3.0).timeout
-    print("Notifying ready to SessionSynchronizer")
-    SessionSynchronizer.get_instance().notify_ready()
+    pass
   )
 
   var sub_channels: Array[String] = []
@@ -117,9 +109,8 @@ func _check_bots_loaded() -> void:
   if !pong_paddle_l.gumbot.is_outfit_loaded: return
   if !pong_paddle_r.gumbot.is_outfit_loaded: return
 
-  print("OUTFITS LOADED!!!")
   outfit_loaded_timer.stop()
-  # SessionSynchronizer.get_instance().notify_ready()
+  SessionSynchronizer.get_instance().notify_ready()
 
 func start_game() -> void:
   if not MultiplayerClient.is_lobby_host():

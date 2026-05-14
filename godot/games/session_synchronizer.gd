@@ -1,5 +1,5 @@
 class_name SessionSynchronizer
-extends Node
+extends StateSynchronizer
 
 static var _instance: SessionSynchronizer = null
 
@@ -25,21 +25,29 @@ enum GlobalGameMessage {
 
   StateSyncClientReady,
   StateSyncRefreshState,
+  ClientGameLoaded,
 }
+
+class SessionSyncState:
+  var ready_peers_map: Dictionary[int, bool] = {}
+  var game_loaded_in: bool = false
 
 signal rtt_updated(rtt_msec: int, net_tick_prediction_offset: int)
 signal all_peers_ready()
 signal peer_is_ready(peer_id: int)
 
-var state: Dictionary[int, bool] = {}
+var session_state: SessionSyncState:
+  get: return state as SessionSyncState
+  set(v): state = v
+
 var _lobby: Lobby = null
-var _all_peers_ready_fired: bool = false
 var current_ping := 0
 
 # --- Sim clock ---
 const TICK_RATE_HZ := 60
 const INPUT_BUFFER_DEPTH := 8
 const MARGIN_TICKS := 2
+const FALLBACK_START_TIMEOUT := 12.0
 
 var net_sim_tick := 0
 var _initial_tick_set := false
@@ -51,25 +59,28 @@ var _run_extra_frame := false
 var _registered_synchronizers: Array[MovementSynchronizer] = []
 var _ping_timer: Timer = null
 var _fallback_start_timer: Timer = null
+var _game_loaded_in_locally: bool = false
 
 func _ready() -> void:
-  MultiplayerClient.packet_received.connect(_handle_peer_packet)
+  channel_id = "session"
+  session_state = SessionSyncState.new()
+  super()
   is_host = MultiplayerClient.is_lobby_host()
   _initial_tick_set = is_host
 
   _ping_timer = Timer.new()
   _ping_timer.wait_time = 8.0
-  _ping_timer.one_shot = false
+  _ping_timer.one_shot = true
   _ping_timer.autostart = true
   _ping_timer.timeout.connect(_send_ping)
 
-  # _fallback_start_timer = Timer.new()
-  # _fallback_start_timer.wait_time = 10.0
-  # _fallback_start_timer.one_shot = true
-  # _fallback_start_timer.autostart = false
-  # _fallback_start_timer.timeout.connect(_force_start_timeout)
-  # add_child(_fallback_start_timer)
-  # _fallback_start_timer.start()
+  if is_host:
+    _fallback_start_timer = Timer.new()
+    _fallback_start_timer.wait_time = FALLBACK_START_TIMEOUT
+    _fallback_start_timer.one_shot = true
+    _fallback_start_timer.autostart = true
+    _fallback_start_timer.timeout.connect(_force_start_timeout)
+    add_child(_fallback_start_timer)
 
   add_child(_ping_timer)
 
@@ -92,29 +103,22 @@ func unregister_synchronizer(sync: MovementSynchronizer) -> void:
 
 func _send_ping() -> void:
   if is_host: return
-  MultiplayerClient.send_packet({
+  send_packet({
     "type": GlobalGameMessage.PingNetTick,
     "client_time": Time.get_ticks_msec(),
   })
 
-func _handle_peer_packet(sender_id: int, packet: Dictionary) -> void:
+func message_received(sender_id: int, packet: Dictionary) -> void:
   match packet.type:
-    # GlobalGameMessage.SessionForceStart:
-    #   trigger_start_local()
-    GlobalGameMessage.ClientReady:
-      state[sender_id] = true
-      _new_peer_ready(sender_id)
+    GlobalGameMessage.ClientGameLoaded:
+      if !is_host: return
+      session_state.ready_peers_map.set(sender_id, true)
       peer_is_ready.emit(sender_id)
-      _check_all_peers_ready()
-    GlobalGameMessage.SessionStateRefresh:
-      var received: Dictionary = packet.get("state", {})
-      for peer_id in received:
-        if received[peer_id]:
-          state[peer_id] = true
-      _check_all_peers_ready()
+      _authority_check_all_peers_ready()
+      send_refresh_state(MultiplayerPeer.TARGET_PEER_BROADCAST)
     GlobalGameMessage.PingNetTick:
       if not is_host: return
-      MultiplayerClient.send_packet({
+      send_packet({
         "type": GlobalGameMessage.PongNetTick,
         "client_time": packet.get("client_time", 0),
         "net_sim_tick": net_sim_tick,
@@ -142,6 +146,16 @@ func _handle_peer_packet(sender_id: int, packet: Dictionary) -> void:
           _skip_next_frame = true
 
       rtt_updated.emit(current_ping, net_sim_tick - server_net_tick)
+  
+  if !is_host:
+    print("game is loaded -> ", session_state.game_loaded_in)
+  _apply_session_state()
+
+func _apply_session_state() -> void:
+  if session_state.game_loaded_in:
+    if !_game_loaded_in_locally:
+      _game_loaded_in_locally = true
+      all_peers_ready.emit()
 
 func _physics_process(delta: float) -> void:
   if not _initial_tick_set: return
@@ -161,54 +175,32 @@ func _tick_all_synchronizers(delta: float) -> void:
     sync.simulate_tick(net_sim_tick, delta)
   net_sim_tick += 1
 
-func _new_peer_ready(peer_id: int) -> void:
-  MultiplayerClient.send_packet(
-    { "type": GlobalGameMessage.SessionStateRefresh, "state": state },
-    peer_id,
-    MultiplayerPeer.TRANSFER_MODE_RELIABLE
-  )
-
-# func _send_refresh_state() -> void:
-#   MultiplayerClient.send_packet(
-#     { "type": GlobalGameMessage.SessionStateRefresh, "state": state },
-#     peer_id,
-#     MultiplayerPeer.TRANSFER_MODE_RELIABLE
-#   )
-
 func notify_ready() -> void:
   if MultiplayerClient.state.current is MultiplayerClient.Disconnected:
     all_peers_ready.emit()
     return
-  state[MultiplayerClient.my_peer_id()] = true
-  MultiplayerClient.send_packet(
-    { "type": GlobalGameMessage.ClientReady },
-    MultiplayerPeer.TARGET_PEER_BROADCAST,
+  send_packet(
+    { "type": GlobalGameMessage.ClientGameLoaded },
+    MultiplayerPeer.TARGET_PEER_SERVER,
     MultiplayerPeer.TRANSFER_MODE_RELIABLE
   )
-  _check_all_peers_ready()
 
-func _check_all_peers_ready() -> void:
-  if _all_peers_ready_fired: return
+func _authority_check_all_peers_ready() -> void:
+  if !is_host: return
+  if session_state.game_loaded_in: return
   if _lobby == null: return
+
   for peer in _lobby.peers:
     if not peer.connected: continue
-    if not state.get(peer.peer_id, false): return
-  _all_peers_ready_fired = true
-  all_peers_ready.emit()
+    if not session_state.ready_peers_map.get(peer.peer_id, false): return
 
-# func trigger_start_local() -> void:
-#   if _all_peers_ready_fired: return
-#   _all_peers_ready_fired = true
-#   all_peers_ready.emit()  
+  session_state.game_loaded_in = true
 
-# func _force_start_timeout() -> void:
-#   if _all_peers_ready_fired or !is_host: return
+func _force_start_timeout() -> void:
+  if session_state.game_loaded_in or !is_host: return
+  print("SESSION START TIMEOUT - STARTING GAME ANYWAY!")
+  session_state.game_loaded_in = true
+  state = session_state
+  send_refresh_state(MultiplayerPeer.TARGET_PEER_BROADCAST)
+  _apply_session_state()
 
-#   _all_peers_ready_fired = true
-#   all_peers_ready.emit()
-
-#   MultiplayerClient.send_packet(
-#     { "type": GlobalGameMessage.SessionForceStart },
-#     MultiplayerPeer.TARGET_PEER_BROADCAST,
-#     MultiplayerPeer.TRANSFER_MODE_RELIABLE
-#   )

@@ -344,7 +344,7 @@ tracks/8/keys = {
 }
 tracks/9/type = "method"
 tracks/9/imported = false
-tracks/9/enabled = true
+tracks/9/enabled = false
 tracks/9/path = NodePath(".")
 tracks/9/interp = 1
 tracks/9/loop_wrap = true
@@ -544,7 +544,7 @@ _data = {
 
 [node name="PongGameScene" type="Node3D" unique_id=632967591]
 script = ExtResource("1_0ehfm")
-players_distance_from_center = 1.0
+players_distance_from_center = 0.122
 dotted_line_mat = SubResource("StandardMaterial3D_r2ito")
 
 [node name="SuccessAudioPlayer" type="AudioStreamPlayer" parent="." unique_id=149136936]
@@ -659,11 +659,11 @@ light_energy = 1.5
 
 [node name="PongPaddleL" parent="." unique_id=372987713 instance=ExtResource("2_racd5")]
 unique_name_in_owner = true
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -3.2)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -0.6538)
 
 [node name="PongPaddleR" parent="." unique_id=85046415 instance=ExtResource("2_racd5")]
 unique_name_in_owner = true
-transform = Transform3D(-1, 0, 8.742278e-08, 0, 1, 0, -8.742278e-08, 0, -1, 0, 0, 3.2)
+transform = Transform3D(-1, 0, -1.509958e-07, 0, 1, 0, 1.509958e-07, 0, -1, 0, 0, 0.6538)
 
 [node name="PongScoreFX" parent="." unique_id=1170788964 instance=ExtResource("8_r5k7i")]
 

@@ -10,6 +10,8 @@ var ready_peers: Array[int]
 func _ready() -> void:
   ObjectSerializer.register_script(MarblesGameState)
   ObjectSerializer.register_script(PongGameState)
+  ObjectSerializer.register_script(SessionSynchronizer)
+
   if WSClient.state.current is not WSClient.AuthenticatedState:
     await WSClient.authenticated
 

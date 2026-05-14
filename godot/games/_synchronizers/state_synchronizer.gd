@@ -10,11 +10,12 @@ func _ready() -> void:
   if !MultiplayerClient.is_lobby_host():
     MultiplayerClient.send_packet({
       "channel_id": channel_id,
-      "type": SessionSynchronizer.GlobalGameMessage.ClientReady
+      "type": SessionSynchronizer.GlobalGameMessage.StateSyncClientReady
     })
 
-func _send_refresh_state(peer_id: int) -> void:
+func send_refresh_state(peer_id: int) -> void:
   MultiplayerClient.send_packet({
+      "channel_id": channel_id,
       "type": SessionSynchronizer.GlobalGameMessage.StateSyncRefreshState,
       "state": state
     },
@@ -28,19 +29,19 @@ func _handle_peer_packet(sender_id: int, packet: Dictionary) -> void:
   match packet.type:
     SessionSynchronizer.GlobalGameMessage.StateSyncRefreshState:
       state = packet.get("state")
-    SessionSynchronizer.GlobalGameMessage.ClientReady:
-      _send_refresh_state(sender_id)
+    SessionSynchronizer.GlobalGameMessage.StateSyncClientReady:
+      send_refresh_state(sender_id)
 
   message_received(sender_id, packet)
 
-# func send_packet(
-#   packet: Dictionary,
-#   target_peer: int = MultiplayerPeer.TARGET_PEER_BROADCAST,
-#   transfer_mode: int = MultiplayerPeer.TRANSFER_MODE_UNRELIABLE_ORDERED,
-#   self_mode: PacketSelfMode = PacketSelfMode.NoSelf
-# ) -> void:
-#   packet.c
-#   MultiplayerClient.se
+func send_packet(
+  packet: Dictionary,
+  target_peer: int = MultiplayerPeer.TARGET_PEER_BROADCAST,
+  transfer_mode: int = MultiplayerPeer.TRANSFER_MODE_UNRELIABLE_ORDERED,
+  self_mode: MultiplayerClient.PacketSelfMode = MultiplayerClient.PacketSelfMode.NoSelf
+) -> void:
+  packet.set("channel_id", channel_id)
+  MultiplayerClient.send_packet(packet, target_peer, transfer_mode, self_mode)
 
 func message_received(_sender_id: int, _packet: Dictionary) -> void:
   pass
