@@ -48,7 +48,7 @@ viewport_path = NodePath("SubViewport")
 resource_local_to_scene = true
 shader = ExtResource("3_mi6u7")
 shader_parameter/to_tex = SubResource("ViewportTexture_mi6u7")
-shader_parameter/progress = 0.0
+shader_parameter/progress = 1.0
 shader_parameter/hex_size = 0.08
 shader_parameter/randomness = 0.05
 shader_parameter/edge_softness = 0.01
@@ -68,9 +68,9 @@ layer = 3
 
 [node name="Loading" parent="CanvasLayer" unique_id=884817838 instance=ExtResource("2_4xtu5")]
 unique_name_in_owner = true
+visible = false
 z_index = 10
 transition_material = SubResource("ShaderMaterial_5bn8s")
-progress = 0.0
 
 [node name="DebugLabel" type="Label" parent="CanvasLayer" unique_id=1386033444]
 unique_name_in_owner = true

@@ -15,6 +15,8 @@ var checkpoints: Array[RaceCheckpoint] = []
 
 func _ready() -> void:
   super._ready()
+  if Engine.is_editor_hint():
+    return
   SessionSynchronizer.get_instance().notify_ready()
 
   chatter_loaded.connect(_handle_chatter_loaded)
