@@ -43,22 +43,6 @@ script = ExtResource("1_4r8fh")
 [node name="Camera3D" type="Camera3D" parent="." unique_id=1133113333]
 transform = Transform3D(-4.371139e-08, 0, 1, 0, 1, 0, -1, 0, -4.371139e-08, 0.46557254, 0.18863684, -0.020418957)
 
-[node name="Wheel_Front_Left" parent="." unique_id=856590652 instance=ExtResource("2_4r8fh")]
-unique_name_in_owner = true
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.0726873, 0.11882522, 0.107221186)
-
-[node name="Wheel_Front_Right" parent="." unique_id=271885351 instance=ExtResource("2_4r8fh")]
-unique_name_in_owner = true
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.08327562, 0.11882522, 0.107221186)
-
-[node name="Wheel_Back_Right" parent="." unique_id=958039242 instance=ExtResource("2_4r8fh")]
-unique_name_in_owner = true
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.08327562, 0.11882522, -0.08784592)
-
-[node name="Wheel_Back_Left" parent="." unique_id=1421979309 instance=ExtResource("2_4r8fh")]
-unique_name_in_owner = true
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.0726873, 0.11882522, -0.09877588)
-
 [node name="Mesh" type="MeshInstance3D" parent="." unique_id=1659740352]
 unique_name_in_owner = true
 transform = Transform3D(0.08089992, 0, 0, 0, 0.08089992, 0, 0, 0, 0.08089992, 0, 0.056507967, 0.023652792)
@@ -86,6 +70,22 @@ transform = Transform3D(12.360951, 0, 0, 0, 12.360951, 0, 0, 0, 12.360951, 0, -0
 collision_layer = 0
 collision_mask = 0
 surface_mat = SubResource("ShaderMaterial_dbe4r")
+
+[node name="Wheel_Front_Left" parent="Mesh" unique_id=856590652 instance=ExtResource("2_4r8fh")]
+unique_name_in_owner = true
+transform = Transform3D(12.360951, 0, 0, 0, 12.360951, 0, 0, 0, 12.360951, 0.8984842, 0.77030057, 1.0329849)
+
+[node name="Wheel_Front_Right" parent="Mesh" unique_id=271885351 instance=ExtResource("2_4r8fh")]
+unique_name_in_owner = true
+transform = Transform3D(12.360951, 0, 0, 0, 12.360951, 0, 0, 0, 12.360951, -1.0293659, 0.77030057, 1.0329849)
+
+[node name="Wheel_Back_Right" parent="Mesh" unique_id=958039242 instance=ExtResource("2_4r8fh")]
+unique_name_in_owner = true
+transform = Transform3D(12.360951, 0, 0, 0, 12.360951, 0, 0, 0, 12.360951, -1.0293659, 0.77030057, -1.3782302)
+
+[node name="Wheel_Back_Left" parent="Mesh" unique_id=1421979309 instance=ExtResource("2_4r8fh")]
+unique_name_in_owner = true
+transform = Transform3D(12.360951, 0, 0, 0, 12.360951, 0, 0, 0, 12.360951, 0.8984842, 0.77030057, -1.5133349)
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="." unique_id=1470868233]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.249, -0.042)

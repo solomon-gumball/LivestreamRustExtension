@@ -26,6 +26,7 @@ var mappings := {
 # Inertia tensor diagonal (Ixx, Iyy, Izz) computed from collision box dimensions.
 # Precomputed in _ready so simulate_one_frame doesn't recompute each tick.
 var _inertia: Vector3
+var _wheel_offsets: Array[Vector3] = []
 
 const MAX_WHEEL_ANGLE := deg_to_rad(35.0)
 const WHEEL_TURN_SPEED := deg_to_rad(120.0)
@@ -33,6 +34,19 @@ const WHEEL_TURN_SPEED := deg_to_rad(120.0)
 func _ready() -> void:
   super._ready()
   _precompute_inertia()
+
+func _on_synchronizer_ready() -> void:
+  _capture_wheel_offsets()
+
+func _capture_wheel_offsets() -> void:
+  _wheel_offsets = []
+  for w in [kart.wheel_fl, kart.wheel_fr, kart.wheel_rl, kart.wheel_rr]:
+    if w:
+      var offset := kart.to_local(w.global_position)
+      print("wheel offset ", w.name, " = ", offset)
+      _wheel_offsets.append(offset)
+    else:
+      _wheel_offsets.append(Vector3.ZERO)
 
 func _precompute_inertia() -> void:
   if not collision_box_shape:
@@ -155,10 +169,10 @@ func simulate_one_frame(input: Dictionary, state: Dictionary, tick: int) -> Dict
   # Front wheels use steered basis for drive direction; rear wheels use chassis basis.
   # All four wheels contribute suspension + grip.
   var wheel_inputs := [
-    { "wheel": kart.wheel_fl, "force_basis": steered_basis, "drive": drive },
-    { "wheel": kart.wheel_fr, "force_basis": steered_basis, "drive": drive },
-    { "wheel": kart.wheel_rl, "force_basis": basis,         "drive": drive },
-    { "wheel": kart.wheel_rr, "force_basis": basis,         "drive": drive },
+    { "wheel": kart.wheel_fl, "force_basis": steered_basis, "drive": drive, "offset": _wheel_offsets[0] },
+    { "wheel": kart.wheel_fr, "force_basis": steered_basis, "drive": drive, "offset": _wheel_offsets[1] },
+    { "wheel": kart.wheel_rl, "force_basis": basis,         "drive": drive, "offset": _wheel_offsets[2] },
+    { "wheel": kart.wheel_rr, "force_basis": basis,         "drive": drive, "offset": _wheel_offsets[3] },
   ]
 
   for entry in wheel_inputs:
@@ -166,7 +180,7 @@ func simulate_one_frame(input: Dictionary, state: Dictionary, tick: int) -> Dict
     if not w:
       continue
     var wheel_result: Dictionary = w.compute_forces(
-      position, basis, entry.force_basis, linear_velocity, angular_velocity, entry.drive, delta
+      position, basis, entry.force_basis, entry.offset, linear_velocity, angular_velocity, entry.drive, delta
     )
     total_force += wheel_result.force
     total_torque += wheel_result.torque

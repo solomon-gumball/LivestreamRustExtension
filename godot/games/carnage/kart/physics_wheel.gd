@@ -35,8 +35,8 @@ func _check_grounded() -> bool:
   var shape := SphereShape3D.new()
   shape.radius = wheel_radius
   params.shape = shape
+  params.collision_mask = 1
   params.transform = Transform3D(Basis.IDENTITY, tire_center)
-  params.exclude = [get_parent().get_rid()]
   var hits := get_tree().get_root().get_world_3d().direct_space_state.intersect_shape(params, 1)
   return hits.size() > 0
 
@@ -52,6 +52,7 @@ func compute_forces(
     chassis_pos: Vector3,
     chassis_basis: Basis,
     force_basis: Basis,
+    wheel_offset: Vector3,
     linear_vel: Vector3,
     angular_vel: Vector3,
     drive: float,
@@ -59,13 +60,14 @@ func compute_forces(
 ) -> Dictionary:
   # Use chassis_basis (unsteered) for attachment point and ray direction so the
   # wheel position doesn't orbit when steering. force_basis (steered) is only
-  # used for computing force directions.
-  var wheel_world_pos: Vector3 = chassis_pos + chassis_basis * position
+  # used for computing force directions. wheel_offset is pre-captured in local
+  # space so this is independent of scene tree nesting depth.
+  var wheel_world_pos: Vector3 = chassis_pos + chassis_basis * wheel_offset
   var ray_origin: Vector3 = wheel_world_pos
   var ray_end: Vector3 = wheel_world_pos + chassis_basis * Vector3(0, -(rest_distance + wheel_radius), 0)
 
   var query := PhysicsRayQueryParameters3D.create(ray_origin, ray_end)
-  query.exclude = [get_parent().get_rid()]
+  query.collision_mask = 1
   var hit: Dictionary = get_tree().get_root().get_world_3d().direct_space_state.intersect_ray(query)
 
   if hit.is_empty():
