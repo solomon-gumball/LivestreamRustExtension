@@ -27,6 +27,9 @@ var mappings := {
 # Precomputed in _ready so simulate_one_frame doesn't recompute each tick.
 var _inertia: Vector3
 var _wheel_offsets: Array[Vector3] = []
+var _visual_rest_offset := Vector3.ZERO
+var _visual_rest_local_basis := Basis.IDENTITY
+var _interp_visual_tween: Tween = null
 
 const MAX_WHEEL_ANGLE := deg_to_rad(35.0)
 const WHEEL_TURN_SPEED := deg_to_rad(120.0)
@@ -37,13 +40,16 @@ func _ready() -> void:
 
 func _on_synchronizer_ready() -> void:
   _capture_wheel_offsets()
+  if kart_visual_node:
+    _visual_rest_offset = kart.to_local(kart_visual_node.global_position)
+    _visual_rest_local_basis = kart.global_basis.inverse() * kart_visual_node.global_basis
+    kart_visual_node.top_level = true
 
 func _capture_wheel_offsets() -> void:
   _wheel_offsets = []
   for w in [kart.wheel_fl, kart.wheel_fr, kart.wheel_rl, kart.wheel_rr]:
     if w:
       var offset := kart.to_local(w.global_position)
-      print("wheel offset ", w.name, " = ", offset)
       _wheel_offsets.append(offset)
     else:
       _wheel_offsets.append(Vector3.ZERO)
@@ -93,10 +99,44 @@ func apply_state_to_entity(state: Dictionary) -> void:
   kart.wheel_turn = state.get("wheel_turn", 0.0)
   kart.set_velocities(state.linear_velocity, state.angular_velocity)
 
+func _process(_delta: float) -> void:
+  if not kart_visual_node:
+    return
+  if _interp_visual_tween == null or not _interp_visual_tween.is_running():
+    kart_visual_node.global_position = kart.global_position + kart.global_basis * _visual_rest_offset
+    kart_visual_node.global_basis = kart.global_basis * _visual_rest_local_basis
+
+const VISUAL_CORRECTION_DURATION := 0.3
+
 func apply_visual_correction(pre_state: Dictionary, post_state: Dictionary) -> void:
   DebugDraw.draw_sphere(pre_state.get("position", Vector3.ZERO), 0.15, Color.RED, 1.0)
   DebugDraw.draw_sphere(post_state.get("position", Vector3.ZERO), 0.15, Color.GREEN, 1.0)
-  # kart.apply_visual_correction(pre_state.get("position", Vector3.ZERO), pre_state.get("basis", Basis.IDENTITY))
+  if not kart_visual_node:
+    return
+
+  var start_pos: Vector3
+  var start_q: Quaternion
+
+  if _interp_visual_tween != null and _interp_visual_tween.is_running():
+    start_pos = kart_visual_node.global_position
+    start_q = Quaternion(kart_visual_node.global_basis)
+    _interp_visual_tween.kill()
+  else:
+    var pre_basis: Basis = pre_state.get("basis", Basis.IDENTITY)
+    var pre_pos: Vector3 = pre_state.get("position", Vector3.ZERO)
+    start_pos = pre_pos + pre_basis * _visual_rest_offset
+    start_q = Quaternion(pre_basis * _visual_rest_local_basis)
+
+  _interp_visual_tween = get_tree().create_tween()
+  _interp_visual_tween.set_ease(Tween.EASE_OUT)
+  _interp_visual_tween.set_trans(Tween.TRANS_QUAD)
+  _interp_visual_tween.tween_method(
+    func(t: float) -> void:
+      var target_pos := kart.global_position + kart.global_basis * _visual_rest_offset
+      var target_q := Quaternion(kart.global_basis * _visual_rest_local_basis)
+      kart_visual_node.global_position = start_pos.lerp(target_pos, t)
+      kart_visual_node.global_basis = Basis(start_q.slerp(target_q, t)),
+    0.0, 1.0, VISUAL_CORRECTION_DURATION)
 
 const POS_CORRECTION_THRESHOLD := 0.02
 const VEL_CORRECTION_THRESHOLD := 0.1

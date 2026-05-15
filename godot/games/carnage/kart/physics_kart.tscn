@@ -33,6 +33,7 @@ point_count = 4
 
 [node name="PhysicsKart" type="RigidBody3D" unique_id=1967429638]
 collision_layer = 2
+collision_mask = 3
 mass = 5.0
 gravity_scale = 0.0
 center_of_mass_mode = 1
@@ -43,12 +44,14 @@ script = ExtResource("1_4r8fh")
 [node name="Camera3D" type="Camera3D" parent="." unique_id=1133113333]
 transform = Transform3D(-4.371139e-08, 0, 1, 0, 1, 0, -1, 0, -4.371139e-08, 0.46557254, 0.18863684, -0.020418957)
 
-[node name="Mesh" type="MeshInstance3D" parent="." unique_id=1659740352]
+[node name="VisualNode" type="Node3D" parent="." unique_id=1533755785]
+
+[node name="Mesh" type="MeshInstance3D" parent="VisualNode" unique_id=1659740352]
 unique_name_in_owner = true
 transform = Transform3D(0.08089992, 0, 0, 0, 0.08089992, 0, 0, 0, 0.08089992, 0, 0.056507967, 0.023652792)
 mesh = ExtResource("1_ygued")
 
-[node name="SmokeFX_R" type="GPUParticles3D" parent="Mesh" unique_id=1598145811]
+[node name="SmokeFX_R" type="GPUParticles3D" parent="VisualNode/Mesh" unique_id=1598145811]
 unique_name_in_owner = true
 transform = Transform3D(12.360948, 0, 0, 0, 12.360948, 0, 0, 0, 12.360948, -0.84048563, -0.022100985, -2.2230427)
 visible = false
@@ -56,7 +59,7 @@ amount = 30
 process_material = ExtResource("4_26l52")
 draw_pass_1 = ExtResource("5_1qgq1")
 
-[node name="SmokeFX_L" type="GPUParticles3D" parent="Mesh" unique_id=1875679819]
+[node name="SmokeFX_L" type="GPUParticles3D" parent="VisualNode/Mesh" unique_id=1875679819]
 unique_name_in_owner = true
 transform = Transform3D(12.360947, 0, 0, 0, 12.360947, 0, 0, 0, 12.360947, 0.7337446, -0.07637793, -2.0160182)
 visible = false
@@ -64,26 +67,26 @@ amount = 30
 process_material = ExtResource("4_26l52")
 draw_pass_1 = ExtResource("5_1qgq1")
 
-[node name="gumbot" parent="Mesh" unique_id=2126276004 instance=ExtResource("1_pnixd")]
+[node name="gumbot" parent="VisualNode/Mesh" unique_id=2126276004 instance=ExtResource("1_pnixd")]
 unique_name_in_owner = true
 transform = Transform3D(12.360951, 0, 0, 0, 12.360951, 0, 0, 0, 12.360951, 0, -0.019290864, -0.7726673)
 collision_layer = 0
 collision_mask = 0
 surface_mat = SubResource("ShaderMaterial_dbe4r")
 
-[node name="Wheel_Front_Left" parent="Mesh" unique_id=856590652 instance=ExtResource("2_4r8fh")]
+[node name="Wheel_Front_Left" parent="VisualNode/Mesh" unique_id=856590652 instance=ExtResource("2_4r8fh")]
 unique_name_in_owner = true
 transform = Transform3D(12.360951, 0, 0, 0, 12.360951, 0, 0, 0, 12.360951, 0.8984842, 0.77030057, 1.0329849)
 
-[node name="Wheel_Front_Right" parent="Mesh" unique_id=271885351 instance=ExtResource("2_4r8fh")]
+[node name="Wheel_Front_Right" parent="VisualNode/Mesh" unique_id=271885351 instance=ExtResource("2_4r8fh")]
 unique_name_in_owner = true
 transform = Transform3D(12.360951, 0, 0, 0, 12.360951, 0, 0, 0, 12.360951, -1.0293659, 0.77030057, 1.0329849)
 
-[node name="Wheel_Back_Right" parent="Mesh" unique_id=958039242 instance=ExtResource("2_4r8fh")]
+[node name="Wheel_Back_Right" parent="VisualNode/Mesh" unique_id=958039242 instance=ExtResource("2_4r8fh")]
 unique_name_in_owner = true
 transform = Transform3D(12.360951, 0, 0, 0, 12.360951, 0, 0, 0, 12.360951, -1.0293659, 0.77030057, -1.3782302)
 
-[node name="Wheel_Back_Left" parent="Mesh" unique_id=1421979309 instance=ExtResource("2_4r8fh")]
+[node name="Wheel_Back_Left" parent="VisualNode/Mesh" unique_id=1421979309 instance=ExtResource("2_4r8fh")]
 unique_name_in_owner = true
 transform = Transform3D(12.360951, 0, 0, 0, 12.360951, 0, 0, 0, 12.360951, 0.8984842, 0.77030057, -1.5133349)
 
@@ -99,7 +102,7 @@ shape = SubResource("BoxShape3D_26l52")
 unique_name_in_owner = true
 script = ExtResource("1_kkve7")
 kart = NodePath("..")
-kart_visual_node = NodePath("../Mesh")
+kart_visual_node = NodePath("../VisualNode")
 collision_box_shape = SubResource("BoxShape3D_26l52")
 acceleration_curve = SubResource("Curve_gvgjh")
 
