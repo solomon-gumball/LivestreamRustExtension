@@ -6,22 +6,6 @@
 [ext_resource type="PackedScene" uid="uid://diyvoye7vs7ks" path="res://games/debug_camera.tscn" id="3_2xtgp"]
 [ext_resource type="PackedScene" uid="uid://crpnxmsftnv0f" path="res://games/carnage/props/race_checkpoint.tscn" id="4_7nuw5"]
 
-[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_pjf2b"]
-resource_local_to_scene = true
-transparency = 1
-cull_mode = 2
-albedo_color = Color(1, 1, 1, 0.33333334)
-emission_enabled = true
-emission = Color(1, 0, 0, 1)
-
-[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_22osk"]
-resource_local_to_scene = true
-transparency = 1
-cull_mode = 2
-albedo_color = Color(1, 1, 1, 0.33333334)
-emission_enabled = true
-emission = Color(1, 0, 0, 1)
-
 [sub_resource type="BoxShape3D" id="BoxShape3D_rhos2"]
 size = Vector3(10, 0.082, 10)
 
@@ -41,6 +25,9 @@ tonemap_mode = 2
 ssao_enabled = true
 glow_enabled = true
 
+[sub_resource type="BoxShape3D" id="BoxShape3D_pjf2b"]
+size = Vector3(40.10681, 11.683105, 22.6333)
+
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_rhos2"]
 cull_mode = 1
 shading_mode = 0
@@ -55,11 +42,9 @@ script = ExtResource("2_pjf2b")
 
 [node name="RaceCheckpoint" parent="." unique_id=712868245 instance=ExtResource("4_7nuw5")]
 transform = Transform3D(-4.371139e-08, 0, 1, 0, 1, 0, -1, 0, -4.371139e-08, -38.446407, 0.65156734, 0.012181282)
-plane_material = SubResource("StandardMaterial3D_pjf2b")
 
 [node name="RaceCheckpoint2" parent="." unique_id=35775725 instance=ExtResource("4_7nuw5")]
 transform = Transform3D(-4.371139e-08, 0, 1, 0, 1, 0, -1, 0, -4.371139e-08, -28.446407, 0.65156734, 0.08892778)
-plane_material = SubResource("StandardMaterial3D_22osk")
 
 [node name="StaticBody3D" type="StaticBody3D" parent="." unique_id=82987365]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -2.2655797, 0)
@@ -97,7 +82,7 @@ environment = SubResource("Environment_q63vr")
 
 [node name="DebugCamera" parent="." unique_id=1098239593 instance=ExtResource("3_2xtgp")]
 unique_name_in_owner = true
-transform = Transform3D(1, 0, 0, 0, 0.97652966, 0.21538304, 0, -0.21538304, 0.97652966, 15.556162, 2.1902146, 9.260475)
+transform = Transform3D(1, 0, 0, 0, 0.9766723, 0.21473533, 0, -0.21473533, 0.9766723, -40.562023, 2.6740055, 10.390078)
 allow_free_cam = false
 
 [node name="Camera2" type="Camera3D" parent="DebugCamera" unique_id=1785970488]
@@ -112,6 +97,16 @@ unique_name_in_owner = true
 unique_name_in_owner = true
 transform = Transform3D(1, 0, 0, 0, 0.6344473, 0.7729662, 0, -0.7729662, 0.6344473, -2.1457672e-06, 1.3747739, 1.8045387)
 visible = false
+
+[node name="OutOfBoundsArea" type="Area3D" parent="." unique_id=510109391]
+unique_name_in_owner = true
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.010496095, -1.9073486e-05, 0.021273375)
+collision_layer = 0
+collision_mask = 2
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="OutOfBoundsArea" unique_id=2059313887]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -26.178598, -7.453396, -0.46044922)
+shape = SubResource("BoxShape3D_pjf2b")
 
 [node name="CSGSphere3D" type="CSGSphere3D" parent="." unique_id=269553093]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.010496095, -1.9073486e-05, 0.021273375)

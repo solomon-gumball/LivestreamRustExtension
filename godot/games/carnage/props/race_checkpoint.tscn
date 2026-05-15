@@ -1,17 +1,22 @@
 [gd_scene format=3 uid="uid://crpnxmsftnv0f"]
 
 [ext_resource type="Script" uid="uid://dm20d7kmdauyh" path="res://games/carnage/props/race_checkpoint.gd" id="1_atafs"]
+[ext_resource type="Texture2D" uid="uid://ofvawp17cyry" path="res://games/marbles/textures/checker.png" id="2_y6aai"]
 
 [sub_resource type="PlaneMesh" id="PlaneMesh_atafs"]
-size = Vector2(5, 0.7)
+size = Vector2(5, 0.8)
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_y6aai"]
 resource_local_to_scene = true
 transparency = 1
 cull_mode = 2
 albedo_color = Color(1, 1, 1, 0.33333334)
+albedo_texture = ExtResource("2_y6aai")
 emission_enabled = true
 emission = Color(1, 0, 0, 1)
+uv1_scale = Vector3(2.5, 2.5, 5)
+uv1_triplanar = true
+uv1_world_triplanar = true
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_atafs"]
 emission_enabled = true
@@ -22,6 +27,8 @@ emission_energy_multiplier = 3.64
 size = Vector3(5, 1, 0.2)
 
 [node name="RaceCheckpoint" type="Area3D" unique_id=35775725]
+collision_layer = 0
+collision_mask = 2
 script = ExtResource("1_atafs")
 plane_mesh = SubResource("PlaneMesh_atafs")
 plane_material = SubResource("StandardMaterial3D_y6aai")

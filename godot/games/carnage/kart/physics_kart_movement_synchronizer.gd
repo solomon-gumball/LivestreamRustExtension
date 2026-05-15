@@ -2,6 +2,8 @@ class_name PhysicsKartMovementSynchronizer
 extends MovementSynchronizer
 
 @export var kart: PhysicsKart
+@export var kart_visual_node: Node3D
+
 @export var collision_box_shape: BoxShape3D
 @export var acceleration_curve: Curve
 @export var base_acceleration: float = 4.0
@@ -265,7 +267,7 @@ func simulate_one_frame(input: Dictionary, state: Dictionary, tick: int) -> Dict
   kart.global_basis = basis
   kart.wheel_turn = wheel_turn
   kart.set_velocities(linear_velocity, angular_velocity)
-  DebugDraw.draw_sphere(position + Vector3(0, 1.0, 0), 0.1, Color.GREEN if any_grounded else Color.RED)
+  # DebugDraw.draw_sphere(position + Vector3(0, 1.0, 0), 0.1, Color.GREEN if any_grounded else Color.RED)
 
   return {
     "position": position,

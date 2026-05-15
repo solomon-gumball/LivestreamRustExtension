@@ -28,8 +28,10 @@ extends Area3D
 signal checkpoint_reached(peer_id)
 
 func _on_body_entered(body: Node) -> void:
+  print("body entered")
   if body is PhysicsKart:
     var kart := body as PhysicsKart
+    print("emitting")
     checkpoint_reached.emit(kart.physics_kart_movement_sync.owner_peer_id)
 
 func _ready() -> void:

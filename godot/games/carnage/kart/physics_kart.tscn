@@ -10,8 +10,9 @@
 [ext_resource type="Material" uid="uid://bhq51jlaqehtr" path="res://games/carnage/fx/dust_clouds_fx_process.tres" id="4_26l52"]
 [ext_resource type="Texture2D" uid="uid://ba6mac1k3t38a" path="res://materials/bot_mat/bot_normals.png" id="4_kkve7"]
 [ext_resource type="ArrayMesh" uid="uid://busnpknqqkqhh" path="res://games/carnage/fx/cloud.res" id="5_1qgq1"]
+[ext_resource type="FontFile" uid="uid://7uibxoligyvb" path="res://fonts/HomeVideo-BLG6G.ttf" id="11_dbe4r"]
 
-[sub_resource type="ShaderMaterial" id="ShaderMaterial_1qgq1"]
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_dbe4r"]
 resource_local_to_scene = true
 render_priority = 0
 shader = ExtResource("2_7mpfn")
@@ -31,6 +32,7 @@ _data = [Vector2(0.00314466, 0.495897), 0.0, 0.0, 0, 0, Vector2(0.416667, 0.9862
 point_count = 4
 
 [node name="PhysicsKart" type="RigidBody3D" unique_id=1967429638]
+collision_layer = 2
 mass = 5.0
 gravity_scale = 0.0
 center_of_mass_mode = 1
@@ -83,7 +85,7 @@ unique_name_in_owner = true
 transform = Transform3D(12.360951, 0, 0, 0, 12.360951, 0, 0, 0, 12.360951, 0, -0.019290864, -0.7726673)
 collision_layer = 0
 collision_mask = 0
-surface_mat = SubResource("ShaderMaterial_1qgq1")
+surface_mat = SubResource("ShaderMaterial_dbe4r")
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="." unique_id=1470868233]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.249, -0.042)
@@ -93,9 +95,17 @@ shape = SubResource("CapsuleShape3D_4r8fh")
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.00065918267, 0.13595451, 0.0068468302)
 shape = SubResource("BoxShape3D_26l52")
 
-[node name="PhysicsKartMovementSynchronizer" type="Node" parent="." unique_id=1826281243 node_paths=PackedStringArray("kart")]
+[node name="PhysicsKartMovementSynchronizer" type="Node" parent="." unique_id=1826281243 node_paths=PackedStringArray("kart", "kart_visual_node")]
 unique_name_in_owner = true
 script = ExtResource("1_kkve7")
 kart = NodePath("..")
+kart_visual_node = NodePath("../Mesh")
 collision_box_shape = SubResource("BoxShape3D_26l52")
 acceleration_curve = SubResource("Curve_gvgjh")
+
+[node name="Label3D" type="Label3D" parent="." unique_id=33787048]
+transform = Transform3D(0.10624574, 0, 0, 0, 0.10624574, 0, 0, 0, 0.10624574, 0, 0.4853788, 0)
+billboard = 1
+fixed_size = true
+text = "solomongumbal1"
+font = ExtResource("11_dbe4r")

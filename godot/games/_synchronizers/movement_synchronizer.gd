@@ -169,6 +169,13 @@ func simulate_tick(current_tick: int, delta: float) -> void:
       if t < cutoff:
         _server_input_store.erase(t)
 
+func authority_teleport(new_state: Dictionary) -> void:
+  assert(is_host, "authority_teleport() must only be called on the host")
+  physics_state = new_state
+  apply_state_to_entity(physics_state)
+  # Force the sync packet to fire on the next simulate_tick call.
+  _sync_accumulator = SERVER_SYNC_RATE
+
 # --- Abstract methods (must be overridden in subclass) ---
 
 func simulate_one_frame(_input: Dictionary, _state: Dictionary, _tick: int) -> Dictionary:

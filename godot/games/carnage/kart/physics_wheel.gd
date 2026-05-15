@@ -13,12 +13,33 @@ class_name PhysicsWheel
 @onready var smoke_fx: GPUParticles3D = %SmokeFX
 
 var initial_position: Vector3
+var _last_global_position: Vector3
 
 func _ready() -> void:
   initial_position = position
+  smoke_fx.amount_ratio = 0.0
 
-func _process(_delta: float) -> void:
-  pass
+func _process(delta: float) -> void:
+  var is_grounded := _check_grounded()
+  if delta > 0.0 and is_grounded:
+    var vel := (global_position - _last_global_position) / delta
+    var lateral_speed := absf(global_basis.x.dot(vel))
+    smoke_fx.amount_ratio = clampf(lateral_speed / 1.0, 0.0, 1.0)
+  else:
+    smoke_fx.amount_ratio = 0.0
+  _last_global_position = global_position
+
+func _check_grounded() -> bool:
+  var tire_center := global_position + Vector3(0, -rest_distance, 0)
+  var params := PhysicsShapeQueryParameters3D.new()
+  var shape := SphereShape3D.new()
+  shape.radius = wheel_radius
+  params.shape = shape
+  params.transform = Transform3D(Basis.IDENTITY, tire_center)
+  params.exclude = [get_parent().get_rid()]
+  var hits := get_tree().get_root().get_world_3d().direct_space_state.intersect_shape(params, 1)
+  return hits.size() > 0
+
   # var tire_center := global_position + Vector3(0, -rest_distance, 0)
   # DebugDraw.draw_line(global_position, tire_center, Color.YELLOW)
   # DebugDraw.draw_sphere(tire_center, 0.02, Color.YELLOW, 0.0)
@@ -56,7 +77,6 @@ func compute_forces(
   if alignment < 0.3:
     return { "force": Vector3.ZERO, "torque": Vector3.ZERO, "is_grounded": false }
 
-  DebugDraw.draw_line(ray_origin, ray_end, Color.CYAN, 0.01)
   var coll_point: Vector3 = hit.position
   var collision_normal: Vector3 = hit.normal
 
@@ -77,8 +97,6 @@ func compute_forces(
   var friction_lookup: float = wheel_friction_curve.sample(tire_brake_dot)
   var desired_acceleration: float = (-vel_in_side_dir * friction_lookup * base_friction) / delta
   var steering_force: Vector3 = desired_acceleration * force_basis.x * tire_mass 
-
-  smoke_fx.amount_ratio = tire_brake_dot
 
   # Drive (project wheel-forward onto the collision plane so it stays on the surface)
   var projected_forward: Vector3 = Plane(collision_normal).project(force_basis.z * 5.0)

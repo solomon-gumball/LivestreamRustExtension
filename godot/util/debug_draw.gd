@@ -19,7 +19,6 @@ class _Item:
     color = c
     time_left = d
 
-
 func _ready() -> void:
   _sphere_mmi = _make_mmi(SphereMesh.new())
 
@@ -48,7 +47,7 @@ func _make_mmi(mesh: Mesh) -> MultiMeshInstance3D:
   mm.mesh.surface_set_material(0, mat)
   return mmi
 
-func _process(delta: float) -> void:
+func _physics_process(delta: float) -> void:
   _flush(_sphere_mmi, _sphere_items)
   _flush(_line_mmi, _line_items)
   _cull(delta, _sphere_items)
