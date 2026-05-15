@@ -87,7 +87,7 @@ func get_default_input() -> Dictionary:
 func get_initial_state() -> Dictionary:
   return {
     "position": kart.global_position,
-    "basis": kart.global_basis,
+    "rotation": Quaternion(kart.global_basis),
     "linear_velocity": Vector3.ZERO,
     "angular_velocity": Vector3.ZERO,
     "wheel_turn": 0.0,
@@ -95,7 +95,7 @@ func get_initial_state() -> Dictionary:
 
 func apply_state_to_entity(state: Dictionary) -> void:
   kart.global_position = state.position
-  kart.global_basis = state.basis
+  kart.global_basis = Basis(state.get("rotation", Quaternion.IDENTITY))
   kart.wheel_turn = state.get("wheel_turn", 0.0)
   kart.set_velocities(state.linear_velocity, state.angular_velocity)
 
@@ -107,11 +107,21 @@ func _process(_delta: float) -> void:
     kart_visual_node.global_basis = kart.global_basis * _visual_rest_local_basis
 
 const VISUAL_CORRECTION_DURATION := 0.3
+const VISUAL_TELEPORT_THRESHOLD := 3.0
 
 func apply_visual_correction(pre_state: Dictionary, post_state: Dictionary) -> void:
   DebugDraw.draw_sphere(pre_state.get("position", Vector3.ZERO), 0.15, Color.RED, 1.0)
   DebugDraw.draw_sphere(post_state.get("position", Vector3.ZERO), 0.15, Color.GREEN, 1.0)
   if not kart_visual_node:
+    return
+
+  if _interp_visual_tween != null and _interp_visual_tween.is_running():
+    _interp_visual_tween.kill()
+
+  # If the correction is large, snap instantly rather than tweening across a visible gap.
+  var post_pos: Vector3 = post_state.get("position", Vector3.ZERO)
+  if kart_visual_node.global_position.distance_to(post_pos) > VISUAL_TELEPORT_THRESHOLD:
+    _interp_visual_tween = null
     return
 
   var start_pos: Vector3
@@ -122,7 +132,7 @@ func apply_visual_correction(pre_state: Dictionary, post_state: Dictionary) -> v
     start_q = Quaternion(kart_visual_node.global_basis)
     _interp_visual_tween.kill()
   else:
-    var pre_basis: Basis = pre_state.get("basis", Basis.IDENTITY)
+    var pre_basis: Basis = Basis(pre_state.get("rotation", Quaternion.IDENTITY))
     var pre_pos: Vector3 = pre_state.get("position", Vector3.ZERO)
     start_pos = pre_pos + pre_basis * _visual_rest_offset
     start_q = Quaternion(pre_basis * _visual_rest_local_basis)
@@ -140,14 +150,14 @@ func apply_visual_correction(pre_state: Dictionary, post_state: Dictionary) -> v
 
 const POS_CORRECTION_THRESHOLD := 0.02
 const VEL_CORRECTION_THRESHOLD := 0.1
-const ROT_CORRECTION_THRESHOLD := 0.01  # quaternion dot deviation
+const ROT_CORRECTION_THRESHOLD := 0.01 # quaternion dot deviation
 const WHEEL_TURN_CORRECTION_THRESHOLD := 0.02
 
 func needs_correction(local_state: Dictionary, server_state: Dictionary) -> bool:
   var pos_err: float = local_state.get("position", Vector3.ZERO).distance_to(server_state.get("position", Vector3.ZERO))
   var vel_err: float = local_state.get("linear_velocity", Vector3.ZERO).distance_to(server_state.get("linear_velocity", Vector3.ZERO))
-  var local_q := Quaternion(local_state.get("basis", Basis.IDENTITY))
-  var server_q := Quaternion(server_state.get("basis", Basis.IDENTITY))
+  var local_q: Quaternion = local_state.get("rotation", Quaternion.IDENTITY)
+  var server_q: Quaternion = server_state.get("rotation", Quaternion.IDENTITY)
   var rot_err: float = 1.0 - absf(local_q.dot(server_q))
   var wheel_turn_err: float = absf(local_state.get("wheel_turn", 0.0) - server_state.get("wheel_turn", 0.0))
 
@@ -157,12 +167,16 @@ func needs_correction(local_state: Dictionary, server_state: Dictionary) -> bool
          wheel_turn_err > WHEEL_TURN_CORRECTION_THRESHOLD
 
 func interpolate_state(from_state: Dictionary, to_state: Dictionary, delta: float) -> Dictionary:
+  if from_state.get("position", Vector3.ZERO).distance_to(to_state.get("position", Vector3.ZERO)) > VISUAL_TELEPORT_THRESHOLD:
+    return to_state
+
   var weight := delta * 10.0
-  var from_q := Quaternion(from_state.get("basis", Basis.IDENTITY))
-  var to_q := Quaternion(to_state.get("basis", Basis.IDENTITY))
+  var from_q: Quaternion = from_state.get("rotation", Quaternion.IDENTITY)
+  var to_q: Quaternion = to_state.get("rotation", Quaternion.IDENTITY)
+
   return {
     "position": from_state.position.lerp(to_state.position, weight),
-    "basis": Basis(from_q.slerp(to_q, weight)),
+    "rotation": from_q.slerp(to_q, weight),
     "linear_velocity": to_state.get("linear_velocity", Vector3.ZERO),
     "angular_velocity": to_state.get("angular_velocity", Vector3.ZERO),
     "wheel_turn": lerpf(from_state.get("wheel_turn", 0.0), to_state.get("wheel_turn", 0.0), weight),
@@ -179,7 +193,7 @@ func simulate_one_frame(input: Dictionary, state: Dictionary, tick: int) -> Dict
   var throttle: float = input_vec.x
 
   var position: Vector3 = state.get("position", Vector3.ZERO)
-  var basis: Basis = state.get("basis", Basis.IDENTITY)
+  var basis: Basis = Basis(state.get("rotation", Quaternion.IDENTITY))
   var linear_velocity: Vector3 = state.get("linear_velocity", Vector3.ZERO)
   var angular_velocity: Vector3 = state.get("angular_velocity", Vector3.ZERO)
   var wheel_turn: float = state.get("wheel_turn", 0.0)
@@ -325,7 +339,7 @@ func simulate_one_frame(input: Dictionary, state: Dictionary, tick: int) -> Dict
 
   return {
     "position": position,
-    "basis": basis,
+    "rotation": Quaternion(basis),
     "linear_velocity": linear_velocity,
     "angular_velocity": angular_velocity,
     "wheel_turn": wheel_turn,

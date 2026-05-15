@@ -68,6 +68,10 @@ func _handle_incoming_peer_packet(sender_id: int, packet: Dictionary) -> void:
     _:
       _on_extra_packet(sender_id, packet)
 
+func clear_local_state() -> void:
+  _has_initial_state = false
+  local_input_buffer.clear()
+
 func reconcile_server_update(server_tick: int, server_state: Dictionary) -> void:
   var local_predicted_state: Dictionary = local_input_buffer.get_entry(server_tick)
 
@@ -227,6 +231,9 @@ func _on_extra_packet(_sender_id: int, _packet: Dictionary) -> void:
 class CircularBuffer:
   const BUFFER_SIZE := 256
   var input_buffer := []
+
+  func clear() -> void:
+    input_buffer = []
 
   func _init() -> void:
     input_buffer.resize(BUFFER_SIZE)

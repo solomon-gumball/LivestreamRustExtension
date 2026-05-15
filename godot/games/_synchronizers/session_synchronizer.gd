@@ -106,6 +106,9 @@ func _send_ping() -> void:
     "client_time": Time.get_ticks_msec(),
   })
 
+const DRIFT_NUDGE_THRESHOLD := 4     # ticks — use nudge
+const DRIFT_RESET_THRESHOLD := 10    # ticks — hard reset
+
 func message_received(sender_id: int, packet: Dictionary) -> void:
   match packet.type:
     GlobalGameMessage.ClientGameLoaded:
@@ -131,17 +134,22 @@ func message_received(sender_id: int, packet: Dictionary) -> void:
       current_ping = rtt_msec
 
       var new_target_tick := server_net_tick + INPUT_BUFFER_DEPTH + one_way_ticks + MARGIN_TICKS
+      var sim_tick_delta := absi(net_sim_tick - new_target_tick)
 
       if not _initial_tick_set:
         net_sim_tick = new_target_tick
         _initial_tick_set = true
-      elif abs(net_sim_tick - new_target_tick) > 2:
+      elif sim_tick_delta > DRIFT_NUDGE_THRESHOLD:
         if new_target_tick > net_sim_tick:
           print("[SessionSynchronizer] latency increased, running extra frame")
           _run_extra_frame = true
         elif new_target_tick < net_sim_tick:
           print("[SessionSynchronizer] latency decreased, skipping next frame")
           _skip_next_frame = true
+      elif sim_tick_delta > DRIFT_RESET_THRESHOLD:
+        print("[SessionSynchronizer] client simulation drifted too far. Resetting!")
+        _reset_all_synchronizers()
+        net_sim_tick = new_target_tick
 
       rtt_updated.emit(current_ping, net_sim_tick - server_net_tick)
   
@@ -167,6 +175,10 @@ func _physics_process(delta: float) -> void:
   if _run_extra_frame:
     _run_extra_frame = false
     _tick_all_synchronizers(delta)
+
+func _reset_all_synchronizers() -> void:
+  for sync in _registered_synchronizers:
+    sync.clear_local_state()
 
 func _tick_all_synchronizers(delta: float) -> void:
   for sync in _registered_synchronizers:

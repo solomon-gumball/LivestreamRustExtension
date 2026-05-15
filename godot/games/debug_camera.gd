@@ -222,14 +222,18 @@ class FollowState extends DebugCameraState:
         cam._pitch = clamp(cam._pitch, deg_to_rad(-89.0), deg_to_rad(89.0))
 
   func _compute_safe_distance(orbit_dir: Vector3) -> float:
-    var sc := cam.collision_shape_cast
-    var world_end := target.global_position + orbit_dir * orbit_distance
-    sc.global_position = target.global_position
-    sc.target_position = sc.to_local(world_end)
-    sc.force_shapecast_update()
-    if sc.is_colliding():
-      var hit_fraction := sc.get_closest_collision_safe_fraction()
-      return maxf(orbit_distance * hit_fraction, MIN_DISTANCE)
+    var space := cam.get_world_3d().direct_space_state
+    var from := target.global_position
+    var to := from + orbit_dir * orbit_distance
+    var query := PhysicsRayQueryParameters3D.create(from, to)
+    query.collision_mask = 1
+    query.exclude = [cam.get_rid()]
+    var result := space.intersect_ray(query)
+    if result:
+      # DebugDraw.draw_line(result.position, to, Color.YELLOW)
+      var hit_dist := from.distance_to(result.position)
+      return maxf(hit_dist, MIN_DISTANCE)
+    # DebugDraw.draw_line(from, to, Color.GREEN)
     return orbit_distance
 
   func physics_update(delta: float) -> void:

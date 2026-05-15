@@ -5,6 +5,31 @@
 [ext_resource type="Script" uid="uid://cf2o11ublve5u" path="res://games/carnage/kart_game_state_synchronizer.gd" id="2_pjf2b"]
 [ext_resource type="PackedScene" uid="uid://diyvoye7vs7ks" path="res://games/debug_camera.tscn" id="3_2xtgp"]
 [ext_resource type="PackedScene" uid="uid://crpnxmsftnv0f" path="res://games/carnage/props/race_checkpoint.tscn" id="4_7nuw5"]
+[ext_resource type="Texture2D" uid="uid://ofvawp17cyry" path="res://games/marbles/textures/checker.png" id="4_22osk"]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_22osk"]
+resource_local_to_scene = true
+transparency = 1
+cull_mode = 2
+albedo_color = Color(1, 1, 1, 0.33333334)
+albedo_texture = ExtResource("4_22osk")
+emission_enabled = true
+emission = Color(1, 0, 0, 1)
+uv1_scale = Vector3(2.5, 2.5, 5)
+uv1_triplanar = true
+uv1_world_triplanar = true
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_o05id"]
+resource_local_to_scene = true
+transparency = 1
+cull_mode = 2
+albedo_color = Color(1, 1, 1, 0.33333334)
+albedo_texture = ExtResource("4_22osk")
+emission_enabled = true
+emission = Color(1, 0, 0, 1)
+uv1_scale = Vector3(2.5, 2.5, 5)
+uv1_triplanar = true
+uv1_world_triplanar = true
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_rhos2"]
 size = Vector3(10, 0.082, 10)
@@ -42,9 +67,11 @@ script = ExtResource("2_pjf2b")
 
 [node name="RaceCheckpoint" parent="." unique_id=712868245 instance=ExtResource("4_7nuw5")]
 transform = Transform3D(-4.371139e-08, 0, 1, 0, 1, 0, -1, 0, -4.371139e-08, -38.446407, 0.65156734, 0.012181282)
+plane_material = SubResource("StandardMaterial3D_22osk")
 
 [node name="RaceCheckpoint2" parent="." unique_id=35775725 instance=ExtResource("4_7nuw5")]
 transform = Transform3D(-4.371139e-08, 0, 1, 0, 1, 0, -1, 0, -4.371139e-08, -28.446407, 0.65156734, 0.08892778)
+plane_material = SubResource("StandardMaterial3D_o05id")
 
 [node name="StaticBody3D" type="StaticBody3D" parent="." unique_id=82987365]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -2.2655797, 0)
@@ -61,8 +88,8 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -40.79398, 0.58948624, -0.017
 unique_name_in_owner = true
 curve = SubResource("Curve3D_pjf2b")
 
-[node name="boxing_ring" parent="." unique_id=2007237807 instance=ExtResource("1_q63vr")]
-transform = Transform3D(0.3, 0, 0, 0, 0.3, 0, 0, 0, 0.3, 0, -0.26946414, 0)
+[node name="boxing_ring" parent="." unique_id=2107348403 instance=ExtResource("1_q63vr")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.050815582, -0.26946604, -0.06414795)
 
 [node name="DirectionalLight3D" type="DirectionalLight3D" parent="." unique_id=1486856216]
 transform = Transform3D(-0.49766108, 0.63648874, 0.58924997, -0.29978192, -0.76370305, 0.57174164, 0.8139191, 0.10788706, 0.5708731, 2.0339265, 2.6281023, -0.35323796)
@@ -87,8 +114,9 @@ allow_free_cam = false
 
 [node name="Camera2" type="Camera3D" parent="DebugCamera" unique_id=1785970488]
 unique_name_in_owner = true
+transform = Transform3D(1, 0, 0, 0, 0.9968858, 0.07885928, 0, -0.07885928, 0.9968858, 0, 0.40996844, -0.032430798)
 current = true
-fov = 40.0
+fov = 35.0
 
 [node name="BoomNode" type="Node3D" parent="." unique_id=1864927377]
 unique_name_in_owner = true

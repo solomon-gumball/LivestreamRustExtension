@@ -32,7 +32,6 @@ func _ready() -> void:
 
 func _out_of_bounds_area_entered(body: Node) -> void:
   if !is_game_host: return
-    # assert(false, "_out_of_bounds_area_entered called by non authority!")
 
   if body is PhysicsKart:
     var kart_bot: PhysicsKart = body as PhysicsKart
@@ -53,7 +52,6 @@ func _setup_checkpoints() -> void:
       var checkpoint := child as RaceCheckpoint
       checkpoints.append(child)
       if is_game_host:
-        print("setting callback")
         var callback: Callable = game_state.authority_checkpoint_reached.bind(checkpoint_index)
         checkpoint.checkpoint_reached.connect(callback)
       checkpoint_index += 1
@@ -103,7 +101,8 @@ func spawn_cars() -> void:
 
     if peer.peer_id == MultiplayerClient.my_peer_id():
       debug_camera._follow_state.move_lerp = 5.0
-      debug_camera._follow_state.lock_pitch = true
+      # debug_camera._follow_state.lock_pitch = true
+      # debug_camera._follow_state.prevent_wall_clip = true
       debug_camera.set_default_orbit_distance(4.0)
       debug_camera.enter_follow_mode(kart_inst, deg_to_rad(35.0))
 
