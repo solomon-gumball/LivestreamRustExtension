@@ -1,0 +1,40 @@
+[gd_scene format=3 uid="uid://cpguym5iqkbec"]
+
+[ext_resource type="PackedScene" uid="uid://dmjqquq6l4to2" path="res://games/carnage/blender/hammer_obstacle.blend" id="1_6ykhp"]
+[ext_resource type="Script" uid="uid://l62r4fcsdegn" path="res://games/carnage/hammer_obstacle.gd" id="2_8v0sp"]
+[ext_resource type="Script" uid="uid://cxvg1dw7htp7o" path="res://games/_synchronizers/net_tick_simulated.gd" id="3_8v0sp"]
+
+[sub_resource type="CylinderShape3D" id="CylinderShape3D_8v0sp"]
+height = 3.7
+radius = 1.045
+
+[node name="hammer_obstacle" unique_id=2071296910 node_paths=PackedStringArray("hammer_head", "impact_area") instance=ExtResource("1_6ykhp")]
+script = ExtResource("2_8v0sp")
+rotation_speed = 0.0
+hammer_head = NodePath("RotationNode/head/StaticBody3D")
+impact_area = NodePath("RotationNode/head/Area3D")
+impulse_force = null
+
+[node name="RotationNode" parent="." index="0" unique_id=817306566]
+unique_name_in_owner = true
+
+[node name="head" parent="RotationNode" index="2" unique_id=2087897759]
+unique_name_in_owner = true
+
+[node name="Area3D" type="Area3D" parent="RotationNode/head" index="0" unique_id=345984177]
+transform = Transform3D(-4.3711392e-08, -1.0000001, 0, 1.0000001, -4.3711392e-08, 0, 0, 0, 1, 0, 0, 0)
+collision_layer = 0
+collision_mask = 2
+monitorable = false
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="RotationNode/head/Area3D" index="0" unique_id=1810115375]
+transform = Transform3D(0.9999999, 0, 0, 0, 0.9999999, 0, 0, 0, 0.9999999, 0, 0, 0)
+shape = SubResource("CylinderShape3D_8v0sp")
+
+[node name="StaticBody3D" parent="RotationNode/head" index="1" unique_id=301104958]
+unique_name_in_owner = true
+
+[node name="NetTickSimulated" type="Node" parent="." index="1" unique_id=209068829]
+unique_name_in_owner = true
+script = ExtResource("3_8v0sp")
+metadata/_custom_type_script = "uid://cxvg1dw7htp7o"

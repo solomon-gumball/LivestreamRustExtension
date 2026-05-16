@@ -1,5 +1,5 @@
 class_name MovementSynchronizer
-extends Node
+extends NetTickSimulated
 
 var local_input_buffer: CircularBuffer = CircularBuffer.new()
 

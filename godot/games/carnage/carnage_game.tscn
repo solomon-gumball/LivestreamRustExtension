@@ -6,8 +6,13 @@
 [ext_resource type="PackedScene" uid="uid://diyvoye7vs7ks" path="res://games/debug_camera.tscn" id="3_2xtgp"]
 [ext_resource type="PackedScene" uid="uid://crpnxmsftnv0f" path="res://games/carnage/props/race_checkpoint.tscn" id="4_7nuw5"]
 [ext_resource type="Texture2D" uid="uid://ofvawp17cyry" path="res://games/marbles/textures/checker.png" id="4_22osk"]
+[ext_resource type="PackedScene" uid="uid://cpguym5iqkbec" path="res://games/carnage/props/hammer_obstacle.tscn" id="7_o05id"]
 
-[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_22osk"]
+[sub_resource type="PlaneMesh" id="PlaneMesh_o05id"]
+resource_local_to_scene = true
+size = Vector2(2.8, 0.8)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_y1vjh"]
 resource_local_to_scene = true
 transparency = 1
 cull_mode = 2
@@ -19,17 +24,9 @@ uv1_scale = Vector3(2.5, 2.5, 5)
 uv1_triplanar = true
 uv1_world_triplanar = true
 
-[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_o05id"]
+[sub_resource type="BoxShape3D" id="BoxShape3D_qn2ad"]
 resource_local_to_scene = true
-transparency = 1
-cull_mode = 2
-albedo_color = Color(1, 1, 1, 0.33333334)
-albedo_texture = ExtResource("4_22osk")
-emission_enabled = true
-emission = Color(1, 0, 0, 1)
-uv1_scale = Vector3(2.5, 2.5, 5)
-uv1_triplanar = true
-uv1_world_triplanar = true
+size = Vector3(2.8, 1, 0.2)
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_rhos2"]
 size = Vector3(10, 0.082, 10)
@@ -58,20 +55,43 @@ cull_mode = 1
 shading_mode = 0
 albedo_color = Color(0.2921582, 0.03526208, 0.4698527, 1)
 
+[sub_resource type="PlaneMesh" id="PlaneMesh_slwue"]
+resource_local_to_scene = true
+size = Vector2(2, 0.8)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_f720e"]
+resource_local_to_scene = true
+transparency = 1
+cull_mode = 2
+albedo_color = Color(1, 1, 1, 0.33333334)
+albedo_texture = ExtResource("4_22osk")
+emission_enabled = true
+emission = Color(1, 0, 0, 1)
+uv1_scale = Vector3(2.5, 2.5, 5)
+uv1_triplanar = true
+uv1_world_triplanar = true
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_a4h86"]
+resource_local_to_scene = true
+size = Vector3(2, 1, 0.2)
+
+[sub_resource type="SphereShape3D" id="SphereShape3D_o05id"]
+radius = 57.58551
+
 [node name="CarnageGame" type="Node3D" unique_id=1863440489]
 script = ExtResource("1_rhos2")
 
 [node name="KartGameStateSynchronizer" type="Node" parent="." unique_id=463833223]
 unique_name_in_owner = true
 script = ExtResource("2_pjf2b")
-
-[node name="RaceCheckpoint" parent="." unique_id=712868245 instance=ExtResource("4_7nuw5")]
-transform = Transform3D(-4.371139e-08, 0, 1, 0, 1, 0, -1, 0, -4.371139e-08, -38.446407, 0.65156734, 0.012181282)
-plane_material = SubResource("StandardMaterial3D_22osk")
+starting_checkpoint = 0
 
 [node name="RaceCheckpoint2" parent="." unique_id=35775725 instance=ExtResource("4_7nuw5")]
-transform = Transform3D(-4.371139e-08, 0, 1, 0, 1, 0, -1, 0, -4.371139e-08, -28.446407, 0.65156734, 0.08892778)
-plane_material = SubResource("StandardMaterial3D_o05id")
+transform = Transform3D(-4.371139e-08, 0, -1, 0, 1, 0, 1, 0, -4.371139e-08, -10.618869, 5.599416, -5.0374446)
+plane_mesh = SubResource("PlaneMesh_o05id")
+plane_material = SubResource("StandardMaterial3D_y1vjh")
+box_shape = SubResource("BoxShape3D_qn2ad")
+width = 2.8
 
 [node name="StaticBody3D" type="StaticBody3D" parent="." unique_id=82987365]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -2.2655797, 0)
@@ -88,7 +108,7 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -40.79398, 0.58948624, -0.017
 unique_name_in_owner = true
 curve = SubResource("Curve3D_pjf2b")
 
-[node name="boxing_ring" parent="." unique_id=2107348403 instance=ExtResource("1_q63vr")]
+[node name="boxing_ring" parent="." unique_id=1093106641 instance=ExtResource("1_q63vr")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.050815582, -0.26946604, -0.06414795)
 
 [node name="DirectionalLight3D" type="DirectionalLight3D" parent="." unique_id=1486856216]
@@ -137,6 +157,59 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -26.178598, -7.453396, -0.460
 shape = SubResource("BoxShape3D_pjf2b")
 
 [node name="CSGSphere3D" type="CSGSphere3D" parent="." unique_id=269553093]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.010496095, -1.9073486e-05, 0.021273375)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.08006854, 0.034898758, -0.010442972)
 radius = 100.0
 material = SubResource("StandardMaterial3D_rhos2")
+
+[node name="HammerGroup" type="Node3D" parent="." unique_id=1702121741]
+
+[node name="hammer_obstacle" parent="HammerGroup" unique_id=2071296910 instance=ExtResource("7_o05id")]
+transform = Transform3D(0.4912207, 0, 0, 0, 0.4912207, 0, 0, 0, 0.4912207, -34.444378, 3.7772903, -7.629905)
+rotation_speed = 0.03
+impulse_force = 1.5
+
+[node name="hammer_obstacle2" parent="HammerGroup" unique_id=1390993595 instance=ExtResource("7_o05id")]
+transform = Transform3D(0.4912207, 0, 0, 0, 0.4912207, 0, 0, 0, 0.4912207, -34.444378, 3.7772903, -9.516501)
+rotation_speed = 0.03
+cycle_offset = 0.3
+impulse_force = 1.5
+
+[node name="hammer_obstacle3" parent="HammerGroup" unique_id=88533710 instance=ExtResource("7_o05id")]
+transform = Transform3D(0.4912207, 0, 0, 0, 0.4912207, 0, 0, 0, 0.4912207, -34.444378, 3.7772903, -11.094286)
+rotation_speed = 0.03
+cycle_offset = 0.6
+impulse_force = 1.5
+
+[node name="hammer_obstacle4" parent="HammerGroup" unique_id=665960330 instance=ExtResource("7_o05id")]
+transform = Transform3D(0.49104598, -0.0027321805, -0.012813254, 0.0024754584, 0.49111566, -0.009853495, 0.012865318, 0.00978542, 0.49095473, -34.444378, 3.7772903, -12.804796)
+rotation_speed = 0.03
+cycle_offset = 0.2
+impulse_force = 1.5
+
+[node name="hammer_obstacle5" parent="HammerGroup" unique_id=581278438 instance=ExtResource("7_o05id")]
+transform = Transform3D(0.4912207, 0, 0, 0, 0.4912207, 0, 0, 0, 0.4912207, -34.444378, 3.7772903, -14.462184)
+rotation_speed = 0.03
+cycle_offset = 0.9
+impulse_force = 1.5
+
+[node name="hammer_obstacle6" parent="HammerGroup" unique_id=1094649281 instance=ExtResource("7_o05id")]
+transform = Transform3D(0.4912207, 0, 0, 0, 0.4912207, 0, 0, 0, 0.4912207, -34.444378, 3.7772903, -16.227545)
+rotation_speed = 0.03
+cycle_offset = 0.5
+impulse_force = 1.5
+
+[node name="RaceCheckpoint" parent="." unique_id=1625046385 instance=ExtResource("4_7nuw5")]
+transform = Transform3D(-1, 0, -8.742278e-08, 0, 1, 0, 8.742278e-08, 0, -1, -34.436714, 1.4340453, -6.450535)
+plane_mesh = SubResource("PlaneMesh_slwue")
+plane_material = SubResource("StandardMaterial3D_f720e")
+box_shape = SubResource("BoxShape3D_a4h86")
+width = 2.0
+
+[node name="InBoundsArea" type="Area3D" parent="." unique_id=111456270]
+unique_name_in_owner = true
+collision_layer = 0
+collision_mask = 2
+monitorable = false
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="InBoundsArea" unique_id=1529356841]
+shape = SubResource("SphereShape3D_o05id")

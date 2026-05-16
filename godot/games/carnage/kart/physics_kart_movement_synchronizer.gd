@@ -7,14 +7,21 @@ extends MovementSynchronizer
 @export var collision_box_shape: BoxShape3D
 @export var acceleration_curve: Curve
 @export var base_acceleration: float = 4.0
-@export var max_ground_speed: float = 1.5
+@export var max_ground_speed: float = 2.0
 @export var drag_coefficient: float = 5.0
 @export var min_speed_threshold: float = 0.01
 @export var mass: float = 5.0
 @export var gravity: float = 2.0
-@export var angular_damp: float = 0.5
+@export var angular_damp: float = 0.8
 @export var surface_friction: float = 4.0
-@export var collision_torque_scale: float = 0.2
+@export var collision_torque_scale: float = 0.03
+@export var flip_velocity_threshold: float = 0.2
+@export var flip_up_dot_threshold: float = 0.5
+@export var flip_frame_threshold: int = 60
+
+signal kart_flipped
+
+var _flip_frames: int = 0
 
 var mappings := {
   "move_forward": KEY_W,
@@ -182,6 +189,10 @@ func interpolate_state(from_state: Dictionary, to_state: Dictionary, delta: floa
     "wheel_turn": lerpf(from_state.get("wheel_turn", 0.0), to_state.get("wheel_turn", 0.0), weight),
   }
 
+var queued_impulse: Vector3 = Vector3.ZERO
+func apply_impulse(impulse: Vector3) -> void:
+  queued_impulse += impulse
+
 func _sample_input() -> Dictionary:
   return {
     "move": Input.get_vector("move_back", "move_forward", "turn_right", "turn_left"),
@@ -253,6 +264,11 @@ func simulate_one_frame(input: Dictionary, state: Dictionary, tick: int) -> Dict
   # Integrate linear
   linear_velocity += (total_force / mass) * delta
 
+  linear_velocity += queued_impulse
+  if queued_impulse.length() > 0.01:
+    _logger.log("%s IMPULSE applied %s new_lvel=%s" % [_sim_tag(tick), queued_impulse, linear_velocity], true)
+  queued_impulse = Vector3.ZERO
+
   # Clamp ground speed
   if any_grounded and linear_velocity.length() > max_ground_speed:
     var vert := linear_velocity.y
@@ -293,6 +309,7 @@ func simulate_one_frame(input: Dictionary, state: Dictionary, tick: int) -> Dict
       var impulse := normal * impact_speed * mass
       # Apply linear response
       linear_velocity += impulse / mass
+      
       # Apply torque from contact offset — this is what rotates the body onto a flat face
       var contact_offset := contact_point - (position + basis * kart.get_center_of_mass())
       var collision_torque := contact_offset.cross(impulse)
@@ -336,6 +353,28 @@ func simulate_one_frame(input: Dictionary, state: Dictionary, tick: int) -> Dict
   kart.wheel_turn = wheel_turn
   kart.set_velocities(linear_velocity, angular_velocity)
   # DebugDraw.draw_sphere(position + Vector3(0, 1.0, 0), 0.1, Color.GREEN if any_grounded else Color.RED)
+
+  if is_host:
+    var is_flipped: bool = (
+      not any_grounded and
+      basis.y.dot(Vector3.UP) < flip_up_dot_threshold and
+      linear_velocity.length() < flip_velocity_threshold
+    )
+    # print(linear_velocity.length())
+    if is_flipped:
+      _flip_frames += 1
+      if _flip_frames >= flip_frame_threshold:
+        _flip_frames = 0
+        print("TRIGGER FLIP!!!")
+        kart_flipped.emit.call_deferred()
+    else:
+      if _flip_frames > 0:
+        print("FLIP RECOVERED after %d frames" % _flip_frames)
+        print("any_grounded ", any_grounded)
+        print("basis.y.dot(Vector3.UP) < flip_up_dot_threshold ", basis.y.dot(Vector3.UP) < flip_up_dot_threshold)
+        print("linear_velocity.length() < flip_velocity_threshold ", linear_velocity.length() < flip_velocity_threshold)
+        print(linear_velocity.length())
+      _flip_frames = 0
 
   return {
     "position": position,

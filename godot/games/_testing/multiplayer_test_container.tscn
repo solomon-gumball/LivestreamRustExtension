@@ -5,6 +5,7 @@
 [node name="MultiplayerTestContainer" type="Node" unique_id=1577533979]
 script = ExtResource("1_2dhvg")
 num_players = 1
+game_name = "carnage"
 
 [node name="CanvasLayer" type="CanvasLayer" parent="." unique_id=1242978891]
 

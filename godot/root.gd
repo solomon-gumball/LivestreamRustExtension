@@ -12,7 +12,6 @@ func get_main_scene() -> PackedScene:
     load("res://pages/extension_root.tscn")
 
 func _ready() -> void:
-  ObjectSerializer.register_script(BaseGameState)
   ObjectSerializer.register_script(PongGameState)
   ObjectSerializer.register_script(MarblesGameState)
   ObjectSerializer.register_script(SessionSynchronizer)

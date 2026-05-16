@@ -20,10 +20,6 @@ shader_parameter/albedo_texture = ExtResource("3_ygued")
 shader_parameter/normal_map = ExtResource("4_kkve7")
 shader_parameter/bot_color = Color(1, 0, 0, 1)
 
-[sub_resource type="CapsuleShape3D" id="CapsuleShape3D_4r8fh"]
-radius = 0.07324219
-height = 0.28857422
-
 [sub_resource type="BoxShape3D" id="BoxShape3D_26l52"]
 size = Vector3(0.19887695, 0.11490211, 0.36168554)
 
@@ -89,10 +85,6 @@ transform = Transform3D(12.360951, 0, 0, 0, 12.360951, 0, 0, 0, 12.360951, -1.02
 [node name="Wheel_Back_Left" parent="VisualNode/Mesh" unique_id=1421979309 instance=ExtResource("2_4r8fh")]
 unique_name_in_owner = true
 transform = Transform3D(12.360951, 0, 0, 0, 12.360951, 0, 0, 0, 12.360951, 0.8984842, 0.77030057, -1.5133349)
-
-[node name="CollisionShape3D" type="CollisionShape3D" parent="." unique_id=1470868233]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.249, -0.042)
-shape = SubResource("CapsuleShape3D_4r8fh")
 
 [node name="CollisionShape3D2" type="CollisionShape3D" parent="." unique_id=516426750]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.00065918267, 0.13595451, 0.0068468302)

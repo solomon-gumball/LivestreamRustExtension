@@ -10,10 +10,12 @@ extends Area3D
 @export var plane_material: StandardMaterial3D
 @export var pillar_material: StandardMaterial3D
 @export var box_shape: BoxShape3D
-@export var width: float = 5.0:
+@export_range(1.0, 10.0) var width: float = 5.0:
   set(new_value):
-    box_shape.size.x = new_value
     width = new_value
+    if !is_inside_tree(): return
+
+    box_shape.size.x = new_value
     plane_mesh.size.x = new_value
     pillar_l.position.x = new_value / 2.0
     pillar_r.position.x = -new_value / 2.0
@@ -28,12 +30,11 @@ extends Area3D
 signal checkpoint_reached(peer_id)
 
 func _on_body_entered(body: Node) -> void:
-  print("body entered")
   if body is PhysicsKart:
     var kart := body as PhysicsKart
-    print("emitting")
     checkpoint_reached.emit(kart.physics_kart_movement_sync.owner_peer_id)
 
 func _ready() -> void:
   body_entered.connect(_on_body_entered)
   reached = reached
+  width = width

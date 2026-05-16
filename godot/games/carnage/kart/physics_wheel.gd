@@ -76,7 +76,7 @@ func compute_forces(
   # Reject contact if the wheel isn't roughly facing the ground — prevents
   # sideways wheels from pushing the kart when rolled over.
   var alignment := chassis_basis.y.dot(hit.normal)
-  if alignment < 0.3:
+  if alignment < 0.3 or hit.normal.y < 0.5:
     return { "force": Vector3.ZERO, "torque": Vector3.ZERO, "is_grounded": false }
 
   var coll_point: Vector3 = hit.position

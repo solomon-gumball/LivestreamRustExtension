@@ -34,6 +34,7 @@ var show_username: bool = false:
   set(new_value):
     if new_value != show_username:
       if new_value:
+        print("Showing username for ", chatter.display_name )
         username_label.modulate = Color(1, 1, 1, 0)
         username_label.outline_modulate = Color(0, 0, 0, 0)
         var tween := create_tween()

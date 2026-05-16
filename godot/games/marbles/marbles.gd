@@ -73,8 +73,6 @@ func toggle_username_visibility(new_visibility: bool) -> void:
 func start_game() -> void:
   if !is_game_host: return
 
-  print("start_game called!!!")
-
   # SessionSynchronizer.get_instance().peer_is_ready.connect(_peer_is_ready)
   # SessionSynchronizer.get_instance().all_peers_ready.connect(server_only_start_game)
 
@@ -86,6 +84,8 @@ func start_game() -> void:
   print("SENDING STATE REFRESH WITH START TIME ", new_state.started_at)
   _handle_peer_packet(1, { "type": MarblesMessage.StateRefresh, "state": new_state })
   _send_refresh_state(MultiplayerPeer.TARGET_PEER_BROADCAST)
+
+  server_only_start_game()
 
 func handle_lobby_updated() -> void:
   if MultiplayerClient.is_lobby_host():
@@ -115,7 +115,7 @@ func handle_anim_finished(_anim_name: String) -> void:
   if _anim_name == "Intro":
     var anim_camera := get_viewport().get_camera_3d()
     current_map.camera.snap_to_camera(anim_camera)
-    current_map.camera.camera.current = true
+    current_map.actual_camera.current = true
 
 var focused_marble: MarbleBot = null:
   set(new_value):
@@ -168,8 +168,8 @@ func increment_focused_bot(index_change: int) -> void:
   focused_marble = leaderboard[new_index]
 
 func _try_follow_marble_at_cursor(screen_pos: Vector2) -> void:
-  var origin: Vector3 = current_map.camera.camera.project_ray_origin(screen_pos)
-  var direction: Vector3 = current_map.camera.camera.project_ray_normal(screen_pos)
+  var origin: Vector3 = current_map.actual_camera.project_ray_origin(screen_pos)
+  var direction: Vector3 = current_map.actual_camera.project_ray_normal(screen_pos)
   var space := get_world_3d().direct_space_state
   var shape := SphereShape3D.new()
   shape.radius = 0.4

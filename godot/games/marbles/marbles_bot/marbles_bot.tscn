@@ -29,7 +29,7 @@ transparency = 4
 albedo_color = Color(0.9063318, 0.9063318, 0.9063318, 0.24475527)
 roughness = 0.14
 
-[sub_resource type="ShaderMaterial" id="ShaderMaterial_xy0im"]
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_jkymx"]
 resource_local_to_scene = true
 render_priority = -1
 shader = ExtResource("4_b3ckc")
@@ -60,8 +60,8 @@ surface_material_override/1 = SubResource("StandardMaterial3D_b8ety")
 
 [node name="EmoteBillboard" parent="." unique_id=665966681 instance=ExtResource("2_q8oxr")]
 unique_name_in_owner = true
-surface_material_override/0 = SubResource("ShaderMaterial_xy0im")
-emote_material = SubResource("ShaderMaterial_xy0im")
+surface_material_override/0 = SubResource("ShaderMaterial_jkymx")
+emote_material = SubResource("ShaderMaterial_jkymx")
 
 [node name="LabelNode" type="Node3D" parent="." unique_id=701709542]
 unique_name_in_owner = true

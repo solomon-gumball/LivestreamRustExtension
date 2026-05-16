@@ -335,7 +335,7 @@ class Connected extends MultiplayerClientState:
 
   func _new_ice_candidate(mid_name: String, index_name: int, sdp_name: String, id: int) -> void:
     if mc.PRINT_DEBUG: print("Created a new ice candidate to send to peer %d: %s %d %s" % [id, mid_name, index_name, sdp_name])
-    print("ice canddiate tyep ", sdp_name)
+
     if "typ host" in sdp_name and not mc.ALLOW_LAN:
       return
     if "typ srflx" in sdp_name and not mc.ALLOW_PUBLIC_IP:

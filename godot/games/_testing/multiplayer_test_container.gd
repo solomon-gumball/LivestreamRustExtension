@@ -3,6 +3,7 @@ class_name MultiplayerTestContainer
 
 @export var child_scene: PackedScene
 @export var num_players: int = 2
+@export var game_name: String = "pong"
 
 var is_host := false
 var ready_peers: Array[int]
@@ -22,7 +23,7 @@ func _ready() -> void:
 
   is_host = DebugScreenLayout.window_index == 0
   if is_host:
-    var error: String = await WSClient.create_lobby("carnage", true)
+    var error: String = await WSClient.create_lobby(game_name, true)
     if error:
       print("err ", error)
   else:

@@ -4,6 +4,7 @@
 [ext_resource type="Texture2D" uid="uid://ofvawp17cyry" path="res://games/marbles/textures/checker.png" id="2_y6aai"]
 
 [sub_resource type="PlaneMesh" id="PlaneMesh_atafs"]
+resource_local_to_scene = true
 size = Vector2(5, 0.8)
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_y6aai"]
@@ -24,6 +25,7 @@ emission = Color(0.19973725, 0.84656924, 0.46723878, 1)
 emission_energy_multiplier = 3.64
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_fqc7b"]
+resource_local_to_scene = true
 size = Vector3(5, 1, 0.2)
 
 [node name="RaceCheckpoint" type="Area3D" unique_id=35775725]

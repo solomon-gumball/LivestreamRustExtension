@@ -54,7 +54,7 @@ var is_host := false
 var _skip_next_frame := false
 var _run_extra_frame := false
 
-var _registered_synchronizers: Array[MovementSynchronizer] = []
+var _registered_synchronizers: Array[NetTickSimulated] = []
 var _ping_timer: Timer = null
 var _fallback_start_timer: Timer = null
 var _game_loaded_in_locally: bool = false
@@ -92,11 +92,11 @@ func _exit_tree() -> void:
 func setup(lobby: Lobby) -> void:
   _lobby = lobby
 
-func register_synchronizer(sync: MovementSynchronizer) -> void:
+func register_synchronizer(sync: NetTickSimulated) -> void:
   if not _registered_synchronizers.has(sync):
     _registered_synchronizers.append(sync)
 
-func unregister_synchronizer(sync: MovementSynchronizer) -> void:
+func unregister_synchronizer(sync: NetTickSimulated) -> void:
   _registered_synchronizers.erase(sync)
 
 func _send_ping() -> void:
@@ -189,10 +189,12 @@ func notify_ready() -> void:
   if MultiplayerClient.state.current is MultiplayerClient.Disconnected:
     all_peers_ready.emit()
     return
+
   send_packet(
     { "type": GlobalGameMessage.ClientGameLoaded },
     MultiplayerPeer.TARGET_PEER_SERVER,
-    MultiplayerPeer.TRANSFER_MODE_RELIABLE
+    MultiplayerPeer.TRANSFER_MODE_RELIABLE,
+    MultiplayerClient.PacketSelfMode.SelfIncluded
   )
 
 func _authority_check_all_peers_ready() -> void:
@@ -200,6 +202,7 @@ func _authority_check_all_peers_ready() -> void:
   if session_state.game_loaded_in: return
   if _lobby == null: return
 
+  print("Checking if all peers are ready...", session_state.ready_peers_map)
   for peer in _lobby.peers:
     if not peer.connected: continue
     if not session_state.ready_peers_map.get(peer.peer_id, false): return
@@ -213,4 +216,3 @@ func _force_start_timeout() -> void:
   state = session_state
   send_refresh_state(MultiplayerPeer.TARGET_PEER_BROADCAST)
   _apply_session_state()
-

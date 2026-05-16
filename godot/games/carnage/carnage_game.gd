@@ -13,6 +13,7 @@ enum CarnageGameMessage {
 @onready var game_state: KartGameStateSynchronizer = %KartGameStateSynchronizer
 @onready var spawn_path: Path3D = %SpawnPath
 @onready var out_of_bounds_area: Area3D = %OutOfBoundsArea
+@onready var in_bounds_area: Area3D = %InBoundsArea
 
 var checkpoints: Array[RaceCheckpoint] = []
 
@@ -25,7 +26,7 @@ func _ready() -> void:
   chatter_loaded.connect(_handle_chatter_loaded)
   game_state.state_updated.connect(_apply_state)
   out_of_bounds_area.body_entered.connect(_out_of_bounds_area_entered)
-
+  in_bounds_area.body_exited.connect(_in_bounds_area_exited)
   await get_tree().create_timer(2.0).timeout
   spawn_cars()
   SessionSynchronizer.get_instance().notify_ready()
@@ -35,15 +36,29 @@ func _out_of_bounds_area_entered(body: Node) -> void:
 
   if body is PhysicsKart:
     var kart_bot: PhysicsKart = body as PhysicsKart
-    var spawn_transform: Transform3D = get_spawn_transform(kart_bot.physics_kart_movement_sync.owner_peer_id)
+    respawn_kart(kart_bot.physics_kart_movement_sync.owner_peer_id)
 
-    kart_bot.physics_kart_movement_sync.authority_teleport({
-      "position": spawn_transform.origin,
-      "basis": spawn_transform.basis,
-      "linear_velocity": Vector3.ZERO,
-      "angular_velocity": Vector3.ZERO,
-      "wheel_turn": 0.0,
-    })
+func respawn_kart(peer_id: int) -> void:
+  if !is_game_host: return
+  var kart_bot: PhysicsKart = karts_by_peer_id.get(peer_id, null)
+  if kart_bot == null: return
+
+  var spawn_transform: Transform3D = get_spawn_transform(peer_id)
+
+  kart_bot.physics_kart_movement_sync.authority_teleport({
+    "position": spawn_transform.origin,
+    "rotation": Quaternion(spawn_transform.basis),
+    "linear_velocity": Vector3.ZERO,
+    "angular_velocity": Vector3.ZERO,
+    "wheel_turn": 0.0,
+  })
+
+func _in_bounds_area_exited(body: Node) -> void:
+  if !is_game_host: return
+
+  if body is PhysicsKart:
+    var kart: PhysicsKart = body as PhysicsKart
+    respawn_kart(kart.physics_kart_movement_sync.owner_peer_id)
 
 func _setup_checkpoints() -> void:
   var checkpoint_index: int = 0
@@ -58,7 +73,7 @@ func _setup_checkpoints() -> void:
 
 func _apply_state() -> void:
   var my_peer_id := MultiplayerClient.my_peer_id()
-  var last_reached_checkpoint: int = game_state.game_state.checkpoints_reached.get(my_peer_id, -1)
+  var last_reached_checkpoint: int = game_state.get_last_reached_checkpoint(my_peer_id)
 
   var index := 0
   for checkpoint in checkpoints:
@@ -72,18 +87,23 @@ func _handle_chatter_loaded(chatter: Chatter) -> void:
   if owning_kart:
     owning_kart.gumbot.chatter = chatter
     
-var karts_by_peer_id: Dictionary[int, KartBot] = {}
+var karts_by_peer_id: Dictionary[int, PhysicsKart] = {}
 
 const spawn_ring_size := 1.0
 const car_template: PackedScene = preload("res://games/carnage/kart/kart_bot.tscn")
 const physics_car_template: PackedScene = preload("res://games/carnage/kart/physics_kart.tscn")
 
 func get_spawn_transform(peer_id: int) -> Transform3D:
-  var last_checkpoint: int = game_state.game_state.checkpoints_reached.get(peer_id, -1)
-  if last_checkpoint >= 0 and last_checkpoint < checkpoints.size():
-    return checkpoints[last_checkpoint].global_transform
-
   var join_index := lobby.peers.map(func(p): return p.peer_id).find(peer_id)
+  var last_checkpoint: int = game_state.get_last_reached_checkpoint(peer_id)
+  if last_checkpoint >= 0 and last_checkpoint < checkpoints.size():
+    var checkpoint: RaceCheckpoint = checkpoints[last_checkpoint]
+    var checkpoint_transform: Transform3D = checkpoint.global_transform
+    var spawn_margins := 0.4
+    var total_spawn_width := checkpoint.width - spawn_margins * 2.0
+    checkpoint_transform = checkpoint_transform.translated(Vector3(-total_spawn_width * 0.5 + join_index * total_spawn_width, 0, 0))
+    return checkpoint_transform
+
   var spawn_path_length = spawn_path.curve.get_baked_length()
   var spawn_path_offset = spawn_path_length / lobby.players.size() * join_index
   var spawn_transform = spawn_path.global_transform * spawn_path.curve.sample_baked_with_rotation(spawn_path_offset)
@@ -96,14 +116,13 @@ func spawn_cars() -> void:
 
     var spawn_transform := get_spawn_transform(peer.peer_id)
     kart_inst.global_transform = spawn_transform
-    kart_inst.look_at(Vector3.ZERO, Vector3.UP, true)
     kart_inst.physics_kart_movement_sync.owner_peer_id = peer.peer_id
+    kart_inst.physics_kart_movement_sync.kart_flipped.connect(respawn_kart.bind(peer.peer_id))
+    karts_by_peer_id[peer.peer_id] = kart_inst
 
     if peer.peer_id == MultiplayerClient.my_peer_id():
       debug_camera._follow_state.move_lerp = 5.0
-      # debug_camera._follow_state.lock_pitch = true
-      # debug_camera._follow_state.prevent_wall_clip = true
-      debug_camera.set_default_orbit_distance(4.0)
+      debug_camera.set_default_orbit_distance(5.5)
       debug_camera.enter_follow_mode(kart_inst, deg_to_rad(35.0))
 
 func start_game() -> void:
