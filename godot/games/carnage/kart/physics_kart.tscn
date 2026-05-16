@@ -21,7 +21,11 @@ shader_parameter/normal_map = ExtResource("4_kkve7")
 shader_parameter/bot_color = Color(1, 0, 0, 1)
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_26l52"]
-size = Vector3(0.19887695, 0.11490211, 0.36168554)
+size = Vector3(0.19887695, 0.11490211, 0.32046306)
+
+[sub_resource type="CapsuleShape3D" id="CapsuleShape3D_dbe4r"]
+radius = 0.075683594
+height = 0.27
 
 [sub_resource type="Curve" id="Curve_gvgjh"]
 _data = [Vector2(0.00314466, 0.495897), 0.0, 0.0, 0, 0, Vector2(0.416667, 0.986236), 0.0, 0.0, 0, 0, Vector2(0.646226, 0.984516), 0.0, 0.0, 0, 0, Vector2(1, 0.339333), 0.0, 0.0, 0, 0]
@@ -87,8 +91,12 @@ unique_name_in_owner = true
 transform = Transform3D(12.360951, 0, 0, 0, 12.360951, 0, 0, 0, 12.360951, 0.8984842, 0.77030057, -1.5133349)
 
 [node name="CollisionShape3D2" type="CollisionShape3D" parent="." unique_id=516426750]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.00065918267, 0.13595451, 0.0068468302)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.00065918267, 0.13595451, 0.0049244463)
 shape = SubResource("BoxShape3D_26l52")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="." unique_id=241505215]
+transform = Transform3D(0.99999994, 0, 0, 0, 0.99999994, 0, 0, 0, 0.99999994, 0, 0.261004, -0.048403636)
+shape = SubResource("CapsuleShape3D_dbe4r")
 
 [node name="PhysicsKartMovementSynchronizer" type="Node" parent="." unique_id=1826281243 node_paths=PackedStringArray("kart", "kart_visual_node")]
 unique_name_in_owner = true

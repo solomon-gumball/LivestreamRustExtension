@@ -84,7 +84,6 @@ script = ExtResource("1_rhos2")
 [node name="KartGameStateSynchronizer" type="Node" parent="." unique_id=463833223]
 unique_name_in_owner = true
 script = ExtResource("2_pjf2b")
-starting_checkpoint = 0
 
 [node name="RaceCheckpoint2" parent="." unique_id=35775725 instance=ExtResource("4_7nuw5")]
 transform = Transform3D(-4.371139e-08, 0, -1, 0, 1, 0, 1, 0, -4.371139e-08, -10.618869, 5.599416, -5.0374446)
@@ -134,7 +133,7 @@ allow_free_cam = false
 
 [node name="Camera2" type="Camera3D" parent="DebugCamera" unique_id=1785970488]
 unique_name_in_owner = true
-transform = Transform3D(1, 0, 0, 0, 0.9968858, 0.07885928, 0, -0.07885928, 0.9968858, 0, 0.40996844, -0.032430798)
+transform = Transform3D(1, 0, 0, 0, 0.9968858, 0.07885928, 0, -0.07885928, 0.9968858, 0, 0.2, -0.032)
 current = true
 fov = 35.0
 
