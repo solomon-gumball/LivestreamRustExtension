@@ -5,20 +5,45 @@
 [ext_resource type="Script" uid="uid://cf2o11ublve5u" path="res://games/carnage/kart_game_state_synchronizer.gd" id="2_pjf2b"]
 [ext_resource type="FontFile" uid="uid://7uibxoligyvb" path="res://fonts/HomeVideo-BLG6G.ttf" id="2_qn2ad"]
 [ext_resource type="PackedScene" uid="uid://diyvoye7vs7ks" path="res://games/debug_camera.tscn" id="3_2xtgp"]
-[ext_resource type="Texture2D" uid="uid://casmdw1resubx" path="res://icons/w.png" id="3_slwue"]
+[ext_resource type="PackedScene" uid="uid://cek8cdds0wfxi" path="res://games/_ui/game_controls_ui.tscn" id="3_qn2ad"]
 [ext_resource type="PackedScene" uid="uid://crpnxmsftnv0f" path="res://games/carnage/props/race_checkpoint.tscn" id="4_7nuw5"]
+[ext_resource type="Script" uid="uid://jcsb6g17efi7" path="res://games/_ui/game_controls_entry.gd" id="4_16guh"]
 [ext_resource type="Texture2D" uid="uid://ofvawp17cyry" path="res://games/marbles/textures/checker.png" id="4_22osk"]
+[ext_resource type="Texture2D" uid="uid://casmdw1resubx" path="res://icons/w.png" id="5_bcsqp"]
+[ext_resource type="Texture2D" uid="uid://db6nbed6w2fis" path="res://icons/s.png" id="6_cgy6g"]
+[ext_resource type="Texture2D" uid="uid://bptg6u6b4y5no" path="res://icons/a.png" id="7_d5drp"]
 [ext_resource type="PackedScene" uid="uid://cpguym5iqkbec" path="res://games/carnage/props/hammer_obstacle.tscn" id="7_o05id"]
+[ext_resource type="Texture2D" uid="uid://dlwamiuq1f5t6" path="res://icons/d.png" id="8_yufsp"]
 
-[sub_resource type="LabelSettings" id="LabelSettings_f720e"]
-font = ExtResource("2_qn2ad")
-font_size = 50
+[sub_resource type="Resource" id="Resource_rlb33"]
+script = ExtResource("4_16guh")
+icon = ExtResource("5_bcsqp")
+description = "Accelerate"
+metadata/_custom_type_script = "uid://jcsb6g17efi7"
 
-[sub_resource type="PlaneMesh" id="PlaneMesh_o05id"]
+[sub_resource type="Resource" id="Resource_jodp3"]
+script = ExtResource("4_16guh")
+icon = ExtResource("6_cgy6g")
+description = "Reverse"
+metadata/_custom_type_script = "uid://jcsb6g17efi7"
+
+[sub_resource type="Resource" id="Resource_iq6cl"]
+script = ExtResource("4_16guh")
+icon = ExtResource("7_d5drp")
+description = "Turn Left"
+metadata/_custom_type_script = "uid://jcsb6g17efi7"
+
+[sub_resource type="Resource" id="Resource_dqt6w"]
+script = ExtResource("4_16guh")
+icon = ExtResource("8_yufsp")
+description = "Turn right"
+metadata/_custom_type_script = "uid://jcsb6g17efi7"
+
+[sub_resource type="PlaneMesh" id="PlaneMesh_16guh"]
 resource_local_to_scene = true
 size = Vector2(2.8, 0.8)
 
-[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_y1vjh"]
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_bcsqp"]
 resource_local_to_scene = true
 transparency = 1
 cull_mode = 2
@@ -30,15 +55,15 @@ uv1_scale = Vector3(2.5, 2.5, 5)
 uv1_triplanar = true
 uv1_world_triplanar = true
 
-[sub_resource type="BoxShape3D" id="BoxShape3D_qn2ad"]
+[sub_resource type="BoxShape3D" id="BoxShape3D_cgy6g"]
 resource_local_to_scene = true
 size = Vector3(2.8, 1, 0.2)
 
-[sub_resource type="PlaneMesh" id="PlaneMesh_slwue"]
+[sub_resource type="PlaneMesh" id="PlaneMesh_d5drp"]
 resource_local_to_scene = true
 size = Vector2(2, 0.8)
 
-[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_f720e"]
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_yufsp"]
 resource_local_to_scene = true
 transparency = 1
 cull_mode = 2
@@ -50,15 +75,15 @@ uv1_scale = Vector3(2.5, 2.5, 5)
 uv1_triplanar = true
 uv1_world_triplanar = true
 
-[sub_resource type="BoxShape3D" id="BoxShape3D_a4h86"]
+[sub_resource type="BoxShape3D" id="BoxShape3D_rlb33"]
 resource_local_to_scene = true
 size = Vector3(2, 1, 0.2)
 
-[sub_resource type="PlaneMesh" id="PlaneMesh_y1vjh"]
+[sub_resource type="PlaneMesh" id="PlaneMesh_jodp3"]
 resource_local_to_scene = true
 size = Vector2(5.542, 0.8)
 
-[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_qn2ad"]
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_iq6cl"]
 resource_local_to_scene = true
 transparency = 1
 cull_mode = 2
@@ -70,15 +95,15 @@ uv1_scale = Vector3(2.5, 2.5, 5)
 uv1_triplanar = true
 uv1_world_triplanar = true
 
-[sub_resource type="BoxShape3D" id="BoxShape3D_slwue"]
+[sub_resource type="BoxShape3D" id="BoxShape3D_dqt6w"]
 resource_local_to_scene = true
 size = Vector3(5.542, 1, 0.2)
 
-[sub_resource type="PlaneMesh" id="PlaneMesh_qn2ad"]
+[sub_resource type="PlaneMesh" id="PlaneMesh_o653e"]
 resource_local_to_scene = true
 size = Vector2(5.542, 0.8)
 
-[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_slwue"]
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_f06ny"]
 resource_local_to_scene = true
 transparency = 1
 cull_mode = 2
@@ -90,7 +115,7 @@ uv1_scale = Vector3(2.5, 2.5, 5)
 uv1_triplanar = true
 uv1_world_triplanar = true
 
-[sub_resource type="BoxShape3D" id="BoxShape3D_f720e"]
+[sub_resource type="BoxShape3D" id="BoxShape3D_mvphm"]
 resource_local_to_scene = true
 size = Vector3(5.542, 1, 0.2)
 
@@ -135,8 +160,8 @@ visible = false
 z_index = -1
 anchors_preset = 10
 anchor_right = 1.0
-offset_top = 40.0
-offset_bottom = 310.0
+offset_top = 98.0
+offset_bottom = 368.0
 grow_horizontal = 2
 theme_override_fonts/normal_font = ExtResource("2_qn2ad")
 theme_override_font_sizes/normal_font_size = 120
@@ -146,73 +171,8 @@ text = "[wave][color=pink]solomongumbot[/color][/wave]
 fit_content = true
 horizontal_alignment = 1
 
-[node name="ControlsContainer" type="MarginContainer" parent="Overlay" unique_id=1910250848]
-z_index = -1
-anchors_preset = 3
-anchor_left = 1.0
-anchor_top = 1.0
-anchor_right = 1.0
-anchor_bottom = 1.0
-offset_left = -458.0
-offset_top = -192.0
-grow_horizontal = 0
-grow_vertical = 0
-theme_override_constants/margin_left = 20
-theme_override_constants/margin_top = 20
-theme_override_constants/margin_right = 20
-theme_override_constants/margin_bottom = 20
-
-[node name="VBoxContainer" type="VBoxContainer" parent="Overlay/ControlsContainer" unique_id=18229995]
-layout_mode = 2
-size_flags_vertical = 8
-
-[node name="HBoxContainer2" type="HBoxContainer" parent="Overlay/ControlsContainer/VBoxContainer" unique_id=1494197032]
-layout_mode = 2
-size_flags_horizontal = 8
-theme_override_constants/separation = 20
-
-[node name="MarginContainer" type="MarginContainer" parent="Overlay/ControlsContainer/VBoxContainer/HBoxContainer2" unique_id=976631893]
-layout_mode = 2
-theme_override_constants/margin_left = 0
-theme_override_constants/margin_top = 10
-theme_override_constants/margin_right = 0
-theme_override_constants/margin_bottom = 10
-
-[node name="ControlLabel" type="Label" parent="Overlay/ControlsContainer/VBoxContainer/HBoxContainer2/MarginContainer" unique_id=1496466619]
-layout_mode = 2
-text = "Move Up"
-label_settings = SubResource("LabelSettings_f720e")
-
-[node name="ControlIcon" type="TextureRect" parent="Overlay/ControlsContainer/VBoxContainer/HBoxContainer2" unique_id=1043504904]
-layout_mode = 2
-size_flags_horizontal = 2
-texture = ExtResource("3_slwue")
-expand_mode = 2
-stretch_mode = 3
-
-[node name="HBoxContainer3" type="HBoxContainer" parent="Overlay/ControlsContainer/VBoxContainer" unique_id=1851620886]
-layout_mode = 2
-size_flags_horizontal = 8
-theme_override_constants/separation = 20
-
-[node name="MarginContainer" type="MarginContainer" parent="Overlay/ControlsContainer/VBoxContainer/HBoxContainer3" unique_id=1921113639]
-layout_mode = 2
-theme_override_constants/margin_left = 0
-theme_override_constants/margin_top = 10
-theme_override_constants/margin_right = 0
-theme_override_constants/margin_bottom = 10
-
-[node name="ControlLabel" type="Label" parent="Overlay/ControlsContainer/VBoxContainer/HBoxContainer3/MarginContainer" unique_id=833697]
-layout_mode = 2
-text = "Move Down"
-label_settings = SubResource("LabelSettings_f720e")
-
-[node name="ControlIcon" type="TextureRect" parent="Overlay/ControlsContainer/VBoxContainer/HBoxContainer3" unique_id=1028476437]
-layout_mode = 2
-size_flags_horizontal = 2
-texture = ExtResource("3_slwue")
-expand_mode = 2
-stretch_mode = 3
+[node name="ControlsContainer" parent="Overlay" unique_id=899012222 instance=ExtResource("3_qn2ad")]
+controls = Array[ExtResource("4_16guh")]([SubResource("Resource_rlb33"), SubResource("Resource_jodp3"), SubResource("Resource_iq6cl"), SubResource("Resource_dqt6w")])
 
 [node name="KartGameStateSynchronizer" type="Node" parent="." unique_id=463833223]
 unique_name_in_owner = true
@@ -221,30 +181,30 @@ starting_checkpoint = 2
 
 [node name="RaceCheckpoint2" parent="." unique_id=35775725 instance=ExtResource("4_7nuw5")]
 transform = Transform3D(-4.371139e-08, 0, -1, 0, 1, 0, 1, 0, -4.371139e-08, -10.618869, 5.599416, -5.0374446)
-plane_mesh = SubResource("PlaneMesh_o05id")
-plane_material = SubResource("StandardMaterial3D_y1vjh")
-box_shape = SubResource("BoxShape3D_qn2ad")
+plane_mesh = SubResource("PlaneMesh_16guh")
+plane_material = SubResource("StandardMaterial3D_bcsqp")
+box_shape = SubResource("BoxShape3D_cgy6g")
 width = 2.8
 
 [node name="RaceCheckpoint" parent="." unique_id=1625046385 instance=ExtResource("4_7nuw5")]
 transform = Transform3D(-1, 0, -8.742278e-08, 0, 1, 0, 8.742278e-08, 0, -1, -35.39201, 1.6121712, -6.450535)
-plane_mesh = SubResource("PlaneMesh_slwue")
-plane_material = SubResource("StandardMaterial3D_f720e")
-box_shape = SubResource("BoxShape3D_a4h86")
+plane_mesh = SubResource("PlaneMesh_d5drp")
+plane_material = SubResource("StandardMaterial3D_yufsp")
+box_shape = SubResource("BoxShape3D_rlb33")
 width = 2.0
 
 [node name="RaceCheckpoint3" parent="." unique_id=1941013204 instance=ExtResource("4_7nuw5")]
 transform = Transform3D(-1, 0, -8.742278e-08, 0, 1, 0, 8.742278e-08, 0, -1, -35.39201, 1.6121712, -23.839588)
-plane_mesh = SubResource("PlaneMesh_y1vjh")
-plane_material = SubResource("StandardMaterial3D_qn2ad")
-box_shape = SubResource("BoxShape3D_slwue")
+plane_mesh = SubResource("PlaneMesh_jodp3")
+plane_material = SubResource("StandardMaterial3D_iq6cl")
+box_shape = SubResource("BoxShape3D_dqt6w")
 width = 5.542
 
 [node name="RaceCheckpoint4" parent="." unique_id=1228806809 instance=ExtResource("4_7nuw5")]
 transform = Transform3D(-1, 0, -8.742278e-08, 0, 1, 0, 8.742278e-08, 0, -1, -35.39201, 1.6121712, -27.770912)
-plane_mesh = SubResource("PlaneMesh_qn2ad")
-plane_material = SubResource("StandardMaterial3D_slwue")
-box_shape = SubResource("BoxShape3D_f720e")
+plane_mesh = SubResource("PlaneMesh_o653e")
+plane_material = SubResource("StandardMaterial3D_f06ny")
+box_shape = SubResource("BoxShape3D_mvphm")
 width = 5.542
 
 [node name="StaticBody3D" type="StaticBody3D" parent="." unique_id=82987365]

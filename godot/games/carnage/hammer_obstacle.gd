@@ -11,6 +11,7 @@ extends Node3D
 @export var impulse_force: float = 1.5
 
 func _ready() -> void:
+  if Engine.is_editor_hint(): return
   simulation_synchronizer.tick_simulated.connect(simulate_tick)
 
 var debug_tick: int = 0

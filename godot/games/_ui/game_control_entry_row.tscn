@@ -1,0 +1,36 @@
+[gd_scene format=3 uid="uid://bk1t5qg1sviu6"]
+
+[ext_resource type="Script" uid="uid://btvwul78r85ha" path="res://games/_ui/game_control_entry_row.gd" id="1_5skb6"]
+[ext_resource type="FontFile" uid="uid://7uibxoligyvb" path="res://fonts/HomeVideo-BLG6G.ttf" id="2_f5hfl"]
+[ext_resource type="Texture2D" uid="uid://casmdw1resubx" path="res://icons/w.png" id="3_yh02v"]
+
+[sub_resource type="LabelSettings" id="LabelSettings_f720e"]
+font = ExtResource("2_f5hfl")
+font_size = 30
+
+[node name="HBoxContainer2" type="HBoxContainer" unique_id=1960089531]
+offset_right = 193.0
+offset_bottom = 47.0
+size_flags_horizontal = 8
+theme_override_constants/separation = 10
+script = ExtResource("1_5skb6")
+
+[node name="MarginContainer" type="MarginContainer" parent="." unique_id=922756926]
+layout_mode = 2
+theme_override_constants/margin_left = 0
+theme_override_constants/margin_top = 10
+theme_override_constants/margin_right = 0
+theme_override_constants/margin_bottom = 10
+
+[node name="DescriptionLabel" type="Label" parent="MarginContainer" unique_id=1790733436]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Move Up"
+label_settings = SubResource("LabelSettings_f720e")
+
+[node name="ControlIcon" type="TextureRect" parent="." unique_id=68459067]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 2
+texture = ExtResource("3_yh02v")
+expand_mode = 2

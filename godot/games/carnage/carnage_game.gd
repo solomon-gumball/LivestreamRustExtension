@@ -14,6 +14,7 @@ enum CarnageGameMessage {
 @onready var spawn_path: Path3D = %SpawnPath
 @onready var out_of_bounds_area: Area3D = %OutOfBoundsArea
 @onready var in_bounds_area: Area3D = %InBoundsArea
+@onready var winner_text: RichTextLabel = %WinnerText
 
 var checkpoints: Array[RaceCheckpoint] = []
 
@@ -80,6 +81,21 @@ func _apply_state() -> void:
   for checkpoint in checkpoints:
     checkpoint.reached = last_reached_checkpoint >= index
     index += 1
+
+  var race_winner: KartGameStateSynchronizer.RaceResult = game_state.game_state.results.get(0)
+  if race_winner:
+    winner_text.text = format_winner_text(race_winner.peer_id)
+    winner_text.visible = true
+  else:
+    winner_text.visible = false
+
+func format_winner_text(peer_id: int) -> String:
+  var chatter: Chatter = get_chatter_for_peer_id(peer_id)
+  var chatter_name: String = chatter.display_name if chatter else str(peer_id)
+  return "\n".join([
+    "[wave][color=pink]%s[/color][/wave]" % chatter_name,
+    "[wave][color=green]wins![/color]",
+  ])
 
 func _handle_chatter_loaded(chatter: Chatter) -> void:
   if MultiplayerClient.current_lobby == null: return

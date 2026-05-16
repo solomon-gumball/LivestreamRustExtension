@@ -59,6 +59,10 @@ func _subscribe_to_chatters_in_lobby() -> void:
     user_sub_channels.append(peer.chatter_id)
   WSClient.subscribe(user_sub_channels)
 
+func get_chatter_for_peer_id(peer_id: int) -> Chatter:
+  var chatter_id: String = lobby.chatter_from_peer.get(peer_id, "")
+  return chatters.get(chatter_id, null)
+
 func _handle_chatter_updated(chatter: Chatter) -> void:
   chatters[chatter.id] = chatter
   chatter_loaded.emit(chatter)
@@ -69,5 +73,6 @@ func _handle_chatter_updated(chatter: Chatter) -> void:
 
   if chatters_loaded_fired: return
 
+  print("chatter loaded ", chatter.display_name)
   chatters_loaded_fired = true
   all_chatters_loaded_locally.emit()
