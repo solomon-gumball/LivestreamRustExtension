@@ -1,0 +1,35 @@
+[gd_scene format=3 uid="uid://cwlu8b8sek3q6"]
+
+[ext_resource type="Script" uid="uid://b8q620ocnoh8a" path="res://games/_testing/physics_sandbox.gd" id="1_sandbox"]
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_ground"]
+size = Vector3(20, 0.2, 20)
+
+[sub_resource type="BoxMesh" id="BoxMesh_ground"]
+size = Vector3(20, 0.2, 20)
+
+[sub_resource type="Environment" id="Environment_xi66c"]
+ambient_light_color = Color(0.91011494, 0.9101149, 0.9101149, 1)
+
+[node name="PhysicsSandbox" type="Node3D" unique_id=278952499]
+script = ExtResource("1_sandbox")
+spawn_count = 1
+
+[node name="Ground" type="StaticBody3D" parent="." unique_id=883730953]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Ground" unique_id=1368037786]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.1, 0)
+shape = SubResource("BoxShape3D_ground")
+
+[node name="GroundMesh" type="MeshInstance3D" parent="Ground" unique_id=1609905487]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.1, 0)
+mesh = SubResource("BoxMesh_ground")
+
+[node name="Camera3D" type="Camera3D" parent="." unique_id=2009306750]
+transform = Transform3D(0.9999996, 0, 0, 0, 0.69788694, 0.72581136, 0, -0.7201635, 0.70336014, 0, 3.3649502, 3.0770154)
+
+[node name="DirectionalLight3D" type="DirectionalLight3D" parent="." unique_id=1452224327]
+transform = Transform3D(1, 0, 0, 0, 0.74117965, 0.6713067, 0, -0.6713067, 0.74117965, 0, 0, 0)
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="." unique_id=1313878725]
+environment = SubResource("Environment_xi66c")
