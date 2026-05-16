@@ -6,15 +6,17 @@ extends MovementSynchronizer
 
 @export var collision_box_shape: BoxShape3D
 @export var acceleration_curve: Curve
-@export var base_acceleration: float = 4.0
+@export var base_acceleration: float = 3.0
 @export var max_ground_speed: float = 2.0
 @export var drag_coefficient: float = 5.0
 @export var min_speed_threshold: float = 0.01
 @export var mass: float = 5.0
 @export var gravity: float = 2.0
-@export var angular_damp: float = 0.2
+@export var angular_damp: float = 0.5
 @export var surface_friction: float = 1.0
-@export var collision_torque_scale: float = 0.03
+@export var collision_torque_scale: float = 0.2
+@export var contact_angular_damp: float = 8.0
+@export var air_control_torque: float = 0.0
 @export var flip_velocity_threshold: float = 0.2
 @export var flip_up_dot_threshold: float = 0.5
 @export var flip_frame_threshold: int = 60
@@ -252,6 +254,18 @@ func simulate_one_frame(input: Dictionary, state: Dictionary, tick: int) -> Dict
     if wheel_result.is_grounded:
       any_grounded = true
 
+  if !any_grounded:
+    # input_vec.x pitches the car forward/back around its local right axis (chassis_basis.x)
+    # input_vec.y rolls the car side to side around its local forward axis (chassis_basis.z)
+    var air_torque := basis.x * (input_vec.x * air_control_torque) \
+                    + basis.z * (-input_vec.y * air_control_torque)
+    var at_local := basis.inverse() * air_torque
+    angular_velocity += basis * Vector3(
+      at_local.x / _inertia.x,
+      at_local.y / _inertia.y,
+      at_local.z / _inertia.z,
+    ) * delta
+
   # Gravity
   total_force += Vector3.DOWN * gravity * mass
 
@@ -325,8 +339,16 @@ func simulate_one_frame(input: Dictionary, state: Dictionary, tick: int) -> Dict
     # Apply surface friction on non-wall contacts — bleeds off sliding velocity
     # proportional to how flat the surface is (no friction on steep walls).
     var flatness := normal.dot(Vector3.UP)
-    if flatness > 0.3:
+    if flatness > 0.1:
       linear_velocity *= clampf(1.0 - surface_friction * flatness * delta, 0.0, 1.0)
+      # Damp roll and pitch axes against the contact surface. Collision torque only
+      # fires on impact_speed > 0, so it can't stop a gravity-driven roll along a
+      # surface. This models the rotational friction that prevents that.
+      var av_local := basis.inverse() * angular_velocity
+      var damp_factor := clampf(1.0 - contact_angular_damp * flatness * delta, 0.0, 1.0)
+      av_local.x *= damp_factor
+      av_local.z *= damp_factor
+      angular_velocity = basis * av_local
 
     # Handle remainder with a second sweep
     var remainder := result.get_remainder()

@@ -3,7 +3,7 @@ class_name PhysicsWheel
 
 @export var ray_cast: RayCast3D
 @export var spring_strength: float = 600.0
-@export var spring_damping: float = 30.0
+@export var spring_damping: float = 40.0
 @export var rest_distance: float = 0.95
 @export var wheel_radius: float = 0.8
 @export var wheel_mesh: MeshInstance3D
