@@ -70,6 +70,7 @@ func _setup_checkpoints() -> void:
         var callback: Callable = game_state.authority_checkpoint_reached.bind(checkpoint_index)
         checkpoint.checkpoint_reached.connect(callback)
       checkpoint_index += 1
+  game_state.total_checkpoints_count = checkpoints.size()
 
 func _apply_state() -> void:
   var my_peer_id := MultiplayerClient.my_peer_id()

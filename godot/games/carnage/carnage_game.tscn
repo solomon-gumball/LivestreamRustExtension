@@ -3,10 +3,16 @@
 [ext_resource type="PackedScene" uid="uid://cjoyyhxf1to18" path="res://games/carnage/blender/boxing_ring.blend" id="1_q63vr"]
 [ext_resource type="Script" uid="uid://c27qhdb12hl0x" path="res://games/carnage/carnage_game.gd" id="1_rhos2"]
 [ext_resource type="Script" uid="uid://cf2o11ublve5u" path="res://games/carnage/kart_game_state_synchronizer.gd" id="2_pjf2b"]
+[ext_resource type="FontFile" uid="uid://7uibxoligyvb" path="res://fonts/HomeVideo-BLG6G.ttf" id="2_qn2ad"]
 [ext_resource type="PackedScene" uid="uid://diyvoye7vs7ks" path="res://games/debug_camera.tscn" id="3_2xtgp"]
+[ext_resource type="Texture2D" uid="uid://casmdw1resubx" path="res://icons/w.png" id="3_slwue"]
 [ext_resource type="PackedScene" uid="uid://crpnxmsftnv0f" path="res://games/carnage/props/race_checkpoint.tscn" id="4_7nuw5"]
 [ext_resource type="Texture2D" uid="uid://ofvawp17cyry" path="res://games/marbles/textures/checker.png" id="4_22osk"]
 [ext_resource type="PackedScene" uid="uid://cpguym5iqkbec" path="res://games/carnage/props/hammer_obstacle.tscn" id="7_o05id"]
+
+[sub_resource type="LabelSettings" id="LabelSettings_f720e"]
+font = ExtResource("2_qn2ad")
+font_size = 50
 
 [sub_resource type="PlaneMesh" id="PlaneMesh_o05id"]
 resource_local_to_scene = true
@@ -121,6 +127,93 @@ radius = 57.58551
 [node name="CarnageGame" type="Node3D" unique_id=1863440489]
 script = ExtResource("1_rhos2")
 
+[node name="Overlay" type="CanvasLayer" parent="." unique_id=2132972244]
+
+[node name="WinnerText" type="RichTextLabel" parent="Overlay" unique_id=1145671719]
+unique_name_in_owner = true
+visible = false
+z_index = -1
+anchors_preset = 10
+anchor_right = 1.0
+offset_top = 40.0
+offset_bottom = 310.0
+grow_horizontal = 2
+theme_override_fonts/normal_font = ExtResource("2_qn2ad")
+theme_override_font_sizes/normal_font_size = 120
+bbcode_enabled = true
+text = "[wave][color=pink]solomongumbot[/color][/wave]
+[wave][color=green]wins![/color]"
+fit_content = true
+horizontal_alignment = 1
+
+[node name="ControlsContainer" type="MarginContainer" parent="Overlay" unique_id=1910250848]
+z_index = -1
+anchors_preset = 3
+anchor_left = 1.0
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -458.0
+offset_top = -192.0
+grow_horizontal = 0
+grow_vertical = 0
+theme_override_constants/margin_left = 20
+theme_override_constants/margin_top = 20
+theme_override_constants/margin_right = 20
+theme_override_constants/margin_bottom = 20
+
+[node name="VBoxContainer" type="VBoxContainer" parent="Overlay/ControlsContainer" unique_id=18229995]
+layout_mode = 2
+size_flags_vertical = 8
+
+[node name="HBoxContainer2" type="HBoxContainer" parent="Overlay/ControlsContainer/VBoxContainer" unique_id=1494197032]
+layout_mode = 2
+size_flags_horizontal = 8
+theme_override_constants/separation = 20
+
+[node name="MarginContainer" type="MarginContainer" parent="Overlay/ControlsContainer/VBoxContainer/HBoxContainer2" unique_id=976631893]
+layout_mode = 2
+theme_override_constants/margin_left = 0
+theme_override_constants/margin_top = 10
+theme_override_constants/margin_right = 0
+theme_override_constants/margin_bottom = 10
+
+[node name="ControlLabel" type="Label" parent="Overlay/ControlsContainer/VBoxContainer/HBoxContainer2/MarginContainer" unique_id=1496466619]
+layout_mode = 2
+text = "Move Up"
+label_settings = SubResource("LabelSettings_f720e")
+
+[node name="ControlIcon" type="TextureRect" parent="Overlay/ControlsContainer/VBoxContainer/HBoxContainer2" unique_id=1043504904]
+layout_mode = 2
+size_flags_horizontal = 2
+texture = ExtResource("3_slwue")
+expand_mode = 2
+stretch_mode = 3
+
+[node name="HBoxContainer3" type="HBoxContainer" parent="Overlay/ControlsContainer/VBoxContainer" unique_id=1851620886]
+layout_mode = 2
+size_flags_horizontal = 8
+theme_override_constants/separation = 20
+
+[node name="MarginContainer" type="MarginContainer" parent="Overlay/ControlsContainer/VBoxContainer/HBoxContainer3" unique_id=1921113639]
+layout_mode = 2
+theme_override_constants/margin_left = 0
+theme_override_constants/margin_top = 10
+theme_override_constants/margin_right = 0
+theme_override_constants/margin_bottom = 10
+
+[node name="ControlLabel" type="Label" parent="Overlay/ControlsContainer/VBoxContainer/HBoxContainer3/MarginContainer" unique_id=833697]
+layout_mode = 2
+text = "Move Down"
+label_settings = SubResource("LabelSettings_f720e")
+
+[node name="ControlIcon" type="TextureRect" parent="Overlay/ControlsContainer/VBoxContainer/HBoxContainer3" unique_id=1028476437]
+layout_mode = 2
+size_flags_horizontal = 2
+texture = ExtResource("3_slwue")
+expand_mode = 2
+stretch_mode = 3
+
 [node name="KartGameStateSynchronizer" type="Node" parent="." unique_id=463833223]
 unique_name_in_owner = true
 script = ExtResource("2_pjf2b")
@@ -169,7 +262,7 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -40.79398, 0.58948624, -0.017
 unique_name_in_owner = true
 curve = SubResource("Curve3D_pjf2b")
 
-[node name="boxing_ring" parent="." unique_id=349068790 instance=ExtResource("1_q63vr")]
+[node name="boxing_ring" parent="." unique_id=1185022900 instance=ExtResource("1_q63vr")]
 
 [node name="DirectionalLight3D" type="DirectionalLight3D" parent="." unique_id=1486856216]
 transform = Transform3D(-0.49766108, 0.63648874, 0.58924997, -0.29978192, -0.76370305, 0.57174164, 0.8139191, 0.10788706, 0.5708731, 2.0339265, 2.6281023, -0.35323796)

@@ -14,7 +14,8 @@ extends MovementSynchronizer
 @export var gravity: float = 2.0
 @export var angular_damp: float = 0.5
 @export var surface_friction: float = 1.0
-@export var collision_torque_scale: float = 0.2
+@export var collision_restitution: float = 0.1
+@export var max_impulse_angular_delta: float = 8.0
 @export var contact_angular_damp: float = 8.0
 @export var air_control_torque: float = 0.0
 @export var flip_velocity_threshold: float = 0.2
@@ -317,38 +318,44 @@ func simulate_one_frame(input: Dictionary, state: Dictionary, tick: int) -> Dict
     var contact_point := result.get_collision_point()
     position += result.get_travel()
 
-    # Collision impulse magnitude: how hard we were moving into the surface
-    var impact_speed := -linear_velocity.dot(normal)
-    if impact_speed > 0.0:
-      var impulse := normal * impact_speed * mass
-      # Apply linear response
+    # Full rigid-body impulse accounting for spin at contact point.
+    # v_contact = linear_vel + angular_vel × r,  r = contact offset from CoM
+    # j = -(1+e)*dot(v_contact,n) / (1/m + dot(n, (I⁻¹(r×n))×r))
+    var flatness := normal.dot(Vector3.UP)
+    var com := basis * kart.get_center_of_mass()
+    var r := contact_point - (position + com)
+    var v_contact := linear_velocity + angular_velocity.cross(r)
+    var v_along_normal := v_contact.dot(normal)
+
+    if v_along_normal < 0.0:
+      var r_cross_n := r.cross(normal)
+      var r_cross_n_local := basis.inverse() * r_cross_n
+      var i_inv_r_cross_n_local := Vector3(
+        r_cross_n_local.x / _inertia.x,
+        r_cross_n_local.y / _inertia.y,
+        r_cross_n_local.z / _inertia.z,
+      )
+      var i_inv_r_cross_n := basis * i_inv_r_cross_n_local
+      var angular_denom := normal.dot(i_inv_r_cross_n.cross(r))
+      var j: float = -(1.0 + collision_restitution) * v_along_normal / (1.0 / mass + angular_denom)
+      var impulse: Vector3 = normal * j
       linear_velocity += impulse / mass
-      
-      # Apply torque from contact offset — this is what rotates the body onto a flat face
-      var contact_offset := contact_point - (position + basis * kart.get_center_of_mass())
-      var collision_torque := contact_offset.cross(impulse)
-      var ct_local := basis.inverse() * collision_torque
-      angular_velocity += basis * Vector3(
-        ct_local.x / _inertia.x,
-        ct_local.y / _inertia.y,
-        ct_local.z / _inertia.z,
-      ) * collision_torque_scale
+      var delta_av_local := basis.inverse() * r.cross(impulse)
+      var delta_av := basis * Vector3(
+        delta_av_local.x / _inertia.x,
+        delta_av_local.y / _inertia.y,
+        delta_av_local.z / _inertia.z,
+      )
+      angular_velocity += delta_av.limit_length(max_impulse_angular_delta)
 
     linear_velocity = linear_velocity.slide(normal)
 
-    # Apply surface friction on non-wall contacts — bleeds off sliding velocity
-    # proportional to how flat the surface is (no friction on steep walls).
-    var flatness := normal.dot(Vector3.UP)
     if flatness > 0.1:
       linear_velocity *= clampf(1.0 - surface_friction * flatness * delta, 0.0, 1.0)
-      # Damp roll and pitch axes against the contact surface. Collision torque only
-      # fires on impact_speed > 0, so it can't stop a gravity-driven roll along a
-      # surface. This models the rotational friction that prevents that.
-      var av_local := basis.inverse() * angular_velocity
       var damp_factor := clampf(1.0 - contact_angular_damp * flatness * delta, 0.0, 1.0)
-      av_local.x *= damp_factor
-      av_local.z *= damp_factor
-      angular_velocity = basis * av_local
+      var spin_component := normal * angular_velocity.dot(normal)
+      var roll_component := angular_velocity - spin_component
+      angular_velocity = roll_component * damp_factor + spin_component * damp_factor * damp_factor
 
     # Handle remainder with a second sweep
     var remainder := result.get_remainder()

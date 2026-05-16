@@ -21,7 +21,7 @@ shader_parameter/normal_map = ExtResource("4_kkve7")
 shader_parameter/bot_color = Color(1, 0, 0, 1)
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_26l52"]
-size = Vector3(0.19887695, 0.11490211, 0.32046306)
+size = Vector3(0.19887695, 0.22590809, 0.32046306)
 
 [sub_resource type="CapsuleShape3D" id="CapsuleShape3D_dbe4r"]
 radius = 0.075683594
@@ -91,7 +91,7 @@ unique_name_in_owner = true
 transform = Transform3D(12.360951, 0, 0, 0, 12.360951, 0, 0, 0, 12.360951, 0.8984842, 0.77030057, -1.5133349)
 
 [node name="CollisionShape3D2" type="CollisionShape3D" parent="." unique_id=516426750]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.00065918267, 0.13595451, 0.0049244463)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.00065918267, 0.19145751, 0.0049244463)
 shape = SubResource("BoxShape3D_26l52")
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="." unique_id=241505215]
