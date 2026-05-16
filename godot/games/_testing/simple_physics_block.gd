@@ -9,6 +9,7 @@ extends RigidBody3D
 @export var surface_friction: float = 3.0
 @export var collision_torque_scale: float = 0.2
 @export var collision_restitution: float = 0.3
+@export var max_impulse_angular_delta: float = 15.0
 
 var _linear_vel := Vector3.ZERO
 var _angular_vel := Vector3.ZERO
@@ -108,11 +109,12 @@ func _step(delta: float) -> void:
 			var impulse: Vector3 = normal * j
 			_linear_vel += impulse / block_mass
 			var delta_av_local := basis.inverse() * r.cross(impulse)
-			_angular_vel += basis * Vector3(
+			var delta_av := basis * Vector3(
 				delta_av_local.x / _inertia.x,
 				delta_av_local.y / _inertia.y,
 				delta_av_local.z / _inertia.z,
 			)
+			_angular_vel += delta_av.limit_length(max_impulse_angular_delta)
 
 		_linear_vel = _linear_vel.slide(normal)
 
