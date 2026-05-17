@@ -9,6 +9,7 @@ const SERVER_SYNC_RATE: float = 1.0 / 20.0
 var _current_tick := 0
 var _sync_accumulator: float = 0.0
 
+var inputs_disabled: bool = false
 var owner_peer_id: int = -1
 var is_host: bool = false
 var is_owning_peer := false
@@ -127,7 +128,7 @@ func simulate_tick(current_tick: int, delta: float) -> void:
     did_start_simulating = true
 
   if is_owning_peer:
-    var input_vector := _sample_input()
+    var input_vector := get_default_input() if inputs_disabled else _sample_input()
     physics_state = simulate_one_frame(input_vector, physics_state, current_tick)
     local_input_buffer.store(current_tick, input_vector, physics_state)
 

@@ -15,3 +15,7 @@ func update_sim() -> void:
   for i in spring_bone_sim.setting_count:
     spring_bone_sim.set_stiffness(i, spring_stiffness)
     spring_bone_sim.set_drag(i, spring_drag)
+
+func enter_state(new_state: String) -> void:
+  var anim_sm: AnimationNodeStateMachinePlayback = anim_tree.get("parameters/KartSM/playback")
+  anim_sm.travel(new_state)

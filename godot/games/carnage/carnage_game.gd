@@ -82,12 +82,29 @@ func _apply_state() -> void:
     checkpoint.reached = last_reached_checkpoint >= index
     index += 1
 
+  # Show winner text when 1st place finishes
   var race_winner: KartGameStateSynchronizer.RaceResult = game_state.game_state.results.get(0)
   if race_winner:
     winner_text.text = format_winner_text(race_winner.peer_id)
     winner_text.visible = true
+    var winning_kart := karts_by_peer_id[race_winner.peer_id]
+    winning_kart.gumbot.enter_state("Win")
   else:
     winner_text.visible = false
+  
+  # Disable controls before and after race gameplay
+  for peer_id in karts_by_peer_id:
+    var kart := karts_by_peer_id[peer_id]
+    var game_not_yet_started := game_state.game_state.start_time == -1
+    var game_finished_for_player := game_state.game_state.results.find_custom(
+      func (result: KartGameStateSynchronizer.RaceResult):
+        return result.peer_id == peer_id
+    ) != -1
+    kart.physics_kart_movement_sync.inputs_disabled = game_not_yet_started or game_finished_for_player
+
+    # If i have finished allow free cam
+    if game_finished_for_player:
+      debug_camera.enter_free_mode()
 
 func format_winner_text(peer_id: int) -> String:
   var chatter: Chatter = get_chatter_for_peer_id(peer_id)
@@ -100,7 +117,7 @@ func format_winner_text(peer_id: int) -> String:
 func _handle_chatter_loaded(chatter: Chatter) -> void:
   if MultiplayerClient.current_lobby == null: return
   var chatter_peer_id: int = MultiplayerClient.current_lobby.peer_from_chatter.get(chatter.id, -1)
-  var owning_kart: KartBot = karts_by_peer_id.get(chatter_peer_id, null)
+  var owning_kart: PhysicsKart = karts_by_peer_id.get(chatter_peer_id, null)
   if owning_kart:
     owning_kart.gumbot.chatter = chatter
     
@@ -144,3 +161,8 @@ func spawn_cars() -> void:
 
 func start_game() -> void:
   pass
+# func handle_anim_finished(_anim_name: String) -> void:
+#   if _anim_name == "Intro":
+#     var anim_camera := get_viewport().get_camera_3d()
+#     current_map.camera.snap_to_camera(anim_camera)
+#     current_map.actual_camera.current = true

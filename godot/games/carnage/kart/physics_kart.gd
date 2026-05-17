@@ -10,6 +10,7 @@ extends RigidBody3D
 @onready var wheel_rr: PhysicsWheel = %Wheel_Back_Right
 @onready var smoke_fx_r: GPUParticles3D = %SmokeFX_R
 @onready var smoke_fx_l: GPUParticles3D = %SmokeFX_L
+@onready var gumbot: CarnageGumbot = %gumbot
 
 @export var wheel_turn: float = 0.0:
   set(v):

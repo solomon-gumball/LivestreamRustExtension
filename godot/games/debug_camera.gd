@@ -43,6 +43,7 @@ func set_default_orbit_distance(new_distance: float) -> void:
 
 func enter_free_mode() -> void:
   _state.change_state(_free_state)
+  did_enter_free_cam.emit()
 
 func snap_to_camera(source: Camera3D) -> void:
   global_transform = source.global_transform
@@ -106,6 +107,8 @@ class DebugCameraState extends State:
     cam = _cam
 
 class FreeState extends DebugCameraState:
+  var _mouse_delta: Vector2 = Vector2.ZERO
+
   func enter_state(_previous_state: State) -> void:
     var forward := cam.global_transform.basis * Vector3.FORWARD
     cam._yaw = atan2(-forward.x, -forward.z)
@@ -120,11 +123,15 @@ class FreeState extends DebugCameraState:
         Input.mouse_mode = Input.MOUSE_MODE_VISIBLE
 
     if event is InputEventMouseMotion and Input.mouse_mode == Input.MOUSE_MODE_CAPTURED:
-      cam._yaw -= event.relative.x * cam.mouse_sensitivity
-      cam._pitch -= event.relative.y * cam.mouse_sensitivity
-      cam._pitch = clamp(cam._pitch, deg_to_rad(-89.0), deg_to_rad(89.0))
+      _mouse_delta += event.relative
 
   func physics_update(delta: float) -> void:
+    if _mouse_delta != Vector2.ZERO:
+      cam._yaw -= _mouse_delta.x * cam.mouse_sensitivity
+      cam._pitch -= _mouse_delta.y * cam.mouse_sensitivity
+      cam._pitch = clamp(cam._pitch, deg_to_rad(-89.0), deg_to_rad(89.0))
+      _mouse_delta = Vector2.ZERO
+
     cam.global_basis = Basis(Quaternion(Vector3.UP, cam._yaw) * Quaternion(Vector3.RIGHT, cam._pitch))
 
     var speed := 100.0
@@ -191,6 +198,8 @@ class FollowState extends DebugCameraState:
     Input.mouse_mode = Input.MOUSE_MODE_VISIBLE
     target = null
 
+  var _mouse_delta: Vector2 = Vector2.ZERO
+
   func handle_input(event: InputEvent) -> void:
     if Input.is_action_pressed("move_forward") \
     or Input.is_action_pressed("move_back") \
@@ -198,7 +207,6 @@ class FollowState extends DebugCameraState:
     Input.is_action_pressed("move_right"):
       if cam.allow_free_cam:
         cam.enter_free_mode()
-        cam.did_enter_free_cam.emit()
 
     if event is InputEventMouseButton:
       if event.button_index == MOUSE_BUTTON_LEFT:
@@ -215,11 +223,7 @@ class FollowState extends DebugCameraState:
       orbit_distance = max(MIN_DISTANCE, orbit_distance + event.delta.y * 0.1)
 
     if event is InputEventMouseMotion and Input.mouse_mode == Input.MOUSE_MODE_CAPTURED:
-      var pitch_sign := 1.0 if invert_pitch else -1.0
-      cam._yaw -= event.relative.x * cam.mouse_sensitivity
-      if not lock_pitch:
-        cam._pitch += event.relative.y * cam.mouse_sensitivity * pitch_sign
-        cam._pitch = clamp(cam._pitch, deg_to_rad(-89.0), deg_to_rad(89.0))
+      _mouse_delta += event.relative
 
   func _compute_safe_distance(orbit_dir: Vector3) -> float:
     var space := cam.get_world_3d().direct_space_state
@@ -239,6 +243,14 @@ class FollowState extends DebugCameraState:
   func physics_update(delta: float) -> void:
     if not is_instance_valid(target):
       return
+
+    if _mouse_delta != Vector2.ZERO:
+      var pitch_sign := 1.0 if invert_pitch else -1.0
+      cam._yaw -= _mouse_delta.x * cam.mouse_sensitivity
+      if not lock_pitch:
+        cam._pitch += _mouse_delta.y * cam.mouse_sensitivity * pitch_sign
+        cam._pitch = clamp(cam._pitch, deg_to_rad(-89.0), deg_to_rad(89.0))
+      _mouse_delta = Vector2.ZERO
 
     if move_lerp > 0.0:
       _lerped_position = _lerped_position.lerp(target.global_position, move_lerp * delta)

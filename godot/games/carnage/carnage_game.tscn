@@ -15,6 +15,30 @@
 [ext_resource type="PackedScene" uid="uid://cpguym5iqkbec" path="res://games/carnage/props/hammer_obstacle.tscn" id="7_o05id"]
 [ext_resource type="Texture2D" uid="uid://dlwamiuq1f5t6" path="res://icons/d.png" id="8_yufsp"]
 
+[sub_resource type="Environment" id="Environment_q63vr"]
+background_mode = 3
+ambient_light_source = 2
+ambient_light_color = Color(1, 1, 1, 1)
+ambient_light_energy = 0.3
+tonemap_mode = 2
+ssao_enabled = true
+glow_enabled = true
+adjustment_enabled = true
+adjustment_saturation = 1.2
+
+[sub_resource type="Animation" id="Animation_bcsqp"]
+length = 0.001
+
+[sub_resource type="Animation" id="Animation_16guh"]
+resource_name = "intro"
+length = 5.0
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_bcsqp"]
+_data = {
+&"RESET": SubResource("Animation_bcsqp"),
+&"intro": SubResource("Animation_16guh")
+}
+
 [sub_resource type="Resource" id="Resource_rlb33"]
 script = ExtResource("4_16guh")
 icon = ExtResource("5_bcsqp")
@@ -79,6 +103,26 @@ uv1_world_triplanar = true
 resource_local_to_scene = true
 size = Vector3(2, 1, 0.2)
 
+[sub_resource type="PlaneMesh" id="PlaneMesh_bcsqp"]
+resource_local_to_scene = true
+size = Vector2(5.542, 0.8)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_cgy6g"]
+resource_local_to_scene = true
+transparency = 1
+cull_mode = 2
+albedo_color = Color(1, 1, 1, 0.33333334)
+albedo_texture = ExtResource("4_22osk")
+emission_enabled = true
+emission = Color(1, 0, 0, 1)
+uv1_scale = Vector3(2.5, 2.5, 5)
+uv1_triplanar = true
+uv1_world_triplanar = true
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_d5drp"]
+resource_local_to_scene = true
+size = Vector3(5.542, 1, 0.2)
+
 [sub_resource type="PlaneMesh" id="PlaneMesh_jodp3"]
 resource_local_to_scene = true
 size = Vector2(5.542, 0.8)
@@ -129,15 +173,6 @@ _data = {
 }
 point_count = 2
 
-[sub_resource type="Environment" id="Environment_q63vr"]
-background_mode = 3
-ambient_light_source = 2
-ambient_light_color = Color(1, 1, 1, 1)
-ambient_light_energy = 0.16
-tonemap_mode = 2
-ssao_enabled = true
-glow_enabled = true
-
 [sub_resource type="BoxShape3D" id="BoxShape3D_pjf2b"]
 size = Vector3(40.10681, 11.683105, 22.6333)
 
@@ -151,6 +186,13 @@ radius = 57.58551
 
 [node name="CarnageGame" type="Node3D" unique_id=1863440489]
 script = ExtResource("1_rhos2")
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="." unique_id=1243038836]
+environment = SubResource("Environment_q63vr")
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="." unique_id=44773331]
+root_node = NodePath("../KartGameStateSynchronizer")
+libraries/ = SubResource("AnimationLibrary_bcsqp")
 
 [node name="Overlay" type="CanvasLayer" parent="." unique_id=2132972244]
 
@@ -193,8 +235,15 @@ plane_material = SubResource("StandardMaterial3D_yufsp")
 box_shape = SubResource("BoxShape3D_rlb33")
 width = 2.0
 
+[node name="RaceCheckpoint5" parent="." unique_id=2004633061 instance=ExtResource("4_7nuw5")]
+transform = Transform3D(-1, 0, -8.742278e-08, 0, 1, 0, 8.742278e-08, 0, -1, -35.39201, 1.6121712, -23.686935)
+plane_mesh = SubResource("PlaneMesh_bcsqp")
+plane_material = SubResource("StandardMaterial3D_cgy6g")
+box_shape = SubResource("BoxShape3D_d5drp")
+width = 5.542
+
 [node name="RaceCheckpoint3" parent="." unique_id=1941013204 instance=ExtResource("4_7nuw5")]
-transform = Transform3D(-1, 0, -8.742278e-08, 0, 1, 0, 8.742278e-08, 0, -1, -35.39201, 1.6121712, -23.839588)
+transform = Transform3D(-1, 0, -8.742278e-08, 0, 1, 0, 8.742278e-08, 0, -1, -35.39201, 1.6121712, -25.751503)
 plane_mesh = SubResource("PlaneMesh_jodp3")
 plane_material = SubResource("StandardMaterial3D_iq6cl")
 box_shape = SubResource("BoxShape3D_dqt6w")
@@ -214,15 +263,12 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -2.2655797, 0)
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.22748864, 0)
 shape = SubResource("BoxShape3D_rhos2")
 
-[node name="SpawnCenter" type="Marker3D" parent="." unique_id=1167048723]
+[node name="SpawnPath" type="Path3D" parent="." unique_id=285754891]
 unique_name_in_owner = true
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -40.79398, 0.58948624, -0.017645597)
-
-[node name="SpawnPath" type="Path3D" parent="SpawnCenter" unique_id=285754891]
-unique_name_in_owner = true
 curve = SubResource("Curve3D_pjf2b")
 
-[node name="boxing_ring" parent="." unique_id=1185022900 instance=ExtResource("1_q63vr")]
+[node name="boxing_ring" parent="." unique_id=1660685046 instance=ExtResource("1_q63vr")]
 
 [node name="DirectionalLight3D" type="DirectionalLight3D" parent="." unique_id=1486856216]
 transform = Transform3D(-0.49766108, 0.63648874, 0.58924997, -0.29978192, -0.76370305, 0.57174164, 0.8139191, 0.10788706, 0.5708731, 2.0339265, 2.6281023, -0.35323796)
@@ -237,12 +283,9 @@ visible = false
 spot_range = 13.224709
 spot_angle = 53.16479
 
-[node name="WorldEnvironment" type="WorldEnvironment" parent="." unique_id=1243038836]
-environment = SubResource("Environment_q63vr")
-
 [node name="DebugCamera" parent="." unique_id=1098239593 instance=ExtResource("3_2xtgp")]
 unique_name_in_owner = true
-transform = Transform3D(1, 0, 0, 0, 0.9766723, 0.21473533, 0, -0.21473533, 0.9766723, -40.562023, 2.6740055, 10.390078)
+transform = Transform3D(0.7120751, 0.1608985, -0.68341845, -7.450581e-09, 0.97338724, 0.22916643, 0.7021034, -0.16318369, 0.69312483, -44.501244, 3.1134653, 4.1785192)
 allow_free_cam = false
 
 [node name="Camera2" type="Camera3D" parent="DebugCamera" unique_id=1785970488]
@@ -270,7 +313,7 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -26.178598, -7.453396, -0.460
 shape = SubResource("BoxShape3D_pjf2b")
 
 [node name="CSGSphere3D" type="CSGSphere3D" parent="." unique_id=269553093]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.08006854, 0.034898758, -0.010442972)
+transform = Transform3D(2, 0, 0, 0, 2, 0, 0, 0, 2, 0.08006854, 0.034898758, -0.010442972)
 radius = 100.0
 material = SubResource("StandardMaterial3D_rhos2")
 
