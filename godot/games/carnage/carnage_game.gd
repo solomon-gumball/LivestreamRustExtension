@@ -174,7 +174,7 @@ func _animation_finished(animation_name: String) -> void:
     map.debug_camera.set_default_orbit_distance(5.0)
     map.debug_camera.enter_follow_mode(kart, deg_to_rad(25.0))
     map.debug_camera.allow_free_cam = !lobby.is_player(MultiplayerClient.my_peer_id())
-    # map.debug_camera._free_state.
+    map.debug_camera._free_state.mouse_sensitivity = .001
     await get_tree().process_frame
     map.debug_inner_cam.current = true
 

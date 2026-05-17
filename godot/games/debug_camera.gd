@@ -3,7 +3,8 @@ class_name DebugCamera
 
 @export var move_speed: float = 10.0
 @export var fast_move_speed: float = 50.0
-@export var mouse_sensitivity: float = 0.003
+@export var look_speed: float = 1.0
+@export_range(0.0, 1.0) var look_smoothing: float = 0.5
 @export var allow_free_cam: bool = true
 @onready var collision_shape_cast: ShapeCast3D = %ShapeCast
 
@@ -107,7 +108,9 @@ class DebugCameraState extends State:
     cam = _cam
 
 class FreeState extends DebugCameraState:
+  var mouse_sensitivity: float = 0.001
   var _mouse_delta: Vector2 = Vector2.ZERO
+  var _smoothed_delta: Vector2 = Vector2.ZERO
 
   func enter_state(_previous_state: State) -> void:
     var forward := cam.global_transform.basis * Vector3.FORWARD
@@ -126,11 +129,12 @@ class FreeState extends DebugCameraState:
       _mouse_delta += event.relative
 
   func physics_update(delta: float) -> void:
-    if _mouse_delta != Vector2.ZERO:
-      cam._yaw -= _mouse_delta.x * cam.mouse_sensitivity
-      cam._pitch -= _mouse_delta.y * cam.mouse_sensitivity
+    _smoothed_delta = _smoothed_delta.lerp(_mouse_delta, 1.0 - cam.look_smoothing)
+    _mouse_delta = Vector2.ZERO
+    if _smoothed_delta.length_squared() > 0.00001:
+      cam._yaw -= _smoothed_delta.x * mouse_sensitivity
+      cam._pitch -= _smoothed_delta.y * mouse_sensitivity
       cam._pitch = clamp(cam._pitch, deg_to_rad(-89.0), deg_to_rad(89.0))
-      _mouse_delta = Vector2.ZERO
 
     cam.global_basis = Basis(Quaternion(Vector3.UP, cam._yaw) * Quaternion(Vector3.RIGHT, cam._pitch))
 
@@ -198,7 +202,9 @@ class FollowState extends DebugCameraState:
     Input.mouse_mode = Input.MOUSE_MODE_VISIBLE
     target = null
 
+  var mouse_sensitivity: float = 0.001
   var _mouse_delta: Vector2 = Vector2.ZERO
+  var _smoothed_delta: Vector2 = Vector2.ZERO
 
   func handle_input(event: InputEvent) -> void:
     if Input.is_action_pressed("move_forward") \
@@ -244,13 +250,14 @@ class FollowState extends DebugCameraState:
     if not is_instance_valid(target):
       return
 
-    if _mouse_delta != Vector2.ZERO:
+    _smoothed_delta = _smoothed_delta.lerp(_mouse_delta, 1.0 - cam.look_smoothing)
+    _mouse_delta = Vector2.ZERO
+    if _smoothed_delta.length_squared() > 0.00001:
       var pitch_sign := 1.0 if invert_pitch else -1.0
-      cam._yaw -= _mouse_delta.x * cam.mouse_sensitivity
+      cam._yaw -= _smoothed_delta.x * mouse_sensitivity
       if not lock_pitch:
-        cam._pitch += _mouse_delta.y * cam.mouse_sensitivity * pitch_sign
+        cam._pitch += _smoothed_delta.y * mouse_sensitivity * pitch_sign
         cam._pitch = clamp(cam._pitch, deg_to_rad(-89.0), deg_to_rad(89.0))
-      _mouse_delta = Vector2.ZERO
 
     if move_lerp > 0.0:
       _lerped_position = _lerped_position.lerp(target.global_position, move_lerp * delta)
