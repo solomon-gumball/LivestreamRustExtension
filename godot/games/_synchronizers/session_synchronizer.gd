@@ -68,7 +68,7 @@ func _ready() -> void:
 
   _ping_timer = Timer.new()
   _ping_timer.wait_time = 8.0
-  _ping_timer.one_shot = true
+  _ping_timer.one_shot = false
   _ping_timer.autostart = true
   _ping_timer.timeout.connect(_send_ping)
 
@@ -106,8 +106,8 @@ func _send_ping() -> void:
     "client_time": Time.get_ticks_msec(),
   })
 
-const DRIFT_NUDGE_THRESHOLD := 4     # ticks — use nudge
-const DRIFT_RESET_THRESHOLD := 10    # ticks — hard reset
+const DRIFT_NUDGE_THRESHOLD := 2     # ticks — use nudge
+const DRIFT_RESET_THRESHOLD := 5    # ticks — hard reset
 
 func message_received(sender_id: int, packet: Dictionary) -> void:
   match packet.type:
@@ -130,15 +130,22 @@ func message_received(sender_id: int, packet: Dictionary) -> void:
       var rtt_msec := Time.get_ticks_msec() - client_time_ms
       var server_net_tick := packet.get("net_sim_tick", 0) as int
       var one_way_ticks := int(round((float(rtt_msec) / 2.0) / 1000.0 * TICK_RATE_HZ))
-      print(rtt_msec, "ms PING - ONE WAY TICKS ", one_way_ticks)
       current_ping = rtt_msec
 
       var new_target_tick := server_net_tick + INPUT_BUFFER_DEPTH + one_way_ticks + MARGIN_TICKS
       var sim_tick_delta := absi(net_sim_tick - new_target_tick)
 
+      print("[PongNetTick] rtt_msec=%d one_way_ticks=%d server_net_tick=%d net_sim_tick=%d new_target_tick=%d sim_tick_delta=%d _initial_tick_set=%s" % [
+        rtt_msec, one_way_ticks, server_net_tick, net_sim_tick, new_target_tick, sim_tick_delta, _initial_tick_set
+      ])
+
       if not _initial_tick_set:
         net_sim_tick = new_target_tick
         _initial_tick_set = true
+      elif sim_tick_delta > DRIFT_RESET_THRESHOLD:
+        print("[SessionSynchronizer] client simulation drifted too far. Resetting!")
+        _reset_all_synchronizers()
+        net_sim_tick = new_target_tick
       elif sim_tick_delta > DRIFT_NUDGE_THRESHOLD:
         if new_target_tick > net_sim_tick:
           print("[SessionSynchronizer] latency increased, running extra frame")
@@ -146,11 +153,8 @@ func message_received(sender_id: int, packet: Dictionary) -> void:
         elif new_target_tick < net_sim_tick:
           print("[SessionSynchronizer] latency decreased, skipping next frame")
           _skip_next_frame = true
-      elif sim_tick_delta > DRIFT_RESET_THRESHOLD:
-        print("[SessionSynchronizer] client simulation drifted too far. Resetting!")
-        _reset_all_synchronizers()
-        net_sim_tick = new_target_tick
 
+      print("[PongNetTick] client_ahead_ticks=%d" % [net_sim_tick - server_net_tick])
       rtt_updated.emit(current_ping, net_sim_tick - server_net_tick)
   
   if !is_host:

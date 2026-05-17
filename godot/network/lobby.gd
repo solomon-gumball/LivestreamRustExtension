@@ -35,6 +35,11 @@ func has_chatter(chatter_id: String) -> bool:
     return peer_data.chatter_id == chatter_id
   )
 
+func is_player(peer_id: int) -> bool:
+  return players.find_custom(func (player: PeerData):
+    return player.peer_id == peer_id
+  ) != -1
+
 func can_be_started(by_peer_id: int) -> bool:
   if started: return false
   var is_host := host_id == by_peer_id

@@ -6,30 +6,39 @@ enum CarnageGameMessage {
   ServerKartPunch,
 }
 
-@onready var spawn_center_node: Marker3D = %SpawnCenter
-@onready var camera_boom: Node3D = %BoomNode
-@onready var camera: Camera3D = %Camera2
-@onready var debug_camera: DebugCamera = %DebugCamera
 @onready var game_state: KartGameStateSynchronizer = %KartGameStateSynchronizer
-@onready var spawn_path: Path3D = %SpawnPath
-@onready var out_of_bounds_area: Area3D = %OutOfBoundsArea
-@onready var in_bounds_area: Area3D = %InBoundsArea
 @onready var winner_text: RichTextLabel = %WinnerText
 
+var map: KartRaceMap = null
 var checkpoints: Array[RaceCheckpoint] = []
 
 func _ready() -> void:
   super._ready()
   if Engine.is_editor_hint(): return
 
+  var map_packed := load("res://games/carnage/maps/kart_race_map1.tscn") as PackedScene
+  map = map_packed.instantiate()
+  add_child(map)
+
   _setup_checkpoints()
 
   chatter_loaded.connect(_handle_chatter_loaded)
   game_state.state_updated.connect(_apply_state)
-  out_of_bounds_area.body_entered.connect(_out_of_bounds_area_entered)
-  in_bounds_area.body_exited.connect(_in_bounds_area_exited)
-  await get_tree().create_timer(2.0).timeout
+  map.out_of_bounds_area.body_entered.connect(_out_of_bounds_area_entered)
+  map.in_bounds_area.body_exited.connect(_in_bounds_area_exited)
+  map.animation_synchronizer.animation_finished.connect(_animation_finished)
+
   spawn_cars()
+
+  # Force a render pass with the scene fully visible so the GPU pre-warms
+  # all shaders and mesh uploads before the intro animation begins.
+  # Without this, models popping into the camera's view during the pan cause
+  # a one-frame GPU stall that shows as a visible framerate hiccup.
+  map.animation_camera.current = true
+  await RenderingServer.frame_post_draw
+  await RenderingServer.frame_post_draw
+
+  await get_tree().create_timer(2.0).timeout
   SessionSynchronizer.get_instance().notify_ready()
 
 func _out_of_bounds_area_entered(body: Node) -> void:
@@ -63,7 +72,7 @@ func _in_bounds_area_exited(body: Node) -> void:
 
 func _setup_checkpoints() -> void:
   var checkpoint_index: int = 0
-  for child in get_children():
+  for child in map.get_children():
     if child is RaceCheckpoint:
       var checkpoint := child as RaceCheckpoint
       checkpoints.append(child)
@@ -83,14 +92,15 @@ func _apply_state() -> void:
     index += 1
 
   # Show winner text when 1st place finishes
-  var race_winner: KartGameStateSynchronizer.RaceResult = game_state.game_state.results.get(0)
-  if race_winner:
-    winner_text.text = format_winner_text(race_winner.peer_id)
-    winner_text.visible = true
-    var winning_kart := karts_by_peer_id[race_winner.peer_id]
-    winning_kart.gumbot.enter_state("Win")
-  else:
-    winner_text.visible = false
+  if game_state.game_state.results.size() > 0:
+    var race_winner: KartGameStateSynchronizer.RaceResult = game_state.game_state.results.get(0)
+    if race_winner:
+      winner_text.text = format_winner_text(race_winner.peer_id)
+      winner_text.visible = true
+      var winning_kart := karts_by_peer_id[race_winner.peer_id]
+      winning_kart.gumbot.enter_state("Win")
+    else:
+      winner_text.visible = false
   
   # Disable controls before and after race gameplay
   for peer_id in karts_by_peer_id:
@@ -104,7 +114,7 @@ func _apply_state() -> void:
 
     # If i have finished allow free cam
     if game_finished_for_player:
-      debug_camera.enter_free_mode()
+      map.debug_camera.enter_free_mode()
 
 func format_winner_text(peer_id: int) -> String:
   var chatter: Chatter = get_chatter_for_peer_id(peer_id)
@@ -128,23 +138,25 @@ const car_template: PackedScene = preload("res://games/carnage/kart/kart_bot.tsc
 const physics_car_template: PackedScene = preload("res://games/carnage/kart/physics_kart.tscn")
 
 func get_spawn_transform(peer_id: int) -> Transform3D:
-  var join_index := lobby.peers.map(func(p): return p.peer_id).find(peer_id)
+  var join_index := lobby.players.map(func(p): return p.peer_id).find(peer_id)
   var last_checkpoint: int = game_state.get_last_reached_checkpoint(peer_id)
   if last_checkpoint >= 0 and last_checkpoint < checkpoints.size():
     var checkpoint: RaceCheckpoint = checkpoints[last_checkpoint]
     var checkpoint_transform: Transform3D = checkpoint.global_transform
+    if lobby.players.size() == 1:
+      return checkpoint_transform
+
     var spawn_margins := 0.4
-    var total_spawn_width := checkpoint.width - spawn_margins * 2.0
-    checkpoint_transform = checkpoint_transform.translated(Vector3(-total_spawn_width * 0.5 + join_index * total_spawn_width, 0, 0))
+    var total_spawn_width := minf(checkpoint.width - spawn_margins * 2.0, 0.5 * float(lobby.players.size() - 1))
+    var car_margins := total_spawn_width / float(lobby.players.size() - 1)
+    var offset := Vector3(-total_spawn_width * 0.5 + join_index * car_margins, 0, 0)
+    checkpoint_transform = checkpoint_transform.translated_local(offset)
     return checkpoint_transform
 
-  var spawn_path_length = spawn_path.curve.get_baked_length()
-  var spawn_path_offset = spawn_path_length / lobby.players.size() * join_index
-  var spawn_transform = spawn_path.global_transform * spawn_path.curve.sample_baked_with_rotation(spawn_path_offset)
-  return spawn_transform
+  return Transform3D.IDENTITY
 
 func spawn_cars() -> void:
-  for peer in lobby.peers:
+  for peer in lobby.players:
     var kart_inst := physics_car_template.instantiate() as PhysicsKart
     add_child(kart_inst)
 
@@ -154,15 +166,23 @@ func spawn_cars() -> void:
     kart_inst.physics_kart_movement_sync.kart_flipped.connect(respawn_kart.bind(peer.peer_id))
     karts_by_peer_id[peer.peer_id] = kart_inst
 
-    if peer.peer_id == MultiplayerClient.my_peer_id():
-      debug_camera._follow_state.move_lerp = 5.0
-      debug_camera.set_default_orbit_distance(5.5)
-      debug_camera.enter_follow_mode(kart_inst, deg_to_rad(35.0))
+func _animation_finished(animation_name: String) -> void:
+  if animation_name == "Intro":
+    var kart: PhysicsKart = karts_by_peer_id.get(MultiplayerClient.my_peer_id(), null)
+    map.debug_camera.snap_to_camera(map.animation_camera)
+    map.debug_camera._follow_state.move_lerp = 5.0
+    map.debug_camera.set_default_orbit_distance(5.0)
+    map.debug_camera.enter_follow_mode(kart, deg_to_rad(25.0))
+    map.debug_camera.allow_free_cam = !lobby.is_player(MultiplayerClient.my_peer_id())
+    # map.debug_camera._free_state.
+    await get_tree().process_frame
+    map.debug_inner_cam.current = true
 
 func start_game() -> void:
+  if !is_game_host: return
+  map.animation_synchronizer.authority_play_animation("Intro")
+  await map.animation_synchronizer.animation_finished
+  game_state.authority_start_game()
+
+func handle_lobby_updated() -> void:
   pass
-# func handle_anim_finished(_anim_name: String) -> void:
-#   if _anim_name == "Intro":
-#     var anim_camera := get_viewport().get_camera_3d()
-#     current_map.camera.snap_to_camera(anim_camera)
-#     current_map.actual_camera.current = true

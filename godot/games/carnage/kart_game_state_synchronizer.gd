@@ -1,7 +1,7 @@
 class_name KartGameStateSynchronizer
 extends StateSynchronizer
 
-@export var starting_checkpoint: int = -1
+@export var starting_checkpoint: int = 0
 var total_checkpoints_count: int = 0
 
 class GameState:
@@ -24,6 +24,11 @@ func _init() -> void:
 
 func get_last_reached_checkpoint(peer_id: int) -> int:
   return game_state.checkpoints_reached.get(peer_id, starting_checkpoint)
+
+func authority_start_game() -> void:
+  game_state.start_time = Time.get_ticks_msec()
+  send_refresh_state(MultiplayerPeer.TARGET_PEER_BROADCAST)
+  state_updated.emit()
 
 func authority_checkpoint_reached(peer_id: int, new_checkpoint_index: int) -> void:
   if !MultiplayerClient.is_lobby_host(): return

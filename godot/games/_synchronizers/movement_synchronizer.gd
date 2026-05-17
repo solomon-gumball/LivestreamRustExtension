@@ -234,7 +234,7 @@ class CircularBuffer:
   var input_buffer := []
 
   func clear() -> void:
-    input_buffer = []
+    input_buffer.fill(null)
 
   func _init() -> void:
     input_buffer.resize(BUFFER_SIZE)

@@ -394,15 +394,8 @@ func simulate_one_frame(input: Dictionary, state: Dictionary, tick: int) -> Dict
       _flip_frames += 1
       if _flip_frames >= flip_frame_threshold:
         _flip_frames = 0
-        print("TRIGGER FLIP!!!")
         kart_flipped.emit.call_deferred()
     else:
-      if _flip_frames > 0:
-        print("FLIP RECOVERED after %d frames" % _flip_frames)
-        print("any_grounded ", any_grounded)
-        print("basis.y.dot(Vector3.UP) < flip_up_dot_threshold ", basis.y.dot(Vector3.UP) < flip_up_dot_threshold)
-        print("linear_velocity.length() < flip_velocity_threshold ", linear_velocity.length() < flip_velocity_threshold)
-        print(linear_velocity.length())
       _flip_frames = 0
 
   return {
