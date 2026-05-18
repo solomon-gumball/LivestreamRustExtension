@@ -30,6 +30,9 @@ height = 0.27
 _data = [Vector2(0.00314466, 0.495897), 0.0, 0.0, 0, 0, Vector2(0.416667, 0.986236), 0.0, 0.0, 0, 0, Vector2(0.646226, 0.984516), 0.0, 0.0, 0, 0, Vector2(1, 0.339333), 0.0, 0.0, 0, 0]
 point_count = 4
 
+[sub_resource type="SphereShape3D" id="SphereShape3D_dbe4r"]
+radius = 0.21981534
+
 [node name="PhysicsKart" type="RigidBody3D" unique_id=1967429638]
 collision_layer = 2
 collision_mask = 3
@@ -109,3 +112,13 @@ kart = NodePath("..")
 kart_visual_node = NodePath("../VisualNode")
 collision_box_shape = SubResource("BoxShape3D_26l52")
 acceleration_curve = SubResource("Curve_gvgjh")
+
+[node name="PunchArea" type="Area3D" parent="." unique_id=961213885]
+unique_name_in_owner = true
+transform = Transform3D(0.29999998, 0, 0, 0, 0.29999998, 0, 0, 0, 0.29999998, -1.1920929e-07, 0.24248087, 0.29073188)
+collision_layer = 0
+collision_mask = 2
+
+[node name="CollisionShape3D2" type="CollisionShape3D" parent="PunchArea" unique_id=203090344]
+transform = Transform3D(3.3333335, 0, 0, 0, 3.3333335, 0, 0, 0, 3.3333335, 0, 0, 0)
+shape = SubResource("SphereShape3D_dbe4r")

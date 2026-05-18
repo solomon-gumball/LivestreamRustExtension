@@ -12,7 +12,7 @@ render_priority = 0
 shader = ExtResource("2_dn58o")
 shader_parameter/albedo_texture = ExtResource("3_qqirw")
 shader_parameter/normal_map = ExtResource("4_crujt")
-shader_parameter/bot_color = Color(1, 0, 0, 1)
+shader_parameter/bot_color = Color(0.5, 0.5, 0.5, 1)
 
 [sub_resource type="AnimationNodeAdd2" id="AnimationNodeAdd2_o2iqh"]
 filters = ["Armature/Skeleton3D:Windup"]
@@ -22,6 +22,11 @@ animation = &"Windup"
 
 [sub_resource type="AnimationNodeAnimation" id="AnimationNodeAnimation_7kn7g"]
 animation = &"KartPunch"
+
+[sub_resource type="AnimationNodeAnimation" id="AnimationNodeAnimation_crujt"]
+animation = &"KartFlail"
+
+[sub_resource type="AnimationNodeOneShot" id="AnimationNodeOneShot_dwov4"]
 
 [sub_resource type="AnimationNodeAnimation" id="AnimationNodeAnimation_qqirw"]
 animation = &"KartNeutral"
@@ -54,36 +59,40 @@ fadeout_time = 0.1
 
 [sub_resource type="AnimationNodeBlendTree" id="AnimationNodeBlendTree_dn58o"]
 resource_local_to_scene = true
-graph_offset = Vector2(-498.39716, -247.87134)
+graph_offset = Vector2(-676.20917, -101.63132)
 nodes/Add2/node = SubResource("AnimationNodeAdd2_o2iqh")
 nodes/Add2/position = Vector2(0, 80)
 "nodes/Animation 2/node" = SubResource("AnimationNodeAnimation_x5r14")
 "nodes/Animation 2/position" = Vector2(-240, 306.667)
 nodes/KartSM/node = SubResource("AnimationNodeStateMachine_dn58o")
-nodes/KartSM/position = Vector2(-500, -100)
+nodes/KartSM/position = Vector2(-1030, -120)
 nodes/PunchOneShot/node = SubResource("AnimationNodeOneShot_dn58o")
-nodes/PunchOneShot/position = Vector2(-260, -50)
+nodes/PunchOneShot/position = Vector2(-790, -70)
 "nodes/Animation 3/node" = SubResource("AnimationNodeAnimation_7kn7g")
-"nodes/Animation 3/position" = Vector2(-430, 100)
-node_connections = [&"output", 0, &"Add2", &"Add2", 0, &"PunchOneShot", &"Add2", 1, &"Animation 2", &"PunchOneShot", 0, &"KartSM", &"PunchOneShot", 1, &"Animation 3"]
+"nodes/Animation 3/position" = Vector2(-960, 80)
+nodes/FlailOneShot/node = SubResource("AnimationNodeOneShot_dwov4")
+nodes/FlailOneShot/position = Vector2(-360, -100)
+nodes/Animation/node = SubResource("AnimationNodeAnimation_crujt")
+nodes/Animation/position = Vector2(-510, 30)
+node_connections = [&"output", 0, &"Add2", &"Add2", 0, &"FlailOneShot", &"Add2", 1, &"Animation 2", &"PunchOneShot", 0, &"KartSM", &"PunchOneShot", 1, &"Animation 3", &"FlailOneShot", 0, &"PunchOneShot", &"FlailOneShot", 1, &"Animation"]
 
 [node name="gumbot" unique_id=2126276004 instance=ExtResource("1_7kn7g")]
 script = ExtResource("2_7kn7g")
 spring_stiffness = 1.0
 spring_drag = 0.1
 surface_mat = SubResource("ShaderMaterial_7kn7g")
+color = Color(0.5, 0.5, 0.5, 1)
 
 [node name="NameLabel" parent="." index="1" unique_id=550378211]
 transform = Transform3D(0.07660255, 0, 0, 0, 0.07660255, 0, 0, 0, 0.07660255, 0, 0.4047441, 0)
-visible = true
 pixel_size = 0.003
 fixed_size = true
 outline_size = 15
 
-[node name="Armature" parent="." index="2" unique_id=1033538753]
+[node name="Armature" parent="." index="2" unique_id=1790749171]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.008804508, 0, 0)
 
-[node name="Skeleton3D" parent="Armature" index="0" unique_id=579280418]
+[node name="Skeleton3D" parent="Armature" index="0" unique_id=377662908]
 process_priority = -1
 process_physics_priority = -1
 physics_interpolation_mode = 1
@@ -96,7 +105,7 @@ bones/4/rotation = Quaternion(0.8077316, -0.009526951, -0.01174861, 0.5893563)
 bones/5/rotation = Quaternion(0.004864545, 0.20424525, 0.9788029, 0.014322811)
 bones/6/rotation = Quaternion(-0.38585603, -2.193282e-07, 2.4067282e-07, 0.9225591)
 bones/7/rotation = Quaternion(0.8077316, 0.009526882, 0.011748662, 0.5893563)
-bones/10/rotation = Quaternion(-0.6290328, 0.32298276, 0.6290327, 0.32298276)
+bones/10/rotation = Quaternion(0.10349761, 0.6994914, -0.103497595, 0.6994915)
 bones/11/rotation = Quaternion(0.21930711, 0.5096833, 0.81720936, 0.15587257)
 bones/12/rotation = Quaternion(0.5691333, -2.0082354e-08, -1.5000863e-07, 0.82224524)
 bones/13/rotation = Quaternion(0.28365347, 0.6676797, 0.063909754, 0.6853176)
@@ -124,36 +133,36 @@ bones/24/rotation = Quaternion(2.5288116e-07, 0.7071068, 0.7071068, 2.5288116e-0
 bones/24/scale = Vector3(0.63530767, 1, 1)
 
 [node name="Hand_L_Socket" parent="Armature/Skeleton3D" index="0" unique_id=541900749]
-transform = Transform3D(-0.050832868, -0.244392, 0.96833813, 0.21269295, 0.9447041, 0.24958894, -0.97579265, 0.21864852, 0.003958065, 0.054230556, 0.21532586, 0.088012874)
+transform = Transform3D(-0.050826892, -0.24438837, 0.9683394, 0.21266258, 0.94471216, 0.24958414, -0.97579956, 0.21861762, 0.003955018, 0.05423043, 0.21532829, 0.0880115)
 
-[node name="Arm" parent="Armature/Skeleton3D" index="1" unique_id=1614395219]
+[node name="Arm" parent="Armature/Skeleton3D" index="1" unique_id=1350541726]
 surface_material_override/0 = SubResource("ShaderMaterial_7kn7g")
 
-[node name="Body" parent="Armature/Skeleton3D" index="2" unique_id=79213522]
+[node name="Body" parent="Armature/Skeleton3D" index="2" unique_id=1291897651]
 surface_material_override/0 = SubResource("ShaderMaterial_7kn7g")
 
-[node name="Button" parent="Armature/Skeleton3D" index="3" unique_id=207405623]
+[node name="Button" parent="Armature/Skeleton3D" index="3" unique_id=596012664]
 surface_material_override/0 = SubResource("ShaderMaterial_7kn7g")
 
-[node name="Circle" parent="Armature/Skeleton3D" index="4" unique_id=822624317]
+[node name="Circle" parent="Armature/Skeleton3D" index="4" unique_id=1216282894]
 surface_material_override/0 = SubResource("ShaderMaterial_7kn7g")
 
-[node name="Hand_L" parent="Armature/Skeleton3D" index="5" unique_id=778797026]
+[node name="Hand_L" parent="Armature/Skeleton3D" index="5" unique_id=1899022651]
 surface_material_override/0 = SubResource("ShaderMaterial_7kn7g")
 
-[node name="Hand_R" parent="Armature/Skeleton3D" index="6" unique_id=1902332049]
+[node name="Hand_R" parent="Armature/Skeleton3D" index="6" unique_id=482192895]
 surface_material_override/0 = SubResource("ShaderMaterial_7kn7g")
 
-[node name="Leg" parent="Armature/Skeleton3D" index="8" unique_id=1747639817]
+[node name="Leg" parent="Armature/Skeleton3D" index="8" unique_id=1917821816]
 surface_material_override/0 = SubResource("ShaderMaterial_7kn7g")
 
 [node name="Head_Socket" parent="Armature/Skeleton3D" index="9" unique_id=1137685559]
-transform = Transform3D(1, 8.881784e-16, 2.3841858e-07, -1.6849851e-08, 0.99749947, 0.07067339, -2.3782243e-07, -0.070673384, 0.9974995, 9.1941774e-17, 0.23987946, -0.009265171)
+transform = Transform3D(1, 1.0842022e-19, 2.3841858e-07, -1.685227e-08, 0.99749875, 0.07068354, -2.3782226e-07, -0.07068353, 0.9974988, 1.1223361e-20, 0.23987938, -0.009266222)
 
 [node name="Spine_Socket" parent="Armature/Skeleton3D" index="10" unique_id=365435926]
-transform = Transform3D(1, 8.881784e-16, 2.3841855e-07, -1.6849848e-08, 0.99749947, 0.07067339, -2.3782239e-07, -0.070673384, 0.9974995, 0, 0.13662107, -0.0019492578)
+transform = Transform3D(1, 1.0842022e-19, 2.3841855e-07, -1.6852267e-08, 0.99749875, 0.07068354, -2.3782222e-07, -0.07068353, 0.9974988, 0, 0.13662107, -0.0019492578)
 
-[node name="Sphere_001" parent="Armature/Skeleton3D" index="12" unique_id=615482210]
+[node name="Sphere_001" parent="Armature/Skeleton3D" index="12" unique_id=1201378497]
 surface_material_override/0 = SubResource("ShaderMaterial_7kn7g")
 
 [node name="SpringBoneSimulator3D" type="SpringBoneSimulator3D" parent="Armature/Skeleton3D" index="13" unique_id=258612005]
@@ -240,3 +249,6 @@ tree_root = SubResource("AnimationNodeBlendTree_dn58o")
 parameters/PunchOneShot/active = false
 parameters/PunchOneShot/internal_active = false
 parameters/PunchOneShot/request = 0
+parameters/FlailOneShot/active = false
+parameters/FlailOneShot/internal_active = false
+parameters/FlailOneShot/request = 0

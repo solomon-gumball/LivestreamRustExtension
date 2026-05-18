@@ -32,6 +32,7 @@ var mappings := {
   "move_back": KEY_S,
   "turn_left": KEY_A,
   "turn_right": KEY_D,
+  "punch": KEY_SPACE,
 }
 
 # Inertia tensor diagonal (Ixx, Iyy, Izz) computed from collision box dimensions.
@@ -96,7 +97,7 @@ func _unbind_inputs() -> void:
       InputMap.erase_action(action)
 
 func get_default_input() -> Dictionary:
-  return { "move": Vector2.ZERO }
+  return { "move": Vector2.ZERO, "punch_pressed": false }
 
 func get_initial_state() -> Dictionary:
   return {
@@ -205,12 +206,20 @@ func apply_impulse(impulse: Vector3) -> void:
 func _sample_input() -> Dictionary:
   return {
     "move": Input.get_vector("move_back", "move_forward", "turn_right", "turn_left"),
+    "punch_pressed": Input.is_action_just_pressed("punch"),
   }
+
+func _on_extra_packet(_sender_id: int, packet: Dictionary) -> void:
+  match packet.type:
+    Carnage.CarnageGameMessage.ServerKartPunch:
+      if is_owning_peer: return
+      kart.punch_cosmetic()
 
 func simulate_one_frame(input: Dictionary, state: Dictionary, tick: int) -> Dictionary:
   var delta := 1.0 / 60.0
   var input_vec: Vector2 = input.get("move", Vector2.ZERO)
   var throttle: float = input_vec.x
+  var punch_pressed: bool = input.get("punch_pressed", false)
 
   var position: Vector3 = state.get("position", Vector3.ZERO)
   var basis: Basis = Basis(state.get("rotation", Quaternion.IDENTITY))
@@ -220,6 +229,15 @@ func simulate_one_frame(input: Dictionary, state: Dictionary, tick: int) -> Dict
 
   # _logger.log("%s IN pos=%s lvel=%s avel=%s wt=%.4f move=%s" % [
   #   _sim_tag(tick), position, linear_velocity, angular_velocity, wheel_turn, input_vec])
+
+  if punch_pressed:
+    kart.punch_cosmetic()
+    if is_host:
+      kart.authority_punch_collide()
+      MultiplayerClient.send_packet({
+        "type": Carnage.CarnageGameMessage.ServerKartPunch,
+        "owner_peer_id": owner_peer_id,
+      })
 
   # Steering
   var desired_wheel_angle := input_vec.y * MAX_WHEEL_ANGLE

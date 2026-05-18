@@ -11,6 +11,7 @@ extends RigidBody3D
 @onready var smoke_fx_r: GPUParticles3D = %SmokeFX_R
 @onready var smoke_fx_l: GPUParticles3D = %SmokeFX_L
 @onready var gumbot: CarnageGumbot = %gumbot
+@onready var punch_area: Area3D = %PunchArea
 
 @export var wheel_turn: float = 0.0:
   set(v):
@@ -51,4 +52,23 @@ func _integrate_forces(physics_state: PhysicsDirectBodyState3D) -> void:
   physics_state.linear_velocity = _pending_linear_velocity
   physics_state.angular_velocity = _pending_angular_velocity
   _has_pending_state = false
+
+func punch_cosmetic() -> void:
+  get_tree().create_tween().tween_property(gumbot.spring_bone_sim, "influence", 0, 0.1)
+  gumbot.anim_tree.set("parameters/PunchOneShot/request", AnimationNodeOneShot.ONE_SHOT_REQUEST_FIRE)
+  await gumbot.anim_tree.animation_finished
+  await get_tree().create_timer(0.1).timeout
+  get_tree().create_tween().tween_property(gumbot.spring_bone_sim, "influence", 1.0, 0.1)
+
+func authority_punch_collide() -> void:
+  for body in punch_area.get_overlapping_bodies():
+    if body is PhysicsKart and body != self:
+      body.authority_handle_punch_impact(self)
+
+func authority_handle_punch_impact(from_kart: PhysicsKart) -> void:
+  var impulse := (global_position - from_kart.global_position).normalized()
+  var axis := impulse.cross(Vector3.UP).normalized()
+  impulse = impulse.rotated(axis, deg_to_rad(45))
+  impulse *= 2.0
+  physics_kart_movement_sync.apply_impulse(impulse)
 
