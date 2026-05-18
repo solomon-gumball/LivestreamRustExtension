@@ -4,6 +4,7 @@ class_name MultiplayerTestContainer
 @export var child_scene: PackedScene
 @export var num_players: int = 2
 @export var game_name: String = "pong"
+@export var join_as_player: bool = true
 
 var is_host := false
 var ready_peers: Array[int]
@@ -46,7 +47,7 @@ func _handle_ws_message(parsed: Variant) -> void:
     if lobbies_data.get(0):
       var lobby_to_join := Lobby.from_data(lobbies_data.get(0))
       if lobby_to_join and !lobby_to_join.has_chatter(WSClient.my_chatter().id) and !did_join:
-        MultiplayerClient.join_lobby(lobby_to_join, true)
+        MultiplayerClient.join_lobby(lobby_to_join, join_as_player)
         did_join = true
 
 var did_start := false

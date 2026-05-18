@@ -8,9 +8,11 @@ enum CarnageGameMessage {
 
 @onready var game_state: KartGameStateSynchronizer = %KartGameStateSynchronizer
 @onready var winner_text: RichTextLabel = %WinnerText
+@onready var countdown_label: RichTextLabel = %CountDownLabel
 
 var map: KartRaceMap = null
 var checkpoints: Array[RaceCheckpoint] = []
+var loading_check_timer: Timer = null
 
 func _ready() -> void:
   super._ready()
@@ -22,13 +24,12 @@ func _ready() -> void:
 
   _setup_checkpoints()
 
+  spawn_cars()
   chatter_loaded.connect(_handle_chatter_loaded)
   game_state.state_updated.connect(_apply_state)
   map.out_of_bounds_area.body_entered.connect(_out_of_bounds_area_entered)
   map.in_bounds_area.body_exited.connect(_in_bounds_area_exited)
   map.animation_synchronizer.animation_finished.connect(_animation_finished)
-
-  spawn_cars()
 
   # Force a render pass with the scene fully visible so the GPU pre-warms
   # all shaders and mesh uploads before the intro animation begins.
@@ -38,7 +39,21 @@ func _ready() -> void:
   await RenderingServer.frame_post_draw
   await RenderingServer.frame_post_draw
 
-  await get_tree().create_timer(2.0).timeout
+  SessionSynchronizer.get_instance().notify_ready()
+
+  loading_check_timer = Timer.new()
+  add_child(loading_check_timer)
+  loading_check_timer.timeout.connect(_check_loaded)
+  loading_check_timer.one_shot = false
+  loading_check_timer.start(1.0)
+
+func _check_loaded() -> void:
+  for peer_id in karts_by_peer_id:
+    var kart := karts_by_peer_id[peer_id]
+    if !kart.gumbot.is_outfit_loaded:
+      return
+
+  loading_check_timer.stop()
   SessionSynchronizer.get_instance().notify_ready()
 
 func _out_of_bounds_area_entered(body: Node) -> void:
@@ -143,14 +158,16 @@ func get_spawn_transform(peer_id: int) -> Transform3D:
   if last_checkpoint >= 0 and last_checkpoint < checkpoints.size():
     var checkpoint: RaceCheckpoint = checkpoints[last_checkpoint]
     var checkpoint_transform: Transform3D = checkpoint.global_transform
+    checkpoint_transform.origin += Vector3.UP * 0.5
+
     if lobby.players.size() == 1:
       return checkpoint_transform
 
     var spawn_margins := 0.4
     var total_spawn_width := minf(checkpoint.width - spawn_margins * 2.0, 0.5 * float(lobby.players.size() - 1))
     var car_margins := total_spawn_width / float(lobby.players.size() - 1)
-    var offset := Vector3(-total_spawn_width * 0.5 + join_index * car_margins, 0, 0)
-    checkpoint_transform = checkpoint_transform.translated_local(offset)
+    var lateral_offset := -total_spawn_width * 0.5 + join_index * car_margins
+    checkpoint_transform.origin += checkpoint_transform.basis.x * lateral_offset
     return checkpoint_transform
 
   return Transform3D.IDENTITY
@@ -170,7 +187,7 @@ func _animation_finished(animation_name: String) -> void:
   if animation_name == "Intro":
     var kart: PhysicsKart = karts_by_peer_id.get(MultiplayerClient.my_peer_id(), null)
     map.debug_camera.snap_to_camera(map.animation_camera)
-    map.debug_camera._follow_state.move_lerp = 5.0
+    # map.debug_camera._follow_state.move_lerp = 5.0
     map.debug_camera.set_default_orbit_distance(5.0)
     map.debug_camera.enter_follow_mode(kart, deg_to_rad(25.0))
     map.debug_camera.allow_free_cam = !lobby.is_player(MultiplayerClient.my_peer_id())

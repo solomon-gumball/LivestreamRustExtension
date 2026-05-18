@@ -19,7 +19,7 @@ class_name GumBot
       name_label.visible = show_name_label
 
 signal outfit_loaded
-var is_outfit_loaded := false
+var is_outfit_loaded := true
 
 var base_meshes = [
   "Arm",
@@ -174,7 +174,6 @@ func _apply_outfit(loaded_mesh_files: Dictionary, equipped: Dictionary, sockets:
 
   # await get_tree().create_timer(randf_range(3.0, 6.0)).timeout
   is_outfit_loaded = true
-  print("SETTING OUTFIT LOADED = true")
   await get_tree().process_frame
   outfit_loaded.emit()
 

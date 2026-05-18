@@ -2,6 +2,7 @@ extends Node3D
 class_name PhysicsWheel
 
 @export var ray_cast: RayCast3D
+@export var physics_kart: PhysicsKart
 @export var spring_strength: float = 600.0
 @export var spring_damping: float = 40.0
 @export var rest_distance: float = 0.95
@@ -15,12 +16,17 @@ class_name PhysicsWheel
 var initial_position: Vector3
 var _last_global_position: Vector3
 
+func _get_space_state() -> PhysicsDirectSpaceState3D:
+  if physics_kart:
+    return PhysicsServer3D.space_get_direct_state(PhysicsServer3D.body_get_space(physics_kart.get_rid()))
+  return get_viewport().get_world_3d().direct_space_state
+
 func _ready() -> void:
   initial_position = position
   smoke_fx.amount_ratio = 0.0
 
 func _process(delta: float) -> void:
-  var is_grounded := _check_grounded()
+  var is_grounded := _check_grounded(_get_space_state())
   if delta > 0.0 and is_grounded:
     var vel := (global_position - _last_global_position) / delta
     var lateral_speed := absf(global_basis.x.dot(vel))
@@ -29,7 +35,7 @@ func _process(delta: float) -> void:
     smoke_fx.amount_ratio = 0.0
   _last_global_position = global_position
 
-func _check_grounded() -> bool:
+func _check_grounded(space_state: PhysicsDirectSpaceState3D) -> bool:
   var tire_center := global_position + Vector3(0, -rest_distance, 0)
   var params := PhysicsShapeQueryParameters3D.new()
   var shape := SphereShape3D.new()
@@ -37,13 +43,8 @@ func _check_grounded() -> bool:
   params.shape = shape
   params.collision_mask = 1
   params.transform = Transform3D(Basis.IDENTITY, tire_center)
-  var hits := get_tree().get_root().get_world_3d().direct_space_state.intersect_shape(params, 1)
+  var hits := space_state.intersect_shape(params, 1)
   return hits.size() > 0
-
-  # var tire_center := global_position + Vector3(0, -rest_distance, 0)
-  # DebugDraw.draw_line(global_position, tire_center, Color.YELLOW)
-  # DebugDraw.draw_sphere(tire_center, 0.02, Color.YELLOW, 0.0)
-  # DebugDraw.draw_sphere(tire_center + Vector3(0, -wheel_radius, 0), 0.02, Color.RED, 0.0)
 
 # Returns { "force": Vector3, "torque": Vector3, "is_grounded": bool }
 # Uses a manual ray query derived from the simulated chassis state so the cast
@@ -68,7 +69,7 @@ func compute_forces(
 
   var query := PhysicsRayQueryParameters3D.create(ray_origin, ray_end)
   query.collision_mask = 1
-  var hit: Dictionary = get_tree().get_root().get_world_3d().direct_space_state.intersect_ray(query)
+  var hit: Dictionary = _get_space_state().intersect_ray(query)
 
   if hit.is_empty():
     return { "force": Vector3.ZERO, "torque": Vector3.ZERO, "is_grounded": false }

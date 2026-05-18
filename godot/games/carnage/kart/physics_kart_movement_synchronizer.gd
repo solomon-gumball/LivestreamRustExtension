@@ -21,6 +21,7 @@ extends MovementSynchronizer
 @export var flip_velocity_threshold: float = 0.2
 @export var flip_up_dot_threshold: float = 0.5
 @export var flip_frame_threshold: int = 60
+@export var interpolation_speed: float = 20.0
 
 signal kart_flipped
 
@@ -46,6 +47,9 @@ const WHEEL_TURN_SPEED := deg_to_rad(80.0)
 
 func _ready() -> void:
   super._ready()
+  # if !MultiplayerClient.is_lobby_host():
+  #   kart.collision_mask = 1
+
   _precompute_inertia()
 
 func _on_synchronizer_ready() -> void:
@@ -110,6 +114,8 @@ func apply_state_to_entity(state: Dictionary) -> void:
   kart.set_velocities(state.linear_velocity, state.angular_velocity)
 
 func _process(_delta: float) -> void:
+  super._process(_delta)
+
   if not kart_visual_node:
     return
   if _interp_visual_tween == null or not _interp_visual_tween.is_running():
@@ -180,7 +186,7 @@ func interpolate_state(from_state: Dictionary, to_state: Dictionary, delta: floa
   if from_state.get("position", Vector3.ZERO).distance_to(to_state.get("position", Vector3.ZERO)) > VISUAL_TELEPORT_THRESHOLD:
     return to_state
 
-  var weight := delta * 10.0
+  var weight := clampf(delta * interpolation_speed, 0.0, 1.0)
   var from_q: Quaternion = from_state.get("rotation", Quaternion.IDENTITY)
   var to_q: Quaternion = to_state.get("rotation", Quaternion.IDENTITY)
 
@@ -212,8 +218,8 @@ func simulate_one_frame(input: Dictionary, state: Dictionary, tick: int) -> Dict
   var angular_velocity: Vector3 = state.get("angular_velocity", Vector3.ZERO)
   var wheel_turn: float = state.get("wheel_turn", 0.0)
 
-  _logger.log("%s IN pos=%s lvel=%s avel=%s wt=%.4f move=%s" % [
-    _sim_tag(tick), position, linear_velocity, angular_velocity, wheel_turn, input_vec])
+  # _logger.log("%s IN pos=%s lvel=%s avel=%s wt=%.4f move=%s" % [
+  #   _sim_tag(tick), position, linear_velocity, angular_velocity, wheel_turn, input_vec])
 
   # Steering
   var desired_wheel_angle := input_vec.y * MAX_WHEEL_ANGLE
@@ -374,8 +380,8 @@ func simulate_one_frame(input: Dictionary, state: Dictionary, tick: int) -> Dict
   else:
     position += linear_velocity * delta
 
-  _logger.log("%s OUT pos=%s lvel=%s avel=%s wt=%.4f" % [
-    _sim_tag(tick), position, linear_velocity, angular_velocity, wheel_turn])
+  # _logger.log("%s OUT pos=%s lvel=%s avel=%s wt=%.4f" % [
+  #   _sim_tag(tick), position, linear_velocity, angular_velocity, wheel_turn])
 
   kart.global_position = position
   kart.global_basis = basis

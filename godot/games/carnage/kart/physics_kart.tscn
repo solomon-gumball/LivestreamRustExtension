@@ -74,21 +74,25 @@ collision_layer = 0
 collision_mask = 0
 surface_mat = SubResource("ShaderMaterial_dbe4r")
 
-[node name="Wheel_Front_Left" parent="VisualNode/Mesh" unique_id=856590652 instance=ExtResource("2_4r8fh")]
+[node name="Wheel_Front_Left" parent="VisualNode/Mesh" unique_id=856590652 node_paths=PackedStringArray("physics_kart") instance=ExtResource("2_4r8fh")]
 unique_name_in_owner = true
 transform = Transform3D(12.360951, 0, 0, 0, 12.360951, 0, 0, 0, 12.360951, 0.8984842, 0.77030057, 1.0329849)
+physics_kart = NodePath("../../..")
 
-[node name="Wheel_Front_Right" parent="VisualNode/Mesh" unique_id=271885351 instance=ExtResource("2_4r8fh")]
+[node name="Wheel_Front_Right" parent="VisualNode/Mesh" unique_id=271885351 node_paths=PackedStringArray("physics_kart") instance=ExtResource("2_4r8fh")]
 unique_name_in_owner = true
 transform = Transform3D(12.360951, 0, 0, 0, 12.360951, 0, 0, 0, 12.360951, -1.0293659, 0.77030057, 1.0329849)
+physics_kart = NodePath("../../..")
 
-[node name="Wheel_Back_Right" parent="VisualNode/Mesh" unique_id=958039242 instance=ExtResource("2_4r8fh")]
+[node name="Wheel_Back_Right" parent="VisualNode/Mesh" unique_id=958039242 node_paths=PackedStringArray("physics_kart") instance=ExtResource("2_4r8fh")]
 unique_name_in_owner = true
 transform = Transform3D(12.360951, 0, 0, 0, 12.360951, 0, 0, 0, 12.360951, -1.0293659, 0.77030057, -1.3782302)
+physics_kart = NodePath("../../..")
 
-[node name="Wheel_Back_Left" parent="VisualNode/Mesh" unique_id=1421979309 instance=ExtResource("2_4r8fh")]
+[node name="Wheel_Back_Left" parent="VisualNode/Mesh" unique_id=1421979309 node_paths=PackedStringArray("physics_kart") instance=ExtResource("2_4r8fh")]
 unique_name_in_owner = true
 transform = Transform3D(12.360951, 0, 0, 0, 12.360951, 0, 0, 0, 12.360951, 0.8984842, 0.77030057, -1.5133349)
+physics_kart = NodePath("../../..")
 
 [node name="CollisionShape3D2" type="CollisionShape3D" parent="." unique_id=516426750]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.00065918267, 0.19145751, 0.0049244463)

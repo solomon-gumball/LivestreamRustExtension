@@ -13,7 +13,7 @@ const mappings := {
 
 func _ready() -> void:
   super._ready()
-  if !is_host:
+  if !MultiplayerClient.is_lobby_host():
     kart.collision_mask = 1
 
 func _bind_inputs() -> void:

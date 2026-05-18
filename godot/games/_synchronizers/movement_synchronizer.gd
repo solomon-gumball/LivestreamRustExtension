@@ -44,12 +44,21 @@ func _exit_tree() -> void:
     _unbind_inputs()
   SessionSynchronizer.get_instance().unregister_synchronizer(self)
 
+var time_since_last_server_move := 0
 func _handle_incoming_peer_packet(sender_id: int, packet: Dictionary) -> void:
   if owner_peer_id != packet.get("owner_peer_id", 0): return
 
   match packet.type:
     SessionSynchronizer.GlobalGameMessage.ServerMovementState:
       if is_host: return
+      # if owner_peer_id == 1:
+      #   var new_time := Time.get_ticks_msec()
+      #   _logger.log(
+      #     "received ServerMovementState for host player, time_since_last=%d" %
+      #     [new_time - time_since_last_server_move],
+      #     true
+      #   )
+      #   time_since_last_server_move = new_time
       var server_physics_state: Dictionary = packet.get("state")
       var server_tick: int = packet.get("net_sim_tick")
       if !_has_initial_state:
@@ -118,13 +127,18 @@ func consume_input_for_tick(tick: int) -> Dictionary:
 func _sim_tag(tick: int) -> String:
   return "[sim:%d peer:%d host:%s]" % [tick, owner_peer_id, is_host]
 
+func _process(delta: float) -> void:
+  if !is_owning_peer and !is_host:
+    if _remote_state_target.is_empty(): return
+    physics_state = interpolate_state(physics_state, _remote_state_target, delta)
+    apply_state_to_entity(physics_state)
+
 var did_start_simulating = false
 func simulate_tick(current_tick: int, delta: float) -> void:
   if not is_host and not _has_initial_state: return
   _current_tick = current_tick
 
   if !is_host and !did_start_simulating:
-    print("CLIENT STARTED SIMULATING!")
     did_start_simulating = true
 
   if is_owning_peer:
@@ -150,11 +164,6 @@ func simulate_tick(current_tick: int, delta: float) -> void:
           "state": physics_state,
         })
 
-  elif !is_owning_peer and !is_host:
-    if _remote_state_target.is_empty(): return
-    physics_state = interpolate_state(physics_state, _remote_state_target, delta)
-    apply_state_to_entity(physics_state)
-
   elif is_host:
     var host_input := consume_input_for_tick(current_tick)
     physics_state = simulate_one_frame(host_input, physics_state, current_tick)
@@ -162,6 +171,14 @@ func simulate_tick(current_tick: int, delta: float) -> void:
     _sync_accumulator += delta / Engine.time_scale
     if _sync_accumulator >= SERVER_SYNC_RATE:
       _sync_accumulator -= SERVER_SYNC_RATE
+
+      # var current_time := Time.get_ticks_msec()
+      # _logger.log(
+      #   "SENT ServerMovementState from host, time_since_last=%d" %
+      #   [current_time - time_since_last_server_move],
+      #   true
+      # )
+      # time_since_last_server_move = current_time
       MultiplayerClient.send_packet({
         "type": SessionSynchronizer.GlobalGameMessage.ServerMovementState,
         "net_sim_tick": current_tick,

@@ -10,9 +10,9 @@ var enabled := false
 const FLUSH_INTERVAL := 1.0
 
 func setup(is_host: bool, peer_id: int) -> void:
-  if peer_id == 1:
-    enabled = false
-    return
+  # if peer_id == 1:
+  #   enabled = false
+  #   return
   enabled = !OS.has_feature("prod_server")
   _path = "res://host.txt" if is_host else "res://client.txt"
   FileAccess.open(_path, FileAccess.WRITE)  # truncate on startup

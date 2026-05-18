@@ -197,12 +197,14 @@ class FollowState extends DebugCameraState:
   var default_orbit_distance: float = 5.0
   var invert_pitch: bool = true
   var prevent_wall_clip: bool = false
-  var move_lerp: float = 0.0
+  var move_lerp: float = 10.0
   var lock_pitch: bool = false
 
   var target: Node3D = null
 
   func set_target(value: Node3D, pitch: float = NAN) -> void:
+    if value == target:
+      return
     _t = 0.0
     var had_target := is_instance_valid(target)
     _from_target = target if had_target else null

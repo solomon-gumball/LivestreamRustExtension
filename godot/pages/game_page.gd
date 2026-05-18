@@ -18,6 +18,7 @@ extends Control
 @onready var ping_label: Label = %PingLabel
 @onready var clock_offset_label: Label = %ClockOffsetLabel
 @onready var game_subviewport_container: SubViewportContainer = %GameSubviewportContainer
+@onready var game_subviewport: SubViewport = %GameSubviewport
 @onready var overlay_subviewport_container: SubViewportContainer = %OverlaySubviewportContainer
 @onready var loading: Loading = %Loading
 @onready var debug_square: ColorRect = %DebugSquare
@@ -166,6 +167,10 @@ class GamePageState extends State:
 
 class DisconnectedState extends GamePageState:
   func enter_state(_prev: State) -> void:
+    if page.game_container:
+      page.game_container.queue_free()
+      page.game_container = null
+
     page.start_game_button.visible = false
     page.close_lobby_button.visible = false
     page.lobby_info_panel.visible = false

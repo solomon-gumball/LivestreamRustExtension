@@ -78,13 +78,6 @@ func load_game_from_lobby(lobby: Lobby) -> void:
     _overlay.queue_free()
     _overlay = null
 
-  _session_sync = SessionSynchronizer.new()
-  add_child(_session_sync)
-  _session_sync.setup(lobby)
-
-  _overlay = debug_overlay_template.instantiate()
-  add_child(_overlay)
-
   var game := lobby.game
 
   if OS.has_feature("game_pcks"):
@@ -114,13 +107,18 @@ func load_game_from_lobby(lobby: Lobby) -> void:
     push_error("GameContainer: could not load scene at entry path '%s'" % game.entry)
     return
 
+  _session_sync = SessionSynchronizer.new()
+  add_child.call_deferred(_session_sync)
+  _session_sync.setup.call_deferred(lobby)
+
+  _overlay = debug_overlay_template.instantiate()
+  add_child.call_deferred(_overlay)
+
   _game_scene = packed_scene.instantiate() as GameBase
   _game_scene.lobby = lobby
   _game_scene.game_finished.connect(game_finished.emit)
   _game_scene.game_finished.connect(_session_sync.queue_free)
   add_child.call_deferred(_game_scene)
 
-  # await _game_scene.ready
-  # _session_sync.notify_ready.call_deferred()
   await _session_sync.all_peers_ready
   _game_scene.start_game()

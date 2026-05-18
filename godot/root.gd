@@ -15,6 +15,8 @@ func _ready() -> void:
   ObjectSerializer.register_script(PongGameState)
   ObjectSerializer.register_script(MarblesGameState)
   ObjectSerializer.register_script(SessionSynchronizer)
+  ObjectSerializer.register_script(KartGameStateSynchronizer)
+  ObjectSerializer.register_script(AnimationSynchronizer)
 
   child_scene = get_main_scene().instantiate()
   add_child(child_scene)

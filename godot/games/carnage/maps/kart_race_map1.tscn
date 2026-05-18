@@ -84,26 +84,6 @@ uv1_world_triplanar = true
 resource_local_to_scene = true
 size = Vector3(2, 1, 0.2)
 
-[sub_resource type="PlaneMesh" id="PlaneMesh_jyfuf"]
-resource_local_to_scene = true
-size = Vector2(5.542, 0.8)
-
-[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_34r55"]
-resource_local_to_scene = true
-transparency = 1
-cull_mode = 2
-albedo_color = Color(1, 1, 1, 0.33333334)
-albedo_texture = ExtResource("4_a5iiy")
-emission_enabled = true
-emission = Color(1, 0, 0, 1)
-uv1_scale = Vector3(2.5, 2.5, 5)
-uv1_triplanar = true
-uv1_world_triplanar = true
-
-[sub_resource type="BoxShape3D" id="BoxShape3D_jg2eg"]
-resource_local_to_scene = true
-size = Vector3(5.542, 1, 0.2)
-
 [sub_resource type="PlaneMesh" id="PlaneMesh_ukvg4"]
 resource_local_to_scene = true
 size = Vector2(5.542, 0.8)
@@ -153,10 +133,10 @@ size = Vector3(40.10681, 11.683105, 22.6333)
 [sub_resource type="SphereShape3D" id="SphereShape3D_1hfx4"]
 radius = 57.58551
 
-[node name="boxing_ring" unique_id=1207374730 instance=ExtResource("1_h6twq")]
+[node name="boxing_ring" unique_id=1465795071 instance=ExtResource("1_h6twq")]
 script = ExtResource("2_penea")
 
-[node name="Camera" parent="." index="1" unique_id=446614468]
+[node name="Camera" parent="." index="1" unique_id=1960514504]
 transform = Transform3D(0.60865337, 0.2147631, -0.76381767, -1.080334e-06, 0.96267086, 0.27067393, 0.793436, -0.16474581, 0.5859332, -74.63479, 16.213852, 23.450089)
 current = true
 fov = 27.0
@@ -189,35 +169,28 @@ plane_material = SubResource("StandardMaterial3D_h8l0i")
 box_shape = SubResource("BoxShape3D_vwdn5")
 width = 2.0
 
-[node name="RaceCheckpoint5" parent="." index="20" unique_id=1939336332 instance=ExtResource("3_s6cem")]
-transform = Transform3D(-1, 0, -8.742278e-08, 0, 1, 0, 8.742278e-08, 0, -1, -35.39201, 1.6121712, -23.686935)
-plane_mesh = SubResource("PlaneMesh_jyfuf")
-plane_material = SubResource("StandardMaterial3D_34r55")
-box_shape = SubResource("BoxShape3D_jg2eg")
-width = 5.542
-
-[node name="RaceCheckpoint3" parent="." index="21" unique_id=855480268 instance=ExtResource("3_s6cem")]
-transform = Transform3D(-1, 0, -8.742278e-08, 0, 1, 0, 8.742278e-08, 0, -1, -35.39201, 1.6121712, -25.751503)
+[node name="RaceCheckpoint3" parent="." index="20" unique_id=855480268 instance=ExtResource("3_s6cem")]
+transform = Transform3D(-1, 0, -8.742278e-08, 0, 1, 0, 8.742278e-08, 0, -1, -35.39201, 2.5576997, -27.2339)
 plane_mesh = SubResource("PlaneMesh_ukvg4")
 plane_material = SubResource("StandardMaterial3D_dscwg")
 box_shape = SubResource("BoxShape3D_xupjn")
 width = 5.542
 
-[node name="RaceCheckpoint4" parent="." index="22" unique_id=1999781906 instance=ExtResource("3_s6cem")]
-transform = Transform3D(-1, 0, -8.742278e-08, 0, 1, 0, 8.742278e-08, 0, -1, -35.39201, 1.6121712, -27.770912)
+[node name="RaceCheckpoint4" parent="." index="21" unique_id=1999781906 instance=ExtResource("3_s6cem")]
+transform = Transform3D(-1, 0, -8.742278e-08, 0, 1, 0, 8.742278e-08, 0, -1, -35.39201, 5.4373026, -38.877205)
 plane_mesh = SubResource("PlaneMesh_anpxf")
 plane_material = SubResource("StandardMaterial3D_aaa3a")
 box_shape = SubResource("BoxShape3D_2yi0g")
 width = 5.542
 
-[node name="DirectionalLight3D" type="DirectionalLight3D" parent="." index="23" unique_id=430946180]
+[node name="DirectionalLight3D" type="DirectionalLight3D" parent="." index="22" unique_id=430946180]
 transform = Transform3D(-0.49766108, 0.63648874, 0.58924997, -0.29978192, -0.76370305, 0.57174164, 0.8139191, 0.10788706, 0.5708731, 2.0339265, 2.6281023, -0.35323796)
 light_color = Color(0.99646264, 0.82775444, 0.63832206, 1)
 light_energy = 0.1
 shadow_enabled = true
 shadow_opacity = 0.68
 
-[node name="DebugCamera" parent="." index="24" unique_id=1098239593 instance=ExtResource("5_xkvto")]
+[node name="DebugCamera" parent="." index="23" unique_id=1098239593 instance=ExtResource("5_xkvto")]
 unique_name_in_owner = true
 transform = Transform3D(0.7120751, 0.1608985, -0.68341845, -7.450581e-09, 0.97338724, 0.22916643, 0.7021034, -0.16318369, 0.69312483, -44.501244, 3.1134653, 4.1785192)
 allow_free_cam = false
@@ -226,7 +199,7 @@ allow_free_cam = false
 unique_name_in_owner = true
 attributes = SubResource("CameraAttributesPhysical_xkvto")
 
-[node name="OutOfBoundsArea" type="Area3D" parent="." index="25" unique_id=397337441]
+[node name="OutOfBoundsArea" type="Area3D" parent="." index="24" unique_id=397337441]
 unique_name_in_owner = true
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.010496095, -1.9073486e-05, 0.021273375)
 collision_layer = 0
@@ -236,7 +209,7 @@ collision_mask = 2
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -26.178598, -7.453396, -0.46044922)
 shape = SubResource("BoxShape3D_ffjai")
 
-[node name="HammerGroup" type="Node3D" parent="." index="26" unique_id=661688869]
+[node name="HammerGroup" type="Node3D" parent="." index="25" unique_id=661688869]
 transform = Transform3D(0.9999998, 0, 0, 0, 0.9999998, 0, 0, 0, 0.9999998, -35.364376, 4.0472903, -16.227543)
 
 [node name="hammer_obstacle" parent="HammerGroup" index="0" unique_id=2071296910 instance=ExtResource("6_6m4jv")]
@@ -274,7 +247,7 @@ rotation_speed = 0.03
 cycle_offset = 0.5
 impulse_force = 1.5
 
-[node name="InBoundsArea" type="Area3D" parent="." index="27" unique_id=1410044697]
+[node name="InBoundsArea" type="Area3D" parent="." index="26" unique_id=1410044697]
 unique_name_in_owner = true
 collision_layer = 0
 collision_mask = 2
@@ -283,7 +256,7 @@ monitorable = false
 [node name="CollisionShape3D" type="CollisionShape3D" parent="InBoundsArea" index="0" unique_id=181381105]
 shape = SubResource("SphereShape3D_1hfx4")
 
-[node name="AnimationSynchronizer" type="Node" parent="AnimationPlayer" parent_id_path=PackedInt32Array(811704652) index="0" unique_id=930945602 node_paths=PackedStringArray("animation_player")]
+[node name="AnimationSynchronizer" type="Node" parent="AnimationPlayer" parent_id_path=PackedInt32Array(1786034317) index="0" unique_id=930945602 node_paths=PackedStringArray("animation_player")]
 unique_name_in_owner = true
 script = ExtResource("7_6m4jv")
 animation_player = NodePath("..")

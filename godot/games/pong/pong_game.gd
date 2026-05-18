@@ -103,6 +103,7 @@ func _ready() -> void:
   outfit_loaded_timer.start(1.0)
 
 func _check_bots_loaded() -> void:
+  print("checking start!")
   if !pong_paddle_l.gumbot.is_outfit_loaded: return
   if !pong_paddle_r.gumbot.is_outfit_loaded: return
 

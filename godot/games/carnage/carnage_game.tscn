@@ -34,6 +34,10 @@ icon = ExtResource("8_yufsp")
 description = "Turn right"
 metadata/_custom_type_script = "uid://jcsb6g17efi7"
 
+[sub_resource type="Theme" id="Theme_qn2ad"]
+default_font = ExtResource("2_qn2ad")
+default_font_size = 30
+
 [node name="CarnageGame" type="Node3D" unique_id=1863440489]
 script = ExtResource("1_rhos2")
 
@@ -59,6 +63,52 @@ horizontal_alignment = 1
 [node name="ControlsContainer" parent="Overlay" unique_id=899012222 instance=ExtResource("3_qn2ad")]
 controls = Array[ExtResource("4_16guh")]([SubResource("Resource_rlb33"), SubResource("Resource_jodp3"), SubResource("Resource_iq6cl"), SubResource("Resource_dqt6w")])
 
+[node name="CountDownLabel" type="RichTextLabel" parent="Overlay" unique_id=1846994277]
+unique_name_in_owner = true
+visible = false
+custom_minimum_size = Vector2(400, 0)
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -20.0
+offset_top = -54.0
+offset_right = 20.0
+offset_bottom = 54.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_fonts/normal_font = ExtResource("2_qn2ad")
+theme_override_font_sizes/normal_font_size = 200
+text = "3"
+fit_content = true
+horizontal_alignment = 1
+
+[node name="HostControlsButton" type="MarginContainer" parent="Overlay" unique_id=20345416]
+anchors_preset = 3
+anchor_left = 1.0
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -40.0
+offset_top = -40.0
+grow_horizontal = 0
+grow_vertical = 0
+theme_override_constants/margin_left = 20
+theme_override_constants/margin_top = 20
+theme_override_constants/margin_right = 20
+theme_override_constants/margin_bottom = 20
+
+[node name="VBoxContainer" type="VBoxContainer" parent="Overlay/HostControlsButton" unique_id=81219574]
+layout_mode = 2
+
+[node name="StartGameButton" type="Button" parent="Overlay/HostControlsButton/VBoxContainer" unique_id=79993982]
+unique_name_in_owner = true
+layout_mode = 2
+theme = SubResource("Theme_qn2ad")
+text = "END GAME"
+
 [node name="KartGameStateSynchronizer" type="Node" parent="." unique_id=463833223]
 unique_name_in_owner = true
 script = ExtResource("2_pjf2b")
+starting_checkpoint = 3

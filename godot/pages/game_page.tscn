@@ -28,7 +28,7 @@ shader_parameter/albedo_texture = ExtResource("6_cy2wj")
 shader_parameter/normal_map = ExtResource("7_x3urd")
 shader_parameter/bot_color = Color(1, 0, 0, 1)
 
-[sub_resource type="World3D" id="World3D_hb8fn"]
+[sub_resource type="World3D" id="World3D_rsatm"]
 
 [sub_resource type="LabelSettings" id="LabelSettings_sqe1x"]
 font = ExtResource("3_nspls")
@@ -101,8 +101,9 @@ grow_vertical = 2
 stretch = true
 
 [node name="GameSubviewport" type="SubViewport" parent="GameSubviewportContainer" unique_id=1131613315]
+unique_name_in_owner = true
 own_world_3d = true
-world_3d = SubResource("World3D_hb8fn")
+world_3d = SubResource("World3D_rsatm")
 handle_input_locally = false
 audio_listener_enable_2d = true
 audio_listener_enable_3d = true
