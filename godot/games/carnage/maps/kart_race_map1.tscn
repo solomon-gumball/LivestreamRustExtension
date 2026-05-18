@@ -24,11 +24,11 @@ glow_enabled = true
 adjustment_enabled = true
 adjustment_saturation = 1.2
 
-[sub_resource type="PlaneMesh" id="PlaneMesh_nmi6l"]
+[sub_resource type="PlaneMesh" id="PlaneMesh_ffjai"]
 resource_local_to_scene = true
 size = Vector2(5, 0.8)
 
-[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_ffjai"]
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_1hfx4"]
 resource_local_to_scene = true
 transparency = 1
 cull_mode = 2
@@ -44,11 +44,11 @@ uv1_world_triplanar = true
 resource_local_to_scene = true
 size = Vector3(5, 1, 0.2)
 
-[sub_resource type="PlaneMesh" id="PlaneMesh_6m4jv"]
+[sub_resource type="PlaneMesh" id="PlaneMesh_h8l0i"]
 resource_local_to_scene = true
 size = Vector2(2.8, 0.8)
 
-[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_nmi6l"]
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_vwdn5"]
 resource_local_to_scene = true
 transparency = 1
 cull_mode = 2
@@ -60,15 +60,15 @@ uv1_scale = Vector3(2.5, 2.5, 5)
 uv1_triplanar = true
 uv1_world_triplanar = true
 
-[sub_resource type="BoxShape3D" id="BoxShape3D_1hfx4"]
+[sub_resource type="BoxShape3D" id="BoxShape3D_jyfuf"]
 resource_local_to_scene = true
 size = Vector3(2.8, 1, 0.2)
 
-[sub_resource type="PlaneMesh" id="PlaneMesh_q7vis"]
+[sub_resource type="PlaneMesh" id="PlaneMesh_34r55"]
 resource_local_to_scene = true
-size = Vector2(2, 0.8)
+size = Vector2(2.9, 0.8)
 
-[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_h8l0i"]
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_jg2eg"]
 resource_local_to_scene = true
 transparency = 1
 cull_mode = 2
@@ -80,15 +80,15 @@ uv1_scale = Vector3(2.5, 2.5, 5)
 uv1_triplanar = true
 uv1_world_triplanar = true
 
-[sub_resource type="BoxShape3D" id="BoxShape3D_vwdn5"]
+[sub_resource type="BoxShape3D" id="BoxShape3D_ukvg4"]
 resource_local_to_scene = true
-size = Vector3(2, 1, 0.2)
+size = Vector3(2.9, 1, 0.2)
 
-[sub_resource type="PlaneMesh" id="PlaneMesh_ukvg4"]
+[sub_resource type="PlaneMesh" id="PlaneMesh_dscwg"]
 resource_local_to_scene = true
 size = Vector2(5.542, 0.8)
 
-[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_dscwg"]
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_xupjn"]
 resource_local_to_scene = true
 transparency = 1
 cull_mode = 2
@@ -100,15 +100,15 @@ uv1_scale = Vector3(2.5, 2.5, 5)
 uv1_triplanar = true
 uv1_world_triplanar = true
 
-[sub_resource type="BoxShape3D" id="BoxShape3D_xupjn"]
+[sub_resource type="BoxShape3D" id="BoxShape3D_anpxf"]
 resource_local_to_scene = true
 size = Vector3(5.542, 1, 0.2)
 
-[sub_resource type="PlaneMesh" id="PlaneMesh_anpxf"]
+[sub_resource type="PlaneMesh" id="PlaneMesh_aaa3a"]
 resource_local_to_scene = true
 size = Vector2(5.542, 0.8)
 
-[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_aaa3a"]
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_2yi0g"]
 resource_local_to_scene = true
 transparency = 1
 cull_mode = 2
@@ -120,7 +120,7 @@ uv1_scale = Vector3(2.5, 2.5, 5)
 uv1_triplanar = true
 uv1_world_triplanar = true
 
-[sub_resource type="BoxShape3D" id="BoxShape3D_2yi0g"]
+[sub_resource type="BoxShape3D" id="BoxShape3D_jv54k"]
 resource_local_to_scene = true
 size = Vector3(5.542, 1, 0.2)
 
@@ -133,13 +133,16 @@ size = Vector3(40.10681, 11.683105, 22.6333)
 [sub_resource type="SphereShape3D" id="SphereShape3D_1hfx4"]
 radius = 57.58551
 
-[node name="boxing_ring" unique_id=1465795071 instance=ExtResource("1_h6twq")]
+[node name="boxing_ring" unique_id=1116326708 instance=ExtResource("1_h6twq")]
 script = ExtResource("2_penea")
 
-[node name="Camera" parent="." index="1" unique_id=1960514504]
+[node name="Camera" parent="." index="1" unique_id=1572633559]
 transform = Transform3D(0.60865337, 0.2147631, -0.76381767, -1.080334e-06, 0.96267086, 0.27067393, 0.793436, -0.16474581, 0.5859332, -74.63479, 16.213852, 23.450089)
 current = true
 fov = 27.0
+
+[node name="Cube" parent="." index="6" unique_id=944794140]
+visible = false
 
 [node name="CSGSphere3D" type="CSGSphere3D" parent="." index="15" unique_id=830440203]
 transform = Transform3D(2, 0, 0, 0, 2, 0, 0, 0, 2, 0.08006854, 0.034898758, -0.010442972)
@@ -151,36 +154,36 @@ environment = SubResource("Environment_h6twq")
 
 [node name="RaceCheckpoint6" parent="." index="17" unique_id=751171855 instance=ExtResource("3_s6cem")]
 transform = Transform3D(-4.371139e-08, 0, 1, 0, 1, 0, -1, 0, -4.371139e-08, -39.697, 0.884, 0)
-plane_mesh = SubResource("PlaneMesh_nmi6l")
-plane_material = SubResource("StandardMaterial3D_ffjai")
+plane_mesh = SubResource("PlaneMesh_ffjai")
+plane_material = SubResource("StandardMaterial3D_1hfx4")
 box_shape = SubResource("BoxShape3D_q7vis")
 
 [node name="RaceCheckpoint2" parent="." index="18" unique_id=35775725 instance=ExtResource("3_s6cem")]
 transform = Transform3D(-4.371139e-08, 0, -1, 0, 1, 0, 1, 0, -4.371139e-08, -10.618869, 5.599416, -5.0374446)
-plane_mesh = SubResource("PlaneMesh_6m4jv")
-plane_material = SubResource("StandardMaterial3D_nmi6l")
-box_shape = SubResource("BoxShape3D_1hfx4")
+plane_mesh = SubResource("PlaneMesh_h8l0i")
+plane_material = SubResource("StandardMaterial3D_vwdn5")
+box_shape = SubResource("BoxShape3D_jyfuf")
 width = 2.8
 
 [node name="RaceCheckpoint" parent="." index="19" unique_id=915690718 instance=ExtResource("3_s6cem")]
 transform = Transform3D(-1, 0, -8.742278e-08, 0, 1, 0, 8.742278e-08, 0, -1, -35.39201, 1.6121712, -6.450535)
-plane_mesh = SubResource("PlaneMesh_q7vis")
-plane_material = SubResource("StandardMaterial3D_h8l0i")
-box_shape = SubResource("BoxShape3D_vwdn5")
-width = 2.0
+plane_mesh = SubResource("PlaneMesh_34r55")
+plane_material = SubResource("StandardMaterial3D_jg2eg")
+box_shape = SubResource("BoxShape3D_ukvg4")
+width = 2.9
 
 [node name="RaceCheckpoint3" parent="." index="20" unique_id=855480268 instance=ExtResource("3_s6cem")]
 transform = Transform3D(-1, 0, -8.742278e-08, 0, 1, 0, 8.742278e-08, 0, -1, -35.39201, 2.5576997, -27.2339)
-plane_mesh = SubResource("PlaneMesh_ukvg4")
-plane_material = SubResource("StandardMaterial3D_dscwg")
-box_shape = SubResource("BoxShape3D_xupjn")
+plane_mesh = SubResource("PlaneMesh_dscwg")
+plane_material = SubResource("StandardMaterial3D_xupjn")
+box_shape = SubResource("BoxShape3D_anpxf")
 width = 5.542
 
 [node name="RaceCheckpoint4" parent="." index="21" unique_id=1999781906 instance=ExtResource("3_s6cem")]
 transform = Transform3D(-1, 0, -8.742278e-08, 0, 1, 0, 8.742278e-08, 0, -1, -35.39201, 5.4373026, -38.877205)
-plane_mesh = SubResource("PlaneMesh_anpxf")
-plane_material = SubResource("StandardMaterial3D_aaa3a")
-box_shape = SubResource("BoxShape3D_2yi0g")
+plane_mesh = SubResource("PlaneMesh_aaa3a")
+plane_material = SubResource("StandardMaterial3D_2yi0g")
+box_shape = SubResource("BoxShape3D_jv54k")
 width = 5.542
 
 [node name="DirectionalLight3D" type="DirectionalLight3D" parent="." index="22" unique_id=430946180]
@@ -214,36 +217,36 @@ transform = Transform3D(0.9999998, 0, 0, 0, 0.9999998, 0, 0, 0, 0.9999998, -35.3
 
 [node name="hammer_obstacle" parent="HammerGroup" index="0" unique_id=2071296910 instance=ExtResource("6_6m4jv")]
 transform = Transform3D(0.49122083, 0, 0, 0, 0.49122083, 0, 0, 0, 0.49122083, 0, 0, 8.597639)
-rotation_speed = 0.03
+rotation_speed = 0.02
 impulse_force = 1.5
 
 [node name="hammer_obstacle2" parent="HammerGroup" index="1" unique_id=1539608922 instance=ExtResource("6_6m4jv")]
 transform = Transform3D(0.49122083, 0, 0, 0, 0.49122083, 0, 0, 0, 0.49122083, 0, 0, 6.7110434)
-rotation_speed = 0.03
+rotation_speed = 0.02
 cycle_offset = 0.3
 impulse_force = 1.5
 
 [node name="hammer_obstacle3" parent="HammerGroup" index="2" unique_id=1420029522 instance=ExtResource("6_6m4jv")]
 transform = Transform3D(0.49122083, 0, 0, 0, 0.49122083, 0, 0, 0, 0.49122083, 0, 0, 5.133258)
-rotation_speed = 0.03
+rotation_speed = 0.02
 cycle_offset = 0.6
 impulse_force = 1.5
 
 [node name="hammer_obstacle4" parent="HammerGroup" index="3" unique_id=1650785791 instance=ExtResource("6_6m4jv")]
 transform = Transform3D(0.4910461, -0.0027321812, -0.012813257, 0.0024754591, 0.49111578, -0.009853498, 0.012865321, 0.009785423, 0.49095485, 0, 0, 3.4227476)
-rotation_speed = 0.03
+rotation_speed = 0.02
 cycle_offset = 0.2
 impulse_force = 1.5
 
 [node name="hammer_obstacle5" parent="HammerGroup" index="4" unique_id=874844062 instance=ExtResource("6_6m4jv")]
 transform = Transform3D(0.49122083, 0, 0, 0, 0.49122083, 0, 0, 0, 0.49122083, 0, 0, 1.7653589)
-rotation_speed = 0.03
+rotation_speed = 0.02
 cycle_offset = 0.9
 impulse_force = 1.5
 
 [node name="hammer_obstacle6" parent="HammerGroup" index="5" unique_id=459731461 instance=ExtResource("6_6m4jv")]
 transform = Transform3D(0.49122083, 0, 0, 0, 0.49122083, 0, 0, 0, 0.49122083, 0, 0, -1.9073486e-06)
-rotation_speed = 0.03
+rotation_speed = 0.02
 cycle_offset = 0.5
 impulse_force = 1.5
 
@@ -256,7 +259,7 @@ monitorable = false
 [node name="CollisionShape3D" type="CollisionShape3D" parent="InBoundsArea" index="0" unique_id=181381105]
 shape = SubResource("SphereShape3D_1hfx4")
 
-[node name="AnimationSynchronizer" type="Node" parent="AnimationPlayer" parent_id_path=PackedInt32Array(1786034317) index="0" unique_id=930945602 node_paths=PackedStringArray("animation_player")]
+[node name="AnimationSynchronizer" type="Node" parent="AnimationPlayer" parent_id_path=PackedInt32Array(1526832039) index="0" unique_id=930945602 node_paths=PackedStringArray("animation_player")]
 unique_name_in_owner = true
 script = ExtResource("7_6m4jv")
 animation_player = NodePath("..")

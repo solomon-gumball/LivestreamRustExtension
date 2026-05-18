@@ -10,9 +10,8 @@
 [ext_resource type="Material" uid="uid://bhq51jlaqehtr" path="res://games/carnage/fx/dust_clouds_fx_process.tres" id="4_26l52"]
 [ext_resource type="Texture2D" uid="uid://ba6mac1k3t38a" path="res://materials/bot_mat/bot_normals.png" id="4_kkve7"]
 [ext_resource type="ArrayMesh" uid="uid://busnpknqqkqhh" path="res://games/carnage/fx/cloud.res" id="5_1qgq1"]
-[ext_resource type="FontFile" uid="uid://7uibxoligyvb" path="res://fonts/HomeVideo-BLG6G.ttf" id="11_dbe4r"]
 
-[sub_resource type="ShaderMaterial" id="ShaderMaterial_dbe4r"]
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_1qgq1"]
 resource_local_to_scene = true
 render_priority = 0
 shader = ExtResource("2_7mpfn")
@@ -72,7 +71,8 @@ unique_name_in_owner = true
 transform = Transform3D(12.360951, 0, 0, 0, 12.360951, 0, 0, 0, 12.360951, 0, -0.019290864, -0.7726673)
 collision_layer = 0
 collision_mask = 0
-surface_mat = SubResource("ShaderMaterial_dbe4r")
+surface_mat = SubResource("ShaderMaterial_1qgq1")
+show_name_label = true
 
 [node name="Wheel_Front_Left" parent="VisualNode/Mesh" unique_id=856590652 node_paths=PackedStringArray("physics_kart") instance=ExtResource("2_4r8fh")]
 unique_name_in_owner = true
@@ -109,10 +109,3 @@ kart = NodePath("..")
 kart_visual_node = NodePath("../VisualNode")
 collision_box_shape = SubResource("BoxShape3D_26l52")
 acceleration_curve = SubResource("Curve_gvgjh")
-
-[node name="Label3D" type="Label3D" parent="." unique_id=33787048]
-transform = Transform3D(0.06467688, 0, 0, 0, 0.06467688, 0, 0, 0, 0.06467688, 0, 0.4853788, 0)
-billboard = 1
-fixed_size = true
-text = "solomongumbal1"
-font = ExtResource("11_dbe4r")

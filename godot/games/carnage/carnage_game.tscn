@@ -85,15 +85,12 @@ fit_content = true
 horizontal_alignment = 1
 
 [node name="HostControlsButton" type="MarginContainer" parent="Overlay" unique_id=20345416]
-anchors_preset = 3
+anchors_preset = 1
 anchor_left = 1.0
-anchor_top = 1.0
 anchor_right = 1.0
-anchor_bottom = 1.0
-offset_left = -40.0
-offset_top = -40.0
+offset_left = -192.0
+offset_bottom = 75.0
 grow_horizontal = 0
-grow_vertical = 0
 theme_override_constants/margin_left = 20
 theme_override_constants/margin_top = 20
 theme_override_constants/margin_right = 20
@@ -102,7 +99,7 @@ theme_override_constants/margin_bottom = 20
 [node name="VBoxContainer" type="VBoxContainer" parent="Overlay/HostControlsButton" unique_id=81219574]
 layout_mode = 2
 
-[node name="StartGameButton" type="Button" parent="Overlay/HostControlsButton/VBoxContainer" unique_id=79993982]
+[node name="EndGameButton" type="Button" parent="Overlay/HostControlsButton/VBoxContainer" unique_id=79993982]
 unique_name_in_owner = true
 layout_mode = 2
 theme = SubResource("Theme_qn2ad")
@@ -111,4 +108,3 @@ text = "END GAME"
 [node name="KartGameStateSynchronizer" type="Node" parent="." unique_id=463833223]
 unique_name_in_owner = true
 script = ExtResource("2_pjf2b")
-starting_checkpoint = 3

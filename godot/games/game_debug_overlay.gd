@@ -16,7 +16,7 @@ func _ready() -> void:
 
 func _exit_tree() -> void:
   MultiplayerClient.state.changed.disconnect(_update_all)
-  SessionSynchronizer.get_instance().rtt_updated.disconnect(_rtt_updated)
+  # SessionSynchronizer.get_instance().rtt_updated.disconnect(_rtt_updated)
   MultiplayerClient.connected_state.lobby_updated.disconnect(_update_role_label)
 
 func _update_all(_state: Variant = null) -> void:

@@ -9,6 +9,7 @@ enum CarnageGameMessage {
 @onready var game_state: KartGameStateSynchronizer = %KartGameStateSynchronizer
 @onready var winner_text: RichTextLabel = %WinnerText
 @onready var countdown_label: RichTextLabel = %CountDownLabel
+@onready var end_game_button: Button = %EndGameButton
 
 var map: KartRaceMap = null
 var checkpoints: Array[RaceCheckpoint] = []
@@ -17,6 +18,9 @@ var loading_check_timer: Timer = null
 func _ready() -> void:
   super._ready()
   if Engine.is_editor_hint(): return
+
+  end_game_button.visible = MultiplayerClient.is_lobby_host()
+  end_game_button.pressed.connect(_on_end_game_button_pressed)
 
   var map_packed := load("res://games/carnage/maps/kart_race_map1.tscn") as PackedScene
   map = map_packed.instantiate()
@@ -46,6 +50,10 @@ func _ready() -> void:
   loading_check_timer.timeout.connect(_check_loaded)
   loading_check_timer.one_shot = false
   loading_check_timer.start(1.0)
+
+func _on_end_game_button_pressed() -> void:
+  if !is_game_host: return
+  game_finished.emit()
 
 func _check_loaded() -> void:
   for peer_id in karts_by_peer_id:

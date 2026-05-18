@@ -42,7 +42,8 @@ func _ready() -> void:
 func _exit_tree() -> void:
   if is_owning_peer:
     _unbind_inputs()
-  SessionSynchronizer.get_instance().unregister_synchronizer(self)
+  # if is_inside_tree():
+  #   SessionSynchronizer.get_instance().unregister_synchronizer(self)
 
 var time_since_last_server_move := 0
 func _handle_incoming_peer_packet(sender_id: int, packet: Dictionary) -> void:
