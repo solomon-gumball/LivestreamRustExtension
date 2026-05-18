@@ -55,6 +55,11 @@ func _ready() -> void:
   current_map.camera.did_enter_free_cam.connect(func() -> void:
     focused_marble = null
   )
+  current_map.camera.did_enter_follow_cam.connect(func(node: Node3D) -> void:
+    if node is MarbleBot:
+      focused_marble = node as MarbleBot
+  )
+  current_map.camera.follow_click_collision_mask = 2
   MultiplayerClient.connected_state.left_lobby.connect(_left_lobby)
   MultiplayerClient.packet_received.connect(_handle_peer_packet)
 
@@ -149,9 +154,7 @@ func _send_refresh_state(peer_id: int) -> void:
     MultiplayerPeer.TRANSFER_MODE_RELIABLE
   )
 
-func _input(event: InputEvent) -> void:
-  if event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_RIGHT and event.pressed:
-    _try_follow_marble_at_cursor(event.position)
+func _input(_event: InputEvent) -> void:
   if Input.is_action_just_pressed("next_placement"):
     increment_focused_bot(-1)
   if Input.is_action_just_pressed("previous_placement"):
@@ -166,29 +169,6 @@ func increment_focused_bot(index_change: int) -> void:
   var current_index := leaderboard.find(focused_marble)
   var new_index := (current_index + index_change) % leaderboard.size()
   focused_marble = leaderboard[new_index]
-
-func _try_follow_marble_at_cursor(screen_pos: Vector2) -> void:
-  var origin: Vector3 = current_map.actual_camera.project_ray_origin(screen_pos)
-  var direction: Vector3 = current_map.actual_camera.project_ray_normal(screen_pos)
-  var space := get_world_3d().direct_space_state
-  var shape := SphereShape3D.new()
-  shape.radius = 0.4
-  var query := PhysicsShapeQueryParameters3D.new()
-  query.shape = shape
-  query.transform = Transform3D(Basis.IDENTITY, origin)
-  query.motion = direction * 1000.0
-  query.collision_mask = 2
-  var result := space.cast_motion(query)
-  if result[0] < 1.0:
-    var hit_pos: Vector3 = origin + direction * 1000.0 * result[1]
-    var shape_query := PhysicsShapeQueryParameters3D.new()
-    shape_query.shape = shape
-    shape_query.transform = Transform3D(Basis.IDENTITY, hit_pos)
-    shape_query.collision_mask = 2
-    var hits := space.intersect_shape(shape_query)
-    if hits.size() > 0 and hits[0].collider is Node3D:
-      var selected_marble: MarbleBot = hits[0].collider as MarbleBot
-      focused_marble = selected_marble
 
 ## Extra Y offset added on top of the raycast ground hit, so marbles spawn above the surface.
 ## Set this to the marble's radius to avoid spawning inside geometry.

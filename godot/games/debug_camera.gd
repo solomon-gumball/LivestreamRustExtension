@@ -6,6 +6,7 @@ class_name DebugCamera
 @export var look_speed: float = 1.0
 @export_range(0.0, 1.0) var look_smoothing: float = 0.5
 @export var allow_free_cam: bool = true
+@export var follow_click_collision_mask: int = 2
 @onready var collision_shape_cast: ShapeCast3D = %ShapeCast
 
 var _yaw: float = 0.0
@@ -15,8 +16,8 @@ var _state: StateMachine
 var _free_state: FreeState
 var _follow_state: FollowState
 
-@warning_ignore("UNUSED_SIGNAL")
-signal did_enter_free_cam()
+@warning_ignore("UNUSED_SIGNAL") signal did_enter_free_cam()
+@warning_ignore("UNUSED_SIGNAL") signal did_enter_follow_cam(follow_node: Node3D)
 
 func _ready() -> void:
   _yaw = global_rotation.y
@@ -33,7 +34,39 @@ func _ready() -> void:
   _state.change_state(_free_state)
 
 func _unhandled_input(event: InputEvent) -> void:
+  if event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_RIGHT and event.pressed:
+    if follow_click_collision_mask != 0:
+      var hit := _raycast_node_at(event.position)
+      if hit != null:
+        enter_follow_mode(hit)
+        did_enter_follow_cam.emit(hit)
+        return
   _state.input_state(event)
+
+func _raycast_node_at(screen_pos: Vector2) -> Node3D:
+  var viewport_cam := get_viewport().get_camera_3d()
+  var origin := viewport_cam.project_ray_origin(screen_pos)
+  var direction := viewport_cam.project_ray_normal(screen_pos)
+  var space := get_world_3d().direct_space_state
+  var shape := SphereShape3D.new()
+  shape.radius = 0.4
+  var cast_query := PhysicsShapeQueryParameters3D.new()
+  cast_query.shape = shape
+  cast_query.transform = Transform3D(Basis.IDENTITY, origin)
+  cast_query.motion = direction * 1000.0
+  cast_query.collision_mask = follow_click_collision_mask
+  var result := space.cast_motion(cast_query)
+  if result[0] >= 1.0:
+    return null
+  var hit_pos := origin + direction * 1000.0 * result[1]
+  var hit_query := PhysicsShapeQueryParameters3D.new()
+  hit_query.shape = shape
+  hit_query.transform = Transform3D(Basis.IDENTITY, hit_pos)
+  hit_query.collision_mask = follow_click_collision_mask
+  var hits := space.intersect_shape(hit_query)
+  if hits.size() > 0 and hits[0].collider is Node3D:
+    return hits[0].collider as Node3D
+  return null
 
 func enter_follow_mode(node_to_follow: Node3D, pitch: float = NAN) -> void:
   _follow_state.set_target(node_to_follow, pitch)

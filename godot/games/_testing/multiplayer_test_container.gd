@@ -46,7 +46,7 @@ func _handle_ws_message(parsed: Variant) -> void:
     if lobbies_data.get(0):
       var lobby_to_join := Lobby.from_data(lobbies_data.get(0))
       if lobby_to_join and !lobby_to_join.has_chatter(WSClient.my_chatter().id) and !did_join:
-        MultiplayerClient.join_lobby(lobby_to_join, false)
+        MultiplayerClient.join_lobby(lobby_to_join, true)
         did_join = true
 
 var did_start := false
