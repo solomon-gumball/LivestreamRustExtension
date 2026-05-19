@@ -4,6 +4,7 @@ class_name Carnage
 
 enum CarnageGameMessage {
   ServerKartPunch,
+  HandleKartPunched
 }
 
 @onready var game_state: KartGameStateSynchronizer = %KartGameStateSynchronizer

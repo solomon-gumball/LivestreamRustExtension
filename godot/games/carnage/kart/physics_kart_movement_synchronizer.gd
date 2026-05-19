@@ -214,6 +214,8 @@ func _on_extra_packet(_sender_id: int, packet: Dictionary) -> void:
     Carnage.CarnageGameMessage.ServerKartPunch:
       if is_owning_peer: return
       kart.punch_cosmetic()
+    Carnage.CarnageGameMessage.HandleKartPunched:
+      kart.handle_punched_cosmetic()
 
 func simulate_one_frame(input: Dictionary, state: Dictionary, tick: int) -> Dictionary:
   var delta := 1.0 / 60.0

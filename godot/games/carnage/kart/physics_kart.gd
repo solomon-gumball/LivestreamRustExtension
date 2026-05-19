@@ -60,6 +60,14 @@ func punch_cosmetic() -> void:
   await get_tree().create_timer(0.1).timeout
   get_tree().create_tween().tween_property(gumbot.spring_bone_sim, "influence", 1.0, 0.1)
 
+func handle_punched_cosmetic() -> void:
+  get_tree().create_tween().tween_property(gumbot.spring_bone_sim, "influence", 0.5, 0.1)
+  gumbot.anim_tree.set("parameters/FlailOneShot/request", AnimationNodeOneShot.ONE_SHOT_REQUEST_FIRE)
+  await get_tree().create_timer(3.0).timeout
+  gumbot.anim_tree.set("parameters/FlailOneShot/request", AnimationNodeOneShot.ONE_SHOT_REQUEST_ABORT)
+  get_tree().create_tween().tween_property(gumbot.spring_bone_sim, "influence", 1.0, 0.1)
+  # await gumbot.anim_tree.animation_finished
+
 func authority_punch_collide() -> void:
   for body in punch_area.get_overlapping_bodies():
     if body is PhysicsKart and body != self:
@@ -70,5 +78,13 @@ func authority_handle_punch_impact(from_kart: PhysicsKart) -> void:
   var axis := impulse.cross(Vector3.UP).normalized()
   impulse = impulse.rotated(axis, deg_to_rad(45))
   impulse *= 2.0
+  MultiplayerClient.send_packet({
+      "type": Carnage.CarnageGameMessage.HandleKartPunched,
+      "owner_peer_id": physics_kart_movement_sync.owner_peer_id,
+    },
+    MultiplayerPeer.TARGET_PEER_BROADCAST,
+    MultiplayerPeer.TRANSFER_MODE_RELIABLE,
+    MultiplayerClient.PacketSelfMode.SelfIncluded
+  )
   physics_kart_movement_sync.apply_impulse(impulse)
 
