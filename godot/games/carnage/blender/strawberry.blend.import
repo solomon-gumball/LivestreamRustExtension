@@ -3,13 +3,13 @@
 importer="scene"
 importer_version=1
 type="PackedScene"
-uid="uid://c0byd3lci67g6"
-path="res://.godot/imported/joony1.blend-02376e8542bc3356f64080ddce3fef48.scn"
+uid="uid://n1358jmuxwub"
+path="res://.godot/imported/strawberry.blend-604434ed5a12bf4d3c4a86e5f2d46d4f.scn"
 
 [deps]
 
-source_file="res://games/carnage/blender/joony1.blend"
-dest_files=["res://.godot/imported/joony1.blend-02376e8542bc3356f64080ddce3fef48.scn"]
+source_file="res://games/carnage/blender/strawberry.blend"
+dest_files=["res://.godot/imported/strawberry.blend-604434ed5a12bf4d3c4a86e5f2d46d4f.scn"]
 
 [params]
 
@@ -37,20 +37,7 @@ import_script/path=""
 materials/extract=0
 materials/extract_format=0
 materials/extract_path=""
-_subresources={
-"materials": {
-"WorldGrid": {
-"use_external/enabled": true,
-"use_external/fallback_path": "res://games/carnage/materials/world_grid.tres",
-"use_external/path": "uid://b8x72k1h2s85q"
-}
-},
-"nodes": {
-"PATH:AnimationPlayer": {
-"optimizer/enabled": false
-}
-}
-}
+_subresources={}
 blender/nodes/visible=1
 blender/nodes/active_collection_only=false
 blender/nodes/punctual_lights=true

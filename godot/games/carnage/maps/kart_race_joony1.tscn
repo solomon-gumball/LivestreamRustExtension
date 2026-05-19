@@ -1,0 +1,209 @@
+[gd_scene format=3 uid="uid://bembadr5gdnr"]
+
+[ext_resource type="PackedScene" uid="uid://c0byd3lci67g6" path="res://games/carnage/blender/joony1.blend" id="1_4o23m"]
+[ext_resource type="Script" uid="uid://brnsoej68m6s8" path="res://games/carnage/kart_race_map.gd" id="2_l5mcx"]
+[ext_resource type="PackedScene" uid="uid://diyvoye7vs7ks" path="res://games/debug_camera.tscn" id="3_l5mcx"]
+[ext_resource type="PackedScene" uid="uid://crpnxmsftnv0f" path="res://games/carnage/props/race_checkpoint.tscn" id="4_fh8sn"]
+[ext_resource type="Texture2D" uid="uid://ofvawp17cyry" path="res://games/marbles/textures/checker.png" id="5_ex1rm"]
+[ext_resource type="Script" uid="uid://txxkpqyixtos" path="res://games/_synchronizers/animation_synchronizer.gd" id="6_ex1rm"]
+[ext_resource type="PackedScene" uid="uid://bhmo0bd0n06dp" path="res://games/carnage/props/strawberry_prop.tscn" id="7_oogcp"]
+
+[sub_resource type="PlaneMesh" id="PlaneMesh_oogcp"]
+resource_local_to_scene = true
+size = Vector2(4, 0.8)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_dvnii"]
+resource_local_to_scene = true
+transparency = 1
+cull_mode = 2
+albedo_color = Color(1, 1, 1, 0.33333334)
+albedo_texture = ExtResource("5_ex1rm")
+emission_enabled = true
+emission = Color(1, 0, 0, 1)
+uv1_scale = Vector3(2.5, 2.5, 5)
+uv1_triplanar = true
+uv1_world_triplanar = true
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_wxgs8"]
+resource_local_to_scene = true
+size = Vector3(4, 1, 0.2)
+
+[sub_resource type="PlaneMesh" id="PlaneMesh_khry1"]
+resource_local_to_scene = true
+size = Vector2(3.5, 0.8)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_1nh41"]
+resource_local_to_scene = true
+transparency = 1
+cull_mode = 2
+albedo_color = Color(1, 1, 1, 0.33333334)
+albedo_texture = ExtResource("5_ex1rm")
+emission_enabled = true
+emission = Color(1, 0, 0, 1)
+uv1_scale = Vector3(2.5, 2.5, 5)
+uv1_triplanar = true
+uv1_world_triplanar = true
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_7vjrd"]
+resource_local_to_scene = true
+size = Vector3(3.5, 1, 0.2)
+
+[sub_resource type="PlaneMesh" id="PlaneMesh_waeir"]
+resource_local_to_scene = true
+size = Vector2(3, 0.8)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_6bsqb"]
+resource_local_to_scene = true
+transparency = 1
+cull_mode = 2
+albedo_color = Color(1, 1, 1, 0.33333334)
+albedo_texture = ExtResource("5_ex1rm")
+emission_enabled = true
+emission = Color(1, 0, 0, 1)
+uv1_scale = Vector3(2.5, 2.5, 5)
+uv1_triplanar = true
+uv1_world_triplanar = true
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_0m0lc"]
+resource_local_to_scene = true
+size = Vector3(3, 1, 0.2)
+
+[sub_resource type="CameraAttributesPhysical" id="CameraAttributesPhysical_3bvbw"]
+frustum_focal_length = 50.0
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_fh8sn"]
+cull_mode = 1
+shading_mode = 0
+albedo_color = Color(0.2921582, 0.03526208, 0.4698527, 1)
+
+[sub_resource type="Environment" id="Environment_ex1rm"]
+background_mode = 3
+ambient_light_source = 2
+ambient_light_color = Color(1, 1, 1, 1)
+ambient_light_energy = 0.3
+tonemap_mode = 2
+ssao_enabled = true
+glow_enabled = true
+adjustment_enabled = true
+adjustment_saturation = 1.2
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_ex1rm"]
+size = Vector3(83.27426, 11.683105, 72.30054)
+
+[sub_resource type="SphereShape3D" id="SphereShape3D_ex1rm"]
+radius = 57.58551
+
+[node name="joony1" unique_id=974291500 instance=ExtResource("1_4o23m")]
+script = ExtResource("2_l5mcx")
+
+[node name="RaceCheckpoint2" parent="." index="0" unique_id=77519353 instance=ExtResource("4_fh8sn")]
+transform = Transform3D(0.886244, 0, -0.46321872, 0, 1, 0, 0.46321872, 0, 0.886244, -12.104145, 1.3950458, -8.329146)
+plane_mesh = SubResource("PlaneMesh_oogcp")
+plane_material = SubResource("StandardMaterial3D_dvnii")
+box_shape = SubResource("BoxShape3D_wxgs8")
+width = 4.0
+
+[node name="RaceCheckpoint4" parent="." index="1" unique_id=35775725 instance=ExtResource("4_fh8sn")]
+transform = Transform3D(0.9973626, 0.01657324, 0.070661806, -0.016614769, 0.99986196, 1.1641532e-10, -0.07065204, -0.0011740297, 0.9975003, 9.970005, 6.455897, -3.5891397)
+plane_mesh = SubResource("PlaneMesh_khry1")
+plane_material = SubResource("StandardMaterial3D_1nh41")
+box_shape = SubResource("BoxShape3D_7vjrd")
+width = 3.5
+
+[node name="RaceCheckpoint3" parent="." index="2" unique_id=1272997953 instance=ExtResource("4_fh8sn")]
+transform = Transform3D(0.9719035, 0, 0.2353796, 0, 1, 0, -0.2353796, 0, 0.9719035, -5.668305, 13.238943, 1.5544068)
+plane_mesh = SubResource("PlaneMesh_waeir")
+plane_material = SubResource("StandardMaterial3D_6bsqb")
+box_shape = SubResource("BoxShape3D_0m0lc")
+width = 3.0
+
+[node name="Cube" parent="." index="4" unique_id=1043224015]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -16.91842, 1.1874971, 0)
+
+[node name="Camera" parent="." index="12" unique_id=530566274]
+transform = Transform3D(0.48056605, 0.345762, -0.80591863, -9.983778e-07, 0.9189931, 0.39427358, 0.8769585, -0.1894737, 0.44163725, -134.88605, 24.179935, -18.159336)
+current = true
+
+[node name="DebugCamera" parent="." index="13" unique_id=1098239593 instance=ExtResource("3_l5mcx")]
+unique_name_in_owner = true
+transform = Transform3D(0.7120751, 0.1608985, -0.68341845, -7.450581e-09, 0.97338724, 0.22916643, 0.7021034, -0.16318369, 0.69312483, -44.501244, 3.1134653, 4.1785192)
+allow_free_cam = false
+
+[node name="DebugInnerCam" type="Camera3D" parent="DebugCamera" index="2" unique_id=1451708095]
+unique_name_in_owner = true
+attributes = SubResource("CameraAttributesPhysical_3bvbw")
+
+[node name="CSGSphere3D" type="CSGSphere3D" parent="." index="14" unique_id=1851498022]
+transform = Transform3D(2, 0, 0, 0, 2, 0, 0, 0, 2, -0.025983855, 0.034902573, 0.13105178)
+radius = 100.0
+material = SubResource("StandardMaterial3D_fh8sn")
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="." index="15" unique_id=1323169795]
+environment = SubResource("Environment_ex1rm")
+
+[node name="OutOfBoundsArea" type="Area3D" parent="." index="16" unique_id=706782503]
+unique_name_in_owner = true
+collision_layer = 0
+collision_mask = 2
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="OutOfBoundsArea" index="0" unique_id=257408165]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.594162, -5.4501076, -0.16931152)
+shape = SubResource("BoxShape3D_ex1rm")
+
+[node name="DirectionalLight3D" type="DirectionalLight3D" parent="." index="17" unique_id=1351853133]
+transform = Transform3D(-0.49766108, 0.63648874, 0.58924997, -0.29978192, -0.76370305, 0.57174164, 0.8139191, 0.10788706, 0.5708731, 2.0339265, 2.6281023, -0.35323796)
+light_color = Color(0.99646264, 0.82775444, 0.63832206, 1)
+light_energy = 0.1
+shadow_enabled = true
+shadow_opacity = 0.68
+
+[node name="InBoundsArea" type="Area3D" parent="." index="19" unique_id=215205796]
+unique_name_in_owner = true
+collision_layer = 0
+collision_mask = 2
+monitorable = false
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="InBoundsArea" index="0" unique_id=807795049]
+shape = SubResource("SphereShape3D_ex1rm")
+
+[node name="AnimationSynchronizer" type="Node" parent="AnimationPlayer" parent_id_path=PackedInt32Array(511524919) index="0" unique_id=178170591 node_paths=PackedStringArray("animation_player")]
+unique_name_in_owner = true
+script = ExtResource("6_ex1rm")
+animation_player = NodePath("..")
+metadata/_custom_type_script = "uid://txxkpqyixtos"
+
+[node name="strawberry" parent="." index="24" unique_id=1254489400 instance=ExtResource("7_oogcp")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5.5087357, 6.695494, 7.8512115)
+
+[node name="strawberry8" parent="." index="25" unique_id=1814201046 instance=ExtResource("7_oogcp")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 8.935375, 6.695494, 6.8262806)
+
+[node name="strawberry9" parent="." index="26" unique_id=1506964570 instance=ExtResource("7_oogcp")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 8.994276, 6.695494, 3.075088)
+
+[node name="strawberry10" parent="." index="27" unique_id=1892624621 instance=ExtResource("7_oogcp")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 11.382543, 6.695494, -0.22649884)
+
+[node name="strawberry3" parent="." index="28" unique_id=1789231185 instance=ExtResource("7_oogcp")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.5626104, 6.695494, 11.158326)
+
+[node name="strawberry4" parent="." index="29" unique_id=1548913955 instance=ExtResource("7_oogcp")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.2935312, 6.695494, 9.103045)
+
+[node name="strawberry5" parent="." index="30" unique_id=722312382 instance=ExtResource("7_oogcp")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4.7524147, 6.695494, 10.066855)
+
+[node name="strawberry6" parent="." index="31" unique_id=1596314794 instance=ExtResource("7_oogcp")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -6.2281113, 6.695494, 6.7151823)
+
+[node name="strawberry7" parent="." index="32" unique_id=1777277386 instance=ExtResource("7_oogcp")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -9.754641, 6.695493, 5.5071964)
+
+[node name="strawberry2" parent="." index="33" unique_id=1170248782 instance=ExtResource("7_oogcp")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -12.625655, 1.6172271, -5.5937324)
+
+[node name="strawberry11" parent="." index="34" unique_id=2003923719 instance=ExtResource("7_oogcp")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -14.890054, 1.6172271, -2.9541807)
+
+[node name="strawberry12" parent="." index="35" unique_id=510195852 instance=ExtResource("7_oogcp")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -13.663225, 1.6172271, 0.8295951)

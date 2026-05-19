@@ -5,6 +5,7 @@ class_name MultiplayerTestContainer
 @export var num_players: int = 2
 @export var game_name: String = "pong"
 @export var join_as_player: bool = true
+@export var host_as_player: bool = true
 
 var is_host := false
 var ready_peers: Array[int]
@@ -24,7 +25,7 @@ func _ready() -> void:
 
   is_host = DebugScreenLayout.window_index == 0
   if is_host:
-    var error: String = await WSClient.create_lobby(game_name, true)
+    var error: String = await WSClient.create_lobby(game_name, host_as_player, true)
     if error:
       print("err ", error)
   else:

@@ -17,6 +17,15 @@ var map: KartRaceMap = null
 var checkpoints: Array[RaceCheckpoint] = []
 var loading_check_timer: Timer = null
 
+func load_map(map_name: String) -> KartRaceMap:
+  if map:
+    map.queue_free()
+
+  var map_path := "res://games/carnage/maps/%s.tscn" % map_name
+  var map_packed := load(map_path) as PackedScene
+  map = map_packed.instantiate() as KartRaceMap
+  return map
+
 func _ready() -> void:
   super._ready()
   if Engine.is_editor_hint(): return
@@ -24,8 +33,8 @@ func _ready() -> void:
   end_game_button.visible = MultiplayerClient.is_lobby_host()
   end_game_button.pressed.connect(_on_end_game_button_pressed)
 
-  var map_packed := load("res://games/carnage/maps/kart_race_map1.tscn") as PackedScene
-  map = map_packed.instantiate()
+  # map = load_map("kart_race_joony1")
+  map = load_map("kart_race_joony1")
   add_child(map)
 
   _setup_checkpoints()
