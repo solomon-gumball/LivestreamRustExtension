@@ -136,12 +136,12 @@ radius = 57.58551
 [node name="boxing_ring" unique_id=1116326708 instance=ExtResource("1_h6twq")]
 script = ExtResource("2_penea")
 
-[node name="Camera" parent="." index="1" unique_id=678197040]
+[node name="Camera" parent="." index="1" unique_id=1829080939]
 transform = Transform3D(0.60865337, 0.2147631, -0.76381767, -1.080334e-06, 0.96267086, 0.27067393, 0.793436, -0.16474581, 0.5859332, -74.63479, 16.213852, 23.450089)
 current = true
 fov = 27.0
 
-[node name="Cube" parent="." index="6" unique_id=1056024699]
+[node name="Cube" parent="." index="6" unique_id=186346269]
 visible = false
 
 [node name="CSGSphere3D" type="CSGSphere3D" parent="." index="15" unique_id=830440203]
@@ -259,7 +259,7 @@ monitorable = false
 [node name="CollisionShape3D" type="CollisionShape3D" parent="InBoundsArea" index="0" unique_id=181381105]
 shape = SubResource("SphereShape3D_1hfx4")
 
-[node name="AnimationSynchronizer" type="Node" parent="AnimationPlayer" parent_id_path=PackedInt32Array(67540258) index="0" unique_id=930945602 node_paths=PackedStringArray("animation_player")]
+[node name="AnimationSynchronizer" type="Node" parent="AnimationPlayer" parent_id_path=PackedInt32Array(963562154) index="0" unique_id=930945602 node_paths=PackedStringArray("animation_player")]
 unique_name_in_owner = true
 script = ExtResource("7_6m4jv")
 animation_player = NodePath("..")

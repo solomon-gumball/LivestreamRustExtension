@@ -9,9 +9,10 @@ var marble_bot_template: PackedScene = ResourceLoader.load("res://games/marbles/
 @onready var animation_synchronizer: AnimationSynchronizer = %AnimationSynchronizer
 @onready var marbles_overlay: MarblesOverlay = $MarblesOverlay
 
-var map: Array[PackedScene] = [
-  preload("res://games/marbles/maps/marbles_map1.tscn"),
-]
+var map: Array[PackedScene] = {
+  "level1": preload("res://games/marbles/maps/marbles_map1.tscn"),
+  "level2": preload("res://games/marbles/maps/marbles_map2.tscn"),
+}
 
 var current_map: MarblesMap
 var marbles_game_state: MarblesGameState = null

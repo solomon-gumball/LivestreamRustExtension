@@ -1,0 +1,62 @@
+[gd_scene format=3 uid="uid://cji7hvtgfccyi"]
+
+[ext_resource type="PackedScene" uid="uid://vffpq2nha7x7" path="res://games/marbles/maps/marbles_map_2.blend" id="1_ah4es"]
+[ext_resource type="Texture2D" uid="uid://6om2hiwmkli" path="res://textures/panorama6.jpg" id="2_ym45g"]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_m67nt"]
+cull_mode = 2
+shading_mode = 0
+albedo_texture = ExtResource("2_ym45g")
+disable_receive_shadows = true
+
+[sub_resource type="Environment" id="Environment_ym45g"]
+background_mode = 3
+ambient_light_source = 2
+ambient_light_color = Color(1, 1, 1, 1)
+ambient_light_energy = 0.3
+tonemap_mode = 2
+ssao_enabled = true
+glow_enabled = true
+adjustment_enabled = true
+adjustment_saturation = 1.2
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_ym45g"]
+cull_mode = 1
+shading_mode = 0
+albedo_color = Color(0.22456041, 0.36560366, 0.6113242, 1)
+
+[sub_resource type="Curve3D" id="Curve3D_ym45g"]
+_data = {
+"points": PackedVector3Array(0, 0, 0, 0, 0, 0, 0.34915924, -1.131424, 1.0147828, 0, 0, 0, 0, 0, 0, 0.26556396, -1.1836319, -2.2278976),
+"tilts": PackedFloat32Array(0, 0)
+}
+point_count = 2
+
+[node name="marbles_map_2" unique_id=169342261 instance=ExtResource("1_ah4es")]
+
+[node name="SkySphere" type="CSGSphere3D" parent="." index="8" unique_id=602631580]
+transform = Transform3D(1, 5.9604645e-08, 0, 0, 0.9999999, 0, -2.9802322e-08, -2.9802322e-08, 0.99999994, -2.2888184e-05, 0, 4.887581e-06)
+visible = false
+radius = 550.13477
+radial_segments = 32
+rings = 32
+material = SubResource("StandardMaterial3D_m67nt")
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="." index="9" unique_id=523913573]
+environment = SubResource("Environment_ym45g")
+
+[node name="DirectionalLight3D" type="DirectionalLight3D" parent="." index="10" unique_id=1173768077]
+transform = Transform3D(0.8936523, 0.10376225, 0.4365998, -0.42749596, 0.49277496, 0.75790524, -0.13650353, -0.86394805, 0.4847275, 2.0339265, 47.07078, -0.35323796)
+light_color = Color(0.99646264, 0.82775444, 0.63832206, 1)
+light_energy = 0.1
+shadow_enabled = true
+shadow_opacity = 0.68
+
+[node name="CSGSphere3D" type="CSGSphere3D" parent="." index="11" unique_id=338816706]
+transform = Transform3D(2, 0, 0, 0, 2, 0, 0, 0, 2, 0.08006854, 0.034898758, -0.010442972)
+radius = 100.0
+material = SubResource("StandardMaterial3D_ym45g")
+
+[node name="SpawnPath" type="Path3D" parent="." index="12" unique_id=643180977]
+transform = Transform3D(0.9999978, 0.0015394343, 0.0014083391, -0.0015396923, 0.9999988, 0.00018113754, -0.0014080569, -0.00018331753, 0.999999, 128.40776, 83.68746, -0.53588295)
+curve = SubResource("Curve3D_ym45g")
