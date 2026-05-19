@@ -203,17 +203,59 @@ var queued_impulse: Vector3 = Vector3.ZERO
 func apply_impulse(impulse: Vector3) -> void:
   queued_impulse += impulse
 
+var queued_torque_impulse: Vector3 = Vector3.ZERO
+func apply_torque_impulse(torque: Vector3) -> void:
+  queued_torque_impulse += torque
+
 func _sample_input() -> Dictionary:
   return {
     "move": Input.get_vector("move_back", "move_forward", "turn_right", "turn_left"),
     "punch_pressed": Input.is_action_just_pressed("punch"),
   }
 
+var punch_timeout: float = 0
+var PUNCH_COOLDOWN := 1.0
+
 func _on_extra_packet(_sender_id: int, packet: Dictionary) -> void:
   match packet.type:
+    Carnage.CarnageGameMessage.TriggerPunch:
+      kart.punch_cosmetic()
+
+      var punch_location: Vector3 = packet.get("punch_location", Vector3.ZERO)
+      var punched := kart.get_punched_karts(punch_location)
+      var did_hit: bool = punched.size() > 0
+
+      punch_timeout = PUNCH_COOLDOWN
+      # DebugDraw
+      print("punch_location ", punch_location)
+
+      if did_hit:
+        kart.trigger_impact_fx_at_location(punch_location)
+      
+      if is_host:
+        for punched_kart in punched:
+          punched_kart.authority_handle_punch_impact(kart)
+        
+        var punch_message := {
+          "type": Carnage.CarnageGameMessage.ServerKartPunch,
+          "owner_peer_id": kart.physics_kart_movement_sync.owner_peer_id,
+        }
+        if did_hit:
+          punch_message["punch_location"] = punch_location
+
+        MultiplayerClient.send_packet(
+          punch_message,
+          MultiplayerPeer.TARGET_PEER_BROADCAST,
+          MultiplayerPeer.TRANSFER_MODE_RELIABLE
+        )
     Carnage.CarnageGameMessage.ServerKartPunch:
       if is_owning_peer: return
+
       kart.punch_cosmetic()
+      var punch_location = packet.get("punch_location", null)
+      if punch_location != null:
+        kart.trigger_impact_fx_at_location(punch_location)
+        
     Carnage.CarnageGameMessage.HandleKartPunched:
       kart.handle_punched_cosmetic()
 
@@ -232,14 +274,17 @@ func simulate_one_frame(input: Dictionary, state: Dictionary, tick: int) -> Dict
   # _logger.log("%s IN pos=%s lvel=%s avel=%s wt=%.4f move=%s" % [
   #   _sim_tag(tick), position, linear_velocity, angular_velocity, wheel_turn, input_vec])
 
-  if punch_pressed:
-    kart.punch_cosmetic()
-    if is_host:
-      kart.authority_punch_collide()
-      MultiplayerClient.send_packet({
-        "type": Carnage.CarnageGameMessage.ServerKartPunch,
+  if punch_pressed and punch_timeout <= 0 and is_owning_peer:
+    var punch_location := kart.punch_area.global_position
+    MultiplayerClient.send_packet({
+        "type": Carnage.CarnageGameMessage.TriggerPunch,
         "owner_peer_id": owner_peer_id,
-      })
+        "punch_location": punch_location,
+      },
+      MultiplayerPeer.TARGET_PEER_SERVER,
+      MultiplayerPeer.TRANSFER_MODE_RELIABLE,
+      MultiplayerClient.PacketSelfMode.SelfIncluded
+    )
 
   # Steering
   var desired_wheel_angle := input_vec.y * MAX_WHEEL_ANGLE
@@ -309,6 +354,11 @@ func simulate_one_frame(input: Dictionary, state: Dictionary, tick: int) -> Dict
   if queued_impulse.length() > 0.01:
     _logger.log("%s IMPULSE applied %s new_lvel=%s" % [_sim_tag(tick), queued_impulse, linear_velocity], true)
   queued_impulse = Vector3.ZERO
+
+  angular_velocity += queued_torque_impulse
+  if queued_torque_impulse.length() > 0.01:
+    _logger.log("%s TORQUE_IMPULSE applied %s new_avel=%s" % [_sim_tag(tick), queued_torque_impulse, angular_velocity], true)
+  queued_torque_impulse = Vector3.ZERO
 
   # Clamp ground speed
   if any_grounded and linear_velocity.length() > max_ground_speed:
@@ -423,6 +473,8 @@ func simulate_one_frame(input: Dictionary, state: Dictionary, tick: int) -> Dict
         kart_flipped.emit.call_deferred()
     else:
       _flip_frames = 0
+
+  punch_timeout = max(punch_timeout - delta, 0.0)
 
   return {
     "position": position,

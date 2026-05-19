@@ -3,6 +3,7 @@ extends GameBase
 class_name Carnage
 
 enum CarnageGameMessage {
+  TriggerPunch,
   ServerKartPunch,
   HandleKartPunched
 }

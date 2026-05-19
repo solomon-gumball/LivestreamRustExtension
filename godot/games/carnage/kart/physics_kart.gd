@@ -53,9 +53,17 @@ func _integrate_forces(physics_state: PhysicsDirectBodyState3D) -> void:
   physics_state.angular_velocity = _pending_angular_velocity
   _has_pending_state = false
 
+var impact_bounce_fx_scene: PackedScene = preload("res://games/carnage/fx/impact_bounce_fx.tscn")
+
+func trigger_impact_fx_at_location(location: Vector3) -> void:
+  var bounce_fx: ImpactBounceFx = impact_bounce_fx_scene.instantiate() as ImpactBounceFx
+  bounce_fx.global_position = location
+  get_parent().add_child(bounce_fx)
+
 func punch_cosmetic() -> void:
   get_tree().create_tween().tween_property(gumbot.spring_bone_sim, "influence", 0, 0.1)
   gumbot.anim_tree.set("parameters/PunchOneShot/request", AnimationNodeOneShot.ONE_SHOT_REQUEST_FIRE)
+
   await gumbot.anim_tree.animation_finished
   await get_tree().create_timer(0.1).timeout
   get_tree().create_tween().tween_property(gumbot.spring_bone_sim, "influence", 1.0, 0.1)
@@ -66,25 +74,38 @@ func handle_punched_cosmetic() -> void:
   await get_tree().create_timer(3.0).timeout
   gumbot.anim_tree.set("parameters/FlailOneShot/request", AnimationNodeOneShot.ONE_SHOT_REQUEST_ABORT)
   get_tree().create_tween().tween_property(gumbot.spring_bone_sim, "influence", 1.0, 0.1)
-  # await gumbot.anim_tree.animation_finished
 
-func authority_punch_collide() -> void:
-  for body in punch_area.get_overlapping_bodies():
-    if body is PhysicsKart and body != self:
-      body.authority_handle_punch_impact(self)
+func get_punched_karts(at_location: Vector3) -> Array[PhysicsKart]:
+  var punched_karts: Array[PhysicsKart] = []
+  var space_state := get_world_3d().direct_space_state
+
+  var query := PhysicsShapeQueryParameters3D.new()
+  query.shape = (punch_area.get_child(0) as CollisionShape3D).shape
+  query.transform = Transform3D(punch_area.global_transform.basis, at_location)
+  # var sphere_radius := (query.shape as SphereShape3D).radius if query.shape is SphereShape3D else 0.5
+  # DebugDraw.draw_sphere(at_location, sphere_radius, Color.RED, 1.0)
+  query.collision_mask = punch_area.collision_mask
+  query.exclude = [get_rid()]
+
+  for result in space_state.intersect_shape(query):
+    var body: Object = result["collider"]
+    if body is PhysicsKart:
+      punched_karts.append(body)
+  return punched_karts
 
 func authority_handle_punch_impact(from_kart: PhysicsKart) -> void:
-  var impulse := (global_position - from_kart.global_position).normalized()
-  var axis := impulse.cross(Vector3.UP).normalized()
-  impulse = impulse.rotated(axis, deg_to_rad(45))
-  impulse *= 2.0
+  var away := (global_position - from_kart.global_position).normalized()
+  var tilt_axis := away.cross(Vector3.UP).normalized()
+  var impulse := away.rotated(tilt_axis, deg_to_rad(45)) * 1.6
+  var torque := -tilt_axis * 1.5
   MultiplayerClient.send_packet({
       "type": Carnage.CarnageGameMessage.HandleKartPunched,
       "owner_peer_id": physics_kart_movement_sync.owner_peer_id,
+      "punch_location": from_kart.punch_area.global_position
     },
     MultiplayerPeer.TARGET_PEER_BROADCAST,
     MultiplayerPeer.TRANSFER_MODE_RELIABLE,
     MultiplayerClient.PacketSelfMode.SelfIncluded
   )
   physics_kart_movement_sync.apply_impulse(impulse)
-
+  physics_kart_movement_sync.apply_torque_impulse(torque)

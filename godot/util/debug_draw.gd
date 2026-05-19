@@ -20,7 +20,10 @@ class _Item:
     time_left = d
 
 func _ready() -> void:
-  _sphere_mmi = _make_mmi(SphereMesh.new())
+  var sphere := SphereMesh.new()
+  sphere.radius = 1.0
+  sphere.height = 2.0
+  _sphere_mmi = _make_mmi(sphere)
 
   var cyl := CylinderMesh.new()
   cyl.top_radius = LINE_RADIUS

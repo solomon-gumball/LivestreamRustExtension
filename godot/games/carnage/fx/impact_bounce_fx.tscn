@@ -1,0 +1,125 @@
+[gd_scene format=3 uid="uid://b3tovmjogglyv"]
+
+[ext_resource type="Texture2D" uid="uid://dps3ndsncm0be" path="res://games/carnage/fx/star_mask.png" id="1_j5bqu"]
+[ext_resource type="Script" uid="uid://htegvpt377i7" path="res://games/carnage/fx/impact_bounce_fx.gd" id="2_1o0le"]
+
+[sub_resource type="Gradient" id="Gradient_j5bqu"]
+interpolation_mode = 2
+offsets = PackedFloat32Array(0, 0.122994654, 0.59358287, 0.83778965, 1)
+colors = PackedColorArray(0.639216, 0.184314, 0.0392157, 0, 0.788235, 0.768627, 0, 1, 0.7647059, 0.6745098, 0, 1, 0.6747974, 0.30563712, 0, 0.21462694, 0.65098, 0.207843, 0, 0)
+
+[sub_resource type="GradientTexture1D" id="GradientTexture1D_x7ofh"]
+gradient = SubResource("Gradient_j5bqu")
+
+[sub_resource type="Curve" id="Curve_j5bqu"]
+_data = [Vector2(0, 0.517576), 0.0, 0.0, 0, 0, Vector2(0.056, 0.875425), 1.72203, 1.72203, 0, 0, Vector2(0.302667, 0.997991), 0.0337759, 0.0337759, 0, 0, Vector2(0.602667, 0.885471), -1.31458, -1.31458, 0, 0, Vector2(0.996393, 0.486754), 0.0, 0.0, 0, 0]
+point_count = 5
+
+[sub_resource type="CurveTexture" id="CurveTexture_x7ofh"]
+curve = SubResource("Curve_j5bqu")
+
+[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_j8lum"]
+emission_shape = 1
+emission_sphere_radius = 0.05
+angle_min = -86.4
+angle_max = 478.3
+direction = Vector3(0, 1, 0)
+spread = 180.0
+initial_velocity_min = 0.29999998
+initial_velocity_max = 1.3
+angular_velocity_min = -162.33
+angular_velocity_max = 457.35
+gravity = Vector3(0, 0, 0)
+scale_min = 0.03
+scale_max = 0.049999997
+scale_curve = SubResource("CurveTexture_x7ofh")
+color_ramp = SubResource("GradientTexture1D_x7ofh")
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_j5bqu"]
+transparency = 1
+shading_mode = 0
+vertex_color_use_as_albedo = true
+albedo_color = Color(1, 1, 0, 1)
+albedo_texture = ExtResource("1_j5bqu")
+billboard_mode = 3
+billboard_keep_scale = true
+particles_anim_h_frames = 1
+particles_anim_v_frames = 1
+particles_anim_loop = false
+
+[sub_resource type="PlaneMesh" id="PlaneMesh_x7ofh"]
+material = SubResource("StandardMaterial3D_j5bqu")
+orientation = 2
+
+[sub_resource type="Gradient" id="Gradient_x7ofh"]
+offsets = PackedFloat32Array(0, 0.456583, 1)
+colors = PackedColorArray(0.639216, 0.184314, 0.0392157, 0, 1, 0.637564, 0.482926, 1, 0.65098, 0.207843, 0, 0)
+
+[sub_resource type="GradientTexture1D" id="GradientTexture1D_xsly4"]
+gradient = SubResource("Gradient_x7ofh")
+
+[sub_resource type="Curve" id="Curve_ewjfs"]
+_data = [Vector2(0, 0.517576), 0.0, 0.0, 0, 0, Vector2(0.11397059, 0.9071141), 1.72203, 1.72203, 0, 0, Vector2(0.2959559, 1), 0.0337759, 0.0337759, 0, 0, Vector2(0.6360295, 0.49114633), 0.0, 0.0, 0, 0]
+point_count = 4
+
+[sub_resource type="CurveTexture" id="CurveTexture_ic6v8"]
+curve = SubResource("Curve_ewjfs")
+
+[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_5qvmy"]
+emission_shape_scale = Vector3(0, 1, 0)
+direction = Vector3(0, 1, 0)
+spread = 180.0
+initial_velocity_min = 0.59999996
+initial_velocity_max = 1.0
+angular_velocity_min = -162.33
+angular_velocity_max = 457.35
+gravity = Vector3(0, 0, 0)
+scale_min = 0.01
+scale_max = 0.01
+scale_curve = SubResource("CurveTexture_ic6v8")
+color_ramp = SubResource("GradientTexture1D_xsly4")
+
+[sub_resource type="Gradient" id="Gradient_xsly4"]
+interpolation_mode = 2
+offsets = PackedFloat32Array(0, 0.504178, 1)
+colors = PackedColorArray(1, 1, 1, 1, 1, 1, 1, 0.92549, 1, 1, 1, 0)
+
+[sub_resource type="GradientTexture2D" id="GradientTexture2D_ewjfs"]
+gradient = SubResource("Gradient_xsly4")
+fill = 1
+fill_from = Vector2(0.518519, 0.507123)
+fill_to = Vector2(0.789174, 0.222222)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_475k7"]
+transparency = 1
+shading_mode = 0
+vertex_color_use_as_albedo = true
+albedo_texture = SubResource("GradientTexture2D_ewjfs")
+billboard_mode = 3
+billboard_keep_scale = true
+particles_anim_h_frames = 1
+particles_anim_v_frames = 1
+particles_anim_loop = false
+
+[sub_resource type="PlaneMesh" id="PlaneMesh_jvxkq"]
+material = SubResource("StandardMaterial3D_475k7")
+orientation = 2
+
+[node name="Node3D" type="Node3D" unique_id=1696601357]
+script = ExtResource("2_1o0le")
+
+[node name="ImpactBounceFx" type="GPUParticles3D" parent="." unique_id=586114754]
+unique_name_in_owner = true
+lifetime = 0.4
+explosiveness = 0.89
+process_material = SubResource("ParticleProcessMaterial_j8lum")
+draw_pass_1 = SubResource("PlaneMesh_x7ofh")
+
+[node name="CircleSprites" type="GPUParticles3D" parent="." unique_id=1138935920]
+unique_name_in_owner = true
+transform = Transform3D(1.00301, 0, 0, 0, 1.00301, 0, 0, 0, 1.00301, 0, 0, 0)
+amount = 20
+lifetime = 0.4
+explosiveness = 0.89
+process_material = SubResource("ParticleProcessMaterial_5qvmy")
+draw_pass_1 = SubResource("PlaneMesh_jvxkq")
