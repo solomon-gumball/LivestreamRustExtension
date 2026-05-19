@@ -40,11 +40,6 @@ func _process(_delta: float) -> void:
     DebugDraw.draw_sphere(to_global(get_center_of_mass()), 0.02, Color.ORANGE, 0.0)
     return
 
-  # var input: Vector2 = physics_kart_movement_sync._sample_input().get("move", Vector2.ZERO)
-  # smoke_amount_acc = lerpf(smoke_amount_acc, input.x, 3.0 * _delta)
-  # smoke_fx_r.amount_ratio = smoke_amount_acc
-  # smoke_fx_l.amount_ratio = smoke_amount_acc
-
 func _integrate_forces(physics_state: PhysicsDirectBodyState3D) -> void:
   if not _has_pending_state:
     return

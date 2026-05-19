@@ -9,6 +9,10 @@
 [ext_resource type="Texture2D" uid="uid://db6nbed6w2fis" path="res://icons/s.png" id="6_cgy6g"]
 [ext_resource type="Texture2D" uid="uid://bptg6u6b4y5no" path="res://icons/a.png" id="7_d5drp"]
 [ext_resource type="Texture2D" uid="uid://dlwamiuq1f5t6" path="res://icons/d.png" id="8_yufsp"]
+[ext_resource type="Script" uid="uid://cleel6jrcvtnn" path="res://games/carnage/mobile_controls_overlay.gd" id="10_f720e"]
+[ext_resource type="Theme" uid="uid://bc7am0i2wif6u" path="res://ui/themes/default_button.tres" id="10_slwue"]
+[ext_resource type="Script" uid="uid://dog5h065dcuul" path="res://games/carnage/mobile_button_binding.gd" id="11_a4h86"]
+[ext_resource type="Script" uid="uid://fonwmk10vtmd" path="res://util/mobile_button.gd" id="13_ad5a5"]
 
 [sub_resource type="Resource" id="Resource_rlb33"]
 script = ExtResource("4_16guh")
@@ -37,6 +41,26 @@ metadata/_custom_type_script = "uid://jcsb6g17efi7"
 [sub_resource type="Theme" id="Theme_qn2ad"]
 default_font = ExtResource("2_qn2ad")
 default_font_size = 30
+
+[sub_resource type="Resource" id="Resource_ad5a5"]
+script = ExtResource("11_a4h86")
+action_name = "turn_left"
+button_path = NodePath("HBoxContainer/HBoxContainer/ButtonTurnLeft")
+
+[sub_resource type="Resource" id="Resource_a4h86"]
+script = ExtResource("11_a4h86")
+action_name = "turn_right"
+button_path = NodePath("HBoxContainer/HBoxContainer/ButtonTurnRight")
+
+[sub_resource type="Resource" id="Resource_16guh"]
+script = ExtResource("11_a4h86")
+action_name = "move_forward"
+button_path = NodePath("HBoxContainer/HBoxContainer2/ButtonMoveForward")
+
+[sub_resource type="Resource" id="Resource_bcsqp"]
+script = ExtResource("11_a4h86")
+action_name = "move_back"
+button_path = NodePath("HBoxContainer/HBoxContainer2/ButtonMoveBack")
 
 [node name="CarnageGame" type="Node3D" unique_id=1863440489]
 script = ExtResource("1_rhos2")
@@ -108,3 +132,304 @@ text = "END GAME"
 [node name="KartGameStateSynchronizer" type="Node" parent="." unique_id=463833223]
 unique_name_in_owner = true
 script = ExtResource("2_pjf2b")
+
+[node name="MobileControlsOverlay" type="CanvasLayer" parent="." unique_id=1468582101]
+layer = 4
+script = ExtResource("10_f720e")
+bindings = Array[ExtResource("11_a4h86")]([SubResource("Resource_ad5a5"), SubResource("Resource_a4h86"), SubResource("Resource_16guh"), SubResource("Resource_bcsqp")])
+
+[node name="HBoxContainer" type="HBoxContainer" parent="MobileControlsOverlay" unique_id=1840752478]
+custom_minimum_size = Vector2(0, 300)
+anchors_preset = 12
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 0
+size_flags_horizontal = 3
+
+[node name="HBoxContainer" type="HBoxContainer" parent="MobileControlsOverlay/HBoxContainer" unique_id=586187061]
+layout_mode = 2
+
+[node name="ButtonTurnLeft" type="BaseButton" parent="MobileControlsOverlay/HBoxContainer/HBoxContainer" unique_id=205972210]
+unique_name_in_owner = false
+process_mode = 0
+process_priority = 0
+process_physics_priority = 0
+process_thread_group = 0
+physics_interpolation_mode = 2
+auto_translate_mode = 0
+editor_description = ""
+visible = true
+modulate = Color(1, 1, 1, 1)
+self_modulate = Color(1, 1, 1, 1)
+show_behind_parent = false
+top_level = false
+clip_children = 0
+light_mask = 1
+visibility_layer = 1
+z_index = 0
+z_as_relative = true
+y_sort_enabled = false
+texture_filter = 0
+texture_repeat = 0
+material = null
+use_parent_material = false
+clip_contents = false
+custom_minimum_size = Vector2(200, 0)
+layout_direction = 0
+layout_mode = 2
+size_flags_horizontal = 1
+size_flags_vertical = 1
+size_flags_stretch_ratio = 1.0
+localize_numeral_system = true
+tooltip_text = ""
+tooltip_auto_translate_mode = 0
+focus_neighbor_left = NodePath("")
+focus_neighbor_top = NodePath("")
+focus_neighbor_right = NodePath("")
+focus_neighbor_bottom = NodePath("")
+focus_next = NodePath("")
+focus_previous = NodePath("")
+focus_mode = 2
+focus_behavior_recursive = 0
+mouse_filter = 2
+mouse_behavior_recursive = 0
+mouse_force_pass_scroll_events = true
+mouse_default_cursor_shape = 0
+accessibility_name = ""
+accessibility_description = ""
+accessibility_live = 0
+accessibility_controls_nodes = Array[NodePath]([])
+accessibility_described_by_nodes = Array[NodePath]([])
+accessibility_labeled_by_nodes = Array[NodePath]([])
+accessibility_flow_to_nodes = Array[NodePath]([])
+theme = ExtResource("10_slwue")
+theme_type_variation = &""
+disabled = false
+toggle_mode = false
+button_pressed = false
+action_mode = 1
+button_mask = 1
+keep_pressed_outside = false
+button_group = null
+shortcut = null
+shortcut_feedback = true
+shortcut_in_tooltip = true
+script = ExtResource("13_ad5a5")
+text = "<"
+border_width = 6
+
+[node name="ButtonTurnRight" type="BaseButton" parent="MobileControlsOverlay/HBoxContainer/HBoxContainer" unique_id=1983035299]
+unique_name_in_owner = false
+process_mode = 0
+process_priority = 0
+process_physics_priority = 0
+process_thread_group = 0
+physics_interpolation_mode = 2
+auto_translate_mode = 0
+editor_description = ""
+visible = true
+modulate = Color(1, 1, 1, 1)
+self_modulate = Color(1, 1, 1, 1)
+show_behind_parent = false
+top_level = false
+clip_children = 0
+light_mask = 1
+visibility_layer = 1
+z_index = 0
+z_as_relative = true
+y_sort_enabled = false
+texture_filter = 0
+texture_repeat = 0
+material = null
+use_parent_material = false
+clip_contents = false
+custom_minimum_size = Vector2(200, 0)
+layout_direction = 0
+layout_mode = 2
+size_flags_horizontal = 1
+size_flags_vertical = 1
+size_flags_stretch_ratio = 1.0
+localize_numeral_system = true
+tooltip_text = ""
+tooltip_auto_translate_mode = 0
+focus_neighbor_left = NodePath("")
+focus_neighbor_top = NodePath("")
+focus_neighbor_right = NodePath("")
+focus_neighbor_bottom = NodePath("")
+focus_next = NodePath("")
+focus_previous = NodePath("")
+focus_mode = 2
+focus_behavior_recursive = 0
+mouse_filter = 2
+mouse_behavior_recursive = 0
+mouse_force_pass_scroll_events = true
+mouse_default_cursor_shape = 0
+accessibility_name = ""
+accessibility_description = ""
+accessibility_live = 0
+accessibility_controls_nodes = Array[NodePath]([])
+accessibility_described_by_nodes = Array[NodePath]([])
+accessibility_labeled_by_nodes = Array[NodePath]([])
+accessibility_flow_to_nodes = Array[NodePath]([])
+theme = ExtResource("10_slwue")
+theme_type_variation = &""
+disabled = false
+toggle_mode = false
+button_pressed = false
+action_mode = 1
+button_mask = 1
+keep_pressed_outside = false
+button_group = null
+shortcut = null
+shortcut_feedback = true
+shortcut_in_tooltip = true
+script = ExtResource("13_ad5a5")
+text = ">"
+border_width = 6
+metadata/_custom_type_script = "uid://fonwmk10vtmd"
+
+[node name="HBoxContainer2" type="VBoxContainer" parent="MobileControlsOverlay/HBoxContainer" unique_id=1763525904]
+layout_mode = 2
+size_flags_horizontal = 10
+
+[node name="ButtonMoveForward" type="BaseButton" parent="MobileControlsOverlay/HBoxContainer/HBoxContainer2" unique_id=1492575544]
+unique_name_in_owner = false
+process_mode = 0
+process_priority = 0
+process_physics_priority = 0
+process_thread_group = 0
+physics_interpolation_mode = 2
+auto_translate_mode = 0
+editor_description = ""
+visible = true
+modulate = Color(1, 1, 1, 1)
+self_modulate = Color(1, 1, 1, 1)
+show_behind_parent = false
+top_level = false
+clip_children = 0
+light_mask = 1
+visibility_layer = 1
+z_index = 0
+z_as_relative = true
+y_sort_enabled = false
+texture_filter = 0
+texture_repeat = 0
+material = null
+use_parent_material = false
+clip_contents = false
+custom_minimum_size = Vector2(400, 0)
+layout_direction = 0
+layout_mode = 2
+size_flags_horizontal = 1
+size_flags_vertical = 3
+size_flags_stretch_ratio = 1.0
+localize_numeral_system = true
+tooltip_text = ""
+tooltip_auto_translate_mode = 0
+focus_neighbor_left = NodePath("")
+focus_neighbor_top = NodePath("")
+focus_neighbor_right = NodePath("")
+focus_neighbor_bottom = NodePath("")
+focus_next = NodePath("")
+focus_previous = NodePath("")
+focus_mode = 2
+focus_behavior_recursive = 0
+mouse_filter = 2
+mouse_behavior_recursive = 0
+mouse_force_pass_scroll_events = true
+mouse_default_cursor_shape = 0
+accessibility_name = ""
+accessibility_description = ""
+accessibility_live = 0
+accessibility_controls_nodes = Array[NodePath]([])
+accessibility_described_by_nodes = Array[NodePath]([])
+accessibility_labeled_by_nodes = Array[NodePath]([])
+accessibility_flow_to_nodes = Array[NodePath]([])
+theme = ExtResource("10_slwue")
+theme_type_variation = &""
+disabled = false
+toggle_mode = false
+button_pressed = false
+action_mode = 1
+button_mask = 1
+keep_pressed_outside = false
+button_group = null
+shortcut = null
+shortcut_feedback = true
+shortcut_in_tooltip = true
+script = ExtResource("13_ad5a5")
+text = "ACCELERATE"
+border_width = 6
+metadata/_custom_type_script = "uid://fonwmk10vtmd"
+
+[node name="ButtonMoveBack" type="BaseButton" parent="MobileControlsOverlay/HBoxContainer/HBoxContainer2" unique_id=302911357]
+unique_name_in_owner = false
+process_mode = 0
+process_priority = 0
+process_physics_priority = 0
+process_thread_group = 0
+physics_interpolation_mode = 2
+auto_translate_mode = 0
+editor_description = ""
+visible = true
+modulate = Color(1, 1, 1, 1)
+self_modulate = Color(1, 1, 1, 1)
+show_behind_parent = false
+top_level = false
+clip_children = 0
+light_mask = 1
+visibility_layer = 1
+z_index = 0
+z_as_relative = true
+y_sort_enabled = false
+texture_filter = 0
+texture_repeat = 0
+material = null
+use_parent_material = false
+clip_contents = false
+custom_minimum_size = Vector2(400, 0)
+layout_direction = 0
+layout_mode = 2
+size_flags_horizontal = 1
+size_flags_vertical = 3
+size_flags_stretch_ratio = 1.0
+localize_numeral_system = true
+tooltip_text = ""
+tooltip_auto_translate_mode = 0
+focus_neighbor_left = NodePath("")
+focus_neighbor_top = NodePath("")
+focus_neighbor_right = NodePath("")
+focus_neighbor_bottom = NodePath("")
+focus_next = NodePath("")
+focus_previous = NodePath("")
+focus_mode = 2
+focus_behavior_recursive = 0
+mouse_filter = 2
+mouse_behavior_recursive = 0
+mouse_force_pass_scroll_events = true
+mouse_default_cursor_shape = 0
+accessibility_name = ""
+accessibility_description = ""
+accessibility_live = 0
+accessibility_controls_nodes = Array[NodePath]([])
+accessibility_described_by_nodes = Array[NodePath]([])
+accessibility_labeled_by_nodes = Array[NodePath]([])
+accessibility_flow_to_nodes = Array[NodePath]([])
+theme = ExtResource("10_slwue")
+theme_type_variation = &""
+disabled = false
+toggle_mode = false
+button_pressed = false
+action_mode = 1
+button_mask = 1
+keep_pressed_outside = false
+button_group = null
+shortcut = null
+shortcut_feedback = true
+shortcut_in_tooltip = true
+script = ExtResource("13_ad5a5")
+text = "REVERSE"
+border_width = 6
+metadata/_custom_type_script = "uid://fonwmk10vtmd"

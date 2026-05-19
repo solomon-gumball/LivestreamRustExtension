@@ -208,6 +208,13 @@ func apply_torque_impulse(torque: Vector3) -> void:
   queued_torque_impulse += torque
 
 func _sample_input() -> Dictionary:
+  var mobile_overlay := MobileControlsOverlay.get_instance()
+  # if mobile and DisplayServer.is_touchscreen_available():
+  if mobile_overlay.is_active:
+    return {
+      "move": mobile_overlay.get_vector("move_back", "move_forward", "turn_right", "turn_left"),
+      "punch_pressed": mobile_overlay.is_action_just_pressed("punch"),
+    }
   return {
     "move": Input.get_vector("move_back", "move_forward", "turn_right", "turn_left"),
     "punch_pressed": Input.is_action_just_pressed("punch"),
