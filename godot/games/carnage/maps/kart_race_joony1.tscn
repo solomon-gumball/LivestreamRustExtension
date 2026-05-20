@@ -93,7 +93,7 @@ size = Vector3(83.27426, 11.683105, 72.30054)
 [sub_resource type="SphereShape3D" id="SphereShape3D_ex1rm"]
 radius = 57.58551
 
-[node name="joony1" unique_id=974291500 instance=ExtResource("1_4o23m")]
+[node name="joony1" unique_id=1411909044 instance=ExtResource("1_4o23m")]
 script = ExtResource("2_l5mcx")
 
 [node name="RaceCheckpoint2" parent="." index="0" unique_id=77519353 instance=ExtResource("4_fh8sn")]
@@ -117,14 +117,14 @@ plane_material = SubResource("StandardMaterial3D_6bsqb")
 box_shape = SubResource("BoxShape3D_0m0lc")
 width = 3.0
 
-[node name="Cube" parent="." index="4" unique_id=1043224015]
+[node name="Cube" parent="." index="4" unique_id=651794002]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -16.91842, 1.1874971, 0)
 
-[node name="Camera" parent="." index="12" unique_id=530566274]
+[node name="Camera" parent="." index="7" unique_id=1577099715]
 transform = Transform3D(0.48056605, 0.345762, -0.80591863, -9.983778e-07, 0.9189931, 0.39427358, 0.8769585, -0.1894737, 0.44163725, -134.88605, 24.179935, -18.159336)
 current = true
 
-[node name="DebugCamera" parent="." index="13" unique_id=1098239593 instance=ExtResource("3_l5mcx")]
+[node name="DebugCamera" parent="." index="11" unique_id=1098239593 instance=ExtResource("3_l5mcx")]
 unique_name_in_owner = true
 transform = Transform3D(0.7120751, 0.1608985, -0.68341845, -7.450581e-09, 0.97338724, 0.22916643, 0.7021034, -0.16318369, 0.69312483, -44.501244, 3.1134653, 4.1785192)
 allow_free_cam = false
@@ -133,15 +133,15 @@ allow_free_cam = false
 unique_name_in_owner = true
 attributes = SubResource("CameraAttributesPhysical_3bvbw")
 
-[node name="CSGSphere3D" type="CSGSphere3D" parent="." index="14" unique_id=1851498022]
+[node name="CSGSphere3D" type="CSGSphere3D" parent="." index="12" unique_id=1851498022]
 transform = Transform3D(2, 0, 0, 0, 2, 0, 0, 0, 2, -0.025983855, 0.034902573, 0.13105178)
 radius = 100.0
 material = SubResource("StandardMaterial3D_fh8sn")
 
-[node name="WorldEnvironment" type="WorldEnvironment" parent="." index="15" unique_id=1323169795]
+[node name="WorldEnvironment" type="WorldEnvironment" parent="." index="13" unique_id=1323169795]
 environment = SubResource("Environment_ex1rm")
 
-[node name="OutOfBoundsArea" type="Area3D" parent="." index="16" unique_id=706782503]
+[node name="OutOfBoundsArea" type="Area3D" parent="." index="14" unique_id=706782503]
 unique_name_in_owner = true
 collision_layer = 0
 collision_mask = 2
@@ -150,14 +150,14 @@ collision_mask = 2
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.594162, -5.4501076, -0.16931152)
 shape = SubResource("BoxShape3D_ex1rm")
 
-[node name="DirectionalLight3D" type="DirectionalLight3D" parent="." index="17" unique_id=1351853133]
+[node name="DirectionalLight3D" type="DirectionalLight3D" parent="." index="15" unique_id=1351853133]
 transform = Transform3D(-0.49766108, 0.63648874, 0.58924997, -0.29978192, -0.76370305, 0.57174164, 0.8139191, 0.10788706, 0.5708731, 2.0339265, 2.6281023, -0.35323796)
 light_color = Color(0.99646264, 0.82775444, 0.63832206, 1)
 light_energy = 0.1
 shadow_enabled = true
 shadow_opacity = 0.68
 
-[node name="InBoundsArea" type="Area3D" parent="." index="19" unique_id=215205796]
+[node name="InBoundsArea" type="Area3D" parent="." index="16" unique_id=215205796]
 unique_name_in_owner = true
 collision_layer = 0
 collision_mask = 2
@@ -166,44 +166,44 @@ monitorable = false
 [node name="CollisionShape3D" type="CollisionShape3D" parent="InBoundsArea" index="0" unique_id=807795049]
 shape = SubResource("SphereShape3D_ex1rm")
 
-[node name="AnimationSynchronizer" type="Node" parent="AnimationPlayer" parent_id_path=PackedInt32Array(511524919) index="0" unique_id=178170591 node_paths=PackedStringArray("animation_player")]
+[node name="strawberry" parent="." index="17" unique_id=1254489400 instance=ExtResource("7_oogcp")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5.5087357, 6.695494, 7.8512115)
+
+[node name="strawberry8" parent="." index="18" unique_id=1814201046 instance=ExtResource("7_oogcp")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 8.935375, 6.695494, 6.8262806)
+
+[node name="strawberry9" parent="." index="19" unique_id=1506964570 instance=ExtResource("7_oogcp")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 8.994276, 6.695494, 3.075088)
+
+[node name="strawberry10" parent="." index="20" unique_id=1892624621 instance=ExtResource("7_oogcp")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 11.382543, 6.695494, -0.22649884)
+
+[node name="strawberry3" parent="." index="21" unique_id=1789231185 instance=ExtResource("7_oogcp")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.5626104, 6.695494, 11.158326)
+
+[node name="strawberry4" parent="." index="22" unique_id=1548913955 instance=ExtResource("7_oogcp")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.2935312, 6.695494, 9.103045)
+
+[node name="strawberry5" parent="." index="23" unique_id=722312382 instance=ExtResource("7_oogcp")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4.7524147, 6.695494, 10.066855)
+
+[node name="strawberry6" parent="." index="24" unique_id=1596314794 instance=ExtResource("7_oogcp")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -6.2281113, 6.695494, 6.7151823)
+
+[node name="strawberry7" parent="." index="25" unique_id=1777277386 instance=ExtResource("7_oogcp")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -9.754641, 6.695493, 5.5071964)
+
+[node name="strawberry2" parent="." index="26" unique_id=1170248782 instance=ExtResource("7_oogcp")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -12.625655, 1.6172271, -5.5937324)
+
+[node name="strawberry11" parent="." index="27" unique_id=2003923719 instance=ExtResource("7_oogcp")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -14.890054, 1.6172271, -2.9541807)
+
+[node name="strawberry12" parent="." index="28" unique_id=510195852 instance=ExtResource("7_oogcp")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -13.663225, 1.6172271, 0.8295951)
+
+[node name="AnimationSynchronizer" type="Node" parent="AnimationPlayer" parent_id_path=PackedInt32Array(1659409417) index="0" unique_id=178170591 node_paths=PackedStringArray("animation_player")]
 unique_name_in_owner = true
 script = ExtResource("6_ex1rm")
 animation_player = NodePath("..")
 metadata/_custom_type_script = "uid://txxkpqyixtos"
-
-[node name="strawberry" parent="." index="24" unique_id=1254489400 instance=ExtResource("7_oogcp")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5.5087357, 6.695494, 7.8512115)
-
-[node name="strawberry8" parent="." index="25" unique_id=1814201046 instance=ExtResource("7_oogcp")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 8.935375, 6.695494, 6.8262806)
-
-[node name="strawberry9" parent="." index="26" unique_id=1506964570 instance=ExtResource("7_oogcp")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 8.994276, 6.695494, 3.075088)
-
-[node name="strawberry10" parent="." index="27" unique_id=1892624621 instance=ExtResource("7_oogcp")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 11.382543, 6.695494, -0.22649884)
-
-[node name="strawberry3" parent="." index="28" unique_id=1789231185 instance=ExtResource("7_oogcp")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.5626104, 6.695494, 11.158326)
-
-[node name="strawberry4" parent="." index="29" unique_id=1548913955 instance=ExtResource("7_oogcp")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.2935312, 6.695494, 9.103045)
-
-[node name="strawberry5" parent="." index="30" unique_id=722312382 instance=ExtResource("7_oogcp")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4.7524147, 6.695494, 10.066855)
-
-[node name="strawberry6" parent="." index="31" unique_id=1596314794 instance=ExtResource("7_oogcp")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -6.2281113, 6.695494, 6.7151823)
-
-[node name="strawberry7" parent="." index="32" unique_id=1777277386 instance=ExtResource("7_oogcp")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -9.754641, 6.695493, 5.5071964)
-
-[node name="strawberry2" parent="." index="33" unique_id=1170248782 instance=ExtResource("7_oogcp")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -12.625655, 1.6172271, -5.5937324)
-
-[node name="strawberry11" parent="." index="34" unique_id=2003923719 instance=ExtResource("7_oogcp")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -14.890054, 1.6172271, -2.9541807)
-
-[node name="strawberry12" parent="." index="35" unique_id=510195852 instance=ExtResource("7_oogcp")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -13.663225, 1.6172271, 0.8295951)
