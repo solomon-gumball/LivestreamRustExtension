@@ -46,8 +46,7 @@ wheel_friction_curve = SubResource("Curve_kdfcr")
 [node name="SmokeFX" type="GPUParticles3D" parent="." unique_id=916975684]
 unique_name_in_owner = true
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.10805744, 0)
-amount = 30
-lifetime = 1.3
+amount = 25
 randomness = 0.68
 process_material = SubResource("ParticleProcessMaterial_xscqx")
 draw_pass_1 = ExtResource("3_qcdd8")

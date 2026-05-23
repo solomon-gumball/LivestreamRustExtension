@@ -72,7 +72,7 @@ draw_pass_1 = ExtResource("5_1qgq1")
 
 [node name="gumbot" parent="VisualNode/Mesh" unique_id=2126276004 instance=ExtResource("1_pnixd")]
 unique_name_in_owner = true
-transform = Transform3D(12.360951, 0, 0, 0, 12.360951, 0, 0, 0, 12.360951, 0, -0.019290864, -0.7726673)
+transform = Transform3D(12.36095, 0, 0, 0, 12.36095, 0, 0, 0, 12.36095, 0, -0.019290864, -0.77266717)
 collision_layer = 0
 collision_mask = 0
 surface_mat = SubResource("ShaderMaterial_dbe4r")

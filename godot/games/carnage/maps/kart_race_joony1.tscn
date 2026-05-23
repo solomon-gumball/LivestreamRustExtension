@@ -4,7 +4,6 @@
 [ext_resource type="Script" uid="uid://brnsoej68m6s8" path="res://games/carnage/kart_race_map.gd" id="2_l5mcx"]
 [ext_resource type="PackedScene" uid="uid://diyvoye7vs7ks" path="res://games/debug_camera.tscn" id="3_l5mcx"]
 [ext_resource type="PackedScene" uid="uid://crpnxmsftnv0f" path="res://games/carnage/props/race_checkpoint.tscn" id="4_fh8sn"]
-[ext_resource type="Material" uid="uid://b8x72k1h2s85q" path="res://games/carnage/materials/world_grid.tres" id="5_dvnii"]
 [ext_resource type="Texture2D" uid="uid://ofvawp17cyry" path="res://games/marbles/textures/checker.png" id="5_ex1rm"]
 [ext_resource type="Script" uid="uid://txxkpqyixtos" path="res://games/_synchronizers/animation_synchronizer.gd" id="6_ex1rm"]
 [ext_resource type="PackedScene" uid="uid://bhmo0bd0n06dp" path="res://games/carnage/props/strawberry_prop.tscn" id="7_oogcp"]
@@ -31,7 +30,7 @@ size = Vector3(4, 1, 0.2)
 
 [sub_resource type="PlaneMesh" id="PlaneMesh_khry1"]
 resource_local_to_scene = true
-size = Vector2(3.5, 0.8)
+size = Vector2(4, 0.8)
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_1nh41"]
 resource_local_to_scene = true
@@ -47,7 +46,7 @@ uv1_world_triplanar = true
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_7vjrd"]
 resource_local_to_scene = true
-size = Vector3(3.5, 1, 0.2)
+size = Vector3(4, 1, 0.2)
 
 [sub_resource type="PlaneMesh" id="PlaneMesh_waeir"]
 resource_local_to_scene = true
@@ -70,7 +69,7 @@ resource_local_to_scene = true
 size = Vector3(3, 1, 0.2)
 
 [sub_resource type="CameraAttributesPhysical" id="CameraAttributesPhysical_3bvbw"]
-frustum_focal_length = 50.0
+frustum_focal_length = 17.5
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_fh8sn"]
 cull_mode = 1
@@ -78,12 +77,13 @@ shading_mode = 0
 albedo_color = Color(0.2921582, 0.03526208, 0.4698527, 1)
 
 [sub_resource type="Environment" id="Environment_ex1rm"]
-background_mode = 3
 ambient_light_source = 2
-ambient_light_color = Color(1, 1, 1, 1)
-ambient_light_energy = 0.3
+ambient_light_color = Color(0.9406359, 0.94063586, 0.94063574, 1)
+ambient_light_energy = 0.7
 tonemap_mode = 2
 ssao_enabled = true
+ssao_radius = 7.97
+ssao_intensity = 15.28
 glow_enabled = true
 adjustment_enabled = true
 adjustment_saturation = 1.2
@@ -94,36 +94,36 @@ size = Vector3(83.27426, 11.683105, 72.30054)
 [sub_resource type="SphereShape3D" id="SphereShape3D_ex1rm"]
 radius = 57.58551
 
-[node name="joony1" unique_id=1640338176 instance=ExtResource("1_4o23m")]
+[node name="joony1" unique_id=1792365166 instance=ExtResource("1_4o23m")]
 script = ExtResource("2_l5mcx")
 
 [node name="RaceCheckpoint2" parent="." index="0" unique_id=77519353 instance=ExtResource("4_fh8sn")]
-transform = Transform3D(0.886244, 0, -0.46321872, 0, 1, 0, 0.46321872, 0, 0.886244, -12.104145, 1.3950458, -8.329146)
+transform = Transform3D(0.43990782, 0, 0.8980429, 0, 1, 0, -0.8980429, 0, 0.43990782, 11.67508, 1.7714648, 4.942031)
 plane_mesh = SubResource("PlaneMesh_oogcp")
 plane_material = SubResource("StandardMaterial3D_dvnii")
 box_shape = SubResource("BoxShape3D_wxgs8")
 width = 4.0
 
 [node name="RaceCheckpoint4" parent="." index="1" unique_id=35775725 instance=ExtResource("4_fh8sn")]
-transform = Transform3D(0.9973626, 0.01657324, 0.070661806, -0.016614769, 0.99986196, 1.1641532e-10, -0.07065204, -0.0011740297, 0.9975003, 9.970005, 6.455897, -3.5891397)
+transform = Transform3D(0.9706073, -0.0978761, 0.21986789, 0.09699443, 0.9951745, 0.014828376, -0.22025822, 0.006933433, 0.975417, -6.4754257, 4.577978, 2.3062346)
 plane_mesh = SubResource("PlaneMesh_khry1")
 plane_material = SubResource("StandardMaterial3D_1nh41")
 box_shape = SubResource("BoxShape3D_7vjrd")
-width = 3.5
+width = 4.0
 
 [node name="RaceCheckpoint3" parent="." index="2" unique_id=1272997953 instance=ExtResource("4_fh8sn")]
-transform = Transform3D(0.9719035, 0, 0.2353796, 0, 1, 0, -0.2353796, 0, 0.9719035, -5.668305, 13.238943, 1.5544068)
+transform = Transform3D(0.40151626, 0, -0.9158519, 0, 1, 0, 0.9158519, 0, 0.40151626, 0.7628393, 10.925606, 0.18908656)
 plane_mesh = SubResource("PlaneMesh_waeir")
 plane_material = SubResource("StandardMaterial3D_6bsqb")
 box_shape = SubResource("BoxShape3D_0m0lc")
 width = 3.0
 
-[node name="Cube_002" parent="." index="6" unique_id=244920034]
-surface_material_override/0 = ExtResource("5_dvnii")
-
-[node name="Camera" parent="." index="10" unique_id=1321101087]
-transform = Transform3D(0.48056605, 0.345762, -0.80591863, -9.983778e-07, 0.9189931, 0.39427358, 0.8769585, -0.1894737, 0.44163725, -134.88605, 24.179935, -18.159336)
+[node name="Camera" parent="." index="10" unique_id=224611777]
+transform = Transform3D(-0.73736036, -0.19832902, 0.64572835, -2.2351738e-08, 0.9559273, 0.29360345, -0.67549944, 0.21649157, -0.7048629, 27.029505, 14.663501, -29.50481)
 current = true
+
+[node name="Plate2" parent="." index="12" unique_id=2080485997]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, -1, 0, 1, -4.371139e-08, 0.011883736, -1.6891447, 0.01194191)
 
 [node name="DebugCamera" parent="." index="13" unique_id=1098239593 instance=ExtResource("3_l5mcx")]
 unique_name_in_owner = true
@@ -142,7 +142,27 @@ material = SubResource("StandardMaterial3D_fh8sn")
 [node name="WorldEnvironment" type="WorldEnvironment" parent="." index="15" unique_id=1323169795]
 environment = SubResource("Environment_ex1rm")
 
-[node name="OutOfBoundsArea" type="Area3D" parent="." index="16" unique_id=706782503]
+[node name="SpotLight3D" type="SpotLight3D" parent="." index="16" unique_id=2040040667]
+transform = Transform3D(-0.50000006, 0, -0.8660254, -0.8660254, 0, 0.50000006, 0, 1, 0, -11.728811, 8.8076725, -1.0762072)
+light_energy = 10.0
+spot_range = 14.215958
+
+[node name="SpotLight3D4" type="SpotLight3D" parent="." index="17" unique_id=662400993]
+transform = Transform3D(-0.45972916, -0.3931878, -0.7962741, -0.8660254, 0, 0.50000006, -0.19659393, 0.9194582, -0.34051058, -11.61684, 8.267803, -13.120645)
+light_energy = 10.0
+spot_range = 14.215958
+
+[node name="SpotLight3D2" type="SpotLight3D" parent="." index="18" unique_id=1911375735]
+transform = Transform3D(0.06530639, 0.9914335, 0.11311395, -0.9963928, 0.058633838, 0.061347526, 0.054189686, -0.11671231, 0.9916863, 0.70993567, 7.3415794, 12.982639)
+light_energy = 10.0
+spot_range = 9.426559
+
+[node name="SpotLight3D3" type="SpotLight3D" parent="." index="19" unique_id=993830223]
+transform = Transform3D(0.28081074, -0.8273944, 0.48637834, -0.8660254, -3.2261955e-08, 0.5000001, -0.41369724, -0.56162137, -0.71654457, 5.2033563, 10.374534, -9.120271)
+light_energy = 10.0
+spot_range = 12.150971
+
+[node name="OutOfBoundsArea" type="Area3D" parent="." index="20" unique_id=706782503]
 unique_name_in_owner = true
 collision_layer = 0
 collision_mask = 2
@@ -151,14 +171,13 @@ collision_mask = 2
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.594162, -5.4501076, -0.16931152)
 shape = SubResource("BoxShape3D_ex1rm")
 
-[node name="DirectionalLight3D" type="DirectionalLight3D" parent="." index="17" unique_id=1351853133]
-transform = Transform3D(-0.29307592, 0.9246663, 0.24310233, -0.5016396, -0.36517474, 0.7842228, 0.8139191, 0.10788703, 0.5708731, 2.0339265, 35.720615, -2.61557)
-light_color = Color(0.99646264, 0.82775444, 0.63832206, 1)
-light_energy = 0.1
+[node name="DirectionalLight3D" type="DirectionalLight3D" parent="." index="21" unique_id=1351853133]
+transform = Transform3D(-0.70922345, 0.48519897, 0.511453, -0.40769696, -0.8741436, 0.2639253, 0.57513946, -0.021335796, 0.81777716, -0.30976057, 15.241773, 9.353657)
+light_energy = 0.254
 shadow_enabled = true
 shadow_opacity = 0.68
 
-[node name="InBoundsArea" type="Area3D" parent="." index="19" unique_id=215205796]
+[node name="InBoundsArea" type="Area3D" parent="." index="23" unique_id=215205796]
 unique_name_in_owner = true
 collision_layer = 0
 collision_mask = 2
@@ -167,37 +186,30 @@ monitorable = false
 [node name="CollisionShape3D" type="CollisionShape3D" parent="InBoundsArea" index="0" unique_id=807795049]
 shape = SubResource("SphereShape3D_ex1rm")
 
-[node name="strawberry" parent="." index="20" unique_id=1254489400 instance=ExtResource("7_oogcp")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5.5087357, 6.695494, 7.8512115)
+[node name="Strawberries" type="Node3D" parent="." index="24" unique_id=1965071959]
 
-[node name="strawberry8" parent="." index="21" unique_id=1814201046 instance=ExtResource("7_oogcp")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 8.935375, 6.695494, 6.8262806)
+[node name="strawberry2" parent="Strawberries" index="0" unique_id=1254489400 instance=ExtResource("7_oogcp")]
+transform = Transform3D(0.7, 0, 0, 0, 0.7, 0, 0, 0, 0.7, -6.2766457, 4.617225, 4.02224)
 
-[node name="strawberry9" parent="." index="22" unique_id=1506964570 instance=ExtResource("7_oogcp")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 8.994276, 6.695494, 3.075088)
+[node name="strawberry3" parent="Strawberries" index="1" unique_id=677832661 instance=ExtResource("7_oogcp")]
+transform = Transform3D(0.7, 0, 0, 0, 0.6954462, 0.07971564, 0, -0.07971564, 0.6954462, -3.75569, 4.8617864, 5.108297)
 
-[node name="strawberry10" parent="." index="23" unique_id=1892624621 instance=ExtResource("7_oogcp")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 11.382543, 6.695494, -0.22649884)
+[node name="strawberry4" parent="Strawberries" index="2" unique_id=342067599 instance=ExtResource("7_oogcp")]
+transform = Transform3D(0.7, 0, 0, 0, 0.7, 0, 0, 0, 0.7, 4.6781974, 4.701751, 3.9406028)
 
-[node name="strawberry5" parent="." index="24" unique_id=722312382 instance=ExtResource("7_oogcp")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4.7524147, 6.695494, 10.066855)
+[node name="strawberry5" parent="Strawberries" index="3" unique_id=706322280 instance=ExtResource("7_oogcp")]
+transform = Transform3D(0.695282, 0.0811356, 0, -0.0811356, 0.695282, 0, 0, 0, 0.7, 7.4067373, 4.47691, 2.7169456)
 
-[node name="strawberry6" parent="." index="25" unique_id=1596314794 instance=ExtResource("7_oogcp")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -6.2281113, 6.695494, 6.7151823)
+[node name="strawberry6" parent="Strawberries" index="4" unique_id=1771760614 instance=ExtResource("7_oogcp")]
+transform = Transform3D(0.7, 0, 0, 0, 0.7, 0, 0, 0, 0.7, 6.3007464, 4.7017508, -0.39340663)
 
-[node name="strawberry7" parent="." index="26" unique_id=1777277386 instance=ExtResource("7_oogcp")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -9.754641, 6.695493, 5.5071964)
+[node name="strawberry7" parent="Strawberries" index="5" unique_id=82618719 instance=ExtResource("7_oogcp")]
+transform = Transform3D(0.7, 0, 0, 0, 0.7, 0, 0, 0, 0.7, 5.1485524, 4.7017508, -4.361932)
 
-[node name="strawberry2" parent="." index="27" unique_id=1170248782 instance=ExtResource("7_oogcp")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -12.625655, 1.6172271, -5.5937324)
+[node name="strawberry8" parent="Strawberries" index="6" unique_id=987291149 instance=ExtResource("7_oogcp")]
+transform = Transform3D(0.7, 0, 0, 0, 0.7, 0, 0, 0, 0.7, 2.819241, 4.7017508, -6.156411)
 
-[node name="strawberry11" parent="." index="28" unique_id=2003923719 instance=ExtResource("7_oogcp")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -14.890054, 1.6172271, -2.9541807)
-
-[node name="strawberry12" parent="." index="29" unique_id=510195852 instance=ExtResource("7_oogcp")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -13.663225, 1.6172271, 0.8295951)
-
-[node name="AnimationSynchronizer" type="Node" parent="AnimationPlayer" parent_id_path=PackedInt32Array(1739291913) index="0" unique_id=178170591 node_paths=PackedStringArray("animation_player")]
+[node name="AnimationSynchronizer" type="Node" parent="AnimationPlayer" parent_id_path=PackedInt32Array(246115815) index="0" unique_id=178170591 node_paths=PackedStringArray("animation_player")]
 unique_name_in_owner = true
 script = ExtResource("6_ex1rm")
 animation_player = NodePath("..")

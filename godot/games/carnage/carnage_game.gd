@@ -207,8 +207,9 @@ func _animation_finished(animation_name: String) -> void:
     var kart: PhysicsKart = karts_by_peer_id.get(MultiplayerClient.my_peer_id(), null)
     map.debug_camera.snap_to_camera(map.animation_camera)
     # map.debug_camera._follow_state.move_lerp = 5.0
-    map.debug_camera.set_default_orbit_distance(5.0)
-    map.debug_camera.enter_follow_mode(kart, deg_to_rad(25.0))
+    map.debug_camera.set_default_orbit_distance(2.0)
+    map.debug_camera.enter_follow_mode(kart, deg_to_rad(25.0), Vector3(0, 0.261, 0))
+    map.debug_camera._follow_state.prevent_wall_clip = true
     map.debug_camera.allow_free_cam = !lobby.is_player(MultiplayerClient.my_peer_id())
     map.debug_camera._free_state.mouse_sensitivity = .001
     await get_tree().process_frame

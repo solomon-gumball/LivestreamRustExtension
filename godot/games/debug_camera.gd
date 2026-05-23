@@ -68,8 +68,8 @@ func _raycast_node_at(screen_pos: Vector2) -> Node3D:
     return hits[0].collider as Node3D
   return null
 
-func enter_follow_mode(node_to_follow: Node3D, pitch: float = NAN) -> void:
-  _follow_state.set_target(node_to_follow, pitch)
+func enter_follow_mode(node_to_follow: Node3D, pitch: float = NAN, local_offset: Vector3 = Vector3.ZERO) -> void:
+  _follow_state.set_target(node_to_follow, pitch, local_offset)
   _state.change_state(_follow_state)
 
 func set_default_orbit_distance(new_distance: float) -> void:
@@ -201,8 +201,9 @@ class FollowState extends DebugCameraState:
   var lock_pitch: bool = false
 
   var target: Node3D = null
+  var target_local_offset: Vector3 = Vector3.ZERO
 
-  func set_target(value: Node3D, pitch: float = NAN) -> void:
+  func set_target(value: Node3D, pitch: float = NAN, local_offset: Vector3 = Vector3.ZERO) -> void:
     if value == target:
       return
     _t = 0.0
@@ -210,6 +211,7 @@ class FollowState extends DebugCameraState:
     _from_target = target if had_target else null
     _from_transform = cam.global_transform
     target = value
+    target_local_offset = local_offset
     if not is_instance_valid(target):
       return
     orbit_distance = default_orbit_distance
@@ -221,7 +223,10 @@ class FollowState extends DebugCameraState:
       cam._yaw = atan2(-forward.x, -forward.z)
       cam._pitch = asin(clamp(-forward.y, -1.0, 1.0))
       cam._pitch = clamp(cam._pitch, deg_to_rad(-89.0), deg_to_rad(89.0))
-    _lerped_position = target.global_position if is_instance_valid(target) else Vector3.ZERO
+    _lerped_position = _pivot_position(target) if is_instance_valid(target) else Vector3.ZERO
+
+  func _pivot_position(node: Node3D) -> Vector3:
+    return node.global_position + node.global_transform.basis * target_local_offset
 
   var orbit_distance: float = default_orbit_distance
   var _current_distance: float = 5.0
@@ -268,7 +273,7 @@ class FollowState extends DebugCameraState:
 
   func _compute_safe_distance(orbit_dir: Vector3) -> float:
     var space := cam.get_world_3d().direct_space_state
-    var from := target.global_position
+    var from := _pivot_position(target)
     var to := from + orbit_dir * orbit_distance
     var query := PhysicsRayQueryParameters3D.create(from, to)
     query.collision_mask = 1
@@ -295,9 +300,9 @@ class FollowState extends DebugCameraState:
         cam._pitch = clamp(cam._pitch, deg_to_rad(-89.0), deg_to_rad(89.0))
 
     if move_lerp > 0.0:
-      _lerped_position = _lerped_position.lerp(target.global_position, move_lerp * delta)
+      _lerped_position = _lerped_position.lerp(_pivot_position(target), move_lerp * delta)
     else:
-      _lerped_position = target.global_position
+      _lerped_position = _pivot_position(target)
 
     var orbit_dir := Vector3(
       sin(cam._yaw) * cos(cam._pitch),

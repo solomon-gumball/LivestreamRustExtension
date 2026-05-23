@@ -9,10 +9,10 @@
 [ext_resource type="Texture2D" uid="uid://db6nbed6w2fis" path="res://icons/s.png" id="6_cgy6g"]
 [ext_resource type="Texture2D" uid="uid://bptg6u6b4y5no" path="res://icons/a.png" id="7_d5drp"]
 [ext_resource type="Texture2D" uid="uid://dlwamiuq1f5t6" path="res://icons/d.png" id="8_yufsp"]
-[ext_resource type="Script" uid="uid://cleel6jrcvtnn" path="res://games/carnage/mobile_controls_overlay.gd" id="10_f720e"]
+[ext_resource type="Script" path="res://games/carnage/mobile_controls_overlay.gd" id="10_f720e"]
 [ext_resource type="Theme" uid="uid://bc7am0i2wif6u" path="res://ui/themes/default_button.tres" id="10_slwue"]
-[ext_resource type="Script" uid="uid://dog5h065dcuul" path="res://games/carnage/mobile_button_binding.gd" id="11_a4h86"]
-[ext_resource type="Script" uid="uid://fonwmk10vtmd" path="res://util/mobile_button.gd" id="13_ad5a5"]
+[ext_resource type="Script" path="res://games/carnage/mobile_button_binding.gd" id="11_a4h86"]
+[ext_resource type="Script" path="res://util/mobile_button.gd" id="13_ad5a5"]
 
 [sub_resource type="Resource" id="Resource_rlb33"]
 script = ExtResource("4_16guh")
@@ -288,7 +288,6 @@ shortcut_in_tooltip = true
 script = ExtResource("13_ad5a5")
 text = ">"
 border_width = 6
-metadata/_custom_type_script = "uid://fonwmk10vtmd"
 
 [node name="HBoxContainer2" type="VBoxContainer" parent="MobileControlsOverlay/HBoxContainer" unique_id=1763525904]
 layout_mode = 2
@@ -362,7 +361,6 @@ shortcut_in_tooltip = true
 script = ExtResource("13_ad5a5")
 text = "ACCELERATE"
 border_width = 6
-metadata/_custom_type_script = "uid://fonwmk10vtmd"
 
 [node name="ButtonMoveBack" type="BaseButton" parent="MobileControlsOverlay/HBoxContainer/HBoxContainer2" unique_id=302911357]
 unique_name_in_owner = false
@@ -432,4 +430,3 @@ shortcut_in_tooltip = true
 script = ExtResource("13_ad5a5")
 text = "REVERSE"
 border_width = 6
-metadata/_custom_type_script = "uid://fonwmk10vtmd"
