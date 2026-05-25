@@ -1,0 +1,127 @@
+[gd_scene format=3 uid="uid://ct6gjt4js3o8i"]
+
+[ext_resource type="FontFile" uid="uid://7uibxoligyvb" path="res://fonts/HomeVideo-BLG6G.ttf" id="1_iuit4"]
+[ext_resource type="Script" uid="uid://5v3l5uctoliq" path="res://pages/start_menu.gd" id="1_loyqk"]
+[ext_resource type="Shader" uid="uid://b0ejr8ho7s47" path="res://games/pong/vhs_shader.gdshader" id="2_loyqk"]
+[ext_resource type="Script" uid="uid://djdqk3bkipj00" path="res://ui/custom_button.gd" id="3_er0dx"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_er0dx"]
+bg_color = Color(0, 0, 0, 1)
+
+[sub_resource type="Theme" id="Theme_er0dx"]
+Button/font_sizes/font_size = 100
+Button/fonts/font = ExtResource("1_iuit4")
+Button/styles/normal = SubResource("StyleBoxFlat_er0dx")
+
+[sub_resource type="Theme" id="Theme_m2dkk"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_fl3bm"]
+shader = ExtResource("2_loyqk")
+shader_parameter/overlay = false
+shader_parameter/scanlines_opacity = 0.2370000112575
+shader_parameter/scanlines_width = 0.25
+shader_parameter/grille_opacity = 0.3
+shader_parameter/resolution = Vector2(640, 480)
+shader_parameter/pixelate = false
+shader_parameter/roll = true
+shader_parameter/roll_speed = 3.0
+shader_parameter/roll_size = 15.0
+shader_parameter/roll_variation = 3.36500015657762
+shader_parameter/distort_intensity = 0.002000000095
+shader_parameter/noise_opacity = 0.06000000285
+shader_parameter/noise_speed = 5.0
+shader_parameter/static_noise_intensity = 0.0710000033725
+shader_parameter/aberration = 0.01000004797499998
+shader_parameter/brightness = 1.4
+shader_parameter/discolor = true
+shader_parameter/warp_amount = 0.0450000021375
+shader_parameter/clip_warp = false
+shader_parameter/vignette_intensity = 0.4
+shader_parameter/vignette_opacity = 0.28400001349
+
+[node name="StartMenu" type="CanvasLayer" unique_id=1927253657]
+script = ExtResource("1_loyqk")
+
+[node name="VBoxContainer" type="VBoxContainer" parent="." unique_id=1099066527]
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -20.0
+offset_top = -20.0
+offset_right = 20.0
+offset_bottom = 20.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/separation = 20
+
+[node name="ProfileButton" type="Button" parent="VBoxContainer" unique_id=689234295]
+unique_name_in_owner = true
+layout_mode = 2
+mouse_default_cursor_shape = 2
+theme = SubResource("Theme_er0dx")
+text = "MY STUFF"
+script = ExtResource("3_er0dx")
+selected = true
+default_color = Color(1, 1, 1, 1)
+default_theme = SubResource("Theme_er0dx")
+metadata/_custom_type_script = "uid://djdqk3bkipj00"
+
+[node name="LeaderboardButton" type="Button" parent="VBoxContainer" unique_id=685405246]
+unique_name_in_owner = true
+layout_mode = 2
+mouse_default_cursor_shape = 2
+theme = SubResource("Theme_er0dx")
+text = "LEADERBOARD"
+script = ExtResource("3_er0dx")
+selected = true
+default_color = Color(1, 1, 1, 1)
+selected_theme = SubResource("Theme_er0dx")
+metadata/_custom_type_script = "uid://djdqk3bkipj00"
+
+[node name="ShopButton" type="Button" parent="VBoxContainer" unique_id=1292682680]
+unique_name_in_owner = true
+layout_mode = 2
+mouse_default_cursor_shape = 2
+theme = SubResource("Theme_er0dx")
+text = "SHOP"
+script = ExtResource("3_er0dx")
+selected = true
+default_color = Color(1, 1, 1, 1)
+selected_theme = SubResource("Theme_er0dx")
+metadata/_custom_type_script = "uid://djdqk3bkipj00"
+
+[node name="MultiplayerButton" type="Button" parent="VBoxContainer" unique_id=99899752]
+unique_name_in_owner = true
+layout_mode = 2
+mouse_default_cursor_shape = 2
+theme = SubResource("Theme_er0dx")
+text = "MULTIPLAYER"
+script = ExtResource("3_er0dx")
+selected = true
+default_color = Color(1, 1, 1, 1)
+selected_theme = SubResource("Theme_er0dx")
+metadata/_custom_type_script = "uid://djdqk3bkipj00"
+
+[node name="ModeratorButton" type="Button" parent="VBoxContainer" unique_id=646984379]
+unique_name_in_owner = true
+layout_mode = 2
+mouse_default_cursor_shape = 2
+theme = SubResource("Theme_er0dx")
+text = "MODERATOR"
+script = ExtResource("3_er0dx")
+selected = true
+default_color = Color(1, 1, 1, 1)
+selected_theme = SubResource("Theme_er0dx")
+default_theme = SubResource("Theme_m2dkk")
+metadata/_custom_type_script = "uid://djdqk3bkipj00"
+
+[node name="ColorRect" type="ColorRect" parent="." unique_id=515248248]
+material = SubResource("ShaderMaterial_fl3bm")
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2

@@ -28,7 +28,7 @@ radius = 0.075683594
 height = 0.27
 
 [sub_resource type="Curve" id="Curve_gvgjh"]
-_data = [Vector2(0.00314466, 0.495897), 0.0, 0.0, 0, 0, Vector2(0.416667, 0.986236), 0.0, 0.0, 0, 0, Vector2(0.646226, 0.984516), 0.0, 0.0, 0, 0, Vector2(1, 0.339333), 0.0, 0.0, 0, 0]
+_data = [Vector2(0, 0.784183), 0.0, 0.0, 0, 0, Vector2(0.416667, 0.986236), 0.0, 0.0, 0, 0, Vector2(0.646226, 0.984516), 0.0, 0.0, 0, 0, Vector2(1, 0.339333), 0.0, 0.0, 0, 0]
 point_count = 4
 
 [sub_resource type="SphereShape3D" id="SphereShape3D_dbe4r"]
@@ -87,6 +87,7 @@ physics_kart = NodePath("../../..")
 unique_name_in_owner = true
 transform = Transform3D(12.360951, 0, 0, 0, 12.360951, 0, 0, 0, 12.360951, -1.0293659, 0.77030057, 1.0329849)
 physics_kart = NodePath("../../..")
+debug_print = true
 
 [node name="Wheel_Back_Right" parent="VisualNode/Mesh" unique_id=958039242 node_paths=PackedStringArray("physics_kart") instance=ExtResource("2_4r8fh")]
 unique_name_in_owner = true

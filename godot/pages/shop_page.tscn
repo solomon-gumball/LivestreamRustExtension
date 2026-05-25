@@ -1,0 +1,207 @@
+[gd_scene format=3 uid="uid://b20ify8i8wged"]
+
+[ext_resource type="PackedScene" uid="uid://cgog6fj0n1sni" path="res://ui/screen_square.tscn" id="1_2gg80"]
+[ext_resource type="Script" uid="uid://bsgqg44jljrq0" path="res://pages/shop_page.gd" id="1_efvaa"]
+[ext_resource type="FontFile" uid="uid://7uibxoligyvb" path="res://fonts/HomeVideo-BLG6G.ttf" id="1_vd7pi"]
+[ext_resource type="Shader" uid="uid://d27ep2cpoix5" path="res://materials/scrolling_background/scrolling_background.gdshader" id="2_uenho"]
+[ext_resource type="Texture2D" uid="uid://lai2e4svmeud" path="res://textures/gumbot_scrolling_banner.png" id="3_vd7pi"]
+[ext_resource type="Shader" uid="uid://bqw622cobg44v" path="res://materials/outline/outline.gdshader" id="3_xeosu"]
+[ext_resource type="PackedScene" uid="uid://crkh8hdu5af84" path="res://gumbot/gumbot.tscn" id="4_efvaa"]
+[ext_resource type="Shader" uid="uid://cw1km147x2fwu" path="res://materials/bot_mat/bot_shader.gdshader" id="5_t46rp"]
+[ext_resource type="Texture2D" uid="uid://cas3gr887xevi" path="res://materials/bot_mat/bot_albedo.png" id="6_8q73h"]
+[ext_resource type="Texture2D" uid="uid://ba6mac1k3t38a" path="res://materials/bot_mat/bot_normals.png" id="7_fwkhe"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_tvrp0"]
+shader = ExtResource("2_uenho")
+shader_parameter/text_texture = ExtResource("3_vd7pi")
+shader_parameter/scroll_speed = 0.2000000095
+shader_parameter/row_height = 0.1
+shader_parameter/texture_aspect_ratio = 3.40000015824012
+shader_parameter/rotation = -0.6615900006082001
+shader_parameter/uv_scale = 0.75500003260262
+shader_parameter/background_color = Color(0, 0.90719426, 0.37562096, 1)
+shader_parameter/text_color = Color(0.41842356, 0.93573904, 0.48314, 0.5529412)
+
+[sub_resource type="QuadMesh" id="QuadMesh_kb66r"]
+lightmap_size_hint = Vector2i(12, 12)
+flip_faces = true
+size = Vector2(2, 2)
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_aqspc"]
+render_priority = 127
+shader = ExtResource("3_xeosu")
+shader_parameter/thickness = 2.0
+shader_parameter/outline_color = Color(0, 0, 0, 1)
+shader_parameter/threshold = 0.00356999991075
+shader_parameter/samples = 8
+
+[sub_resource type="Environment" id="Environment_c3yp5"]
+background_mode = 3
+ambient_light_source = 2
+ambient_light_color = Color(1, 1, 1, 1)
+tonemap_mode = 2
+ssao_enabled = true
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_bnpwh"]
+resource_local_to_scene = true
+render_priority = 0
+shader = ExtResource("5_t46rp")
+shader_parameter/albedo_texture = ExtResource("6_8q73h")
+shader_parameter/normal_map = ExtResource("7_fwkhe")
+shader_parameter/bot_color = Color(0, 0, 0, 1)
+
+[node name="ShopPage" type="Control" unique_id=78025589]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_efvaa")
+
+[node name="BackgroundLayer" type="CanvasLayer" parent="." unique_id=442451490]
+layer = -1
+
+[node name="ScrollingBackground" type="ColorRect" parent="BackgroundLayer" unique_id=629177022]
+material = SubResource("ShaderMaterial_tvrp0")
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+metadata/_edit_use_anchors_ = true
+
+[node name="MarginContainer" type="MarginContainer" parent="." unique_id=1808268192]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/margin_left = 50
+theme_override_constants/margin_top = 50
+theme_override_constants/margin_right = 50
+theme_override_constants/margin_bottom = 50
+
+[node name="HBoxContainer" type="HBoxContainer" parent="MarginContainer" unique_id=244248737]
+layout_mode = 2
+
+[node name="SubViewportContainer" type="SubViewportContainer" parent="MarginContainer/HBoxContainer" unique_id=1613682171]
+layout_mode = 2
+size_flags_horizontal = 3
+stretch = true
+
+[node name="SubViewport" type="SubViewport" parent="MarginContainer/HBoxContainer/SubViewportContainer" unique_id=1217365945]
+transparent_bg = true
+handle_input_locally = false
+size = Vector2i(716, 980)
+render_target_update_mode = 4
+
+[node name="World" type="Node3D" parent="MarginContainer/HBoxContainer/SubViewportContainer/SubViewport" unique_id=549173998]
+
+[node name="Camera3D" type="Camera3D" parent="MarginContainer/HBoxContainer/SubViewportContainer/SubViewport/World" unique_id=987490178]
+transform = Transform3D(1, 0, 0, 0, 0.9953139, 0.09669699, 0, -0.09669699, 0.9953139, 0, 0.2270751, 0.3882163)
+current = true
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="MarginContainer/HBoxContainer/SubViewportContainer/SubViewport/World/Camera3D" unique_id=739197684]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.06012258, -1.861503)
+visible = false
+mesh = SubResource("QuadMesh_kb66r")
+surface_material_override/0 = SubResource("ShaderMaterial_aqspc")
+
+[node name="DirectionalLight3D" type="DirectionalLight3D" parent="MarginContainer/HBoxContainer/SubViewportContainer/SubViewport/World" unique_id=607200152]
+transform = Transform3D(0.18701153, 0.62628746, 0.7568294, 0.06279059, -0.77646667, 0.6270222, 0.98034894, -0.06973862, -0.18453318, 1.137617, 0.9017843, -0.071688496)
+visible = false
+light_color = Color(0.99646264, 0.82775444, 0.63832206, 1)
+light_energy = 5.0
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="MarginContainer/HBoxContainer/SubViewportContainer/SubViewport/World" unique_id=87851949]
+environment = SubResource("Environment_c3yp5")
+
+[node name="gumbot" parent="MarginContainer/HBoxContainer/SubViewportContainer/SubViewport/World" unique_id=2126276004 instance=ExtResource("4_efvaa")]
+unique_name_in_owner = true
+transform = Transform3D(0.99999994, 0, 0, 0, 1, 0, 0, 0, 0.99999994, 0, 0, 0)
+surface_mat = SubResource("ShaderMaterial_bnpwh")
+color = Color(0, 0, 0, 1)
+
+[node name="VBoxContainer" type="VBoxContainer" parent="MarginContainer/HBoxContainer" unique_id=903732734]
+custom_minimum_size = Vector2(1100, 0)
+layout_mode = 2
+size_flags_vertical = 4
+theme_override_constants/separation = 20
+
+[node name="RichTextLabel" type="RichTextLabel" parent="MarginContainer/HBoxContainer/VBoxContainer" unique_id=1508065895]
+layout_mode = 2
+theme_override_colors/default_color = Color(8.904189e-07, 0.54415464, 0.08735014, 1)
+theme_override_fonts/normal_font = ExtResource("1_vd7pi")
+theme_override_font_sizes/normal_font_size = 80
+bbcode_enabled = true
+text = "ON SALE TODAY:"
+fit_content = true
+horizontal_alignment = 1
+
+[node name="ItemsGrid" type="GridContainer" parent="MarginContainer/HBoxContainer/VBoxContainer" unique_id=1326886852]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 4
+columns = 3
+
+[node name="ScreenSquare15" parent="MarginContainer/HBoxContainer/VBoxContainer/ItemsGrid" unique_id=1256852975 instance=ExtResource("1_2gg80")]
+custom_minimum_size = Vector2(260, 260)
+layout_mode = 2
+icon_size = 180.0
+width = 250.0
+padding = 10.0
+background_color = Color(0.22708684, 0.84214246, 0.37563667, 1)
+border_color = Color(0.1962555, 0.68664193, 0.30947465, 1)
+icon_color = Color(1, 1, 1, 1)
+
+[node name="ScreenSquare16" parent="MarginContainer/HBoxContainer/VBoxContainer/ItemsGrid" unique_id=688981325 instance=ExtResource("1_2gg80")]
+custom_minimum_size = Vector2(260, 260)
+layout_mode = 2
+icon_size = 180.0
+width = 250.0
+padding = 10.0
+background_color = Color(0.22708684, 0.84214246, 0.37563667, 1)
+border_color = Color(0.1962555, 0.68664193, 0.30947465, 1)
+icon_color = Color(1, 1, 1, 1)
+
+[node name="ScreenSquare17" parent="MarginContainer/HBoxContainer/VBoxContainer/ItemsGrid" unique_id=908155505 instance=ExtResource("1_2gg80")]
+custom_minimum_size = Vector2(260, 260)
+layout_mode = 2
+icon_size = 180.0
+width = 250.0
+padding = 10.0
+background_color = Color(0.22708684, 0.84214246, 0.37563667, 1)
+border_color = Color(0.1962555, 0.68664193, 0.30947465, 1)
+icon_color = Color(1, 1, 1, 1)
+
+[node name="ScreenSquare18" parent="MarginContainer/HBoxContainer/VBoxContainer/ItemsGrid" unique_id=356329818 instance=ExtResource("1_2gg80")]
+custom_minimum_size = Vector2(260, 260)
+layout_mode = 2
+icon_size = 180.0
+width = 250.0
+padding = 10.0
+background_color = Color(0.22708684, 0.84214246, 0.37563667, 1)
+border_color = Color(0.1962555, 0.68664193, 0.30947465, 1)
+icon_color = Color(1, 1, 1, 1)
+
+[node name="ScreenSquare19" parent="MarginContainer/HBoxContainer/VBoxContainer/ItemsGrid" unique_id=1313522246 instance=ExtResource("1_2gg80")]
+custom_minimum_size = Vector2(260, 260)
+layout_mode = 2
+icon_size = 180.0
+width = 250.0
+padding = 10.0
+background_color = Color(0.22708684, 0.84214246, 0.37563667, 1)
+border_color = Color(0.1962555, 0.68664193, 0.30947465, 1)
+icon_color = Color(1, 1, 1, 1)
+
+[node name="ScreenSquare20" parent="MarginContainer/HBoxContainer/VBoxContainer/ItemsGrid" unique_id=1178389215 instance=ExtResource("1_2gg80")]
+custom_minimum_size = Vector2(260, 260)
+layout_mode = 2
+icon_size = 180.0
+width = 250.0
+padding = 10.0
+background_color = Color(0.22708684, 0.84214246, 0.37563667, 1)
+border_color = Color(0.1962555, 0.68664193, 0.30947465, 1)
+icon_color = Color(1, 1, 1, 1)

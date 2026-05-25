@@ -150,6 +150,18 @@ func create_authorized_request(url: String, method: int, body: Dictionary) -> HT
   request.queue_free()
   return response
 
+func fetch_shop() -> Array[String]:
+  var response: HTTPResult = await create_authorized_request(
+    get_database_server_url("shop"),
+    HTTPClient.METHOD_GET,
+    {}
+  )
+  if response.success() and response.status_ok():
+    var names: Array[String] = []
+    names.assign(response.body_as_json())
+    return names
+  return []
+
 func wear_item(item: String) -> Chatter:
   var response: HTTPResult = await create_authorized_request(
     get_database_server_url("wear-item"),

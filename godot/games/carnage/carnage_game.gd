@@ -33,8 +33,8 @@ func _ready() -> void:
   end_game_button.visible = MultiplayerClient.is_lobby_host()
   end_game_button.pressed.connect(_on_end_game_button_pressed)
 
+  map = load_map("kart_race_map1")
   # map = load_map("kart_race_joony1")
-  map = load_map("kart_race_joony1")
   add_child(map)
 
   _setup_checkpoints()
@@ -206,6 +206,7 @@ func _animation_finished(animation_name: String) -> void:
   if animation_name == "Intro":
     var kart: PhysicsKart = karts_by_peer_id.get(MultiplayerClient.my_peer_id(), null)
     map.debug_camera.snap_to_camera(map.animation_camera)
+    map.debug_camera.allow_switch_targets = false
     # map.debug_camera._follow_state.move_lerp = 5.0
     map.debug_camera.set_default_orbit_distance(2.0)
     map.debug_camera.enter_follow_mode(kart, deg_to_rad(25.0), Vector3(0, 0.261, 0))

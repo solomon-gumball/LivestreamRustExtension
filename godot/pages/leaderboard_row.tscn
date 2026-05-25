@@ -1,0 +1,39 @@
+[gd_scene format=3 uid="uid://bk6lylo06gl76"]
+
+[ext_resource type="FontFile" uid="uid://7uibxoligyvb" path="res://fonts/HomeVideo-BLG6G.ttf" id="1_ebs3l"]
+[ext_resource type="Script" uid="uid://3p7v58ttkw6i" path="res://pages/leaderboard_row.gd" id="1_rdyjx"]
+
+[node name="MarginContainer" type="MarginContainer" unique_id=687504124]
+offset_right = 1075.0
+offset_bottom = 85.0
+theme_override_constants/margin_left = 20
+theme_override_constants/margin_top = 20
+theme_override_constants/margin_right = 20
+theme_override_constants/margin_bottom = 20
+script = ExtResource("1_rdyjx")
+max_rotation_degrees = 1.0
+
+[node name="HBoxContainer" type="HBoxContainer" parent="." unique_id=878705212]
+layout_mode = 2
+
+[node name="LeftLabel" type="RichTextLabel" parent="HBoxContainer" unique_id=62106308]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_fonts/normal_font = ExtResource("1_ebs3l")
+theme_override_font_sizes/normal_font_size = 50
+bbcode_enabled = true
+text = "1 solomongumbal1"
+fit_content = true
+
+[node name="RightLabel" type="RichTextLabel" parent="HBoxContainer" unique_id=1190546260]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 0
+theme_override_fonts/normal_font = ExtResource("1_ebs3l")
+theme_override_font_sizes/normal_font_size = 50
+bbcode_enabled = true
+text = "16,320 GUM"
+fit_content = true
+horizontal_alignment = 2

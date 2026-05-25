@@ -44,7 +44,7 @@ var _visual_rest_local_basis := Basis.IDENTITY
 var _interp_visual_tween: Tween = null
 
 const MAX_WHEEL_ANGLE := deg_to_rad(35.0)
-const WHEEL_TURN_SPEED := deg_to_rad(80.0)
+const WHEEL_TURN_SPEED := deg_to_rad(40.0)
 
 func _ready() -> void:
   super._ready()

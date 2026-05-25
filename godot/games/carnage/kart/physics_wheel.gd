@@ -12,6 +12,7 @@ class_name PhysicsWheel
 @export var tire_mass: float = 2.0
 @export var base_friction: float = 0.1
 @onready var smoke_fx: GPUParticles3D = %SmokeFX
+@export var debug_print: bool = false
 
 var initial_position: Vector3
 var _last_global_position: Vector3
@@ -99,7 +100,11 @@ func compute_forces(
   var tire_brake_dot: float = absf(force_basis.x.dot(world_velocity.normalized()))
   var friction_lookup: float = wheel_friction_curve.sample(tire_brake_dot)
   var desired_acceleration: float = (-vel_in_side_dir * friction_lookup * base_friction) / delta
-  var steering_force: Vector3 = desired_acceleration * force_basis.x * tire_mass 
+  var steering_force: Vector3 = desired_acceleration * force_basis.x * tire_mass
+
+  # if debug_print:
+  #   print("tire_brake_dot - ", tire_brake_dot)
+    # print("friction_lookup - ", friction_lookup) 
 
   # Drive (project wheel-forward onto the collision plane so it stays on the surface)
   var projected_forward: Vector3 = Plane(collision_normal).project(force_basis.z * 5.0)

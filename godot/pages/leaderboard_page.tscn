@@ -1,0 +1,157 @@
+[gd_scene format=3 uid="uid://bhwchfktfefos"]
+
+[ext_resource type="Script" uid="uid://br7sn2p6hv25j" path="res://pages/leaderboard_page.gd" id="1_4011w"]
+[ext_resource type="Texture2D" uid="uid://lai2e4svmeud" path="res://textures/gumbot_scrolling_banner.png" id="1_ygcfc"]
+[ext_resource type="Script" uid="uid://djdqk3bkipj00" path="res://ui/custom_button.gd" id="2_syndr"]
+[ext_resource type="FontFile" uid="uid://7uibxoligyvb" path="res://fonts/HomeVideo-BLG6G.ttf" id="3_gmkyg"]
+[ext_resource type="PackedScene" uid="uid://bk6lylo06gl76" path="res://pages/leaderboard_row.tscn" id="4_ygcfc"]
+
+[sub_resource type="Shader" id="Shader_cagmn"]
+code = "shader_type canvas_item;
+
+uniform sampler2D text_texture : source_color, filter_linear_mipmap, repeat_enable;
+uniform float scroll_speed : hint_range(0.0, 5.0) = 0.3;
+uniform float row_height : hint_range(0.01, 1.0) = 0.1;
+uniform float texture_aspect_ratio : hint_range(0.1, 50.0) = 10.0;
+uniform float rotation : hint_range(-3.14159, 3.14159) = 0.0;
+uniform float uv_scale : hint_range(0.1, 10.0) = 1.0;
+
+uniform vec3 background_color : source_color = vec3(1.0, 0.0, 0.0);
+uniform vec4 text_color : source_color = vec4(0.0, 0.0, 0.0, 1.0);
+
+void fragment() {
+    // Rotate UV around the center
+    vec2 centered = (UV - vec2(0.5)) * uv_scale;
+    float s = sin(rotation);
+    float c = cos(rotation);
+    vec2 rotated = vec2(
+        centered.x * c - centered.y * s,
+        centered.x * s + centered.y * c
+    ) + vec2(0.5);
+
+    // Everything below is identical to before, just using rotated instead of UV
+    float row = floor(rotated.y / row_height);
+    float tile_v = fract(rotated.y / row_height);
+
+    float direction = mod(row, 2.0) < 1.0 ? 1.0 : -1.0;
+    float row_offset = fract(sin(row * 127.1 + 311.7) * 43758.5453);
+    float offset = TIME * scroll_speed * direction + row_offset;
+
+    float u_scale = row_height * texture_aspect_ratio;
+    float tile_u = (rotated.x / u_scale) + offset;
+
+    float texture_read = texture(text_texture, vec2(tile_u, tile_v)).a;
+    vec3 out_color = mix(background_color, text_color.rgb, texture_read * text_color.a);
+    COLOR = vec4(out_color, 1.0);
+}"
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_4011w"]
+shader = SubResource("Shader_cagmn")
+shader_parameter/text_texture = ExtResource("1_ygcfc")
+shader_parameter/scroll_speed = 0.2000000095
+shader_parameter/row_height = 0.1
+shader_parameter/texture_aspect_ratio = 3.40000015824012
+shader_parameter/rotation = -0.6615900006082001
+shader_parameter/uv_scale = 0.75500003260262
+shader_parameter/background_color = Color(0.6509804, 0.89411765, 1, 1)
+shader_parameter/text_color = Color(0.56, 0.8679999, 1, 0.53333336)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_gmkyg"]
+content_margin_left = 20.0
+content_margin_top = 20.0
+content_margin_right = 20.0
+content_margin_bottom = 20.0
+bg_color = Color(0.3647059, 0.5058824, 0.9647059, 1)
+
+[sub_resource type="Theme" id="Theme_4011w"]
+Button/colors/font_color = Color(1, 1, 1, 1)
+Button/font_sizes/font_size = 50
+Button/fonts/font = ExtResource("3_gmkyg")
+Button/styles/normal = SubResource("StyleBoxFlat_gmkyg")
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_ygcfc"]
+
+[sub_resource type="Theme" id="Theme_ygcfc"]
+Button/colors/font_color = Color(1, 1, 1, 1)
+Button/font_sizes/font_size = 50
+Button/fonts/font = ExtResource("3_gmkyg")
+Button/styles/normal = SubResource("StyleBoxEmpty_ygcfc")
+
+[node name="LeaderboardPage" type="Control" unique_id=1411279437]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_4011w")
+
+[node name="BackgroundLayer" type="CanvasLayer" parent="." unique_id=1842374443]
+layer = -1
+
+[node name="ScrollingBackground" type="ColorRect" parent="BackgroundLayer" unique_id=1718496661]
+material = SubResource("ShaderMaterial_4011w")
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="VBoxContainer" type="VBoxContainer" parent="." unique_id=1409471917]
+custom_minimum_size = Vector2(1400, 0)
+layout_mode = 1
+anchors_preset = 13
+anchor_left = 0.5
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_left = -290.0
+offset_right = 290.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/separation = 20
+
+[node name="Control" type="Control" parent="VBoxContainer" unique_id=732176871]
+custom_minimum_size = Vector2(0, 100)
+layout_mode = 2
+
+[node name="HBoxContainer" type="HBoxContainer" parent="VBoxContainer" unique_id=153756974]
+layout_mode = 2
+theme_override_constants/separation = 20
+
+[node name="GumbucksListButton" type="Button" parent="VBoxContainer/HBoxContainer" unique_id=972642404]
+unique_name_in_owner = true
+layout_mode = 2
+theme = SubResource("Theme_4011w")
+text = "RICHEST"
+script = ExtResource("2_syndr")
+selected = true
+default_color = Color(1, 1, 1, 1)
+selected_theme = SubResource("Theme_4011w")
+default_theme = SubResource("Theme_ygcfc")
+metadata/_custom_type_script = "uid://djdqk3bkipj00"
+
+[node name="GameWinsListButton" type="Button" parent="VBoxContainer/HBoxContainer" unique_id=161972639]
+unique_name_in_owner = true
+layout_mode = 2
+theme = SubResource("Theme_4011w")
+text = "MOST WINS"
+script = ExtResource("2_syndr")
+selected = true
+default_color = Color(1, 1, 1, 1)
+selected_theme = SubResource("Theme_4011w")
+default_theme = SubResource("Theme_ygcfc")
+metadata/_custom_type_script = "uid://djdqk3bkipj00"
+
+[node name="ScrollContainer" type="ScrollContainer" parent="VBoxContainer" unique_id=1491363228]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="LeaderboardList" type="VBoxContainer" parent="VBoxContainer/ScrollContainer" unique_id=307560411]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(1400, 0)
+layout_mode = 2
+theme_override_constants/separation = 20
+
+[node name="LeaderboardRow" parent="VBoxContainer/ScrollContainer/LeaderboardList" unique_id=687504124 instance=ExtResource("4_ygcfc")]
+layout_mode = 2
+background_color = Color(0.36862746, 0.5058824, 0.9647059, 1)

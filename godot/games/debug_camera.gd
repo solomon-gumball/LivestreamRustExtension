@@ -16,6 +16,8 @@ var _state: StateMachine
 var _free_state: FreeState
 var _follow_state: FollowState
 
+var allow_switch_targets := true
+
 @warning_ignore("UNUSED_SIGNAL") signal did_enter_free_cam()
 @warning_ignore("UNUSED_SIGNAL") signal did_enter_follow_cam(follow_node: Node3D)
 
@@ -34,7 +36,10 @@ func _ready() -> void:
   _state.change_state(_free_state)
 
 func _unhandled_input(event: InputEvent) -> void:
-  if event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_RIGHT and event.pressed:
+  if event is InputEventMouseButton and \
+     event.button_index == MOUSE_BUTTON_RIGHT and \
+     event.pressed and \
+      allow_switch_targets:
     if follow_click_collision_mask != 0:
       var hit := _raycast_node_at(event.position)
       if hit != null:
@@ -199,6 +204,7 @@ class FollowState extends DebugCameraState:
   var prevent_wall_clip: bool = false
   var move_lerp: float = 10.0
   var lock_pitch: bool = false
+  var allow_switch_targets: bool = true
 
   var target: Node3D = null
   var target_local_offset: Vector3 = Vector3.ZERO

@@ -7,9 +7,14 @@ extends Control
 
 func _ready() -> void:
   username_label.text = ""
+  WSClient.state.changed.connect(_handle_connection_status_changed)
   WSClient.authenticated_state.emote_triggered.connect(_handle_emote_triggered)
   WSClient.authenticated_state.my_chatter_updated.connect(_handle_chatter_updated)
   _handle_chatter_updated(WSClient.authenticated_state.current_chatter)
+
+func _handle_connection_status_changed(state: WSClient.WSClientState) -> void:
+  if state is WSClient.AuthenticatedState:
+    _handle_chatter_updated(WSClient.authenticated_state.current_chatter)
 
 func _handle_chatter_updated(chatter: Chatter) -> void:
   if WSClient.state.current is not WSClient.AuthenticatedState:

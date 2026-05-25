@@ -4,60 +4,55 @@ class_name ExtensionRoot
 var current_chatter: Chatter
 
 @export var active_page: Node
-@onready var profile_button: CustomButton = %ProfileButton
-@onready var play_game_button: CustomButton = %PlayGameButton
-@onready var host_game_button: CustomButton = %HostGameButton
 @onready var page_container: Control = %PageContainer
+@onready var start_menu: StartMenu = %StartMenu
 
 var profile_page_template: PackedScene = preload("res://pages/profile_page.tscn")
 var game_page_template: PackedScene = preload("res://pages/game_page.tscn")
 var host_game_page_template: PackedScene = preload("res://pages/host_game_page.tscn")
-
-enum ExtensionPage { Profile, PlayGame, HostGame }
+var leaderboard_page_template: PackedScene = preload("res://pages/leaderboard_page.tscn")
+var shop_page_template: PackedScene = preload("res://pages/shop_page.tscn")
 
 func _ready() -> void:
-  print("[ExtensionRoot] _ready — Godot scene tree is running")
+  start_menu_visible = false
+
   WSClient.state.changed.connect(_handle_connection_status_changed)
+  start_menu.trigger_navigate.connect(_navigate_to_page)
   _handle_connection_status_changed(WSClient.state.current)
-
-  play_game_button.pressed.connect(_navigate_to_page.bind(ExtensionPage.PlayGame))
-  host_game_button.pressed.connect(_navigate_to_page.bind(ExtensionPage.HostGame))
-  profile_button.pressed.connect(_navigate_to_page.bind(ExtensionPage.Profile))
-
-  _navigate_to_page(ExtensionPage.PlayGame)
+  _navigate_to_page(StartMenu.ExtensionPage.Profile)
 
 func _handle_connection_status_changed(state: WSClient.WSClientState) -> void:
   if state is WSClient.DisconnectedState:
     AlertLayer.display_alert("No connection found!\nReconnecting...")
   else:
     AlertLayer.hide_alert()
-
-  if state is WSClient.AuthenticatedState and WSClient.authenticated_state.current_chatter:
-    host_game_button.visible = WSClient.is_moderator()
-  else:
-    host_game_button.visible = false
-
+  
 func _navigate_to_page(page: int) -> void:
   if active_page:
     active_page.queue_free()
-
+  
+  start_menu_visible = false
   match page:
-    ExtensionPage.Profile:
-      profile_button.selected = true
-      play_game_button.selected = false
-      host_game_button.selected = false
+    StartMenu.ExtensionPage.Learderboard:
+      active_page = leaderboard_page_template.instantiate()
+    StartMenu.ExtensionPage.Profile:
       active_page = profile_page_template.instantiate()
-    ExtensionPage.PlayGame:
-      profile_button.selected = false
-      play_game_button.selected = true
-      host_game_button.selected = false
+    StartMenu.ExtensionPage.Multiplayer:
       active_page = game_page_template.instantiate()
-    ExtensionPage.HostGame:
-      profile_button.selected = false
-      play_game_button.selected = false
-      host_game_button.selected = true
+    StartMenu.ExtensionPage.Shop:
+      active_page = shop_page_template.instantiate()
+    StartMenu.ExtensionPage.Moderator:
       var host_game_scene: HostGamePage = host_game_page_template.instantiate()
       active_page = host_game_scene
-      active_page.on_lobby_created.connect(_navigate_to_page.bind(ExtensionPage.PlayGame))
+      active_page.on_lobby_created.connect(_navigate_to_page.bind(StartMenu.ExtensionPage.Multiplayer))
 
   page_container.add_child(active_page)
+
+var start_menu_visible: bool = false:
+  set(new_value):
+    start_menu_visible = new_value
+    start_menu.visible = start_menu_visible
+
+func _input(event: InputEvent) -> void:
+  if Input.is_action_just_pressed("StartMenu"):
+    start_menu_visible = !start_menu_visible

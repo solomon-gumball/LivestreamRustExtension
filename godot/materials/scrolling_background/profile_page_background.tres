@@ -1,15 +1,53 @@
 [gd_resource type="ShaderMaterial" format=3 uid="uid://csotmk0m42uj7"]
 
-[ext_resource type="Shader" uid="uid://d27ep2cpoix5" path="res://materials/scrolling_background/scrolling_background.gdshader" id="1_e7ipb"]
 [ext_resource type="Texture2D" uid="uid://lai2e4svmeud" path="res://textures/gumbot_scrolling_banner.png" id="2_juxr5"]
 
+[sub_resource type="Shader" id="Shader_cagmn"]
+code = "shader_type canvas_item;
+
+uniform sampler2D text_texture : source_color, filter_linear_mipmap, repeat_enable;
+uniform float scroll_speed : hint_range(0.0, 5.0) = 0.3;
+uniform float row_height : hint_range(0.01, 1.0) = 0.1;
+uniform float texture_aspect_ratio : hint_range(0.1, 50.0) = 10.0;
+uniform float rotation : hint_range(-3.14159, 3.14159) = 0.0;
+uniform float uv_scale : hint_range(0.1, 10.0) = 1.0;
+
+uniform vec3 background_color : source_color = vec3(1.0, 0.0, 0.0);
+uniform vec4 text_color : source_color = vec4(0.0, 0.0, 0.0, 1.0);
+
+void fragment() {
+    // Rotate UV around the center
+    vec2 centered = (UV - vec2(0.5)) * uv_scale;
+    float s = sin(rotation);
+    float c = cos(rotation);
+    vec2 rotated = vec2(
+        centered.x * c - centered.y * s,
+        centered.x * s + centered.y * c
+    ) + vec2(0.5);
+
+    // Everything below is identical to before, just using rotated instead of UV
+    float row = floor(rotated.y / row_height);
+    float tile_v = fract(rotated.y / row_height);
+
+    float direction = mod(row, 2.0) < 1.0 ? 1.0 : -1.0;
+    float row_offset = fract(sin(row * 127.1 + 311.7) * 43758.5453);
+    float offset = TIME * scroll_speed * direction + row_offset;
+
+    float u_scale = row_height * texture_aspect_ratio;
+    float tile_u = (rotated.x / u_scale) + offset;
+
+    float texture_read = texture(text_texture, vec2(tile_u, tile_v)).a;
+    vec3 out_color = mix(background_color, text_color.rgb, texture_read * text_color.a);
+    COLOR = vec4(out_color, 1.0);
+}"
+
 [resource]
-shader = ExtResource("1_e7ipb")
+shader = SubResource("Shader_cagmn")
 shader_parameter/text_texture = ExtResource("2_juxr5")
 shader_parameter/scroll_speed = 0.2000000095
 shader_parameter/row_height = 0.1
 shader_parameter/texture_aspect_ratio = 3.40000015824012
 shader_parameter/rotation = -0.6615900006082001
 shader_parameter/uv_scale = 0.75500003260262
-shader_parameter/background_color = Color(0.9994286, 0.76574904, 0.45401907, 1)
-shader_parameter/text_color = Color(0.83, 0.44266668, 0, 0.0627451)
+shader_parameter/background_color = Color(0.99711543, 0.6658272, 0.49188018, 1)
+shader_parameter/text_color = Color(0.9767763, 0.6336562, 0.40988675, 0.5529412)

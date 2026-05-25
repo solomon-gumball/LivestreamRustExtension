@@ -6,8 +6,9 @@ class_name CustomButton
   set(new_value):
     selected = new_value
     self_modulate = selected_color if selected else default_color
-    if selected_theme:
-      theme = selected_theme if selected else default_theme
+    var new_theme: Theme = selected_theme if selected else default_theme
+    if new_theme:
+      theme = new_theme
 
 func _ready() -> void:
   selected = selected
